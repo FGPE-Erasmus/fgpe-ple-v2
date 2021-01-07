@@ -5,28 +5,67 @@ import { useTranslation } from "react-i18next";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
 import keycloak from "./keycloak";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Homepage from "./containers/HomePage";
 import Navbar from "./components/Navbar";
 import styled from "@emotion/styled";
+import { AnimatePresence } from "framer-motion";
+
+import Homepage from "./containers/HomePage";
+import Profile from "./containers/Profile";
+import MainLoading from "./containers/MainLoading";
+
+import PrivateRoute from "./utilities/PrivateRoute";
+
+const pageVariants = {
+  initial: {
+    opacity: 0,
+  },
+  in: {
+    opacity: 1,
+  },
+  out: {
+    opacity: 0,
+  },
+};
 
 const MainWrapper = styled.div`
-  max-width: 1920px;
+  max-width: 1140px;
   margin: auto;
 `;
 
 function App() {
-  const { t, i18n, ready } = useTranslation();
-  console.log(process.env.REACT_APP_KEYCLOAK_CLIENT_ID);
+  const { ready } = useTranslation();
+
+  // console.log(process.env.REACT_APP_KEYCLOAK_CLIENT_ID);
   if (!ready) {
     return <div>Loading...</div>;
   }
-
+  console.log("KEYCLOAK", keycloak);
   return (
     <ReactKeycloakProvider authClient={keycloak}>
-      <Navbar />
-      <MainWrapper>
-        <Homepage />
-        <h2>{t("title")}</h2>
+      <BrowserRouter>
+        <Route
+          render={({ location }) => (
+            <>
+              <MainLoading />
+              <Navbar />
+              <MainWrapper>
+                <AnimatePresence exitBeforeEnter initial={false}>
+                  <Switch location={location} key={location.pathname}>
+                    <Route exact path="/" component={Homepage} />
+                    <PrivateRoute
+                      exact
+                      path="/profile"
+                      roles={["student", "teacher"]}
+                      component={Profile}
+                    />
+                  </Switch>
+                </AnimatePresence>
+              </MainWrapper>
+            </>
+          )}
+        />
+      </BrowserRouter>
+      {/* <h2>{t("title")}</h2>
         <p>{t("description.part1")}</p>
         <p>{t("description.part2")}</p>
 
@@ -43,8 +82,7 @@ function App() {
           }}
         >
           English
-        </button>
-      </MainWrapper>
+        </button> */}
     </ReactKeycloakProvider>
   );
 }
