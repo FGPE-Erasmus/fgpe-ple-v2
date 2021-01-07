@@ -1,10 +1,14 @@
-import { Global, css } from "@emotion/react";
+import { Global, css, useTheme } from "@emotion/react";
+
 import React from "react";
 
-const GlobalStyles: React.FC = () => (
-  <>
+const GlobalStyles: React.FC = () => {
+  const theme = useTheme();
+  return (
     <Global
       styles={css`
+        @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap");
+
         html {
           line-height: 1.15; /* 1 */
           -ms-text-size-adjust: 100%; /* 2 */
@@ -12,7 +16,9 @@ const GlobalStyles: React.FC = () => (
         }
 
         body {
+          font-family: "Open Sans", sans-serif;
           margin: 0;
+          background-color: ${theme.background};
         }
 
         article,
@@ -359,7 +365,7 @@ const GlobalStyles: React.FC = () => (
         }
       `}
     />
-  </>
-);
+  );
+};
 
 export default GlobalStyles;

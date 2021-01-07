@@ -7,18 +7,24 @@ import keycloak from "./keycloak";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Homepage from "./containers/HomePage";
 import Navbar from "./components/Navbar";
+import styled from "@emotion/styled";
+
+const MainWrapper = styled.div`
+  max-width: 1920px;
+  margin: auto;
+`;
 
 function App() {
   const { t, i18n, ready } = useTranslation();
-
+  console.log(process.env.REACT_APP_KEYCLOAK_CLIENT_ID);
   if (!ready) {
     return <div>Loading...</div>;
   }
 
   return (
     <ReactKeycloakProvider authClient={keycloak}>
-      <div>
-        <Navbar />
+      <Navbar />
+      <MainWrapper>
         <Homepage />
         <h2>{t("title")}</h2>
         <p>{t("description.part1")}</p>
@@ -38,7 +44,7 @@ function App() {
         >
           English
         </button>
-      </div>
+      </MainWrapper>
     </ReactKeycloakProvider>
   );
 }
