@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useKeycloak } from "@react-keycloak/web";
 import withChangeAnimation from "../utilities/withChangeAnimation";
+import GamesList from "../components/GamesList";
 
 const Profile: React.ComponentType = () => {
   const { keycloak, initialized } = useKeycloak();
@@ -22,6 +23,8 @@ const Profile: React.ComponentType = () => {
   return (
     <div>
       Hello, {userProfile?.firstName} {userProfile?.lastName}
+      <div>Query check:</div>
+      <GamesList />
     </div>
   );
 };

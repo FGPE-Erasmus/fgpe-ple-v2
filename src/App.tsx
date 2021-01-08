@@ -1,5 +1,4 @@
 import React from "react";
-import { ThemeProvider } from "@emotion/react";
 import "./i18n/config";
 import { useTranslation } from "react-i18next";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
@@ -12,23 +11,14 @@ import { AnimatePresence } from "framer-motion";
 import Homepage from "./containers/HomePage";
 import Profile from "./containers/Profile";
 import MainLoading from "./containers/MainLoading";
+import ProfileInGame from "./containers/ProfileInGame";
+import Challenge from "./containers/Challenge";
 
 import PrivateRoute from "./utilities/PrivateRoute";
 
-const pageVariants = {
-  initial: {
-    opacity: 0,
-  },
-  in: {
-    opacity: 1,
-  },
-  out: {
-    opacity: 0,
-  },
-};
-
 const MainWrapper = styled.div`
   max-width: 1140px;
+  padding: 15px;
   margin: auto;
 `;
 
@@ -39,51 +29,61 @@ function App() {
   if (!ready) {
     return <div>Loading...</div>;
   }
-  console.log("KEYCLOAK", keycloak);
-  return (
-    <ReactKeycloakProvider authClient={keycloak}>
-      <BrowserRouter>
-        <Route
-          render={({ location }) => (
-            <>
-              <MainLoading />
-              <Navbar />
-              <MainWrapper>
-                <AnimatePresence exitBeforeEnter initial={false}>
-                  <Switch location={location} key={location.pathname}>
-                    <Route exact path="/" component={Homepage} />
-                    <PrivateRoute
-                      exact
-                      path="/profile"
-                      roles={["student", "teacher"]}
-                      component={Profile}
-                    />
-                  </Switch>
-                </AnimatePresence>
-              </MainWrapper>
-            </>
-          )}
-        />
-      </BrowserRouter>
-      {/* <h2>{t("title")}</h2>
-        <p>{t("description.part1")}</p>
-        <p>{t("description.part2")}</p>
 
-        <button
-          onClick={() => {
-            i18n.changeLanguage("pl");
-          }}
-        >
-          Polski
-        </button>
-        <button
-          onClick={() => {
-            i18n.changeLanguage("en");
-          }}
-        >
-          English
-        </button> */}
-    </ReactKeycloakProvider>
+  return (
+    <BrowserRouter>
+      <Route
+        render={({ location }) => (
+          <>
+            <MainLoading />
+            <Navbar />
+            <MainWrapper>
+              <AnimatePresence exitBeforeEnter initial={false}>
+                <Switch location={location} key={location.pathname}>
+                  <Route exact path="/" component={Homepage} />
+                  <PrivateRoute
+                    exact
+                    path="/profile"
+                    roles={["student", "teacher"]}
+                    component={Profile}
+                  />
+                  <PrivateRoute
+                    exact
+                    path="/profile/game"
+                    roles={["student"]}
+                    component={ProfileInGame}
+                  />
+                  <PrivateRoute
+                    exact
+                    path="/game"
+                    roles={["student"]}
+                    component={Challenge}
+                  />
+                </Switch>
+              </AnimatePresence>
+            </MainWrapper>
+          </>
+        )}
+      />
+    </BrowserRouter>
+    // {/* <h2>{t("title")}</h2>
+    //   <p>{t("description.part1")}</p>
+    //   <p>{t("description.part2")}</p>
+
+    //   <button
+    //     onClick={() => {
+    //       i18n.changeLanguage("pl");
+    //     }}
+    //   >
+    //     Polski
+    //   </button>
+    //   <button
+    //     onClick={() => {
+    //       i18n.changeLanguage("en");
+    //     }}
+    //   >
+    //     English
+    //   </button> */}
   );
 }
 

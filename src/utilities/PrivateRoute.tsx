@@ -21,8 +21,6 @@ export default function PrivateRoute({
   const isAuthorized = (roles: rolesTypes) => {
     if (keycloak && roles) {
       return roles.some((r) => {
-        console.log("UNATHORIZED");
-
         const realm = keycloak.hasRealmRole(r);
         const resource = keycloak.hasResourceRole(r);
         return realm || resource;

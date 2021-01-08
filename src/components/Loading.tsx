@@ -45,63 +45,87 @@ const Fullscreen = styled.div`
 `;
 
 const Indicator = styled.div`
-  &,
-  &:before,
-  &:after {
-    background: ${({ theme }) => theme.primary};
-    -webkit-animation: load1 1s infinite ease-in-out;
-    animation: load1 1s infinite ease-in-out;
-    width: 1em;
-    height: 4em;
-  }
   & {
-    color: ${({ theme }) => theme.primary};
+    font-size: 10px;
+    margin: 50px auto;
     text-indent: -9999em;
-    margin: 88px auto;
+    width: 5em;
+    height: 5em;
+    border-radius: 50%;
+    background: ${({ theme }) => theme.primary};
+    background: -moz-linear-gradient(
+      left,
+      ${({ theme }) => theme.primary} 10%,
+      rgba(255, 255, 255, 0) 42%
+    );
+    background: -webkit-linear-gradient(
+      left,
+      ${({ theme }) => theme.primary} 10%,
+      rgba(255, 255, 255, 0) 42%
+    );
+    background: -o-linear-gradient(
+      left,
+      ${({ theme }) => theme.primary} 10%,
+      rgba(255, 255, 255, 0) 42%
+    );
+    background: -ms-linear-gradient(
+      left,
+      ${({ theme }) => theme.primary} 10%,
+      rgba(255, 255, 255, 0) 42%
+    );
+    background: linear-gradient(
+      to right,
+      ${({ theme }) => theme.primary} 10%,
+      rgba(255, 255, 255, 0) 42%
+    );
     position: relative;
-    font-size: 11px;
+    -webkit-animation: load3 1.4s infinite linear;
+    animation: load3 1.4s infinite linear;
     -webkit-transform: translateZ(0);
     -ms-transform: translateZ(0);
     transform: translateZ(0);
-    -webkit-animation-delay: -0.16s;
-    animation-delay: -0.16s;
-  }
-  &:before,
-  &:after {
-    position: absolute;
-    top: 0;
-    content: "";
   }
   &:before {
-    left: -1.5em;
-    -webkit-animation-delay: -0.32s;
-    animation-delay: -0.32s;
+    width: 50%;
+    height: 50%;
+    background: ${({ theme }) => theme.primary};
+    border-radius: 100% 0 0 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: "";
   }
   &:after {
-    left: 1.5em;
+    background: ${({ theme }) => theme.background};
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    content: "";
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
   }
-  @-webkit-keyframes load1 {
-    0%,
-    80%,
-    100% {
-      box-shadow: 0 0;
-      height: 4em;
+  @-webkit-keyframes load3 {
+    0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
     }
-    40% {
-      box-shadow: 0 -2em;
-      height: 5em;
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
     }
   }
-  @keyframes load1 {
-    0%,
-    80%,
-    100% {
-      box-shadow: 0 0;
-      height: 4em;
+  @keyframes load3 {
+    0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
     }
-    40% {
-      box-shadow: 0 -2em;
-      height: 5em;
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
     }
   }
 `;

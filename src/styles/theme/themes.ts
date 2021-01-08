@@ -1,5 +1,5 @@
 const lightTheme = {
-  primary: "rgba(215,113,88,1)",
+  primary: "#009dda",
   text: "rgba(58,52,51,1)",
   textSecondary: "rgba(58,52,51,0.7)",
   background: "#f5f7fa",

@@ -2,19 +2,19 @@ import React from "react";
 import { useKeycloak } from "@react-keycloak/web";
 import { Flex, Box } from "reflexbox";
 import styled from "@emotion/styled";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
-  const { keycloak, initialized } = useKeycloak();
+  const { keycloak } = useKeycloak();
 
   return (
     <NavbarStyled>
       <Flex px={2} alignItems="center" height="100%">
         <Box width={1 / 2}>
-          <Link to="/">
+          <NavLink to="/">
             {keycloak.authenticated ? "FGPE (logged in)" : "FGPE"}
-          </Link>
-          <Link to="/profile">Check your profile</Link>
+          </NavLink>
+          <NavLink to="/profile">Check your profile</NavLink>
         </Box>
         <Box width={1 / 2} textAlign="right">
           {keycloak.authenticated ? (
