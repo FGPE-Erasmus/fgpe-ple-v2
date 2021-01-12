@@ -9,7 +9,14 @@ import { Difficulty, Mode } from "./globalTypes";
 // GraphQL query operation: FindChallenge
 // ====================================================
 
-export interface FindChallenge_challenges {
+export interface FindChallenge_challenge_refs {
+  __typename: "Activity";
+  id: string | null;
+  name: string | null;
+  statement: string | null;
+}
+
+export interface FindChallenge_challenge {
   __typename: "Challenge";
   id: string;
   name: string;
@@ -19,13 +26,22 @@ export interface FindChallenge_challenges {
   modeParameters: string[];
   locked: boolean;
   hidden: boolean;
-  refs: string[];
+  refs: FindChallenge_challenge_refs[];
+}
+
+export interface FindChallenge_programmingLanguages {
+  __typename: "ProgrammingLanguage";
+  id: string | null;
+  name: string | null;
+  extension: string | null;
 }
 
 export interface FindChallenge {
-  challenges: FindChallenge_challenges[];
+  challenge: FindChallenge_challenge;
+  programmingLanguages: FindChallenge_programmingLanguages[];
 }
 
 export interface FindChallengeVariables {
   gameId: string;
+  challengeId: string;
 }

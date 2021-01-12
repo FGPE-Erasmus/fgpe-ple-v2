@@ -15,6 +15,10 @@ export enum Difficulty {
   MASTER = "MASTER",
 }
 
+export enum EvaluationEngine {
+  MOOSHAK = "MOOSHAK",
+}
+
 export enum Mode {
   DUEL = "DUEL",
   HACK_IT = "HACK_IT",

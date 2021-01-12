@@ -53,7 +53,7 @@ const GamesList = () => {
 
   return (
     <div>
-      Data has been loaded:{" "}
+      Available games:{" "}
       {data.myGameProfiles.map((gameProfile, i) => {
         return (
           <Link

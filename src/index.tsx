@@ -10,11 +10,13 @@ import {
   ApolloProvider,
   createHttpLink,
 } from "@apollo/client";
+import { createUploadLink } from "apollo-upload-client";
+
 import { setContext } from "@apollo/client/link/context";
 import keycloak from "./keycloak";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
 
-const httpLink = createHttpLink({
+const httpLink = createUploadLink({
   uri: process.env.REACT_APP_GRAPHQL_URI,
 });
 

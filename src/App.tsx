@@ -8,11 +8,11 @@ import Navbar from "./components/Navbar";
 import styled from "@emotion/styled";
 import { AnimatePresence } from "framer-motion";
 
-import Homepage from "./containers/HomePage";
-import Profile from "./containers/Profile";
-import MainLoading from "./containers/MainLoading";
-import ProfileInGame from "./containers/ProfileInGame";
-import Challenge from "./containers/Challenge";
+import Homepage from "./components/HomePage";
+import Profile from "./components/Profile";
+import MainLoading from "./components/MainLoading";
+import ProfileInGame from "./components/ProfileInGame";
+import Challenge from "./components/Challenge";
 
 import PrivateRoute from "./utilities/PrivateRoute";
 
@@ -55,7 +55,7 @@ function App() {
                   />
                   <PrivateRoute
                     exact
-                    path="/game"
+                    path="/profile/game/challenge"
                     roles={["student"]}
                     component={Challenge}
                   />

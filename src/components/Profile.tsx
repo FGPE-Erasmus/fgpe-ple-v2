@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useKeycloak } from "@react-keycloak/web";
 import withChangeAnimation from "../utilities/withChangeAnimation";
-import GamesList from "../components/GamesList";
+import GamesList from "./GamesList";
 
 const Profile: React.ComponentType = () => {
   const { keycloak, initialized } = useKeycloak();
