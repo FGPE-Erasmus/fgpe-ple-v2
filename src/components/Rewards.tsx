@@ -22,7 +22,7 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
                 })
               : showRewardsAlert && "You will see your rewards here";
           })
-        : "You will see your rewards here"}
+        : showRewardsAlert && "You will see your rewards"}
     </RewardsWrapper>
   );
 };
