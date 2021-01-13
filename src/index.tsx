@@ -18,9 +18,11 @@ import { ReactKeycloakProvider } from "@react-keycloak/web";
 
 const httpLink = createUploadLink({
   uri: process.env.REACT_APP_GRAPHQL_URI,
+  credentials: "include",
 });
 
-const authLink = setContext((_, { headers }) => {
+const authLink = setContext(async (_, { headers }) => {
+  await keycloak.refreshToken();
   const token = keycloak.token;
   return {
     headers: {
