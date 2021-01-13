@@ -36,7 +36,7 @@
   },
   "scripts": {
     "start": "PORT=3006 react-scripts start",
-    "build": "react-scripts build",
+    "build": "REACT_APP_HEROKU_SLUG_COMMIT=$HEROKU_SLUG_COMMIT react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "apollo:generate": "apollo codegen:generate --target typescript --excludes=node_modules/* --includes=**/*.tsx --endpoint http://localhost:3000/graphql --tagName=gql --outputFlat src/generated"
