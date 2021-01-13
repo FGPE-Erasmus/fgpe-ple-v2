@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import { useQuery, gql } from "@apollo/client";
-import { ProfileInGameQuery } from "../generated/ProfileInGameQuery";
+import {
+  ProfileInGameQuery,
+  ProfileInGameQuery_profileInGame_learningPath,
+  ProfileInGameQuery_profileInGame_learningPath_challenge_parentChallenge,
+} from "../generated/ProfileInGameQuery";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import { State } from "../generated/globalTypes";
+import NavContext from "../context/NavContext";
 
 const PROFILE_IN_GAME = gql`
   query ProfileInGameQuery($gameId: String!) {
@@ -36,6 +41,11 @@ const PROFILE_IN_GAME = gql`
           id
           name
           description
+          parentChallenge {
+            id
+            name
+            description
+          }
         }
         state
         startedAt
@@ -54,11 +64,39 @@ const PROFILE_IN_GAME = gql`
   }
 `;
 
+const getChallengeChildren = (
+  parentChallenge: ProfileInGameQuery_profileInGame_learningPath_challenge_parentChallenge | null,
+  learningPath: ProfileInGameQuery_profileInGame_learningPath[]
+) => {
+  if (!parentChallenge) {
+    return null;
+  }
+
+  // return learningPath.map(({ challenge }, i) => {
+  //   return challenge;
+  // });
+
+  return learningPath.map(({ challenge }, i) => {
+    if (challenge.parentChallenge?.id == parentChallenge.id) {
+      return challenge;
+    }
+  });
+};
+
+const isChallengeWithoutChildren = (children: any) => {
+  if (!children) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
 const ProfileInGame = ({
   location,
 }: {
   location: { state: { gameId: string } };
 }) => {
+  const { setActiveChallenge } = useContext(NavContext);
   const { gameId } = location.state;
   const { loading, error, data } = useQuery<ProfileInGameQuery>(
     PROFILE_IN_GAME,
@@ -78,29 +116,94 @@ const ProfileInGame = ({
   if (!data) return <div>no data</div>;
 
   return (
-    <div>
-      <h2>Game: {data.profileInGame.game.name}</h2>
+    <ChallengesWrapper>
+      <h3>Game: {data.profileInGame.game.name}</h3>
       <div>
         {data.profileInGame.learningPath.map((learningPath, i) => {
           return (
-            <Link
-              key={i}
-              to={{
-                pathname: "/profile/game/challenge",
-                state: {
-                  gameId: data.profileInGame.game.id,
-                  challengeId: learningPath.challenge.id,
-                },
-              }}
-            >
-              <Challenge available={learningPath.state == State.AVAILABLE}>
-                <h3>{learningPath.challenge.name}</h3>
-                <p>{learningPath.challenge.description}</p>
-                {/* {learningPath.challenge.refs.map((exercise, i) => {
-                return <div key={i}>{exercise.id}</div>;
-              })} */}
-              </Challenge>
-            </Link>
+            !learningPath.challenge.parentChallenge && (
+              <ParentChallenge
+                key={i}
+                available={learningPath.state == State.AVAILABLE}
+                withoutChildren={isChallengeWithoutChildren(
+                  getChallengeChildren(
+                    learningPath.challenge,
+                    data.profileInGame.learningPath
+                  )
+                )}
+              >
+                {!isChallengeWithoutChildren(
+                  getChallengeChildren(
+                    learningPath.challenge,
+                    data.profileInGame.learningPath
+                  )
+                ) && (
+                  <div className="challenge-info">
+                    <h3>{learningPath.challenge.name}</h3>
+                    <p>{learningPath.challenge.description}</p>
+                  </div>
+                )}
+
+                {getChallengeChildren(
+                  learningPath.challenge,
+                  data.profileInGame.learningPath
+                )?.map((childChallenge, i) => {
+                  return (
+                    childChallenge && (
+                      <ChildrenChallenge>
+                        <Link
+                          key={i}
+                          to={{
+                            pathname: "/profile/game/challenge",
+                            state: {
+                              gameId: data.profileInGame.game.id,
+                              challengeId: childChallenge.id,
+                            },
+                          }}
+                          onClick={() =>
+                            setActiveChallenge({
+                              id: childChallenge.id,
+                              name: childChallenge.name,
+                            })
+                          }
+                        >
+                          <h4>{childChallenge.name}</h4>
+                          <p>{childChallenge.description}</p>
+                        </Link>
+                      </ChildrenChallenge>
+                    )
+                  );
+                })}
+
+                {isChallengeWithoutChildren(
+                  getChallengeChildren(
+                    learningPath.challenge,
+                    data.profileInGame.learningPath
+                  )
+                ) && (
+                  <Link
+                    to={{
+                      pathname: "/profile/game/challenge",
+                      state: {
+                        gameId: data.profileInGame.game.id,
+                        challengeId: learningPath.challenge.id,
+                      },
+                    }}
+                    onClick={() =>
+                      setActiveChallenge({
+                        id: learningPath.challenge.id,
+                        name: learningPath.challenge.name,
+                      })
+                    }
+                  >
+                    <h3>{learningPath.challenge.name}</h3>
+                    <p>{learningPath.challenge.description}</p>
+                  </Link>
+                )}
+                {/* <h3>{learningPath.challenge.name}</h3>
+                  <p>{learningPath.challenge.description}</p> */}
+              </ParentChallenge>
+            )
           );
         })}
       </div>
@@ -122,19 +225,52 @@ const ProfileInGame = ({
           </div>
         );
       })} */}
-    </div>
+    </ChallengesWrapper>
   );
 };
 
-const Challenge = styled.div<{ available: boolean }>`
+// const ParentChallenge = styled.div``;
+
+const ChildrenChallenge = styled.div`
+  background-color: ${({ theme }) => theme.background};
+  margin-bottom: 12px;
+  padding: 10px;
+  p {
+    font-size: 13px;
+  }
+  transition: transform 0.5s;
+
+  &:hover {
+    transform: scale(0.97);
+  }
+`;
+
+const ChallengesWrapper = styled.div`
+  h3 {
+    margin-bottom: 10px;
+  }
+`;
+
+const ParentChallenge = styled.div<{
+  available: boolean;
+  withoutChildren: boolean;
+}>`
+  .challenge-info {
+    margin-bottom: 12px;
+  }
+
   background-color: ${({ theme }) => theme.backgroundVariant};
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   border-radius: 5px;
   padding: 25px;
   transition: transform 0.5s;
   cursor: ${({ available }) => (available ? "pointer" : "initial")};
   h3 {
     margin-bottom: 15px;
+  }
+
+  a {
+    color: black;
   }
 
   &:hover {

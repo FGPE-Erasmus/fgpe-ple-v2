@@ -1,7 +1,7 @@
 import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import withChangeAnimation from "../utilities/withChangeAnimation";
-import CodeEditor from "./CodeEditor";
+import CodeEditor, { languages } from "./CodeEditor";
 import useInterval from "../utilities/useInterval";
 import {
   FindChallenge,
@@ -13,55 +13,8 @@ import { uploadSubmissionQuery } from "../generated/uploadSubmissionQuery";
 import styled from "@emotion/styled";
 import { Flex, Box } from "reflexbox";
 import ReactHtmlParser from "react-html-parser";
-import { start } from "repl";
 
-const GET_SUBMISSION_BY_ID = gql`
-  query getSubmissionByIdQuery($gameId: String!, $submissionId: String!) {
-    submission(gameId: $gameId, id: $submissionId) {
-      id
-      game {
-        id
-      }
-      player {
-        id
-      }
-      exerciseId
-      evaluationEngine
-      evaluationEngineId
-      language
-      metrics
-      result
-      feedback
-      submittedAt
-      evaluatedAt
-      program
-    }
-  }
-`;
-
-const UPLOAD_SUBMISSION = gql`
-  mutation uploadSubmissionQuery(
-    $exerciseId: String!
-    $gameId: String!
-    $file: Upload!
-  ) {
-    evaluate(gameId: $gameId, exerciseId: $exerciseId, file: $file) {
-      id
-      game {
-        id
-      }
-      player {
-        user {
-          username
-        }
-      }
-      feedback
-      exerciseId
-      evaluationEngine
-      evaluationEngineId
-    }
-  }
-`;
+import Exercise from "./Exercise";
 
 const FIND_CHALLENGE = gql`
   query FindChallenge($gameId: String!, $challengeId: String!) {
@@ -89,30 +42,12 @@ const FIND_CHALLENGE = gql`
   }
 `;
 
-const getStatement = (exercise: FindChallenge_challenge_refs | null) => {
-  if (!exercise) {
-    return "No description";
-  }
-
-  if (exercise.statement) {
-    return exercise.statement;
-  } else {
-    return "No description";
-  }
-};
-
 const Challenge = ({
   location,
 }: {
   location: { state: { gameId: string; challengeId: string } };
 }) => {
   const { gameId, challengeId } = location.state;
-  const [code, setCode] = useState("");
-  const [submissionId, setSubmissionId] = useState<null | string>(null);
-
-  const [isSubmissionFetching, setSubmissionFetching] = useState(false);
-  const [fetchingCount, setFetchingCount] = useState(0);
-  const [lastSubmissionId, setLastSubmissionId] = useState<null | string>(null);
 
   const {
     data: challengeData,
@@ -121,81 +56,6 @@ const Challenge = ({
   } = useQuery<FindChallenge>(FIND_CHALLENGE, {
     variables: { gameId, challengeId },
   });
-
-  const [
-    getSubmissionById,
-    {
-      loading: isSubmissionLoading,
-      data: submissionData,
-      error: submissionError,
-    },
-  ] = useLazyQuery<getSubmissionByIdQuery>(GET_SUBMISSION_BY_ID);
-
-  useInterval(
-    () => {
-      console.log("submission data", submissionData);
-      if (submissionError) {
-        setFetchingCount(0);
-        setSubmissionFetching(false);
-      }
-
-      if (fetchingCount > 7) {
-        setFetchingCount(0);
-        setSubmissionFetching(false);
-      }
-
-      if (lastSubmissionId) {
-        if (submissionData?.submission.id == lastSubmissionId) {
-          //   setFetchingCount(fetchingCount + 1);
-          // getSubmissionById({
-          //   variables: { gameId, submissionId },
-          // });
-          console.log("Finally?", submissionData);
-        }
-      } else {
-      }
-
-      if (!submissionData?.submission.feedback) {
-        console.log("Checking the result...");
-        setFetchingCount(fetchingCount + 1);
-        getSubmissionById({
-          variables: { gameId, submissionId },
-        });
-      } else {
-        console.log("Submission", submissionData);
-        // setSubmissionFetching(false);
-        setLastSubmissionId(submissionId);
-      }
-    },
-    // Delay in milliseconds or null to stop it
-    isSubmissionFetching ? 1000 : null
-  );
-
-  const [uploadSubmissionMutation, { data: evaluationData }] = useMutation(
-    UPLOAD_SUBMISSION,
-    {
-      onCompleted(data) {
-        const submissionId = data.evaluate.id;
-        console.log("DATA EVALUATE", data);
-        console.log("SUBMISSION", submissionId);
-        setSubmissionId(submissionId);
-        setSubmissionFetching(true);
-
-        // getSubmissionById({
-        //   variables: { gameId, submissionId },
-        // });
-      },
-    }
-  );
-
-  const uploadSubmission = () => {
-    const blob = new Blob([code], { type: "text/plain" });
-    const file = new File([blob], "exercise.py");
-
-    uploadSubmissionMutation({
-      variables: { file, gameId, exerciseId: activeExercise?.id },
-    });
-  };
 
   const [
     activeExercise,
@@ -223,63 +83,28 @@ const Challenge = ({
   return (
     <Playground>
       <Flex height={"100%"}>
-        <Box className="test1" width={[2 / 12]} maxWidth={330}>
-          <ol style={{ width: "100%" }}>
-            {challengeData.challenge.refs.map((exercise, i) => {
-              return (
-                <li
-                  key={i}
-                  className={exercise.id === activeExercise?.id ? "active" : ""}
-                  onClick={() => setActiveExercise(exercise)}
-                >
-                  {exercise.name}
-                </li>
-              );
-            })}
-          </ol>
+        <Box width={[2 / 12]} maxWidth={330}>
+          <SideMenu>
+            <div>
+              {challengeData.challenge.refs.map((exercise, i) => {
+                return (
+                  <div
+                    key={i}
+                    className={
+                      "exercise " +
+                      (exercise.id === activeExercise?.id ? "active" : "")
+                    }
+                    onClick={() => setActiveExercise(exercise)}
+                  >
+                    {i + 1}. {exercise.name}
+                  </div>
+                );
+              })}
+            </div>
+          </SideMenu>
         </Box>
 
-        <Box width={"100%"} height={"100%"}>
-          <Flex height={150} overflowY={"auto"}>
-            <Box>
-              <ExerciseDescription>
-                {ReactHtmlParser(getStatement(activeExercise))}
-              </ExerciseDescription>
-            </Box>
-          </Flex>
-          <Flex height={50}>
-            <Box width={7 / 12}>
-              <button onClick={uploadSubmission}>Run</button>
-            </Box>
-            <Box width={5 / 12}>Status: empty</Box>
-          </Flex>
-          <Flex height={"calc(100% - 200px)"} flexDirection={["column", "row"]}>
-            <Box width={[1, 7 / 12]} height={["auto", "100%"]} minHeight="50vh">
-              <CodeEditor code={code} setCode={setCode} />
-            </Box>
-            <Box width={[1, 5 / 12]} height={["auto", "100%"]} minHeight="50vh">
-              <Terminal>
-                <button
-                  onClick={() => {
-                    setSubmissionFetching(false);
-                  }}
-                >
-                  test
-                </button>
-                {submissionData?.submission.id}
-                {ReactHtmlParser(
-                  submissionData?.submission.feedback
-                    ? submissionData?.submission.feedback
-                    : ""
-                )}
-
-                {/* {submissionError
-                  ? JSON.stringify(submissionError)
-                  : "[No error]"} */}
-              </Terminal>
-            </Box>
-          </Flex>
-        </Box>
+        <Exercise gameId={gameId} exercise={activeExercise} />
       </Flex>
     </Playground>
     // <div>
@@ -289,17 +114,33 @@ const Challenge = ({
   );
 };
 
-const ExerciseDescription = styled.div`
-  padding: 15px;
-`;
+const SideMenu = styled.div`
+  display: flex;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.5);
 
-const Terminal = styled.div`
-  font-family: "Source Code Pro", monospace;
-  background-color: #323232;
-  height: 100%;
-  color: white;
-  padding: 12px;
-  overflow-y: auto;
+  .active {
+    color: ${({ theme }) => theme.primary};
+  }
+
+  .exercise {
+    background-color: ${({ theme }) => theme.backgroundVariant};
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.5s, color 0.5s;
+
+    &:hover {
+      transform: scale(0.9);
+    }
+  }
+
+  .exercise:first-of-type {
+    margin-top: 10px;
+  }
 `;
 
 const Playground = styled.div`
@@ -309,20 +150,8 @@ const Playground = styled.div`
   top: 65px;
   left: 0;
 
-  li.active {
-    color: red;
-  }
-
   & > div {
     width: 100%;
-  }
-
-  .test1 {
-    background-color: #929292;
-  }
-
-  .test {
-    background-color: #323232;
   }
 `;
 

@@ -39,11 +39,19 @@ export interface ProfileInGameQuery_profileInGame_rewards {
   count: number;
 }
 
+export interface ProfileInGameQuery_profileInGame_learningPath_challenge_parentChallenge {
+  __typename: "Challenge";
+  id: string;
+  name: string;
+  description: string | null;
+}
+
 export interface ProfileInGameQuery_profileInGame_learningPath_challenge {
   __typename: "Challenge";
   id: string;
   name: string;
   description: string | null;
+  parentChallenge: ProfileInGameQuery_profileInGame_learningPath_challenge_parentChallenge | null;
 }
 
 export interface ProfileInGameQuery_profileInGame_learningPath {

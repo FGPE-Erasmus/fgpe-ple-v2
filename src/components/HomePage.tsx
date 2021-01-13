@@ -10,8 +10,8 @@ const HomePage = () => {
   return (
     <div>
       <div>
-        <h1>Home Page</h1>
-        <strong>Anyone can access this page</strong>
+        <h3>Home Page</h3>
+        <p>Anyone can access this page</p>
       </div>
 
       {/* {initialized ? (

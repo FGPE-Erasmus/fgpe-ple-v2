@@ -1,59 +1,40 @@
-import React, { useEffect } from "react";
+import React, { useContext } from "react";
 import { useQuery, gql } from "@apollo/client";
 import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
 import { useKeycloak } from "@react-keycloak/web";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 
-const PLAYER_GAME_PROFILES = gql`
-  query PlayerGameProfiles {
-    myGameProfiles {
-      id
-      game {
-        id
-        name
-        description
-      }
-      user {
-        id
-        username
-        email
-      }
-      group {
-        id
-        name
-      }
-    }
-  }
-`;
+import NavContext from "../context/NavContext";
 
-const GamesList = () => {
+const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
   const { keycloak } = useKeycloak();
+  const { setActiveGame } = useContext(NavContext);
 
-  const { data, error, loading } = useQuery<PlayerGameProfiles>(
-    PLAYER_GAME_PROFILES
-  );
-  if (error) {
-    console.log("ERROR", error.graphQLErrors);
-    // console.log("CRAZY TOKEN", keycloak);
-    // if (error.message === "Forbidden resource") {
-    //   keycloak.updateToken(1).then((res) => {
-    //     console.log("token?", res);
-    //   });
-    //   console.log("siup");
-    // }
-  }
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // const { data, error, loading } = useQuery<PlayerGameProfiles>(
+  //   PLAYER_GAME_PROFILES
+  // );
+  // if (error) {
+  //   console.log("ERROR", error.graphQLErrors);
+  //   // console.log("CRAZY TOKEN", keycloak);
+  //   // if (error.message === "Forbidden resource") {
+  //   //   keycloak.updateToken(1).then((res) => {
+  //   //     console.log("token?", res);
+  //   //   });
+  //   //   console.log("siup");
+  //   // }
+  // }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (!data) {
-    return <div>No data.</div>;
-  }
+  // if (!data) {
+  //   return <div>No data.</div>;
+  // }
 
   return (
-    <div>
-      Available games:{" "}
+    <GamesWrapper>
+      <h4 style={{ margin: 10, marginTop: 30 }}>Available games:</h4>
       {data.myGameProfiles.map((gameProfile, i) => {
         return (
           <Link
@@ -62,23 +43,35 @@ const GamesList = () => {
               pathname: "/profile/game",
               state: { gameId: gameProfile.game.id },
             }}
+            onClick={() =>
+              setActiveGame({
+                id: gameProfile.game.id,
+                name: gameProfile.game.name,
+              })
+            }
           >
             <Game>
               <div>
-                {gameProfile.game.name}
+                <h3>{gameProfile.game.name}</h3>
                 <div>{gameProfile.game.description}</div>
               </div>
             </Game>
           </Link>
         );
       })}
-    </div>
+    </GamesWrapper>
   );
 };
 
+const GamesWrapper = styled.div`
+  a {
+    color: black;
+  }
+`;
+
 const Game = styled.div`
   height: 100px;
-  width: 400px;
+  width: 100%;
   border-radius: 5px;
   background-color: white;
   display: flex;
@@ -86,7 +79,7 @@ const Game = styled.div`
   padding: 15px;
   transition: transform 0.5s;
   &:hover {
-    transform: scale(1.1);
+    transform: scale(0.97);
   }
   & > div > div {
     font-size: 12px;

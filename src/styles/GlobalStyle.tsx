@@ -9,6 +9,8 @@ const GlobalStyles: React.FC = () => {
       styles={css`
         @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap");
 
+        @import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap");
+
         html {
           line-height: 1.15; /* 1 */
           -ms-text-size-adjust: 100%; /* 2 */
@@ -143,6 +145,8 @@ const GlobalStyles: React.FC = () => {
           font-size: 100%; /* 1 */
           line-height: 1.15; /* 1 */
           margin: 0; /* 2 */
+          outline: none;
+          border: none;
         }
 
         button,
@@ -282,8 +286,7 @@ const GlobalStyles: React.FC = () => {
         }
 
         button:focus {
-          outline: 1px dotted;
-          outline: 5px auto -webkit-focus-ring-color;
+          outline: none;
         }
 
         fieldset {

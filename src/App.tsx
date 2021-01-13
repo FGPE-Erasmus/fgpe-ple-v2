@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./i18n/config";
 import { useTranslation } from "react-i18next";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
@@ -16,6 +16,8 @@ import Challenge from "./components/Challenge";
 
 import PrivateRoute from "./utilities/PrivateRoute";
 
+import NavContext from "./context/NavContext";
+
 const MainWrapper = styled.div`
   max-width: 1140px;
   padding: 15px;
@@ -24,6 +26,14 @@ const MainWrapper = styled.div`
 
 function App() {
   const { ready } = useTranslation();
+  const [activeChallenge, setActiveChallenge] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [activeGame, setActiveGame] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   // console.log(process.env.REACT_APP_KEYCLOAK_CLIENT_ID);
   if (!ready) {
@@ -36,32 +46,41 @@ function App() {
         render={({ location }) => (
           <>
             <MainLoading />
-            <Navbar />
-            <MainWrapper>
-              <AnimatePresence exitBeforeEnter initial={false}>
-                <Switch location={location} key={location.pathname}>
-                  <Route exact path="/" component={Homepage} />
-                  <PrivateRoute
-                    exact
-                    path="/profile"
-                    roles={["student", "teacher"]}
-                    component={Profile}
-                  />
-                  <PrivateRoute
-                    exact
-                    path="/profile/game"
-                    roles={["student"]}
-                    component={ProfileInGame}
-                  />
-                  <PrivateRoute
-                    exact
-                    path="/profile/game/challenge"
-                    roles={["student"]}
-                    component={Challenge}
-                  />
-                </Switch>
-              </AnimatePresence>
-            </MainWrapper>
+            <NavContext.Provider
+              value={{
+                activeChallenge: activeChallenge,
+                setActiveChallenge: setActiveChallenge,
+                activeGame: activeGame,
+                setActiveGame: setActiveGame,
+              }}
+            >
+              <Navbar />
+              <MainWrapper>
+                <AnimatePresence exitBeforeEnter initial={false}>
+                  <Switch location={location} key={location.pathname}>
+                    <Route exact path="/" component={Homepage} />
+                    <PrivateRoute
+                      exact
+                      path="/profile"
+                      roles={["student", "teacher"]}
+                      component={Profile}
+                    />
+                    <PrivateRoute
+                      exact
+                      path="/profile/game"
+                      roles={["student"]}
+                      component={ProfileInGame}
+                    />
+                    <PrivateRoute
+                      exact
+                      path="/profile/game/challenge"
+                      roles={["student"]}
+                      component={Challenge}
+                    />
+                  </Switch>
+                </AnimatePresence>
+              </MainWrapper>
+            </NavContext.Provider>
           </>
         )}
       />

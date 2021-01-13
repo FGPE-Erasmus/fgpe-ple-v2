@@ -5,9 +5,11 @@ import { AnimatePresence, motion } from "framer-motion";
 const Loading = ({
   fullscreen,
   show,
+  width,
 }: {
   fullscreen?: boolean;
   show: boolean;
+  width?: number;
 }) => {
   return (
     <AnimatePresence initial={false}>
@@ -23,10 +25,8 @@ const Loading = ({
               <Indicator />
             </Fullscreen>
           ) : (
-            <div>
-              <Indicator />
-            </div>
-          )}{" "}
+            <Indicator width={width} className="loading-indicator" />
+          )}
         </motion.div>
       )}
     </AnimatePresence>
@@ -44,13 +44,14 @@ const Fullscreen = styled.div`
   align-items: center;
 `;
 
-const Indicator = styled.div`
+const Indicator = styled.div<{ width?: number }>`
+  z-index: 999;
   & {
     font-size: 10px;
-    margin: 50px auto;
+    /* margin: 50px auto; */
     text-indent: -9999em;
-    width: 5em;
-    height: 5em;
+    width: ${({ width }) => (width ? width : 5)}em;
+    height: ${({ width }) => (width ? width : 5)}em;
     border-radius: 50%;
     background: ${({ theme }) => theme.primary};
     background: -moz-linear-gradient(
