@@ -22,12 +22,11 @@ const httpLink = createUploadLink({
 });
 
 const authLink = setContext((_, { headers }) => {
-  // await keycloak.refreshToken();
   const token = keycloak.token;
   return {
     headers: {
       ...headers,
-      authorization: token ? `bearer ${token}` : "",
+      Authorization: token ? `bearer ${token}` : "",
     },
   };
 });
