@@ -1,23 +1,26 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useState } from "react";
 import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
 
 const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
+  const [showRewardsAlert, setShowRewardsAlert] = useState(true);
   return (
     <RewardsWrapper>
       {data
         ? data.myGameProfiles.map((gameProfile, i) => {
             return gameProfile.rewards.length > 0
               ? gameProfile.rewards.map(({ reward }, i) => {
+                  if (showRewardsAlert) {
+                    setShowRewardsAlert(false);
+                  }
                   return (
                     <RewardStyle key={i}>
-                      {/* <img src={`${reward.image}`} /> */}
                       <RewardImage imageData={reward.image} />
                       <div>{reward.name}</div>
                     </RewardStyle>
                   );
                 })
-              : "You will see your rewards here";
+              : showRewardsAlert && "You will see your rewards here";
           })
         : "You will see your rewards here"}
     </RewardsWrapper>
