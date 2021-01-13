@@ -21,8 +21,8 @@ const httpLink = createUploadLink({
   credentials: "include",
 });
 
-const authLink = setContext(async (_, { headers }) => {
-  await keycloak.refreshToken();
+const authLink = setContext((_, { headers }) => {
+  // await keycloak.refreshToken();
   const token = keycloak.token;
   return {
     headers: {
