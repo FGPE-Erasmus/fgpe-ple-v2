@@ -57,6 +57,10 @@ const Challenge = ({
     variables: { gameId, challengeId },
   });
 
+  if (challengeError) {
+    console.log("challengeError", challengeError);
+  }
+
   const [
     activeExercise,
     setActiveExercise,

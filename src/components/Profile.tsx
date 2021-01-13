@@ -62,6 +62,10 @@ const Profile: React.ComponentType = () => {
     return <div>Loading...</div>;
   }
 
+  if (error) {
+    console.log("ERROR", error);
+  }
+
   if (!data) {
     return <div>Couldn't fetch data</div>;
   }
