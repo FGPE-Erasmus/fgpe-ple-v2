@@ -31,7 +31,6 @@ const FIND_CHALLENGE = gql`
         id
         name
         statement
-        solved
       }
     }
 
@@ -101,7 +100,7 @@ const Challenge = ({
                     }
                     onClick={() => setActiveExercise(exercise)}
                   >
-                    {i + 1}. {exercise.name} {JSON.stringify(exercise.solved)}
+                    {i + 1}. {exercise.name}
                   </div>
                 );
               })}
