@@ -10,7 +10,6 @@ import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import { State } from "../generated/globalTypes";
 import NavContext from "../context/NavContext";
-import ProgressBar from "./ProgressBar";
 
 const PROFILE_IN_GAME = gql`
   query ProfileInGameQuery($gameId: String!) {
@@ -49,7 +48,6 @@ const PROFILE_IN_GAME = gql`
           }
         }
         state
-        progress
         startedAt
         openedAt
         endedAt
@@ -200,10 +198,6 @@ const ProfileInGame = ({
                   >
                     <h3>{learningPath.challenge.name}</h3>
                     <p>{learningPath.challenge.description}</p>
-                    <ProgressBar
-                      percentage={learningPath.progress}
-                      style={{ marginTop: 10 }}
-                    />
                   </Link>
                 )}
                 {/* <h3>{learningPath.challenge.name}</h3>
