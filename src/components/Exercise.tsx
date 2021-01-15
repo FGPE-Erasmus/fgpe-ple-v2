@@ -84,7 +84,7 @@ const Exercise = ({
   const [code, setCode] = useState("");
   const [fetchingCount, setFetchingCount] = useState(0);
 
-  const [submissionFeedback, setSubmissionFeedback] = useState("Waiting...");
+  const [submissionFeedback, setSubmissionFeedback] = useState("Ready");
   const [submissionResult, setSubmissionResult] = useState<null | string>("");
 
   const [isSubmissionFetching, setSubmissionFetching] = useState(false);
@@ -92,7 +92,7 @@ const Exercise = ({
 
   useEffect(() => {
     setCode("");
-    setSubmissionFeedback("Waiting...");
+    setSubmissionFeedback("Ready");
     setSubmissionResult("");
   }, [exercise]);
 
