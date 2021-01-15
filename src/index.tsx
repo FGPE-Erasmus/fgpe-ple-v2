@@ -22,6 +22,7 @@ const httpLink = createUploadLink({
 
 const authLink = setContext((_, { headers }) => {
   const token = keycloak.token;
+
   return {
     headers: {
       ...headers,
@@ -35,11 +36,33 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+keycloak.onTokenExpired = () => {
+  console.log("expired " + new Date());
+  keycloak
+    .updateToken(50)
+    .success((refreshed: boolean) => {
+      if (refreshed) {
+        console.log("refreshed " + new Date());
+      } else {
+        console.log("not refreshed " + new Date());
+      }
+    })
+    .error(() => {
+      console.error("Failed to refresh token " + new Date());
+    });
+};
+
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={true ? themes.light : themes.dark}>
       <GlobalStyle />
-      <ReactKeycloakProvider authClient={keycloak}>
+      <ReactKeycloakProvider
+        authClient={keycloak}
+        initOptions={{
+          onLoad: "check-sso",
+        }}
+        LoadingComponent={<div>loading</div>}
+      >
         <ApolloProvider client={client}>
           <App />
         </ApolloProvider>

@@ -10,7 +10,6 @@ import NavContext from "../context/NavContext";
 const Navbar = () => {
   const activeGameAndChallenge = useContext(NavContext);
   const { keycloak, initialized } = useKeycloak();
-
   const resetActiveGameAndChallenge = () => {
     activeGameAndChallenge.setActiveChallenge(null);
     activeGameAndChallenge.setActiveGame(null);
@@ -73,7 +72,15 @@ const Navbar = () => {
             {keycloak.authenticated ? (
               <button onClick={() => keycloak.logout()}>Logout</button>
             ) : (
-              <button onClick={() => keycloak.login()}>Login</button>
+              <button
+                onClick={() => {
+                  keycloak.login({
+                    redirectUri: process.env.REACT_APP_ORIGIN + "/profile",
+                  });
+                }}
+              >
+                Login
+              </button>
             )}
           </UserMenu>
         </Box>
