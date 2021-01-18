@@ -1,11 +1,14 @@
 import styled from "@emotion/styled";
 import React, { useState } from "react";
 import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
+import { Box, useColorModeValue } from "@chakra-ui/react";
 
 const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
+  const color = useColorModeValue("borderDark", "borderLight");
+
   const [showRewardsAlert, setShowRewardsAlert] = useState(true);
   return (
-    <RewardsWrapper>
+    <RewardsWrapper bg={color}>
       {data
         ? data.myGameProfiles.map((gameProfile, i) => {
             return gameProfile.rewards.length > 0
@@ -36,22 +39,19 @@ const RewardImage = styled.div<{ imageData: string | null }>`
   border-radius: 5px;
 `;
 
-const RewardsWrapper = styled.div`
+const RewardsWrapper = styled(Box)`
   width: 100%;
   height: 150px;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
-  background-color: ${({ theme }) => theme.backgroundVariant};
   display: flex;
   justify-content: center;
   align-items: center;
-  color: black;
+  /* color: black; */
 `;
 
-const RewardStyle = styled.div`
-  background-color: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.primary};
+const RewardStyle = styled(Box)`
   width: 150px;
   height: 130px;
   display: flex;

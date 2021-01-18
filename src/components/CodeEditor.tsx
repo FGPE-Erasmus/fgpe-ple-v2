@@ -4,14 +4,8 @@ import Prism from "prismjs";
 import styled from "@emotion/styled";
 // import "../styles/prism.css";
 import { Controlled as CodeMirror } from "react-codemirror2";
-import { read } from "fs";
-require("codemirror/lib/codemirror.css");
-require("codemirror/theme/neo.css");
-require("codemirror/theme/dracula.css");
-// require("codemirror/theme/neat.css");
-require("codemirror/mode/xml/xml.js");
-require("codemirror/mode/python/python.js");
-require("codemirror/mode/shell/shell.js");
+
+import Editor, { DiffEditor, useMonaco, loader } from "@monaco-editor/react";
 
 export enum languages {
   python = "python",
@@ -20,46 +14,26 @@ export enum languages {
 }
 
 const CodeEditor = ({
-  code,
-  setCode,
   language,
-  theme,
-  lineNumbers,
-  readOnly,
-  showCursorWhenSelecting,
+  setCode,
+  code,
 }: {
-  code: string;
-  setCode?: (code: string) => void;
   language: languages;
-  theme?: string;
-  lineNumbers?: boolean;
-  readOnly?: boolean;
-  showCursorWhenSelecting?: boolean;
+  code: any;
+  setCode: (value: string) => void;
 }) => {
+  function handleEditorChange(value: any, event: any) {
+    setCode(value);
+    console.log("here is the current model value:", value);
+  }
+
   return (
     <EditorStyled>
-      <CodeMirror
+      <Editor
+        language={language}
+        defaultValue="#some content"
         value={code}
-        options={{
-          mode: language ? language : "python",
-          theme: theme ? theme : "neo",
-          lineNumbers: lineNumbers != undefined ? lineNumbers : true,
-          readOnly: readOnly ? readOnly : false,
-          showCursorWhenSelecting: showCursorWhenSelecting
-            ? showCursorWhenSelecting
-            : false,
-          cursorBlinkRate: showCursorWhenSelecting == undefined ? 530 : -1,
-          lineWrapping: true,
-        }}
-        onBeforeChange={(editor, data, value) => {
-          if (setCode) {
-            setCode(value);
-          }
-        }}
-        onChange={(editor, data, value) => {}}
-        // editorDidMount={(x) => {
-        //   console.log("info", x);
-        // }}
+        onChange={handleEditorChange}
       />
     </EditorStyled>
   );

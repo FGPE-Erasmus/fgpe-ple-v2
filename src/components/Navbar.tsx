@@ -7,6 +7,9 @@ import UserIcon from "../images/user.svg";
 
 import NavContext from "../context/NavContext";
 
+import { Button, useColorMode, IconButton } from "@chakra-ui/react";
+import { SunIcon, MoonIcon } from "@chakra-ui/icons";
+
 const Navbar = () => {
   const activeGameAndChallenge = useContext(NavContext);
   const { keycloak, initialized } = useKeycloak();
@@ -14,6 +17,7 @@ const Navbar = () => {
     activeGameAndChallenge.setActiveChallenge(null);
     activeGameAndChallenge.setActiveGame(null);
   };
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const [
     userProfile,
@@ -75,13 +79,18 @@ const Navbar = () => {
               <button
                 onClick={() => {
                   keycloak.login({
-                    redirectUri: process.env.REACT_APP_ORIGIN + "/profile",
+                    redirectUri: `${window.location.origin.toString()}/profile`,
                   });
                 }}
               >
                 Login
               </button>
             )}
+            <IconButton
+              onClick={toggleColorMode}
+              aria-label="Toggle theme"
+              icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}
+            />
           </UserMenu>
         </Box>
       </Flex>
@@ -117,7 +126,6 @@ const NavbarStyled = styled.div`
     color: black;
   }
 
-  background-color: ${({ theme }) => theme.backgroundVariant};
   height: 65px;
   z-index: 999;
   box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.05);

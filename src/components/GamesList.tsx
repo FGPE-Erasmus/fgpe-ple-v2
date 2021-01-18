@@ -7,6 +7,27 @@ import styled from "@emotion/styled";
 
 import NavContext from "../context/NavContext";
 
+import {
+  Box,
+  Heading,
+  StackDivider,
+  useColorModeValue,
+  VStack,
+} from "@chakra-ui/react";
+
+const Game = ({ name, description }: { name: string; description: string }) => {
+  const color = useColorModeValue("borderDark", "borderLight");
+
+  return (
+    <GameStyled bg={color}>
+      <div>
+        <Heading size="lg">{name}</Heading>
+        <div>{description}</div>
+      </div>
+    </GameStyled>
+  );
+};
+
 const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
   const { keycloak } = useKeycloak();
   const { setActiveGame } = useContext(NavContext);
@@ -33,8 +54,11 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
   // }
 
   return (
-    <GamesWrapper>
-      <h4 style={{ margin: 10, marginTop: 30 }}>Available games:</h4>
+    <VStack
+      divider={<StackDivider borderColor="gray.200" />}
+      spacing={4}
+      align="stretch"
+    >
       {data.myGameProfiles.map((gameProfile, i) => {
         return (
           <Link
@@ -50,30 +74,68 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
               })
             }
           >
-            <Game>
-              <div>
-                <h3>{gameProfile.game.name}</h3>
-                <div>{gameProfile.game.description}</div>
-              </div>
-            </Game>
+            <Game
+              name={gameProfile.game.name}
+              description={
+                gameProfile.game.description
+                  ? gameProfile.game.description
+                  : "No description"
+              }
+            />
           </Link>
         );
       })}
-    </GamesWrapper>
+      {/* <Box h="40px" bg="yellow.200">
+        1
+      </Box>
+      <Box h="40px" bg="tomato">
+        2
+      </Box>
+      <Box h="40px" bg="pink.100">
+        3
+      </Box> */}
+    </VStack>
+    // <GamesWrapper>
+    //   <h4 style={{ margin: 10, marginTop: 30 }}>Available games:</h4>
+    //   {data.myGameProfiles.map((gameProfile, i) => {
+    //     return (
+    //       <Link
+    //         key={i}
+    //         to={{
+    //           pathname: "/profile/game",
+    //           state: { gameId: gameProfile.game.id },
+    //         }}
+    //         onClick={() =>
+    //           setActiveGame({
+    //             id: gameProfile.game.id,
+    //             name: gameProfile.game.name,
+    //           })
+    //         }
+    //       >
+    //         <Game variant="outline">
+    //           <div>
+    //             <h3>{gameProfile.game.name}</h3>
+    //             <div>{gameProfile.game.description}</div>
+    //           </div>
+    //         </Game>
+    //       </Link>
+    //     );
+    //   })}
+    // </GamesWrapper>
   );
 };
 
-const GamesWrapper = styled.div`
-  a {
+const GamesWrapper = styled(Box)`
+  /* a {
     color: black;
-  }
+  } */
 `;
 
-const Game = styled.div`
+const GameStyled = styled(Box)`
   height: 100px;
   width: 100%;
   border-radius: 5px;
-  background-color: white;
+  /* background-color: white; */
   display: flex;
   align-items: center;
   padding: 15px;

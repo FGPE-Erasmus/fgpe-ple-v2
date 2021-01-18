@@ -31,7 +31,6 @@ const FIND_CHALLENGE = gql`
         id
         name
         statement
-        solved
       }
     }
 
@@ -101,7 +100,7 @@ const Challenge = ({
                     }
                     onClick={() => setActiveExercise(exercise)}
                   >
-                    {i + 1}. {exercise.name} {JSON.stringify(exercise.solved)}
+                    {i + 1}. {exercise.name}
                   </div>
                 );
               })}
@@ -125,11 +124,9 @@ const SideMenu = styled.div`
   color: rgba(0, 0, 0, 0.5);
 
   .active {
-    color: ${({ theme }) => theme.primary};
   }
 
   .exercise {
-    background-color: ${({ theme }) => theme.backgroundVariant};
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;

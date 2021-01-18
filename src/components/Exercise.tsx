@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Flex, Box } from "reflexbox";
+// import { Flex, Box } from "reflexbox";
+import { Flex, Box } from "@chakra-ui/react";
 import ReactHtmlParser from "react-html-parser";
 import styled from "@emotion/styled";
 import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
@@ -198,15 +199,26 @@ const Exercise = ({
           </StatusInfo>
         </Box>
       </Flex>
-      <Flex height={"calc(100% - 200px)"} flexDirection={["column", "row"]}>
-        <Box width={[1, 7 / 12]} height={["auto", "100%"]} minHeight="50vh">
+      <Flex
+        height={"calc(100% - 200px)"}
+        flexDirection={{ base: "column", md: "row" }}
+      >
+        <Box
+          width={{ base: "100%", md: "58%" }}
+          height={{ base: "auto", md: "100%" }}
+          minHeight="50vh"
+        >
           <CodeEditor
+            language={languages.python}
             code={code}
             setCode={setCode}
-            language={languages.python}
           />
         </Box>
-        <Box width={[1, 5 / 12]} height={["auto", "100%"]} minHeight="50vh">
+        <Box
+          width={{ base: "100%", md: "42%" }}
+          height={{ base: "auto", md: "100%" }}
+          minHeight="50vh"
+        >
           <Terminal>
             {ReactHtmlParser(
               submissionFeedback ? submissionFeedback : "Waiting..."
@@ -229,7 +241,6 @@ const Exercise = ({
 const StatusInfo = styled.div`
   width: 100%;
   height: 100%;
-  color: ${({ theme }) => theme.primary};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -239,7 +250,6 @@ const Button = styled.button<{ disabled?: boolean }>`
   width: 100%;
   height: 100%;
   transition: transform 0.5s;
-  color: ${({ theme }) => theme.primary};
   opacity: ${({ disabled }) => (disabled ? "0.5" : "1")};
   pointer-events: ${({ disabled }) => (disabled ? "none" : "all")};
   position: relative;

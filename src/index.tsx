@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import { ThemeProvider } from "@emotion/react";
-import { themes } from "./styles/theme/themes";
+import theme from "./styles/theme/themes";
 import GlobalStyle from "./styles/GlobalStyle";
 import {
   ApolloClient,
@@ -15,6 +15,13 @@ import { createUploadLink } from "apollo-upload-client";
 import { setContext } from "@apollo/client/link/context";
 import keycloak from "./keycloak";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
+
+import {
+  ChakraProvider,
+  ColorModeScript,
+  localStorageManager,
+} from "@chakra-ui/react";
+import { extendTheme } from "@chakra-ui/react";
 
 const httpLink = createUploadLink({
   uri: process.env.REACT_APP_GRAPHQL_URI,
@@ -54,20 +61,22 @@ keycloak.onTokenExpired = () => {
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={true ? themes.light : themes.dark}>
-      <GlobalStyle />
+    <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
+      {/* <GlobalStyle /> */}
+
+      <ColorModeScript initialColorMode={theme.config.lightTheme} />
       <ReactKeycloakProvider
         authClient={keycloak}
         initOptions={{
           onLoad: "check-sso",
         }}
-        LoadingComponent={<div>loading</div>}
+        LoadingComponent={<span>loading</span>}
       >
         <ApolloProvider client={client}>
           <App />
         </ApolloProvider>
       </ReactKeycloakProvider>
-    </ThemeProvider>
+    </ChakraProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

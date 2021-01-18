@@ -14,7 +14,6 @@ export interface FindChallenge_challenge_refs {
   id: string | null;
   name: string | null;
   statement: string | null;
-  solved: boolean | null;
 }
 
 export interface FindChallenge_challenge {

@@ -1,9 +1,8 @@
-import { Global, css, useTheme } from "@emotion/react";
+import { Global, css } from "@emotion/react";
 
 import React from "react";
 
 const GlobalStyles: React.FC = () => {
-  const theme = useTheme();
   return (
     <Global
       styles={css`
@@ -20,7 +19,7 @@ const GlobalStyles: React.FC = () => {
         body {
           font-family: "Open Sans", sans-serif;
           margin: 0;
-          background-color: ${theme.background};
+          background-color: #121212;
         }
 
         article,
