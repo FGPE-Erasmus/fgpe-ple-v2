@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useKeycloak } from "@react-keycloak/web";
-import { Flex, Box } from "reflexbox";
+// import { Flex, Box } from "reflexbox";
 import styled from "@emotion/styled";
 import { NavLink } from "react-router-dom";
 import UserIcon from "../images/user.svg";
 
 import NavContext from "../context/NavContext";
 
-import { Button, useColorMode, IconButton } from "@chakra-ui/react";
+import { Button, useColorMode, IconButton, Flex, Box } from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
+import useBreadcrumbs from "use-react-router-breadcrumbs";
 
 const Navbar = () => {
+  const breadcrumbs = useBreadcrumbs();
+
   const activeGameAndChallenge = useContext(NavContext);
   const { keycloak, initialized } = useKeycloak();
   const resetActiveGameAndChallenge = () => {
@@ -41,8 +44,15 @@ const Navbar = () => {
           <NavLink to="/" onClick={resetActiveGameAndChallenge}>
             <b>FGPE</b>
           </NavLink>
+          {/* {breadcrumbs.map(({ match, breadcrumb }) => {
+            return (
+              <NavLink key={match.url} to={match.url}>
+                {breadcrumb}
+              </NavLink>
+            );
+          })} */}
 
-          <NavLink
+          {/* <NavLink
             to={{
               pathname: "/profile/game",
               state: {
@@ -58,7 +68,8 @@ const Navbar = () => {
               activeGameAndChallenge.activeGame.name}
             {activeGameAndChallenge.activeChallenge &&
               " > " + activeGameAndChallenge.activeChallenge.name}
-          </NavLink>
+          </NavLink> */}
+
           {/* {keycloak.authenticated && (
             <NavLink to="/profile">
               {userProfile?.firstName} {userProfile?.lastName}

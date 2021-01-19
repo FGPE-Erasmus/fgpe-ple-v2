@@ -14,12 +14,12 @@ const GlobalStyles: React.FC = () => {
           line-height: 1.15; /* 1 */
           -ms-text-size-adjust: 100%; /* 2 */
           -webkit-text-size-adjust: 100%; /* 2 */
+          height: 100%;
         }
 
         body {
           font-family: "Open Sans", sans-serif;
           margin: 0;
-          background-color: #121212;
         }
 
         article,

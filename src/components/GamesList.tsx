@@ -64,8 +64,7 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
           <Link
             key={i}
             to={{
-              pathname: "/profile/game",
-              state: { gameId: gameProfile.game.id },
+              pathname: `/game/${gameProfile.game.id}`,
             }}
             onClick={() =>
               setActiveGame({

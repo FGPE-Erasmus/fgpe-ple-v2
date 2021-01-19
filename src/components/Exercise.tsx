@@ -7,8 +7,20 @@ import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import { getSubmissionByIdQuery } from "../generated/getSubmissionByIdQuery";
 import CodeEditor, { languages } from "./CodeEditor";
 import useInterval from "../utilities/useInterval";
-import Loading from "./Loading";
-import { motion, AnimatePresence } from "framer-motion";
+// import Loading from "./Loading";
+import {
+  Button,
+  ButtonGroup,
+  Menu,
+  MenuItem,
+  MenuButton,
+  MenuList,
+  IconButton,
+  Grid,
+  GridItem,
+} from "@chakra-ui/react";
+
+import { ChevronDownIcon, SettingsIcon } from "@chakra-ui/icons";
 
 import {
   FindChallenge,
@@ -171,25 +183,64 @@ const Exercise = ({
           </ExerciseDescription>
         </Box>
       </Flex>
-      <Flex height={50}>
+      <Flex height={50} backgroundColor="gray.50" alignItems="center" p={2}>
         <Box width={7 / 12}>
           <Flex width={"100%"} height={"100%"}>
-            <Box width={1 / 4}>
+            <Box width={1 / 5}>
+              <Menu>
+                {({ isOpen }) => (
+                  <>
+                    <MenuButton
+                      isActive={isOpen}
+                      as={Button}
+                      w="95%"
+                      rightIcon={<ChevronDownIcon />}
+                      fontSize={12}
+                    >
+                      Python
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem>Python</MenuItem>
+                      <MenuItem>Java</MenuItem>
+                    </MenuList>
+                  </>
+                )}
+              </Menu>
+            </Box>
+            <Box width={1 / 5}>
               <Button
                 onClick={uploadSubmission}
-                disabled={isSubmissionFetching}
+                isLoading={isSubmissionFetching}
+                loadingText={"Stop"}
+                disabled={false}
+                w="95%"
+                colorScheme="blue"
               >
-                Run <Loading show={isSubmissionFetching} width={2} />
+                Run
+                {/* Run <Loading show={isSubmissionFetching} width={2} /> */}
               </Button>
             </Box>
-            <Box width={1 / 4}>
-              <Button disabled>Submit</Button>
+            <Box width={1 / 5}>
+              <Button w="95%" colorScheme="teal" variant="outline" disabled>
+                Submit
+              </Button>
             </Box>
-            <Box width={1 / 4}>
-              <Button disabled>Save</Button>
+            <Box width={1 / 5}>
+              <Button w="95%" disabled>
+                Save
+              </Button>
             </Box>
-            <Box width={1 / 4}>
-              <Button disabled>Restore</Button>
+            <Box width={1 / 5}>
+              <Button w="95%" disabled>
+                Restore
+              </Button>
+            </Box>
+            <Box width={1 / 10}>
+              <IconButton
+                aria-label="Settings"
+                icon={<SettingsIcon />}
+                variant="outline"
+              />
             </Box>
           </Flex>
         </Box>
@@ -223,14 +274,6 @@ const Exercise = ({
             {ReactHtmlParser(
               submissionFeedback ? submissionFeedback : "Waiting..."
             )}
-            {/* <CodeEditor
-              code={submissionFeedback}
-              lineNumbers={false}
-              language={languages.shell}
-              readOnly
-              showCursorWhenSelecting={false}
-              theme="dracula"
-            /> */}
           </Terminal>
         </Box>
       </Flex>
@@ -246,27 +289,27 @@ const StatusInfo = styled.div`
   align-items: center;
 `;
 
-const Button = styled.button<{ disabled?: boolean }>`
-  width: 100%;
-  height: 100%;
-  transition: transform 0.5s;
-  opacity: ${({ disabled }) => (disabled ? "0.5" : "1")};
-  pointer-events: ${({ disabled }) => (disabled ? "none" : "all")};
-  position: relative;
+// const Button = styled.button<{ disabled?: boolean }>`
+//   width: 100%;
+//   height: 100%;
+//   transition: transform 0.5s;
+//   opacity: ${({ disabled }) => (disabled ? "0.5" : "1")};
+//   pointer-events: ${({ disabled }) => (disabled ? "none" : "all")};
+//   position: relative;
 
-  * {
-    display: inline-block;
-  }
+//   * {
+//     display: inline-block;
+//   }
 
-  .loading-indicator {
-    width: 12px;
-    height: 12px;
-  }
+//   .loading-indicator {
+//     width: 12px;
+//     height: 12px;
+//   }
 
-  &:hover {
-    transform: scale(0.9);
-  }
-`;
+//   &:hover {
+//     transform: scale(0.9);
+//   }
+// `;
 
 const ExerciseDescription = styled.div`
   padding: 15px;

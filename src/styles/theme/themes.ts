@@ -54,11 +54,16 @@ const theme = extendTheme({
   styles: {
     global: (props) => ({
       body: {
-        // fontFamily: `"Open sans", sans-serif`,
-        color: mode("black", "whiteAlpha.900")(props),
-        bg: mode("#f5f7fa", "#141214")(props),
+        height: "100%",
       },
     }),
+    // global: (props) => ({
+    //   body: {
+    //     // fontFamily: `"Open sans", sans-serif`,
+    //     color: mode("black", "whiteAlpha.900")(props),
+    //     bg: mode("#f5f7fa", "#141214")(props),
+    //   },
+    // }),
   },
 });
 

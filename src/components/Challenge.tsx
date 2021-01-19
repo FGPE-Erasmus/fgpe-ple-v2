@@ -11,10 +11,16 @@ import { getSubmissionByIdQuery } from "../generated/getSubmissionByIdQuery";
 import { uploadSubmissionQuery } from "../generated/uploadSubmissionQuery";
 
 import styled from "@emotion/styled";
-import { Flex, Box } from "reflexbox";
+import { Flex, Box } from "@chakra-ui/react";
 import ReactHtmlParser from "react-html-parser";
 
 import Exercise from "./Exercise";
+import { useParams } from "react-router-dom";
+
+interface ParamTypes {
+  gameId: string;
+  challengeId: string;
+}
 
 const FIND_CHALLENGE = gql`
   query FindChallenge($gameId: String!, $challengeId: String!) {
@@ -47,7 +53,7 @@ const Challenge = ({
 }: {
   location: { state: { gameId: string; challengeId: string } };
 }) => {
-  const { gameId, challengeId } = location.state;
+  const { gameId, challengeId } = useParams<ParamTypes>();
 
   const {
     data: challengeData,
@@ -86,8 +92,8 @@ const Challenge = ({
 
   return (
     <Playground>
-      <Flex height={"100%"}>
-        <Box width={[2 / 12]} maxWidth={330}>
+      <Flex h="100%" w="100%">
+        <Box width={[2 / 12]} maxWidth={330} height="100%">
           <SideMenu>
             <div>
               {challengeData.challenge.refs.map((exercise, i) => {

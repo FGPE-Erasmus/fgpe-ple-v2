@@ -19,6 +19,11 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { LockIcon } from "@chakra-ui/icons";
+import { useParams } from "react-router-dom";
+
+interface ParamTypes {
+  gameId: string;
+}
 
 const PROFILE_IN_GAME = gql`
   query ProfileInGameQuery($gameId: String!) {
@@ -113,7 +118,8 @@ const ProfileInGame = ({
   location: { state: { gameId: string } };
 }) => {
   const { setActiveChallenge } = useContext(NavContext);
-  const { gameId } = location.state;
+  const { gameId } = useParams<ParamTypes>();
+
   const { loading, error, data } = useQuery<ProfileInGameQuery>(
     PROFILE_IN_GAME,
     {
@@ -205,11 +211,7 @@ const ProfileInGame = ({
                 ) && (
                   <Link
                     to={{
-                      pathname: "/profile/game/challenge",
-                      state: {
-                        gameId: data.profileInGame.game.id,
-                        challengeId: learningPath.challenge.id,
-                      },
+                      pathname: `/game/${data.profileInGame.game.id}/challenge/${learningPath.challenge.id}`,
                     }}
                     onClick={() =>
                       setActiveChallenge({
