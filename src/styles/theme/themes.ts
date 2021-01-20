@@ -53,7 +53,7 @@ const theme = extendTheme({
   },
   styles: {
     global: (props) => ({
-      body: {
+      html: {
         height: "100%",
       },
     }),

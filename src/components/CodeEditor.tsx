@@ -6,19 +6,14 @@ import styled from "@emotion/styled";
 import { Controlled as CodeMirror } from "react-codemirror2";
 
 import Editor, { DiffEditor, useMonaco, loader } from "@monaco-editor/react";
-
-export enum languages {
-  python = "python",
-  java = "java",
-  shell = "shell",
-}
+import { FindChallenge_programmingLanguages } from "../generated/FindChallenge";
 
 const CodeEditor = ({
   language,
   setCode,
   code,
 }: {
-  language: languages;
+  language: FindChallenge_programmingLanguages;
   code: any;
   setCode: (value: string) => void;
 }) => {
@@ -28,14 +23,15 @@ const CodeEditor = ({
   }
 
   return (
-    <EditorStyled>
-      <Editor
-        language={language}
-        defaultValue="#some content"
-        value={code}
-        onChange={handleEditorChange}
-      />
-    </EditorStyled>
+    <Editor
+      language={language.id?.toLowerCase()}
+      value={code}
+      onChange={handleEditorChange}
+      theme="vs-dark"
+      wrapperClassName="editor-wrapper"
+      className="editor"
+      options={{ fixedOverflowWidgets: true }}
+    />
   );
 };
 
@@ -46,14 +42,20 @@ const EditorStyled = styled.div`
     outline: none;
   } */
   height: 100%;
-
-  .react-codemirror2 {
-    height: 100%;
+  .editor {
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 
-  .CodeMirror {
-    height: 100%;
+  .editor-wrapper {
+    padding: 0;
+    margin: 0;
   }
+  padding: 0;
+  margin: 0;
 `;
 
 export default CodeEditor;
