@@ -89,6 +89,7 @@ const Challenge = ({
     data: challengeData,
     error: challengeError,
     loading: challengeLoading,
+    refetch: challengeRefetch,
   } = useQuery<FindChallenge>(FIND_CHALLENGE, {
     variables: { gameId, challengeId },
   });
@@ -104,9 +105,10 @@ const Challenge = ({
 
   useEffect(() => {
     if (challengeData) {
+      // getLastSolvedExercise();
       setActiveExercise(challengeData.challenge.refs[0]);
     }
-  }, [challengeData]);
+  }, []);
 
   if (!gameId || !challengeId) {
     return <div>Game ID or Challenge ID not provided</div>;
@@ -124,15 +126,22 @@ const Challenge = ({
     <Playground>
       <Flex h="100%" w="100%">
         <Box width={[2 / 12]} maxWidth={330} height="100%">
-          <Box p={5} h="100%">
-            <Flex flexDirection="column">
+          <Box p={{ base: 1, md: 5 }} h="100%" w="100%">
+            <Flex flexDirection="column" alignItems="center" w="100%">
               {challengeData.challenge.refs.map((exercise, i) => {
                 return (
                   <Button
                     marginBottom={2}
+                    w="100%"
+                    size="sm"
+                    fontSize={12}
                     key={i}
                     colorScheme={
-                      exercise.id === activeExercise?.id ? "blue" : "gray"
+                      exercise.id === activeExercise?.id
+                        ? "blue"
+                        : checkIfSolved(challengeData, exercise)
+                        ? "green"
+                        : "gray"
                     }
                     className={
                       "exercise " +
@@ -157,6 +166,7 @@ const Challenge = ({
           gameId={gameId}
           exercise={activeExercise}
           programmingLanguages={challengeData.programmingLanguages}
+          challengeRefetch={challengeRefetch}
         />
       </Flex>
     </Playground>

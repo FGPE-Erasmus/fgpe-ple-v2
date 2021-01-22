@@ -5,9 +5,18 @@ import styled from "@emotion/styled";
 import { NavLink } from "react-router-dom";
 import UserIcon from "../images/user.svg";
 
+import { BiUserCircle } from "react-icons/bi";
+
 import NavContext from "../context/NavContext";
 
-import { Button, useColorMode, IconButton, Flex, Box } from "@chakra-ui/react";
+import {
+  Button,
+  useColorMode,
+  IconButton,
+  Flex,
+  Box,
+  Text,
+} from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import useBreadcrumbs from "use-react-router-breadcrumbs";
 
@@ -20,7 +29,7 @@ const Navbar = () => {
     activeGameAndChallenge.setActiveChallenge(null);
     activeGameAndChallenge.setActiveGame(null);
   };
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
 
   const [
     userProfile,
@@ -42,7 +51,11 @@ const Navbar = () => {
       <Flex px={2} alignItems="center" height="100%">
         <Box width={1 / 2}>
           <NavLink to="/" onClick={resetActiveGameAndChallenge}>
-            <b>FGPE</b>
+            <b>
+              <Text as="span" color={colorMode == "dark" ? "white" : "black"}>
+                FGPE
+              </Text>
+            </b>
           </NavLink>
           {/* {breadcrumbs.map(({ match, breadcrumb }) => {
             return (
@@ -81,7 +94,12 @@ const Navbar = () => {
             <NavLink to="/profile" onClick={resetActiveGameAndChallenge}>
               {/* {userProfile?.firstName} {userProfile?.lastName} */}
 
-              {keycloak.authenticated && <UserIconStyled src={UserIcon} />}
+              {keycloak.authenticated && (
+                <BiUserCircle
+                  fontSize={24}
+                  color={colorMode == "dark" ? "white" : "black"}
+                />
+              )}
             </NavLink>
 
             {keycloak.authenticated ? (
@@ -97,11 +115,11 @@ const Navbar = () => {
                 Login
               </button>
             )}
-            <IconButton
+            {/* <IconButton
               onClick={toggleColorMode}
               aria-label="Toggle theme"
               icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}
-            />
+            /> */}
           </UserMenu>
         </Box>
       </Flex>
