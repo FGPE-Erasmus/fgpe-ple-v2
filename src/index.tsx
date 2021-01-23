@@ -29,7 +29,9 @@ const httpLink = createUploadLink({
 
 const authLink = setContext((_, { headers }) => {
   const token = keycloak.token;
-
+  if (keycloak.isTokenExpired()) {
+    console.log("TOKEN HAS EXPIRED");
+  }
   return {
     headers: {
       ...headers,

@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 
 const Game = ({ name, description }: { name: string; description: string }) => {
-  const color = useColorModeValue("borderDark", "borderLight");
+  const color = useColorModeValue("gray.100", "gray.700");
 
   return (
     <GameStyled bg={color}>

@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
 import React, { useState } from "react";
 import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
-import { Box, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
 
 const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
-  const color = useColorModeValue("borderDark", "borderLight");
+  const color = useColorModeValue("gray.100", "gray.700");
 
   const [showRewardsAlert, setShowRewardsAlert] = useState(true);
   return (
@@ -17,8 +17,14 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
                     setShowRewardsAlert(false);
                   }
                   return (
-                    <RewardStyle key={i}>
+                    <RewardStyle
+                      key={i}
+                      bg={"white"}
+                      marginLeft={5}
+                      textAlign="center"
+                    >
                       <RewardImage imageData={reward.image} />
+
                       <div>{reward.name}</div>
                     </RewardStyle>
                   );
@@ -33,7 +39,8 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
 const RewardImage = styled.div<{ imageData: string | null }>`
   width: 85%;
   height: 65%;
-  background: url(${({ imageData }) => (imageData ? imageData : "#323232")});
+  background: ${({ imageData }) =>
+    imageData ? `url(${imageData})` : "#e2e2e2"};
   background-position: center;
   background-size: cover;
   border-radius: 5px;
@@ -51,11 +58,12 @@ const RewardsWrapper = styled(Box)`
   /* color: black; */
 `;
 
-const RewardStyle = styled(Box)`
+const RewardStyle = styled(Flex)`
   width: 150px;
   height: 130px;
   display: flex;
   flex-direction: column;
+  font-size: 13px;
 
   justify-content: center;
   align-items: center;

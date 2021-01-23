@@ -1,5 +1,5 @@
 import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import useInterval from "../utilities/useInterval";
 import {
@@ -59,6 +59,42 @@ const FIND_CHALLENGE = gql`
   }
 `;
 
+const getLastSolvedExercise = (challengeData: FindChallenge) => {
+  let lastSolved = null;
+
+  challengeData.challenge.refs.forEach((ref) => {
+    challengeData.profileInGame.learningPath.forEach((learningPath) => {
+      learningPath.refs.forEach((refToCompare) => {
+        if (refToCompare.solved) {
+          if (refToCompare.activity?.id == ref.id) {
+            lastSolved = ref.id;
+          }
+        }
+      });
+    });
+  });
+
+  console.log(lastSolved);
+};
+
+const getFirstUnsolvedExercise = (challengeData: FindChallenge) => {
+  let lastUnsolved = null;
+
+  challengeData.challenge.refs.forEach((ref) => {
+    challengeData.profileInGame.learningPath.forEach((learningPath) => {
+      learningPath.refs.forEach((refToCompare) => {
+        if (!refToCompare.solved) {
+          if (refToCompare.activity?.id == ref.id) {
+            lastUnsolved = ref.id;
+          }
+        }
+      });
+    });
+  });
+
+  console.log(lastUnsolved);
+};
+
 const checkIfSolved = (
   challengeData: FindChallenge,
   exercise: FindChallenge_challenge_refs
@@ -84,6 +120,10 @@ const Challenge = ({
   location: { state: { gameId: string; challengeId: string } };
 }) => {
   const { gameId, challengeId } = useParams<ParamTypes>();
+  const [
+    activeExercise,
+    setActiveExercise,
+  ] = useState<null | FindChallenge_challenge_refs>(null);
 
   const {
     data: challengeData,
@@ -92,23 +132,24 @@ const Challenge = ({
     refetch: challengeRefetch,
   } = useQuery<FindChallenge>(FIND_CHALLENGE, {
     variables: { gameId, challengeId },
+    onCompleted: (data) => {
+      if (!activeExercise) {
+        setActiveExercise(data.challenge.refs[0]);
+      }
+    },
   });
 
   if (challengeError) {
     console.log("challengeError", challengeError);
   }
 
-  const [
-    activeExercise,
-    setActiveExercise,
-  ] = useState<null | FindChallenge_challenge_refs>(null);
-
-  useEffect(() => {
-    if (challengeData) {
-      // getLastSolvedExercise();
-      setActiveExercise(challengeData.challenge.refs[0]);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (challengeData) {
+  //     // getFirstUnsolvedExercise(challengeData);
+  //     //
+  //     setActiveExercise(challengeData.challenge.refs[0]);
+  //   }
+  // }, [challengeLoading]);
 
   if (!gameId || !challengeId) {
     return <div>Game ID or Challenge ID not provided</div>;
@@ -125,7 +166,12 @@ const Challenge = ({
   return (
     <Playground>
       <Flex h="100%" w="100%">
-        <Box width={[2 / 12]} maxWidth={330} height="100%">
+        <Box
+          width={[2 / 12]}
+          maxWidth={330}
+          height="100%"
+          borderRight="1px solid rgba(0,0,0,0.1)"
+        >
           <Box p={{ base: 1, md: 5 }} h="100%" w="100%">
             <Flex flexDirection="column" alignItems="center" w="100%">
               {challengeData.challenge.refs.map((exercise, i) => {
@@ -137,11 +183,7 @@ const Challenge = ({
                     fontSize={12}
                     key={i}
                     colorScheme={
-                      exercise.id === activeExercise?.id
-                        ? "blue"
-                        : checkIfSolved(challengeData, exercise)
-                        ? "green"
-                        : "gray"
+                      exercise.id === activeExercise?.id ? "blue" : "gray"
                     }
                     className={
                       "exercise " +

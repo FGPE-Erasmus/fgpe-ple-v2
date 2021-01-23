@@ -16,10 +16,12 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-import React from "react";
+import React, { useRef } from "react";
 import { AiOutlineAppstoreAdd } from "react-icons/ai";
 import { FindChallenge_programmingLanguages } from "../../generated/FindChallenge";
 import { Result } from "../../generated/globalTypes";
+// import { useHotkeys } from "react-hotkeys-hook";
+import TextareaModal from "./TextareaModal";
 
 import Settings from "./Settings";
 
@@ -39,23 +41,31 @@ const EditorMenu = ({
   activeLanguage,
   evaluateSubmission,
   validateSubmission,
-  isSubmissionFetching,
+  isEvaluationFetching,
   setFetchingCount,
   setSubmissionFetching,
   setActiveLanguage,
   programmingLanguages,
+  isValidationFetching,
+  setValidationFetching,
+  testValues,
+  setTestValues,
 }: {
   submissionResult: string | null;
   activeLanguage: FindChallenge_programmingLanguages;
   evaluateSubmission: () => void;
   validateSubmission: () => void;
-  isSubmissionFetching: boolean;
+  isEvaluationFetching: boolean;
   setFetchingCount: React.Dispatch<React.SetStateAction<number>>;
   setSubmissionFetching: React.Dispatch<React.SetStateAction<boolean>>;
+  setValidationFetching: React.Dispatch<React.SetStateAction<boolean>>;
   setActiveLanguage: React.Dispatch<
     React.SetStateAction<FindChallenge_programmingLanguages>
   >;
   programmingLanguages: FindChallenge_programmingLanguages[];
+  isValidationFetching: boolean;
+  testValues: string[];
+  setTestValues: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
   const {
     isOpen: isSettingsOpen,
@@ -63,7 +73,14 @@ const EditorMenu = ({
     onClose: closeSettings,
   } = useDisclosure();
 
+  const {
+    isOpen: isTextareaModalOpen,
+    onOpen: openTextareaModal,
+    onClose: closeTextareaModal,
+  } = useDisclosure();
+
   const { colorMode } = useColorMode();
+  // useHotkeys("ctrl+\\", evaluateSubmission);
 
   return (
     <>
@@ -71,6 +88,12 @@ const EditorMenu = ({
         isOpen={isSettingsOpen}
         onOpen={openSettings}
         onClose={closeSettings}
+      />
+      <TextareaModal
+        isOpen={isTextareaModalOpen}
+        onClose={closeTextareaModal}
+        testValues={testValues}
+        setTestValues={setTestValues}
       />
       <Flex
         height={{ base: 100, md: 50 }}
@@ -85,7 +108,7 @@ const EditorMenu = ({
           height={{ base: "50%", md: "auto" }}
         >
           <Flex width={"100%"} height={"100%"}>
-            <Center width={(1 / 6) * 1.5}>
+            <Center width={(1 / 6) * 1.35}>
               <Menu>
                 {({ isOpen }) => (
                   <>
@@ -117,17 +140,17 @@ const EditorMenu = ({
               <ButtonGroup size="sm" isAttached w="95%" colorScheme="blue">
                 <Button
                   onClick={() => {
-                    if (isSubmissionFetching) {
-                      setSubmissionFetching(false);
+                    if (isValidationFetching) {
+                      setValidationFetching(false);
                       setFetchingCount(0);
                     } else {
                       validateSubmission();
                     }
                   }}
                   w="95%"
-                  isLoading={isSubmissionFetching}
+                  isLoading={isValidationFetching}
                   loadingText={"Stop"}
-                  disabled={false}
+                  disabled={isEvaluationFetching}
                   fontSize={{ base: 12, md: 14 }}
                 >
                   Run
@@ -139,8 +162,10 @@ const EditorMenu = ({
                   color="black"
                   hasArrow
                   openDelay={500}
+                  visibility={isTextareaModalOpen ? "hidden" : "initial"}
                 >
                   <IconButton
+                    onClick={openTextareaModal}
                     colorScheme="yellow"
                     aria-label="Add to friends"
                     icon={<AiOutlineAppstoreAdd fontSize={18} />}
@@ -152,7 +177,7 @@ const EditorMenu = ({
               <Button
                 colorScheme="blue"
                 onClick={() => {
-                  if (isSubmissionFetching) {
+                  if (isEvaluationFetching) {
                     setSubmissionFetching(false);
                     setFetchingCount(0);
                   } else {
@@ -161,9 +186,9 @@ const EditorMenu = ({
                 }}
                 w="95%"
                 size="sm"
-                isLoading={isSubmissionFetching}
+                isLoading={isEvaluationFetching}
                 loadingText={"Stop"}
-                disabled={false}
+                disabled={isValidationFetching}
                 fontSize={{ base: 12, md: 14 }}
               >
                 Submit

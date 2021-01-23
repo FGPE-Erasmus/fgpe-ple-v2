@@ -69,7 +69,6 @@ const Profile: React.ComponentType = () => {
   if (!data) {
     return <div>Couldn't fetch data</div>;
   }
-
   return (
     <div>
       {/* Hello, {userProfile?.firstName} {userProfile?.lastName} */}

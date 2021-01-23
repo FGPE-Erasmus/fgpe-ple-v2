@@ -18,7 +18,7 @@ import {
   Box,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { LockIcon } from "@chakra-ui/icons";
+import { LockIcon, CheckIcon } from "@chakra-ui/icons";
 import { useParams } from "react-router-dom";
 
 interface ParamTypes {
@@ -156,9 +156,12 @@ const ProfileInGame = ({
                   )
                 )}
               >
-                {learningPath.state != State.AVAILABLE && (
-                  <LockIcon w={6} h={6} float="right" />
-                )}
+                {learningPath.state != State.AVAILABLE &&
+                  (learningPath.progress == 1 ? (
+                    <CheckIcon w={6} h={6} m={4} float="right" />
+                  ) : (
+                    <LockIcon w={6} h={6} m={4} float="right" />
+                  ))}
 
                 {!isChallengeWithoutChildren(
                   getChallengeChildren(
@@ -249,18 +252,24 @@ const ChallengeBox = ({
   name: string;
   description: string;
 }) => {
-  const color = useColorModeValue("borderDark", "borderLight");
+  const color = useColorModeValue("gray.100", "gray.700");
+  const progressBarBg = useColorModeValue("gray.200", "gray.800");
+
+  const textColor = useColorModeValue("black", "white");
 
   return (
     <Box bg={color} p={3} borderRadius={5}>
-      <Heading size="md">{name}</Heading>
-      <Text>{description}</Text>
+      <Heading size="md" color={textColor}>
+        {name}
+      </Heading>
+      <Text color={textColor}>{description}</Text>
       <Progress
         colorScheme="blue"
         size="lg"
         value={progress * 100}
         marginTop={2}
         borderRadius={5}
+        bg={progressBarBg}
       />
     </Box>
   );
@@ -289,7 +298,6 @@ const ParentChallenge = styled.div<{
     margin-bottom: 12px;
   }
 
-  margin-bottom: 20px;
   border-radius: 5px;
   padding: 25px;
   transition: transform 0.5s;
