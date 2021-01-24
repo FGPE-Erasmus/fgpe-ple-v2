@@ -11,6 +11,20 @@ import styled from "@emotion/styled";
 import { State } from "../generated/globalTypes";
 import NavContext from "../context/NavContext";
 
+import {
+  Progress,
+  Text,
+  Heading,
+  Box,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { LockIcon, CheckIcon } from "@chakra-ui/icons";
+import { useParams } from "react-router-dom";
+
+interface ParamTypes {
+  gameId: string;
+}
+
 const PROFILE_IN_GAME = gql`
   query ProfileInGameQuery($gameId: String!) {
     profileInGame(gameId: $gameId) {
@@ -48,9 +62,16 @@ const PROFILE_IN_GAME = gql`
           }
         }
         state
+        progress
         startedAt
         openedAt
         endedAt
+        refs {
+          activity {
+            id
+          }
+          solved
+        }
       }
       submissions {
         id
@@ -97,7 +118,8 @@ const ProfileInGame = ({
   location: { state: { gameId: string } };
 }) => {
   const { setActiveChallenge } = useContext(NavContext);
-  const { gameId } = location.state;
+  const { gameId } = useParams<ParamTypes>();
+
   const { loading, error, data } = useQuery<ProfileInGameQuery>(
     PROFILE_IN_GAME,
     {
@@ -105,20 +127,22 @@ const ProfileInGame = ({
     }
   );
   if (!gameId) {
-    return <div>Game ID not provided</div>;
+    return <Text>Game ID not provided</Text>;
   }
 
   if (loading) return null;
   if (error) {
     console.log("error", error);
-    return <div>error</div>;
+    return <Text>error</Text>;
   }
-  if (!data) return <div>no data</div>;
+  if (!data) return <Text>no data</Text>;
 
   return (
-    <ChallengesWrapper>
-      <h3>Game: {data.profileInGame.game.name}</h3>
-      <div>
+    <Box>
+      <Heading as="h3" size="lg">
+        Game: {data.profileInGame.game.name}
+      </Heading>
+      <Box>
         {data.profileInGame.learningPath.map((learningPath, i) => {
           return (
             !learningPath.challenge.parentChallenge && (
@@ -132,6 +156,13 @@ const ProfileInGame = ({
                   )
                 )}
               >
+                {learningPath.state != State.AVAILABLE &&
+                  (learningPath.progress == 1 ? (
+                    <CheckIcon w={6} h={6} m={4} float="right" />
+                  ) : (
+                    <LockIcon w={6} h={6} m={4} float="right" />
+                  ))}
+
                 {!isChallengeWithoutChildren(
                   getChallengeChildren(
                     learningPath.challenge,
@@ -168,7 +199,7 @@ const ProfileInGame = ({
                           }
                         >
                           <h4>{childChallenge.name}</h4>
-                          <p>{childChallenge.description}</p>
+                          <Text>{childChallenge.description}</Text>
                         </Link>
                       </ChildrenChallenge>
                     )
@@ -183,11 +214,7 @@ const ProfileInGame = ({
                 ) && (
                   <Link
                     to={{
-                      pathname: "/profile/game/challenge",
-                      state: {
-                        gameId: data.profileInGame.game.id,
-                        challengeId: learningPath.challenge.id,
-                      },
+                      pathname: `/game/${data.profileInGame.game.id}/challenge/${learningPath.challenge.id}`,
                     }}
                     onClick={() =>
                       setActiveChallenge({
@@ -196,43 +223,61 @@ const ProfileInGame = ({
                       })
                     }
                   >
-                    <h3>{learningPath.challenge.name}</h3>
-                    <p>{learningPath.challenge.description}</p>
+                    <ChallengeBox
+                      progress={learningPath.progress}
+                      name={learningPath.challenge.name}
+                      description={
+                        learningPath.challenge.description
+                          ? learningPath.challenge.description
+                          : "No description"
+                      }
+                    />
                   </Link>
                 )}
-                {/* <h3>{learningPath.challenge.name}</h3>
-                  <p>{learningPath.challenge.description}</p> */}
               </ParentChallenge>
             )
           );
         })}
-      </div>
-      {/* {data.challenges.map((challenge, i) => {
-        return (
-          <div key={i}>
-            {challenge.locked ? (
-              challenge.name
-            ) : (
-              <Link
-                to={{
-                  pathname: "/game",
-                  state: { challengeId: challenge.id },
-                }}
-              >
-                {challenge.name}
-              </Link>
-            )}
-          </div>
-        );
-      })} */}
-    </ChallengesWrapper>
+      </Box>
+    </Box>
+  );
+};
+
+const ChallengeBox = ({
+  progress,
+  name,
+  description,
+}: {
+  progress: number;
+  name: string;
+  description: string;
+}) => {
+  const color = useColorModeValue("gray.100", "gray.700");
+  const progressBarBg = useColorModeValue("gray.200", "gray.800");
+
+  const textColor = useColorModeValue("black", "white");
+
+  return (
+    <Box bg={color} p={3} borderRadius={5}>
+      <Heading size="md" color={textColor}>
+        {name}
+      </Heading>
+      <Text color={textColor}>{description}</Text>
+      <Progress
+        colorScheme="blue"
+        size="lg"
+        value={progress * 100}
+        marginTop={2}
+        borderRadius={5}
+        bg={progressBarBg}
+      />
+    </Box>
   );
 };
 
 // const ParentChallenge = styled.div``;
 
 const ChildrenChallenge = styled.div`
-  background-color: ${({ theme }) => theme.background};
   margin-bottom: 12px;
   padding: 10px;
   p {
@@ -245,12 +290,6 @@ const ChildrenChallenge = styled.div`
   }
 `;
 
-const ChallengesWrapper = styled.div`
-  h3 {
-    margin-bottom: 10px;
-  }
-`;
-
 const ParentChallenge = styled.div<{
   available: boolean;
   withoutChildren: boolean;
@@ -259,8 +298,6 @@ const ParentChallenge = styled.div<{
     margin-bottom: 12px;
   }
 
-  background-color: ${({ theme }) => theme.backgroundVariant};
-  margin-bottom: 20px;
   border-radius: 5px;
   padding: 25px;
   transition: transform 0.5s;

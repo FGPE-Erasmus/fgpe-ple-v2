@@ -1,20 +1,22 @@
-import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import { gql, useQuery } from "@apollo/client";
+import React, { useState } from "react";
 import withChangeAnimation from "../utilities/withChangeAnimation";
-import CodeEditor, { languages } from "./CodeEditor";
-import useInterval from "../utilities/useInterval";
 import {
   FindChallenge,
   FindChallenge_challenge_refs,
 } from "../generated/FindChallenge";
-import { getSubmissionByIdQuery } from "../generated/getSubmissionByIdQuery";
-import { uploadSubmissionQuery } from "../generated/uploadSubmissionQuery";
 
 import styled from "@emotion/styled";
-import { Flex, Box } from "reflexbox";
-import ReactHtmlParser from "react-html-parser";
+import { Flex, Box, Button } from "@chakra-ui/react";
 
 import Exercise from "./Exercise";
+import { useParams } from "react-router-dom";
+import { CheckIcon } from "@chakra-ui/icons";
+
+interface ParamTypes {
+  gameId: string;
+  challengeId: string;
+}
 
 const FIND_CHALLENGE = gql`
   query FindChallenge($gameId: String!, $challengeId: String!) {
@@ -34,6 +36,17 @@ const FIND_CHALLENGE = gql`
       }
     }
 
+    profileInGame(gameId: $gameId) {
+      learningPath {
+        refs {
+          activity {
+            id
+          }
+          solved
+        }
+      }
+    }
+
     programmingLanguages(gameId: $gameId) {
       id
       name
@@ -42,35 +55,61 @@ const FIND_CHALLENGE = gql`
   }
 `;
 
+const checkIfSolved = (
+  challengeData: FindChallenge,
+  exercise: FindChallenge_challenge_refs
+) => {
+  let solved = false;
+
+  challengeData.profileInGame.learningPath.map((learningPath) => {
+    return learningPath.refs.map((ref, i) => {
+      if (ref.activity?.id === exercise.id) {
+        if (ref.solved) {
+          solved = true;
+        }
+      }
+    });
+  });
+
+  return solved;
+};
+
 const Challenge = ({
   location,
 }: {
   location: { state: { gameId: string; challengeId: string } };
 }) => {
-  const { gameId, challengeId } = location.state;
+  const { gameId, challengeId } = useParams<ParamTypes>();
+  const [
+    activeExercise,
+    setActiveExercise,
+  ] = useState<null | FindChallenge_challenge_refs>(null);
 
   const {
     data: challengeData,
     error: challengeError,
     loading: challengeLoading,
+    refetch: challengeRefetch,
   } = useQuery<FindChallenge>(FIND_CHALLENGE, {
     variables: { gameId, challengeId },
+    onCompleted: (data) => {
+      if (!activeExercise) {
+        setActiveExercise(data.challenge.refs[0]);
+      }
+    },
   });
 
   if (challengeError) {
     console.log("challengeError", challengeError);
   }
 
-  const [
-    activeExercise,
-    setActiveExercise,
-  ] = useState<null | FindChallenge_challenge_refs>(null);
-
-  useEffect(() => {
-    if (challengeData) {
-      setActiveExercise(challengeData.challenge.refs[0]);
-    }
-  }, [challengeData]);
+  // useEffect(() => {
+  //   if (challengeData) {
+  //     // getFirstUnsolvedExercise(challengeData);
+  //     //
+  //     setActiveExercise(challengeData.challenge.refs[0]);
+  //   }
+  // }, [challengeLoading]);
 
   if (!gameId || !challengeId) {
     return <div>Game ID or Challenge ID not provided</div>;
@@ -86,29 +125,51 @@ const Challenge = ({
 
   return (
     <Playground>
-      <Flex height={"100%"}>
-        <Box width={[2 / 12]} maxWidth={330}>
-          <SideMenu>
-            <div>
+      <Flex h="100%" w="100%">
+        <Box
+          width={[2 / 12]}
+          maxWidth={330}
+          height="100%"
+          borderRight="1px solid rgba(0,0,0,0.1)"
+        >
+          <Box p={{ base: 1, md: 5 }} h="100%" w="100%">
+            <Flex flexDirection="column" alignItems="center" w="100%">
               {challengeData.challenge.refs.map((exercise, i) => {
                 return (
-                  <div
+                  <Button
+                    marginBottom={2}
+                    w="100%"
+                    size="sm"
+                    fontSize={12}
                     key={i}
+                    colorScheme={
+                      exercise.id === activeExercise?.id ? "blue" : "gray"
+                    }
                     className={
                       "exercise " +
                       (exercise.id === activeExercise?.id ? "active" : "")
                     }
                     onClick={() => setActiveExercise(exercise)}
+                    rightIcon={
+                      checkIfSolved(challengeData, exercise) ? (
+                        <CheckIcon />
+                      ) : undefined
+                    }
                   >
                     {i + 1}. {exercise.name}
-                  </div>
+                  </Button>
                 );
               })}
-            </div>
-          </SideMenu>
+            </Flex>
+          </Box>
         </Box>
 
-        <Exercise gameId={gameId} exercise={activeExercise} />
+        <Exercise
+          gameId={gameId}
+          exercise={activeExercise}
+          programmingLanguages={challengeData.programmingLanguages}
+          challengeRefetch={challengeRefetch}
+        />
       </Flex>
     </Playground>
     // <div>
@@ -124,11 +185,9 @@ const SideMenu = styled.div`
   color: rgba(0, 0, 0, 0.5);
 
   .active {
-    color: ${({ theme }) => theme.primary};
   }
 
   .exercise {
-    background-color: ${({ theme }) => theme.backgroundVariant};
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;

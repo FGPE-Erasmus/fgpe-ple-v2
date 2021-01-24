@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import "./i18n/config";
 import { useTranslation } from "react-i18next";
-import { ReactKeycloakProvider } from "@react-keycloak/web";
-import keycloak from "./keycloak";
+
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import styled from "@emotion/styled";
@@ -10,10 +9,9 @@ import { AnimatePresence } from "framer-motion";
 
 import Homepage from "./components/HomePage";
 import Profile from "./components/Profile";
-import MainLoading from "./components/MainLoading";
+// import MainLoading from "./components/MainLoading";
 import ProfileInGame from "./components/ProfileInGame";
 import Challenge from "./components/Challenge";
-
 import PrivateRoute from "./utilities/PrivateRoute";
 
 import NavContext from "./context/NavContext";
@@ -45,7 +43,7 @@ function App() {
       <Route
         render={({ location }) => (
           <>
-            <MainLoading />
+            {/* <MainLoading /> */}
             <NavContext.Provider
               value={{
                 activeChallenge: activeChallenge,
@@ -67,16 +65,23 @@ function App() {
                     />
                     <PrivateRoute
                       exact
-                      path="/profile/game"
+                      path="/game/:gameId"
                       roles={["student"]}
                       component={ProfileInGame}
                     />
                     <PrivateRoute
                       exact
-                      path="/profile/game/challenge"
+                      path="/game/:gameId/challenge/:challengeId"
                       roles={["student"]}
                       component={Challenge}
                     />
+
+                    {/* <PrivateRoute
+                      exact
+                      path="/profile/game/challenge"
+                      roles={["student"]}
+                      component={Challenge}
+                    /> */}
                   </Switch>
                 </AnimatePresence>
               </MainWrapper>

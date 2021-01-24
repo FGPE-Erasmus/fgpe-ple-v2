@@ -29,6 +29,27 @@ export interface FindChallenge_challenge {
   refs: FindChallenge_challenge_refs[];
 }
 
+export interface FindChallenge_profileInGame_learningPath_refs_activity {
+  __typename: "Activity";
+  id: string | null;
+}
+
+export interface FindChallenge_profileInGame_learningPath_refs {
+  __typename: "ActivityStatus";
+  activity: FindChallenge_profileInGame_learningPath_refs_activity | null;
+  solved: boolean | null;
+}
+
+export interface FindChallenge_profileInGame_learningPath {
+  __typename: "ChallengeStatus";
+  refs: FindChallenge_profileInGame_learningPath_refs[];
+}
+
+export interface FindChallenge_profileInGame {
+  __typename: "Player";
+  learningPath: FindChallenge_profileInGame_learningPath[];
+}
+
 export interface FindChallenge_programmingLanguages {
   __typename: "ProgrammingLanguage";
   id: string | null;
@@ -38,6 +59,7 @@ export interface FindChallenge_programmingLanguages {
 
 export interface FindChallenge {
   challenge: FindChallenge_challenge;
+  profileInGame: FindChallenge_profileInGame;
   programmingLanguages: FindChallenge_programmingLanguages[];
 }
 

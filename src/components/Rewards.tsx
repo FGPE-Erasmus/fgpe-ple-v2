@@ -1,11 +1,14 @@
 import styled from "@emotion/styled";
 import React, { useState } from "react";
 import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
+import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
 
 const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
+  const color = useColorModeValue("gray.100", "gray.700");
+
   const [showRewardsAlert, setShowRewardsAlert] = useState(true);
   return (
-    <RewardsWrapper>
+    <RewardsWrapper bg={color}>
       {data
         ? data.myGameProfiles.map((gameProfile, i) => {
             return gameProfile.rewards.length > 0
@@ -14,8 +17,14 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
                     setShowRewardsAlert(false);
                   }
                   return (
-                    <RewardStyle key={i}>
+                    <RewardStyle
+                      key={i}
+                      bg={"white"}
+                      marginLeft={5}
+                      textAlign="center"
+                    >
                       <RewardImage imageData={reward.image} />
+
                       <div>{reward.name}</div>
                     </RewardStyle>
                   );
@@ -30,32 +39,31 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
 const RewardImage = styled.div<{ imageData: string | null }>`
   width: 85%;
   height: 65%;
-  background: url(${({ imageData }) => (imageData ? imageData : "#323232")});
+  background: ${({ imageData }) =>
+    imageData ? `url(${imageData})` : "#e2e2e2"};
   background-position: center;
   background-size: cover;
   border-radius: 5px;
 `;
 
-const RewardsWrapper = styled.div`
+const RewardsWrapper = styled(Box)`
   width: 100%;
   height: 150px;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
-  background-color: ${({ theme }) => theme.backgroundVariant};
   display: flex;
   justify-content: center;
   align-items: center;
-  color: black;
+  /* color: black; */
 `;
 
-const RewardStyle = styled.div`
-  background-color: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.primary};
+const RewardStyle = styled(Flex)`
   width: 150px;
   height: 130px;
   display: flex;
   flex-direction: column;
+  font-size: 13px;
 
   justify-content: center;
   align-items: center;

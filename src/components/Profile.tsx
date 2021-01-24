@@ -69,10 +69,11 @@ const Profile: React.ComponentType = () => {
   if (!data) {
     return <div>Couldn't fetch data</div>;
   }
-
   return (
     <div>
       {/* Hello, {userProfile?.firstName} {userProfile?.lastName} */}
+      {data.myGameProfiles.length < 1 &&
+        "Unfortunately you are not enrolled in any games at the moment."}
       <Rewards data={data} />
       <GamesList data={data} />
     </div>

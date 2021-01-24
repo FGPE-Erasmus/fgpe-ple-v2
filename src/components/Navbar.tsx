@@ -1,21 +1,35 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useKeycloak } from "@react-keycloak/web";
-import { Flex, Box } from "reflexbox";
+// import { Flex, Box } from "reflexbox";
 import styled from "@emotion/styled";
 import { NavLink } from "react-router-dom";
 import UserIcon from "../images/user.svg";
 
+import { BiUserCircle } from "react-icons/bi";
+
 import NavContext from "../context/NavContext";
 
+import {
+  Button,
+  useColorMode,
+  IconButton,
+  Flex,
+  Box,
+  Text,
+} from "@chakra-ui/react";
+import { SunIcon, MoonIcon } from "@chakra-ui/icons";
+import useBreadcrumbs from "use-react-router-breadcrumbs";
+
 const Navbar = () => {
+  const breadcrumbs = useBreadcrumbs();
+
   const activeGameAndChallenge = useContext(NavContext);
   const { keycloak, initialized } = useKeycloak();
-
   const resetActiveGameAndChallenge = () => {
     activeGameAndChallenge.setActiveChallenge(null);
     activeGameAndChallenge.setActiveGame(null);
   };
-
+  const { colorMode } = useColorMode();
   const [
     userProfile,
     setUserProfile,
@@ -36,10 +50,21 @@ const Navbar = () => {
       <Flex px={2} alignItems="center" height="100%">
         <Box width={1 / 2}>
           <NavLink to="/" onClick={resetActiveGameAndChallenge}>
-            <b>FGPE</b>
+            <b>
+              <Text as="span" color={colorMode == "dark" ? "white" : "black"}>
+                FGPE
+              </Text>
+            </b>
           </NavLink>
+          {/* {breadcrumbs.map(({ match, breadcrumb }) => {
+            return (
+              <NavLink key={match.url} to={match.url}>
+                {breadcrumb}
+              </NavLink>
+            );
+          })} */}
 
-          <NavLink
+          {/* <NavLink
             to={{
               pathname: "/profile/game",
               state: {
@@ -55,7 +80,8 @@ const Navbar = () => {
               activeGameAndChallenge.activeGame.name}
             {activeGameAndChallenge.activeChallenge &&
               " > " + activeGameAndChallenge.activeChallenge.name}
-          </NavLink>
+          </NavLink> */}
+
           {/* {keycloak.authenticated && (
             <NavLink to="/profile">
               {userProfile?.firstName} {userProfile?.lastName}
@@ -67,14 +93,32 @@ const Navbar = () => {
             <NavLink to="/profile" onClick={resetActiveGameAndChallenge}>
               {/* {userProfile?.firstName} {userProfile?.lastName} */}
 
-              {keycloak.authenticated && <UserIconStyled src={UserIcon} />}
+              {keycloak.authenticated && (
+                <BiUserCircle
+                  fontSize={24}
+                  color={colorMode == "dark" ? "white" : "black"}
+                />
+              )}
             </NavLink>
 
             {keycloak.authenticated ? (
               <button onClick={() => keycloak.logout()}>Logout</button>
             ) : (
-              <button onClick={() => keycloak.login()}>Login</button>
+              <button
+                onClick={() => {
+                  keycloak.login({
+                    redirectUri: `${window.location.origin.toString()}/profile`,
+                  });
+                }}
+              >
+                Login
+              </button>
             )}
+            {/* <IconButton
+              onClick={toggleColorMode}
+              aria-label="Toggle theme"
+              icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}
+            /> */}
           </UserMenu>
         </Box>
       </Flex>
@@ -110,7 +154,6 @@ const NavbarStyled = styled.div`
     color: black;
   }
 
-  background-color: ${({ theme }) => theme.backgroundVariant};
   height: 65px;
   z-index: 999;
   box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.05);
