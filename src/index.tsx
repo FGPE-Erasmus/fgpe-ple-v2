@@ -30,14 +30,32 @@ const httpLink = createUploadLink({
 const authLink = setContext((_, { headers }) => {
   const token = keycloak.token;
   if (keycloak.isTokenExpired()) {
-    console.log("TOKEN HAS EXPIRED");
+    keycloak
+      .updateToken(1)
+      .then(function (refreshed: boolean) {
+        if (refreshed) {
+          console.log("Token was successfully refreshed");
+        } else {
+          console.log("Token is still valid");
+        }
+        return {
+          headers: {
+            ...headers,
+            Authorization: token ? `bearer ${token}` : "",
+          },
+        };
+      })
+      .catch(function () {
+        console.log("Failed to refresh the token, or the session has expired");
+      });
+  } else {
+    return {
+      headers: {
+        ...headers,
+        Authorization: token ? `bearer ${token}` : "",
+      },
+    };
   }
-  return {
-    headers: {
-      ...headers,
-      Authorization: token ? `bearer ${token}` : "",
-    },
-  };
 });
 
 const client = new ApolloClient({

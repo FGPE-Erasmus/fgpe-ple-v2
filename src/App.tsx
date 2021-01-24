@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import "./i18n/config";
 import { useTranslation } from "react-i18next";
-import { ReactKeycloakProvider } from "@react-keycloak/web";
-import keycloak from "./keycloak";
+
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import styled from "@emotion/styled";

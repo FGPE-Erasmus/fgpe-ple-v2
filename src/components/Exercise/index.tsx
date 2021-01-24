@@ -25,6 +25,34 @@ import Statement, { getStatementLength } from "./Statement";
 import { Result } from "../../generated/globalTypes";
 import { SettingsContext } from "./SettingsContext";
 import Terminal from "./Terminal";
+import { getValidationByIdQuery } from "../../generated/getValidationByIdQuery";
+
+const GET_VALIDATION_BY_ID = gql`
+  query getValidationByIdQuery($gameId: String!, $validationId: String!) {
+    validation(gameId: $gameId, id: $validationId) {
+      id
+      game {
+        id
+      }
+      player {
+        id
+      }
+      exerciseId
+      evaluationEngine
+      evaluationEngineId
+      language
+      metrics
+      outputs
+      userExecutionTimes
+
+      feedback
+      submittedAt
+      evaluatedAt
+      program
+      result
+    }
+  }
+`;
 
 const GET_SUBMISSION_BY_ID = gql`
   query getSubmissionByIdQuery($gameId: String!, $submissionId: String!) {
@@ -139,16 +167,18 @@ const Exercise = ({
 
   const [submissionFeedback, setSubmissionFeedback] = useState("Ready");
   const [submissionResult, setSubmissionResult] = useState<Result | null>(null);
+  const [validationOutputs, setValidationOutputs] = useState<null | any>(null);
 
   const [isEvaluationFetching, setEvaluationFetching] = useState(false);
   const [isValidationFetching, setValidationFetching] = useState(false);
 
-  const [submissionId, setSubmissionId] = useState<null | string>(null);
+  const [evaluationId, setEvaluationId] = useState<null | string>(null);
+  const [validationId, setValidationId] = useState<null | string>(null);
 
   const [editorTheme, setEditorTheme] = useState("light");
   const [terminalTheme, setTerminalTheme] = useState("light");
 
-  const [testValues, setTestValues] = useState<string[]>([]);
+  const [testValues, setTestValues] = useState<string[]>([""]);
 
   const exerciseRef = useRef<FindChallenge_challenge_refs | null>(null);
   const activeLanguageRef = useRef<FindChallenge_programmingLanguages>(
@@ -200,7 +230,7 @@ const Exercise = ({
 
   useInterval(
     () => {
-      if (submissionError) {
+      if (evaluationError) {
         setFetchingCount(0);
         setEvaluationFetching(false);
       }
@@ -210,65 +240,108 @@ const Exercise = ({
         setEvaluationFetching(false);
       }
 
-      if (!submissionData?.submission.feedback) {
+      if (!evaluationData?.submission.result) {
         console.log("Checking the result...");
         setFetchingCount(fetchingCount + 1);
-        getSubmissionById({
-          variables: { gameId, submissionId },
+        getEvaluationById({
+          variables: { gameId, submissionId: evaluationId },
         });
       } else {
-        console.log("Submission", submissionData);
+        console.log("Submission", evaluationData);
         setEvaluationFetching(false);
-        setSubmissionFeedback(submissionData.submission.feedback);
-        setSubmissionResult(submissionData.submission.result);
+        setSubmissionFeedback(evaluationData.submission.feedback || "");
+        setSubmissionResult(evaluationData.submission.result);
       }
     },
     // Delay in milliseconds or null to stop it
     isEvaluationFetching ? 1000 : null
   );
 
+  // VALIDATION POLLING
+  useInterval(
+    () => {
+      if (evaluationError) {
+        setFetchingCount(0);
+        setValidationFetching(false);
+      }
+
+      if (fetchingCount > 7) {
+        setFetchingCount(0);
+        setValidationFetching(false);
+      }
+
+      console.log("validation data", validationData);
+
+      if (!validationData?.validation.result) {
+        console.log("VALIDATION", validationData);
+        // console.log("Checking the result...");
+        setFetchingCount(fetchingCount + 1);
+        getValidationById({
+          variables: { gameId, validationId: validationId },
+        });
+      } else {
+        console.log("Validation", validationData);
+        setValidationFetching(false);
+
+        setSubmissionResult(validationData.validation.result);
+
+        setSubmissionFeedback(validationData.validation.feedback || "");
+
+        setValidationOutputs(validationData.validation.outputs);
+        // setSubmissionResult(validationData.validation.);
+      }
+    },
+    // Delay in milliseconds or null to stop it
+    isValidationFetching ? 1000 : null
+  );
+
   const [
-    getSubmissionById,
+    getEvaluationById,
     {
-      loading: isSubmissionLoading,
-      data: submissionData,
-      error: submissionError,
+      loading: isEvaluationLoading,
+      data: evaluationData,
+      error: evaluationError,
     },
   ] = useLazyQuery<getSubmissionByIdQuery>(GET_SUBMISSION_BY_ID, {
     fetchPolicy: "network-only",
   });
 
-  const [evaluateSubmissionMutation, { data: evaluationData }] = useMutation(
-    EVALUATE_SUBMISSION,
+  const [
+    getValidationById,
     {
-      onCompleted(data) {
-        const submissionId = data.evaluate.id;
-        console.log("DATA EVALUATE", data);
-        console.log("SUBMISSION - EVALUATE", submissionId);
-        setEvaluationFetching(true);
-        setSubmissionId(submissionId);
-        getSubmissionById({
-          variables: { gameId, submissionId },
-        });
-      },
-    }
-  );
+      loading: isValidationLoading,
+      data: validationData,
+      error: validationError,
+    },
+  ] = useLazyQuery<getValidationByIdQuery>(GET_VALIDATION_BY_ID, {
+    fetchPolicy: "network-only",
+  });
 
-  const [validateSubmissionMutation, { data: validationData }] = useMutation(
-    VALIDATE_SUBMISSION,
-    {
-      onCompleted(data) {
-        const submissionId = data.validate.id;
-        console.log("DATA VALIDATE", data);
-        console.log("SUBMISSION - VALIDATE", submissionId);
-        setValidationFetching(true);
-        setSubmissionId(submissionId);
-        getSubmissionById({
-          variables: { gameId, submissionId },
-        });
-      },
-    }
-  );
+  const [evaluateSubmissionMutation] = useMutation(EVALUATE_SUBMISSION, {
+    onCompleted(data) {
+      const submissionId = data.evaluate.id;
+      console.log("EVALUATE", data);
+      console.log("SUBMISSION - EVALUATE", submissionId);
+      setEvaluationFetching(true);
+      setEvaluationId(submissionId);
+      getEvaluationById({
+        variables: { gameId, submissionId },
+      });
+    },
+  });
+
+  const [validateSubmissionMutation] = useMutation(VALIDATE_SUBMISSION, {
+    onCompleted(data) {
+      const validationId = data.validate.id;
+      console.log("VALIDATE", data);
+      console.log("EVALUATION ID", validationId);
+      setValidationFetching(true);
+      setValidationId(validationId);
+      getValidationById({
+        variables: { gameId, validationId },
+      });
+    },
+  });
 
   const getFileFromCode = () => {
     const blob = new Blob([codeRef.current], { type: "text/plain" });
@@ -281,7 +354,9 @@ const Exercise = ({
   };
 
   const evaluateSubmission = () => {
+    clearPlayground();
     setEvaluationFetching(true);
+    setFetchingCount(0);
     if (isEvaluationFetching) {
       return;
     }
@@ -298,7 +373,10 @@ const Exercise = ({
   };
 
   const validateSubmission = () => {
+    clearPlayground();
     setValidationFetching(true);
+    setFetchingCount(0);
+
     if (isValidationFetching) {
       return;
     }
@@ -313,9 +391,15 @@ const Exercise = ({
         file,
         gameId,
         exerciseId: exerciseRef.current?.id,
-        inputs: ["1 2 3"],
+        inputs: testValues,
       },
     });
+  };
+
+  const clearPlayground = () => {
+    setSubmissionResult(null);
+    setSubmissionFeedback("");
+    setValidationOutputs(null);
   };
 
   return (
@@ -372,6 +456,7 @@ const Exercise = ({
             <Terminal
               submissionFeedback={submissionFeedback}
               submissionResult={submissionResult}
+              validationOutputs={validationOutputs}
             />
             {/* <Terminal terminalTheme={terminalTheme}>
               <div>

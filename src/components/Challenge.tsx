@@ -1,17 +1,13 @@
-import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
-import React, { useEffect, useRef, useState } from "react";
+import { gql, useQuery } from "@apollo/client";
+import React, { useState } from "react";
 import withChangeAnimation from "../utilities/withChangeAnimation";
-import useInterval from "../utilities/useInterval";
 import {
   FindChallenge,
   FindChallenge_challenge_refs,
 } from "../generated/FindChallenge";
-import { getSubmissionByIdQuery } from "../generated/getSubmissionByIdQuery";
-import { uploadSubmissionQuery } from "../generated/uploadSubmissionQuery";
 
 import styled from "@emotion/styled";
 import { Flex, Box, Button } from "@chakra-ui/react";
-import ReactHtmlParser from "react-html-parser";
 
 import Exercise from "./Exercise";
 import { useParams } from "react-router-dom";
@@ -58,42 +54,6 @@ const FIND_CHALLENGE = gql`
     }
   }
 `;
-
-const getLastSolvedExercise = (challengeData: FindChallenge) => {
-  let lastSolved = null;
-
-  challengeData.challenge.refs.forEach((ref) => {
-    challengeData.profileInGame.learningPath.forEach((learningPath) => {
-      learningPath.refs.forEach((refToCompare) => {
-        if (refToCompare.solved) {
-          if (refToCompare.activity?.id == ref.id) {
-            lastSolved = ref.id;
-          }
-        }
-      });
-    });
-  });
-
-  console.log(lastSolved);
-};
-
-const getFirstUnsolvedExercise = (challengeData: FindChallenge) => {
-  let lastUnsolved = null;
-
-  challengeData.challenge.refs.forEach((ref) => {
-    challengeData.profileInGame.learningPath.forEach((learningPath) => {
-      learningPath.refs.forEach((refToCompare) => {
-        if (!refToCompare.solved) {
-          if (refToCompare.activity?.id == ref.id) {
-            lastUnsolved = ref.id;
-          }
-        }
-      });
-    });
-  });
-
-  console.log(lastUnsolved);
-};
 
 const checkIfSolved = (
   challengeData: FindChallenge,

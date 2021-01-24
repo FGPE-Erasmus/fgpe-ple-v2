@@ -5,12 +5,14 @@ import {
   Button,
   ButtonGroup,
   Center,
+  CircularProgress,
   Flex,
   IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
+  Spinner,
   Tooltip,
   useColorMode,
   useDisclosure,
@@ -169,6 +171,7 @@ const EditorMenu = ({
                     colorScheme="yellow"
                     aria-label="Add to friends"
                     icon={<AiOutlineAppstoreAdd fontSize={18} />}
+                    disabled={isEvaluationFetching}
                   />
                 </Tooltip>
               </ButtonGroup>
@@ -243,6 +246,8 @@ const EditorMenu = ({
               >
                 {submissionResult}
               </Badge>
+            ) : isValidationFetching || isEvaluationFetching ? (
+              <Spinner size="xs" />
             ) : (
               " -"
             )}

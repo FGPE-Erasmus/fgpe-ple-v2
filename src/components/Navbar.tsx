@@ -30,7 +30,6 @@ const Navbar = () => {
     activeGameAndChallenge.setActiveGame(null);
   };
   const { colorMode } = useColorMode();
-
   const [
     userProfile,
     setUserProfile,

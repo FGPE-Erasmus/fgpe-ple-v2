@@ -7,20 +7,24 @@ import { Result } from "../../generated/globalTypes";
 const Terminal = ({
   submissionResult,
   submissionFeedback,
+  validationOutputs,
 }: {
   submissionResult: Result | null;
   submissionFeedback: string;
+  validationOutputs: null | any;
 }) => {
   const { terminalTheme } = useContext(SettingsContext);
 
   return (
     <TerminalStyled terminalTheme={terminalTheme}>
       <div>
+        {validationOutputs &&
+          Object.keys(validationOutputs).map((objectKey, i) => {
+            return <p key={i}>{validationOutputs[objectKey]}</p>;
+          })}
         {submissionResult == Result.COMPILATION_ERROR
           ? submissionFeedback
-          : ReactHtmlParser(
-              submissionFeedback ? submissionFeedback : "Waiting..."
-            )}
+          : ReactHtmlParser(submissionFeedback ? submissionFeedback : "|")}
       </div>
     </TerminalStyled>
   );
