@@ -7,7 +7,7 @@ import {
 } from "../generated/FindChallenge";
 
 import styled from "@emotion/styled";
-import { Flex, Box, Button } from "@chakra-ui/react";
+import { Flex, Box, Button, Stack, Skeleton } from "@chakra-ui/react";
 
 import Exercise from "./Exercise";
 import { useParams } from "react-router-dom";
@@ -115,11 +115,19 @@ const Challenge = ({
     return <div>Game ID or Challenge ID not provided</div>;
   }
 
-  if (challengeLoading) {
-    return <div>Loading</div>;
-  }
+  // if (challengeLoading) {
+  //   return (
+  //     <Stack>
+  //       <Skeleton>
+  //         <Playground>
+  //           <Flex h="100%" w="100%" />
+  //         </Playground>
+  //       </Skeleton>
+  //     </Stack>
+  //   );
+  // }
 
-  if (!challengeData) {
+  if (!challengeData && !challengeLoading) {
     return <div>Couldn't load challengeData</div>;
   }
 
@@ -134,42 +142,46 @@ const Challenge = ({
         >
           <Box p={{ base: 1, md: 5 }} h="100%" w="100%">
             <Flex flexDirection="column" alignItems="center" w="100%">
-              {challengeData.challenge.refs.map((exercise, i) => {
-                return (
-                  <Button
-                    marginBottom={2}
-                    w="100%"
-                    size="sm"
-                    fontSize={12}
-                    key={i}
-                    colorScheme={
-                      exercise.id === activeExercise?.id ? "blue" : "gray"
-                    }
-                    className={
-                      "exercise " +
-                      (exercise.id === activeExercise?.id ? "active" : "")
-                    }
-                    onClick={() => setActiveExercise(exercise)}
-                    rightIcon={
-                      checkIfSolved(challengeData, exercise) ? (
-                        <CheckIcon />
-                      ) : undefined
-                    }
-                  >
-                    {i + 1}. {exercise.name}
-                  </Button>
-                );
-              })}
+              {!challengeLoading &&
+                challengeData &&
+                challengeData.challenge.refs.map((exercise, i) => {
+                  return (
+                    <Button
+                      marginBottom={2}
+                      w="100%"
+                      size="sm"
+                      fontSize={12}
+                      key={i}
+                      colorScheme={
+                        exercise.id === activeExercise?.id ? "blue" : "gray"
+                      }
+                      className={
+                        "exercise " +
+                        (exercise.id === activeExercise?.id ? "active" : "")
+                      }
+                      onClick={() => setActiveExercise(exercise)}
+                      rightIcon={
+                        checkIfSolved(challengeData, exercise) ? (
+                          <CheckIcon />
+                        ) : undefined
+                      }
+                    >
+                      {i + 1}. {exercise.name}
+                    </Button>
+                  );
+                })}
             </Flex>
           </Box>
         </Box>
 
-        <Exercise
-          gameId={gameId}
-          exercise={activeExercise}
-          programmingLanguages={challengeData.programmingLanguages}
-          challengeRefetch={challengeRefetch}
-        />
+        {!challengeLoading && challengeData && (
+          <Exercise
+            gameId={gameId}
+            exercise={activeExercise}
+            programmingLanguages={challengeData.programmingLanguages}
+            challengeRefetch={challengeRefetch}
+          />
+        )}
       </Flex>
     </Playground>
     // <div>

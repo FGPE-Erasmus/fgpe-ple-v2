@@ -21,7 +21,8 @@ import {
   ColorModeScript,
   localStorageManager,
 } from "@chakra-ui/react";
-import { extendTheme } from "@chakra-ui/react";
+
+import MainLoading from "./components/MainLoading";
 
 const httpLink = createUploadLink({
   uri: process.env.REACT_APP_GRAPHQL_URI,
@@ -90,7 +91,7 @@ ReactDOM.render(
         initOptions={{
           onLoad: "check-sso",
         }}
-        LoadingComponent={<span>loading</span>}
+        LoadingComponent={<MainLoading />}
       >
         <ApolloProvider client={client}>
           <App />
