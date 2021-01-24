@@ -70,6 +70,7 @@ export interface ProfileInGameQuery_profileInGame_learningPath {
   id: string;
   challenge: ProfileInGameQuery_profileInGame_learningPath_challenge;
   state: State;
+  progress: number;
   startedAt: any | null;
   openedAt: any | null;
   endedAt: any | null;
