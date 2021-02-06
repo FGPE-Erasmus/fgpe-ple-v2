@@ -10,7 +10,7 @@ import styled from "@emotion/styled";
 import { Flex, Box, Button, Stack, Skeleton } from "@chakra-ui/react";
 
 import Exercise from "./Exercise";
-import { useParams } from "react-router-dom";
+import { Redirect, useParams } from "react-router-dom";
 import { CheckIcon } from "@chakra-ui/icons";
 
 interface ParamTypes {
@@ -57,9 +57,13 @@ const FIND_CHALLENGE = gql`
 
 const checkIfSolved = (
   challengeData: FindChallenge,
-  exercise: FindChallenge_challenge_refs
+  exercise: FindChallenge_challenge_refs | null
 ) => {
   let solved = false;
+
+  if (!exercise) {
+    return false;
+  }
 
   challengeData.profileInGame.learningPath.map((learningPath) => {
     return learningPath.refs.map((ref, i) => {
@@ -84,6 +88,7 @@ const Challenge = ({
     activeExercise,
     setActiveExercise,
   ] = useState<null | FindChallenge_challenge_refs>(null);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   const {
     data: challengeData,
@@ -127,8 +132,58 @@ const Challenge = ({
   //   );
   // }
 
+  /** Redirects to main course page if there are no more unsolved exercises. */
+  const setNextUnsolvedExercise = () => {
+    if (!challengeData) {
+      return;
+    }
+
+    const learningPathMap = challengeData.profileInGame.learningPath;
+    const challenges = challengeData.challenge.refs;
+    let foundUnsolvedExercise = false;
+    learningPathMap.map((learningPath) => {
+      for (let x = 0; x < learningPath.refs.length; x++) {
+        for (let i = 0; i < challenges.length; i++) {
+          if (!learningPath.refs[x].solved) {
+            if (challenges[i].id === learningPath.refs[x].activity?.id) {
+              if (activeExercise?.id === learningPath.refs[x].activity?.id) {
+                continue;
+              } else {
+                foundUnsolvedExercise = true;
+                setActiveExercise(challenges[i]);
+                break;
+              }
+            }
+          }
+        }
+
+        if (!learningPath.refs[x].solved) {
+          if (activeExercise?.id === learningPath.refs[x].activity?.id) {
+            continue;
+          } else {
+            break;
+          }
+        }
+      }
+    });
+
+    if (!foundUnsolvedExercise) {
+      setShouldRedirect(true);
+    }
+  };
+
   if (!challengeData && !challengeLoading) {
     return <div>Couldn't load challengeData</div>;
+  }
+
+  if (shouldRedirect) {
+    return (
+      <Redirect
+        to={{
+          pathname: `/game/${gameId}`,
+        }}
+      />
+    );
   }
 
   return (
@@ -180,6 +235,8 @@ const Challenge = ({
             exercise={activeExercise}
             programmingLanguages={challengeData.programmingLanguages}
             challengeRefetch={challengeRefetch}
+            solved={checkIfSolved(challengeData, activeExercise)}
+            setNextUnsolvedExercise={setNextUnsolvedExercise}
           />
         )}
       </Flex>

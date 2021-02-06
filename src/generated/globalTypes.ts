@@ -16,6 +16,7 @@ export enum Difficulty {
 }
 
 export enum EvaluationEngine {
+  BASE = "BASE",
   MOOSHAK = "MOOSHAK",
 }
 

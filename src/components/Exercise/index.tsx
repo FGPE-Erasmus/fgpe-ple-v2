@@ -16,6 +16,8 @@ import useInterval from "../../utilities/useInterval";
 import EditorMenu from "./EditorMenu";
 import { Flex, Box, useDisclosure } from "@chakra-ui/react";
 
+import useHotKeys from "./useHotKeys";
+
 import {
   FindChallenge,
   FindChallenge_challenge_refs,
@@ -26,6 +28,7 @@ import { Result } from "../../generated/globalTypes";
 import { SettingsContext } from "./SettingsContext";
 import Terminal from "./Terminal";
 import { getValidationByIdQuery } from "../../generated/getValidationByIdQuery";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const GET_VALIDATION_BY_ID = gql`
   query getValidationByIdQuery($gameId: String!, $validationId: String!) {
@@ -131,6 +134,8 @@ const VALIDATE_SUBMISSION = gql`
   }
 `;
 
+const MAX_FETCHING_COUNT = 30;
+
 const getEditorTheme = () => {
   const editorTheme = localStorage.getItem("editorTheme");
   if (editorTheme) {
@@ -152,6 +157,8 @@ const Exercise = ({
   exercise,
   programmingLanguages,
   challengeRefetch,
+  solved,
+  setNextUnsolvedExercise,
 }: {
   gameId: string;
   exercise: FindChallenge_challenge_refs | null;
@@ -159,6 +166,8 @@ const Exercise = ({
   challengeRefetch: (
     variables?: Partial<Record<string, any>> | undefined
   ) => Promise<ApolloQueryResult<FindChallenge>>;
+  solved: boolean;
+  setNextUnsolvedExercise: () => void;
 }) => {
   const [code, setCode] = useState("");
   const [activeLanguage, setActiveLanguage] = useState(programmingLanguages[0]);
@@ -184,42 +193,26 @@ const Exercise = ({
   const activeLanguageRef = useRef<FindChallenge_programmingLanguages>(
     activeLanguage
   );
+  const isEvaluationFetchingRef = useRef<boolean>(isEvaluationFetching);
+  const isValidationFetchingRef = useRef<boolean>(isValidationFetching);
   const codeRef = useRef<string>(code);
 
   useEffect(() => {
+    isEvaluationFetchingRef.current = isEvaluationFetching;
+    isValidationFetchingRef.current = isValidationFetching;
     exerciseRef.current = exercise;
     activeLanguageRef.current = activeLanguage;
     codeRef.current = code;
   });
 
   useEffect(() => {
-    document.addEventListener("keydown", (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.code === "Backslash") {
-        evaluateSubmission();
-        return;
-      }
-
-      if ((e.metaKey || e.ctrlKey) && e.code === "Enter") {
-        validateSubmission();
-        return;
-      }
-
-      if ((e.metaKey || e.ctrlKey) && e.code === "KeyM") {
-        // validateSubmission();
-        return;
-      }
-
-      if ((e.metaKey || e.ctrlKey) && e.code === "Comma") {
-        // validateSubmission();
-        return;
-      }
-    });
-  }, []);
-
-  useEffect(() => {
     setCode("");
     setSubmissionFeedback("Ready");
     setSubmissionResult(null);
+    setEvaluationFetching(false);
+    setValidationFetching(false);
+    setFetchingCount(0);
+    setValidationOutputs(null);
   }, [exercise]);
 
   useEffect(() => {
@@ -228,20 +221,24 @@ const Exercise = ({
     }
   }, [submissionResult]);
 
+  // EVALUATION (SUBMIT) POLLING
   useInterval(
     () => {
       if (evaluationError) {
+        console.log("Stopping interval", evaluationError);
         setFetchingCount(0);
         setEvaluationFetching(false);
       }
 
-      if (fetchingCount > 7) {
+      if (fetchingCount > MAX_FETCHING_COUNT) {
         setFetchingCount(0);
         setEvaluationFetching(false);
       }
+
+      console.log("[POLLING EVALUATION]", evaluationData);
 
       if (!evaluationData?.submission.result) {
-        console.log("Checking the result...");
+        console.log("[NO EVALUATION DATA]", evaluationData);
         setFetchingCount(fetchingCount + 1);
         getEvaluationById({
           variables: { gameId, submissionId: evaluationId },
@@ -257,7 +254,7 @@ const Exercise = ({
     isEvaluationFetching ? 1000 : null
   );
 
-  // VALIDATION POLLING
+  // VALIDATION (RUN) POLLING
   useInterval(
     () => {
       if (evaluationError) {
@@ -265,15 +262,16 @@ const Exercise = ({
         setValidationFetching(false);
       }
 
-      if (fetchingCount > 7) {
+      if (fetchingCount > MAX_FETCHING_COUNT) {
         setFetchingCount(0);
         setValidationFetching(false);
       }
 
-      console.log("validation data", validationData);
+      console.log("[POLLING VALIDATION]", validationData);
+      // console.log("validation data", validationData);
 
       if (!validationData?.validation.result) {
-        console.log("VALIDATION", validationData);
+        console.log("[NO VALIDAION DATA]", validationData);
         // console.log("Checking the result...");
         setFetchingCount(fetchingCount + 1);
         getValidationById({
@@ -283,7 +281,11 @@ const Exercise = ({
         console.log("Validation", validationData);
         setValidationFetching(false);
 
-        setSubmissionResult(validationData.validation.result);
+        if (validationData.validation.result === Result.ACCEPT) {
+          setSubmissionResult(null);
+        } else {
+          setSubmissionResult(validationData.validation.result);
+        }
 
         setSubmissionFeedback(validationData.validation.feedback || "");
 
@@ -303,6 +305,12 @@ const Exercise = ({
       error: evaluationError,
     },
   ] = useLazyQuery<getSubmissionByIdQuery>(GET_SUBMISSION_BY_ID, {
+    onError(data) {
+      console.log("[GET EVALUATION BY ID ERROR]", data);
+    },
+    onCompleted(data) {
+      console.log("[GET EVALUATION BY ID]", data);
+    },
     fetchPolicy: "network-only",
   });
 
@@ -314,15 +322,25 @@ const Exercise = ({
       error: validationError,
     },
   ] = useLazyQuery<getValidationByIdQuery>(GET_VALIDATION_BY_ID, {
+    onCompleted(data) {
+      console.log("[GET VALIDATION BY ID]", data);
+    },
     fetchPolicy: "network-only",
   });
 
   const [evaluateSubmissionMutation] = useMutation(EVALUATE_SUBMISSION, {
+    onError(data) {
+      console.log("[EVALUATION ERROR]");
+    },
     onCompleted(data) {
       const submissionId = data.evaluate.id;
-      console.log("EVALUATE", data);
-      console.log("SUBMISSION - EVALUATE", submissionId);
+      console.log("[EVALUATE MUTATION DATA]", data);
+      console.log("[SUBMISSION ID]", submissionId);
+      console.log("QUERY DATA", {
+        variables: { gameId, submissionId },
+      });
       setEvaluationFetching(true);
+      setFetchingCount(0);
       setEvaluationId(submissionId);
       getEvaluationById({
         variables: { gameId, submissionId },
@@ -333,9 +351,10 @@ const Exercise = ({
   const [validateSubmissionMutation] = useMutation(VALIDATE_SUBMISSION, {
     onCompleted(data) {
       const validationId = data.validate.id;
-      console.log("VALIDATE", data);
-      console.log("EVALUATION ID", validationId);
+      console.log("[VALIDATE MUTATION DATA]", data);
+      console.log("[VALIDATION ID]", validationId);
       setValidationFetching(true);
+      setFetchingCount(0);
       setValidationId(validationId);
       getValidationById({
         variables: { gameId, validationId },
@@ -355,17 +374,16 @@ const Exercise = ({
 
   const evaluateSubmission = () => {
     clearPlayground();
-    setEvaluationFetching(true);
-    setFetchingCount(0);
-    if (isEvaluationFetching) {
+    // setEvaluationFetching(true);
+    // setFetchingCount(0);
+    if (isEvaluationFetchingRef.current) {
       return;
     }
     if (!exerciseRef.current) {
       return;
-    } else console.log("Evaluating submission...");
+    } else console.log("[EVALUATE SUBMISSION]");
 
     const file = getFileFromCode();
-    console.log("file", file);
 
     evaluateSubmissionMutation({
       variables: { file, gameId, exerciseId: exerciseRef.current?.id },
@@ -374,15 +392,15 @@ const Exercise = ({
 
   const validateSubmission = () => {
     clearPlayground();
-    setValidationFetching(true);
-    setFetchingCount(0);
+    // setValidationFetching(true);
+    // setFetchingCount(0);
 
-    if (isValidationFetching) {
+    if (isValidationFetchingRef.current) {
       return;
     }
     if (!exerciseRef.current) {
       return;
-    } else console.log("Validating submission...");
+    } else console.log("[VALIDATE SUBMISSION]");
 
     const file = getFileFromCode();
 
@@ -427,6 +445,8 @@ const Exercise = ({
           setValidationFetching={setValidationFetching}
           testValues={testValues}
           setTestValues={setTestValues}
+          solved={solved}
+          setNextUnsolvedExercise={setNextUnsolvedExercise}
         />
 
         <Flex
@@ -446,6 +466,7 @@ const Exercise = ({
               code={code}
               setCode={setCode}
               evaluateSubmission={evaluateSubmission}
+              validateSubmission={validateSubmission}
             />
           </Box>
           <Box

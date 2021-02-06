@@ -19,24 +19,14 @@ import {
 } from "@chakra-ui/react";
 
 import React, { useRef } from "react";
-import { AiOutlineAppstoreAdd } from "react-icons/ai";
+import { IoExitOutline } from "react-icons/io5";
 import { FindChallenge_programmingLanguages } from "../../generated/FindChallenge";
 import { Result } from "../../generated/globalTypes";
 // import { useHotkeys } from "react-hotkeys-hook";
 import TextareaModal from "./TextareaModal";
 
 import Settings from "./Settings";
-
-const getColorSchemeForSubmissionResult = (submissionResult: string) => {
-  if (submissionResult == Result.ACCEPT) {
-    return "green";
-  }
-  if (submissionResult == Result.ASK_FOR_REEVALUATION) {
-    return "orange";
-  }
-
-  return "red";
-};
+import { getColorSchemeForSubmissionResult } from "./helpers/EditorMenu";
 
 const EditorMenu = ({
   submissionResult,
@@ -52,6 +42,8 @@ const EditorMenu = ({
   setValidationFetching,
   testValues,
   setTestValues,
+  solved,
+  setNextUnsolvedExercise,
 }: {
   submissionResult: string | null;
   activeLanguage: FindChallenge_programmingLanguages;
@@ -68,6 +60,8 @@ const EditorMenu = ({
   isValidationFetching: boolean;
   testValues: string[];
   setTestValues: React.Dispatch<React.SetStateAction<string[]>>;
+  solved: boolean;
+  setNextUnsolvedExercise: () => void;
 }) => {
   const {
     isOpen: isSettingsOpen,
@@ -167,10 +161,11 @@ const EditorMenu = ({
                   visibility={isTextareaModalOpen ? "hidden" : "initial"}
                 >
                   <IconButton
+                    color={colorMode == "dark" ? "black" : "white"}
+                    bgColor={colorMode == "dark" ? "gray.500" : "gray.800"}
                     onClick={openTextareaModal}
-                    colorScheme="yellow"
                     aria-label="Add to friends"
-                    icon={<AiOutlineAppstoreAdd fontSize={18} />}
+                    icon={<IoExitOutline fontSize={18} />}
                     disabled={isEvaluationFetching}
                   />
                 </Tooltip>
@@ -205,12 +200,12 @@ const EditorMenu = ({
                 disabled
                 fontSize={{ base: 12, md: 14 }}
               >
-                Save
+                Reload
               </Button>
             </Center>
             <Center width={1 / 6.5}>
               <Button
-                colorScheme="blue"
+                colorScheme="teal"
                 size="sm"
                 w="95%"
                 disabled
@@ -235,23 +230,38 @@ const EditorMenu = ({
           width={{ base: "100%", md: 5 / 12 }}
           height={{ base: "50%", md: "auto" }}
         >
-          <Box>
-            Status:
-            {submissionResult ? (
-              <Badge
-                m={3}
-                colorScheme={getColorSchemeForSubmissionResult(
-                  submissionResult
-                )}
+          <Flex w="100%" alignItems="center" justifyContent="center">
+            <Box width={3 / 4} textAlign="left">
+              Status:
+              {submissionResult ? (
+                <Badge
+                  m={3}
+                  colorScheme={getColorSchemeForSubmissionResult(
+                    submissionResult
+                  )}
+                >
+                  {submissionResult}
+                </Badge>
+              ) : isValidationFetching || isEvaluationFetching ? (
+                <Spinner size="xs" />
+              ) : (
+                <Badge m={3} colorScheme="green">
+                  READY
+                </Badge>
+              )}
+            </Box>
+            <Box width={1 / 4} alignItems="center" justifyContent="center">
+              <Button
+                colorScheme={solved ? "green" : "gray"}
+                size="sm"
+                w="95%"
+                fontSize={{ base: 12, md: 14 }}
+                onClick={setNextUnsolvedExercise}
               >
-                {submissionResult}
-              </Badge>
-            ) : isValidationFetching || isEvaluationFetching ? (
-              <Spinner size="xs" />
-            ) : (
-              " -"
-            )}
-          </Box>
+                Next
+              </Button>
+            </Box>
+          </Flex>
         </Center>
       </Flex>
     </>
