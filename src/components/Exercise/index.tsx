@@ -29,6 +29,7 @@ import { SettingsContext } from "./SettingsContext";
 import Terminal from "./Terminal";
 import { getValidationByIdQuery } from "../../generated/getValidationByIdQuery";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useKeycloak } from "@react-keycloak/web";
 
 const GET_VALIDATION_BY_ID = gql`
   query getValidationByIdQuery($gameId: String!, $validationId: String!) {
@@ -171,6 +172,7 @@ const Exercise = ({
 }) => {
   const [code, setCode] = useState("");
   const [activeLanguage, setActiveLanguage] = useState(programmingLanguages[0]);
+  const { keycloak, initialized } = useKeycloak();
 
   const [fetchingCount, setFetchingCount] = useState(0);
 
@@ -207,12 +209,50 @@ const Exercise = ({
 
   useEffect(() => {
     setCode("");
-    setSubmissionFeedback("Ready");
-    setSubmissionResult(null);
+    // setSubmissionResult(null);
     setEvaluationFetching(false);
     setValidationFetching(false);
     setFetchingCount(0);
-    setValidationOutputs(null);
+    // setValidationOutputs(null);
+
+    if (exercise?.id) {
+      const lastSubmissionFeedbackUnparsed = localStorage.getItem(
+        `${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`
+      );
+      try {
+        if (lastSubmissionFeedbackUnparsed) {
+          const parsedLastSubmission = JSON.parse(
+            lastSubmissionFeedbackUnparsed
+          );
+          console.log("GOT", parsedLastSubmission);
+          if (parsedLastSubmission.submissionFeedback != undefined) {
+            setSubmissionFeedback(parsedLastSubmission.submissionFeedback);
+            console.log("setting feedback");
+          } else {
+            setSubmissionFeedback("Ready");
+            console.log("setting feedback - ready");
+          }
+
+          if (parsedLastSubmission.submissionResult) {
+            setSubmissionResult(parsedLastSubmission.submissionResult);
+          } else {
+            setSubmissionResult(null);
+          }
+
+          if (parsedLastSubmission.validationOutputs) {
+            setValidationOutputs(parsedLastSubmission.validationOutputs);
+          } else {
+            setValidationOutputs(null);
+          }
+        } else {
+          clearPlayground();
+        }
+      } catch (err) {
+        clearPlayground();
+      }
+    } else {
+      clearPlayground();
+    }
   }, [exercise]);
 
   useEffect(() => {
@@ -220,6 +260,33 @@ const Exercise = ({
       challengeRefetch();
     }
   }, [submissionResult]);
+
+  // const setSubmissionFeedbackWithLocalStorage = (value: string) => {
+  //   if (exercise?.id) {
+  //     console.log("saving to localstorage...", value);
+  //     console.log(value);
+  //     localStorage.setItem(exercise.id, value);
+  //   }
+
+  //   setSubmissionFeedback(value);
+  // };
+
+  const saveSubmissionDataInLocalStorage = (
+    submissionFeedback: string,
+    submissionResult: Result,
+    validationOutputs?: any
+  ) => {
+    if (exercise?.id) {
+      localStorage.setItem(
+        `${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`,
+        JSON.stringify({
+          submissionFeedback,
+          submissionResult,
+          validationOutputs,
+        })
+      );
+    }
+  };
 
   // EVALUATION (SUBMIT) POLLING
   useInterval(
@@ -248,6 +315,11 @@ const Exercise = ({
         setEvaluationFetching(false);
         setSubmissionFeedback(evaluationData.submission.feedback || "");
         setSubmissionResult(evaluationData.submission.result);
+
+        saveSubmissionDataInLocalStorage(
+          evaluationData.submission.feedback || "",
+          evaluationData.submission.result
+        );
       }
     },
     // Delay in milliseconds or null to stop it
@@ -290,6 +362,13 @@ const Exercise = ({
         setSubmissionFeedback(validationData.validation.feedback || "");
 
         setValidationOutputs(validationData.validation.outputs);
+
+        saveSubmissionDataInLocalStorage(
+          validationData.validation.feedback || "",
+          validationData.validation.result,
+          validationData.validation.outputs
+        );
+
         // setSubmissionResult(validationData.validation.);
       }
     },
@@ -416,7 +495,7 @@ const Exercise = ({
 
   const clearPlayground = () => {
     setSubmissionResult(null);
-    setSubmissionFeedback("");
+    setSubmissionFeedback("Ready");
     setValidationOutputs(null);
   };
 

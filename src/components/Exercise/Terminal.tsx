@@ -24,7 +24,7 @@ const Terminal = ({
           })}
         {submissionResult == Result.COMPILATION_ERROR
           ? submissionFeedback
-          : ReactHtmlParser(submissionFeedback ? submissionFeedback : "|")}
+          : ReactHtmlParser(submissionFeedback ? submissionFeedback : "")}
       </div>
     </TerminalStyled>
   );
