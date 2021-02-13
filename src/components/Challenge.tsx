@@ -12,11 +12,20 @@ import { Flex, Box, Button, Stack, Skeleton } from "@chakra-ui/react";
 import Exercise from "./Exercise";
 import { Redirect, useParams } from "react-router-dom";
 import { CheckIcon } from "@chakra-ui/icons";
+import { getPlayerIdQuery } from "../generated/getPlayerIdQuery";
 
 interface ParamTypes {
   gameId: string;
   challengeId: string;
 }
+
+const GET_PLAYER_ID = gql`
+  query getPlayerIdQuery($gameId: String!) {
+    profileInGame(gameId: $gameId) {
+      id
+    }
+  }
+`;
 
 const FIND_CHALLENGE = gql`
   query FindChallenge($gameId: String!, $challengeId: String!) {
@@ -89,6 +98,17 @@ const Challenge = ({
     setActiveExercise,
   ] = useState<null | FindChallenge_challenge_refs>(null);
   const [shouldRedirect, setShouldRedirect] = useState(false);
+
+  const {
+    data: playerData,
+    error: playerError,
+    loading: playerLoading,
+  } = useQuery<getPlayerIdQuery>(GET_PLAYER_ID, {
+    variables: { gameId },
+    onCompleted: (data) => {
+      console.log("data", data);
+    },
+  });
 
   const {
     data: challengeData,
@@ -198,6 +218,7 @@ const Challenge = ({
           <Box p={{ base: 1, md: 5 }} h="100%" w="100%">
             <Flex flexDirection="column" alignItems="center" w="100%">
               {!challengeLoading &&
+                !playerLoading &&
                 challengeData &&
                 challengeData.challenge.refs.map((exercise, i) => {
                   return (
@@ -229,7 +250,7 @@ const Challenge = ({
           </Box>
         </Box>
 
-        {!challengeLoading && challengeData && (
+        {!challengeLoading && !playerLoading && challengeData && playerData && (
           <Exercise
             gameId={gameId}
             exercise={activeExercise}
@@ -237,6 +258,7 @@ const Challenge = ({
             challengeRefetch={challengeRefetch}
             solved={checkIfSolved(challengeData, activeExercise)}
             setNextUnsolvedExercise={setNextUnsolvedExercise}
+            playerId={playerData.profileInGame.id}
           />
         )}
       </Flex>

@@ -9,6 +9,7 @@ import {
   InMemoryCache,
   ApolloProvider,
   createHttpLink,
+  split,
 } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 
@@ -23,6 +24,22 @@ import {
 } from "@chakra-ui/react";
 
 import MainLoading from "./components/MainLoading";
+import { WebSocketLink } from "@apollo/client/link/ws";
+import { getMainDefinition } from "@apollo/client/utilities";
+
+const wsLink = new WebSocketLink({
+  uri: process.env.REACT_APP_GRAPHQL_WS,
+  options: {
+    reconnect: true,
+    lazy: true,
+    connectionParams: () => ({
+      isWebSocket: true,
+      headers: {
+        Authorization: `bearer ${keycloak.token}`,
+      },
+    }),
+  },
+});
 
 const httpLink = createUploadLink({
   uri: process.env.REACT_APP_GRAPHQL_URI,
@@ -59,8 +76,20 @@ const authLink = setContext((_, { headers }) => {
   }
 });
 
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
+    );
+  },
+  wsLink,
+  authLink.concat(httpLink)
+);
+
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: splitLink,
   cache: new InMemoryCache(),
 });
 

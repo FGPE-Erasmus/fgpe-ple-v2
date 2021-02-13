@@ -15,6 +15,7 @@ import Challenge from "./components/Challenge";
 import PrivateRoute from "./utilities/PrivateRoute";
 
 import NavContext from "./context/NavContext";
+import MainContext from "./context/MainContext";
 
 const MainWrapper = styled.div`
   max-width: 1140px;
@@ -24,14 +25,15 @@ const MainWrapper = styled.div`
 
 function App() {
   const { ready } = useTranslation();
-  const [activeChallenge, setActiveChallenge] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
-  const [activeGame, setActiveGame] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+  // const [activeChallenge, setActiveChallenge] = useState<{
+  //   id: string;
+  //   name: string;
+  // } | null>(null);
+  // const [activeGame, setActiveGame] = useState<{
+  //   id: string;
+  //   name: string;
+  // } | null>(null);
+  const [playerId, setPlayerId] = useState<null | string>(null);
 
   // console.log(process.env.REACT_APP_KEYCLOAK_CLIENT_ID);
   if (!ready) {
@@ -44,12 +46,18 @@ function App() {
         render={({ location }) => (
           <>
             {/* <MainLoading /> */}
-            <NavContext.Provider
+            {/* <NavContext.Provider
               value={{
                 activeChallenge: activeChallenge,
                 setActiveChallenge: setActiveChallenge,
                 activeGame: activeGame,
                 setActiveGame: setActiveGame,
+              }}
+            > */}
+            <MainContext.Provider
+              value={{
+                playerId: null,
+                setPlayerId: setPlayerId,
               }}
             >
               <Navbar />
@@ -85,7 +93,8 @@ function App() {
                   </Switch>
                 </AnimatePresence>
               </MainWrapper>
-            </NavContext.Provider>
+            </MainContext.Provider>
+            {/* </NavContext.Provider> */}
           </>
         )}
       />

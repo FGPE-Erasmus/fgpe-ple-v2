@@ -8,6 +8,7 @@ import {
   useMutation,
   useLazyQuery,
   ApolloQueryResult,
+  useSubscription,
 } from "@apollo/client";
 import { getSubmissionByIdQuery } from "../../generated/getSubmissionByIdQuery";
 import CodeEditor from "../CodeEditor";
@@ -30,6 +31,9 @@ import Terminal from "./Terminal";
 import { getValidationByIdQuery } from "../../generated/getValidationByIdQuery";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useKeycloak } from "@react-keycloak/web";
+
+import { getPlayerIdQuery } from "../../generated/getPlayerIdQuery";
+import { validationSubscription } from "../../generated/validationSubscription";
 
 const GET_VALIDATION_BY_ID = gql`
   query getValidationByIdQuery($gameId: String!, $validationId: String!) {
@@ -135,6 +139,37 @@ const VALIDATE_SUBMISSION = gql`
   }
 `;
 
+const VALIDATION_SUBSCRIPTION = gql`
+  subscription validationSubscription($gameId: String!, $playerId: String!) {
+    validationProcessedStudent(gameId: $gameId, playerId: $playerId) {
+      id
+      player {
+        id
+      }
+      exerciseId
+      result
+      createdAt
+      feedback
+      outputs
+    }
+  }
+`;
+
+const EVALUATION_SUBSCRIPTION = gql`
+  subscription evaluationSubscription($gameId: String!, $playerId: String!) {
+    submissionEvaluatedStudent(gameId: $gameId, playerId: $playerId) {
+      id
+      player {
+        id
+      }
+      exerciseId
+      result
+      createdAt
+      feedback
+    }
+  }
+`;
+
 const MAX_FETCHING_COUNT = 30;
 
 const getEditorTheme = () => {
@@ -160,6 +195,7 @@ const Exercise = ({
   challengeRefetch,
   solved,
   setNextUnsolvedExercise,
+  playerId,
 }: {
   gameId: string;
   exercise: FindChallenge_challenge_refs | null;
@@ -169,6 +205,7 @@ const Exercise = ({
   ) => Promise<ApolloQueryResult<FindChallenge>>;
   solved: boolean;
   setNextUnsolvedExercise: () => void;
+  playerId: string;
 }) => {
   const [code, setCode] = useState("");
   const [activeLanguage, setActiveLanguage] = useState(programmingLanguages[0]);
@@ -392,6 +429,16 @@ const Exercise = ({
     },
     fetchPolicy: "network-only",
   });
+
+  const {
+    data: subscriptionData,
+    loading: subscriptionLoading,
+    error: subError,
+  } = useSubscription<validationSubscription>(VALIDATION_SUBSCRIPTION, {
+    variables: { gameId, playerId },
+  });
+  console.log("SUB", subscriptionData, subscriptionLoading);
+  console.log("error", subError);
 
   const [
     getValidationById,
