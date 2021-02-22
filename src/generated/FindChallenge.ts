@@ -9,11 +9,18 @@ import { Difficulty, Mode } from "./globalTypes";
 // GraphQL query operation: FindChallenge
 // ====================================================
 
+export interface FindChallenge_challenge_refs_codeSkeletons {
+  __typename: "CodeSkeleton";
+  code: string | null;
+  extension: string | null;
+}
+
 export interface FindChallenge_challenge_refs {
   __typename: "Activity";
   id: string | null;
   name: string | null;
   statement: string | null;
+  codeSkeletons: FindChallenge_challenge_refs_codeSkeletons[] | null;
 }
 
 export interface FindChallenge_challenge {

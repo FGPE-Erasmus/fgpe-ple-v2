@@ -16,14 +16,17 @@ import {
   Tooltip,
   useColorMode,
   useDisclosure,
+  Text,
 } from "@chakra-ui/react";
 
 import React, { useRef } from "react";
 import { IoExitOutline } from "react-icons/io5";
+import { BiLink, BiUnlink } from "react-icons/bi";
 import { FindChallenge_programmingLanguages } from "../../generated/FindChallenge";
 import { Result } from "../../generated/globalTypes";
 // import { useHotkeys } from "react-hotkeys-hook";
 import TextareaModal from "./TextareaModal";
+import { motion, AnimatePresence } from "framer-motion";
 
 import Settings from "./Settings";
 import { getColorSchemeForSubmissionResult } from "./helpers/EditorMenu";
@@ -33,24 +36,27 @@ const EditorMenu = ({
   activeLanguage,
   evaluateSubmission,
   validateSubmission,
-  isEvaluationFetching,
-  setFetchingCount,
-  setSubmissionFetching,
+  isEvaluationFetching: isWaitingForEvaluationResult,
+
+  setSubmissionFetching: setIsWaitingForEvaluationResult,
   setActiveLanguage,
   programmingLanguages,
-  isValidationFetching,
-  setValidationFetching,
+  isValidationFetching: isWaitingForValidationResult,
+  setValidationFetching: setIsWaitingForValidationResult,
   testValues,
   setTestValues,
   solved,
   setNextUnsolvedExercise,
+  connectionError,
+  restore,
+  isRestoreAvailable,
+  reload,
 }: {
   submissionResult: string | null;
   activeLanguage: FindChallenge_programmingLanguages;
   evaluateSubmission: () => void;
   validateSubmission: () => void;
   isEvaluationFetching: boolean;
-  setFetchingCount: React.Dispatch<React.SetStateAction<number>>;
   setSubmissionFetching: React.Dispatch<React.SetStateAction<boolean>>;
   setValidationFetching: React.Dispatch<React.SetStateAction<boolean>>;
   setActiveLanguage: React.Dispatch<
@@ -62,6 +68,10 @@ const EditorMenu = ({
   setTestValues: React.Dispatch<React.SetStateAction<string[]>>;
   solved: boolean;
   setNextUnsolvedExercise: () => void;
+  connectionError: any;
+  restore: () => void;
+  reload: () => void;
+  isRestoreAvailable: boolean;
 }) => {
   const {
     isOpen: isSettingsOpen,
@@ -136,17 +146,18 @@ const EditorMenu = ({
               <ButtonGroup size="sm" isAttached w="95%" colorScheme="blue">
                 <Button
                   onClick={() => {
-                    if (isValidationFetching) {
-                      setValidationFetching(false);
-                      setFetchingCount(0);
+                    if (isWaitingForValidationResult) {
+                      setIsWaitingForValidationResult(false);
                     } else {
                       validateSubmission();
                     }
                   }}
                   w="95%"
-                  isLoading={isValidationFetching}
-                  loadingText={"Stop"}
-                  disabled={isEvaluationFetching}
+                  isLoading={isWaitingForValidationResult}
+                  // loadingText={"Stop"}
+                  disabled={
+                    isWaitingForEvaluationResult || isWaitingForValidationResult
+                  }
                   fontSize={{ base: 12, md: 14 }}
                 >
                   Run
@@ -166,7 +177,10 @@ const EditorMenu = ({
                     onClick={openTextareaModal}
                     aria-label="Add to friends"
                     icon={<IoExitOutline fontSize={18} />}
-                    disabled={isEvaluationFetching}
+                    disabled={
+                      isWaitingForEvaluationResult ||
+                      isWaitingForValidationResult
+                    }
                   />
                 </Tooltip>
               </ButtonGroup>
@@ -175,18 +189,19 @@ const EditorMenu = ({
               <Button
                 colorScheme="blue"
                 onClick={() => {
-                  if (isEvaluationFetching) {
-                    setSubmissionFetching(false);
-                    setFetchingCount(0);
+                  if (isWaitingForEvaluationResult) {
+                    setIsWaitingForEvaluationResult(false);
                   } else {
                     evaluateSubmission();
                   }
                 }}
                 w="95%"
                 size="sm"
-                isLoading={isEvaluationFetching}
-                loadingText={"Stop"}
-                disabled={isValidationFetching}
+                isLoading={isWaitingForEvaluationResult}
+                // loadingText={"Stop"}
+                disabled={
+                  isWaitingForEvaluationResult || isWaitingForValidationResult
+                }
                 fontSize={{ base: 12, md: 14 }}
               >
                 Submit
@@ -197,8 +212,8 @@ const EditorMenu = ({
                 colorScheme="teal"
                 size="sm"
                 w="95%"
-                disabled
                 fontSize={{ base: 12, md: 14 }}
+                onClick={reload}
               >
                 Reload
               </Button>
@@ -208,8 +223,9 @@ const EditorMenu = ({
                 colorScheme="teal"
                 size="sm"
                 w="95%"
-                disabled
                 fontSize={{ base: 12, md: 14 }}
+                onClick={restore}
+                disabled={!isRestoreAvailable}
               >
                 Restore
               </Button>
@@ -233,22 +249,89 @@ const EditorMenu = ({
           <Flex w="100%" alignItems="center" justifyContent="center">
             <Box width={3 / 4} textAlign="left">
               Status:
+              {/* <div style={{ display: "inline-block", width: 50 }}>
+                <AnimatePresence>
+                  {(isValidationFetching || isEvaluationFetching) && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      style={{ display: "inline-block", position: "absolute" }}
+                    >
+                      <Spinner size="xs" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+              <AnimatePresence>
+                {submissionResult ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    style={{ display: "inline-block", position: "absolute" }}
+                  >
+                    <Badge
+                      m={1}
+                      colorScheme={getColorSchemeForSubmissionResult(
+                        submissionResult
+                      )}
+                    >
+                      {submissionResult}
+                    </Badge>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    style={{ display: "inline-block", position: "absolute" }}
+                  >
+                    <Badge m={1} colorScheme="green">
+                      READY
+                    </Badge>
+                  </motion.div>
+                )}
+              </AnimatePresence> */}
               {submissionResult ? (
                 <Badge
-                  m={3}
+                  m={1}
                   colorScheme={getColorSchemeForSubmissionResult(
                     submissionResult
                   )}
                 >
-                  {submissionResult}
+                  {connectionError ? "CONNECTION PROBLEM" : submissionResult}
                 </Badge>
-              ) : isValidationFetching || isEvaluationFetching ? (
-                <Spinner size="xs" />
+              ) : isWaitingForValidationResult ||
+                isWaitingForEvaluationResult ? (
+                <Spinner marginRight={3} marginLeft={3} size="xs" />
               ) : (
-                <Badge m={3} colorScheme="green">
-                  READY
+                <Badge m={1} colorScheme={connectionError ? "red" : "green"}>
+                  {connectionError ? "CONNECTION PROBLEM" : "READY"}
                 </Badge>
               )}
+              <Tooltip
+                label={
+                  connectionError
+                    ? "There's a problem with your connection, try to refresh"
+                    : "Connected succesfully"
+                }
+                aria-label="A tooltip"
+                bg="gray.300"
+                color="black"
+                hasArrow
+              >
+                <Badge
+                  colorScheme={connectionError ? "red" : "green"}
+                  variant="solid"
+                >
+                  {connectionError ? (
+                    <BiUnlink fontSize={18} />
+                  ) : (
+                    <BiLink fontSize={18} />
+                  )}
+                </Badge>
+              </Tooltip>
             </Box>
             <Box width={1 / 4} alignItems="center" justifyContent="center">
               <Button

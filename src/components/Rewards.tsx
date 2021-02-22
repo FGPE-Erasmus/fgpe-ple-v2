@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import React, { useState } from "react";
 import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
 import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
+import { RewardType } from "../generated/globalTypes";
 
 const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
   const color = useColorModeValue("gray.100", "gray.700");
@@ -9,29 +10,36 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
   const [showRewardsAlert, setShowRewardsAlert] = useState(true);
   return (
     <RewardsWrapper bg={color}>
-      {data
-        ? data.myGameProfiles.map((gameProfile, i) => {
-            return gameProfile.rewards.length > 0
-              ? gameProfile.rewards.map(({ reward }, i) => {
-                  if (showRewardsAlert) {
-                    setShowRewardsAlert(false);
-                  }
-                  return (
-                    <RewardStyle
-                      key={i}
-                      bg={"white"}
-                      marginLeft={5}
-                      textAlign="center"
-                    >
-                      <RewardImage imageData={reward.image} />
+      {data &&
+        data.myGameProfiles.map((gameProfile, i) => {
+          return (
+            gameProfile.rewards.length > 0 &&
+            gameProfile.rewards.map(({ reward }, i) => {
+              if (
+                reward.kind == RewardType.UNLOCK ||
+                reward.kind == RewardType.REVEAL
+              ) {
+                return;
+              }
+              if (showRewardsAlert) {
+                setShowRewardsAlert(false);
+              }
+              return (
+                <RewardStyle
+                  key={i}
+                  bg={"white"}
+                  marginLeft={5}
+                  textAlign="center"
+                >
+                  <RewardImage imageData={reward.image} />
 
-                      <div>{reward.name}</div>
-                    </RewardStyle>
-                  );
-                })
-              : showRewardsAlert && "You will see your rewards here";
-          })
-        : showRewardsAlert && "You will see your rewards"}
+                  <div>{reward.name}</div>
+                </RewardStyle>
+              );
+            })
+          );
+        })}
+      {showRewardsAlert && "You will see your rewards here"}
     </RewardsWrapper>
   );
 };

@@ -38,66 +38,98 @@ const CodeEditor = ({
   function handleEditorDidMount(editor: any) {
     // here is the editor instance
     // you can store it in `useRef` for further usage
+    // console.log("editor", editor);
     editorRef.current = editor;
+
+    editor.addAction({
+      // An unique identifier of the contributed action.
+      id: "runYourCode",
+      // A label of the action that will be presented to the user.
+      label: "Run your code",
+      // An optional array of keybindings for the action.
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+      // A precondition for this action.
+      precondition: null,
+      // A rule to evaluate on top of the precondition in order to dispatch the keybindings.
+      keybindingContext: null,
+      contextMenuGroupId: "navigation",
+      contextMenuOrder: 1.5,
+      // Method that will be executed when the action is triggered.
+      // @param editor The editor instance is passed in as a convinience
+      run: function (ed: any) {
+        // console.log("VALIDATE");
+        validateSubmission();
+        return null;
+      },
+    });
+
+    editorRef.current.addAction({
+      id: "submitYourCode",
+      label: "Submit your code",
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_BACKSLASH],
+      precondition: null,
+      keybindingContext: null,
+      contextMenuGroupId: "navigation",
+      contextMenuOrder: 1.5,
+      run: function (ed: any) {
+        // console.log("EVALUATE");
+        evaluateSubmission();
+        return null;
+      },
+    });
   }
 
   useEffect(() => {
     if (monaco && editorRef.current) {
-      //   editorRef.current.onKeyDown((event: any) => {
-      //     console.log("event", event);
-      //     const { ctrlKey, metaKey } = event;
-      //     if (metaKey || ctrlKey) {
-      //       console.log("trolololo");
-      //       event.preventDefault();
-      //     }
-      //   });
-
-      if (!editorRef.current._actions.submitYourCode) {
-        editorRef.current.addAction({
-          // An unique identifier of the contributed action.
-          id: "submitYourCode",
-          // A label of the action that will be presented to the user.
-          label: "Submit your code",
-          // An optional array of keybindings for the action.
-          keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-          // A precondition for this action.
-          precondition: null,
-          // A rule to evaluate on top of the precondition in order to dispatch the keybindings.
-          keybindingContext: null,
-          contextMenuGroupId: "navigation",
-          contextMenuOrder: 1.5,
-          // Method that will be executed when the action is triggered.
-          // @param editor The editor instance is passed in as a convinience
-          run: function (ed: any) {
-            console.log("VALIDATE");
-            validateSubmission();
-            return null;
-          },
-        });
-      }
+      editorRef.current.addAction({
+        // An unique identifier of the contributed action.
+        id: "runYourCode",
+        // A label of the action that will be presented to the user.
+        label: "Run your code",
+        // An optional array of keybindings for the action.
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+        // A precondition for this action.
+        precondition: null,
+        // A rule to evaluate on top of the precondition in order to dispatch the keybindings.
+        keybindingContext: null,
+        contextMenuGroupId: "navigation",
+        contextMenuOrder: 1.5,
+        // Method that will be executed when the action is triggered.
+        // @param editor The editor instance is passed in as a convinience
+        run: function (ed: any) {
+          // console.log("VALIDATE");
+          validateSubmission();
+          return null;
+        },
+      });
+      // }
 
       if (!editorRef.current._actions.runYourCode) {
         editorRef.current.addAction({
-          id: "runYourCode",
-          label: "Run your code",
+          id: "submitYourCode",
+          label: "Submit your code",
           keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_BACKSLASH],
           precondition: null,
           keybindingContext: null,
           contextMenuGroupId: "navigation",
           contextMenuOrder: 1.5,
           run: function (ed: any) {
-            console.log("EVALUATE");
+            // console.log("EVALUATE");
             evaluateSubmission();
             return null;
           },
         });
       }
     }
-  }, [monaco, editorRef]);
+  }, [monaco, editorRef, language]);
 
   function handleEditorChange(value: any, event: any) {
     setCode(value);
     // console.log("here is the current model value:", value);
+  }
+
+  if (!monaco) {
+    return <EditorStyled>Loading...</EditorStyled>;
   }
 
   return (
@@ -112,7 +144,9 @@ const CodeEditor = ({
         className="editor"
         options={{
           fixedOverflowWidgets: true,
-          minimap: false,
+          minimap: {
+            enabled: false,
+          },
         }}
       />
     </EditorStyled>

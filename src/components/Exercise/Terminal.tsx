@@ -8,29 +8,46 @@ const Terminal = ({
   submissionResult,
   submissionFeedback,
   validationOutputs,
+  loading,
 }: {
   submissionResult: Result | null;
   submissionFeedback: string;
   validationOutputs: null | any;
+  loading: boolean;
 }) => {
-  const { terminalTheme } = useContext(SettingsContext);
-
+  const { terminalTheme, terminalFontSize } = useContext(SettingsContext);
   return (
-    <TerminalStyled terminalTheme={terminalTheme}>
+    <TerminalStyled
+      terminalTheme={terminalTheme}
+      terminalFontSize={terminalFontSize}
+    >
       <div>
         {validationOutputs &&
           Object.keys(validationOutputs).map((objectKey, i) => {
-            return <p key={i}>{validationOutputs[objectKey]}</p>;
+            return (
+              <span key={i} style={{ whiteSpace: "pre-line" }}>
+                {validationOutputs[objectKey]}
+              </span>
+            );
           })}
         {submissionResult == Result.COMPILATION_ERROR
           ? submissionFeedback
-          : ReactHtmlParser(submissionFeedback ? submissionFeedback : "")}
+          : ReactHtmlParser(
+              submissionFeedback
+                ? loading
+                  ? "Waiting for result..."
+                  : submissionFeedback
+                : ""
+            )}
       </div>
     </TerminalStyled>
   );
 };
 
-const TerminalStyled = styled.div<{ terminalTheme: string }>`
+const TerminalStyled = styled.div<{
+  terminalTheme: string;
+  terminalFontSize: string;
+}>`
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   position: relative;
   height: 100%;
@@ -41,7 +58,7 @@ const TerminalStyled = styled.div<{ terminalTheme: string }>`
     terminalTheme == "dark" ? "white" : "#121212"};
   padding: 12px;
   margin: 0px;
-  font-size: 13px;
+  font-size: ${({ terminalFontSize }) => terminalFontSize}px;
   font-family: "Source Code Pro", monospace;
   overflow-y: auto;
   overflow-x: hidden;

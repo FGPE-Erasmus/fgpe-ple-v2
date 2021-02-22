@@ -31,6 +31,7 @@ const PLAYER_GAME_PROFILES = gql`
           name
           description
           image
+          kind
         }
       }
     }

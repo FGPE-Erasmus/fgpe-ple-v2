@@ -31,5 +31,4 @@ export interface validationSubscription {
 
 export interface validationSubscriptionVariables {
   gameId: string;
-  playerId: string;
 }

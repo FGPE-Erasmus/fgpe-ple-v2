@@ -19,14 +19,6 @@ interface ParamTypes {
   challengeId: string;
 }
 
-const GET_PLAYER_ID = gql`
-  query getPlayerIdQuery($gameId: String!) {
-    profileInGame(gameId: $gameId) {
-      id
-    }
-  }
-`;
-
 const FIND_CHALLENGE = gql`
   query FindChallenge($gameId: String!, $challengeId: String!) {
     challenge(gameId: $gameId, id: $challengeId) {
@@ -42,6 +34,10 @@ const FIND_CHALLENGE = gql`
         id
         name
         statement
+        codeSkeletons {
+          code
+          extension
+        }
       }
     }
 
@@ -98,17 +94,6 @@ const Challenge = ({
     setActiveExercise,
   ] = useState<null | FindChallenge_challenge_refs>(null);
   const [shouldRedirect, setShouldRedirect] = useState(false);
-
-  const {
-    data: playerData,
-    error: playerError,
-    loading: playerLoading,
-  } = useQuery<getPlayerIdQuery>(GET_PLAYER_ID, {
-    variables: { gameId },
-    onCompleted: (data) => {
-      console.log("data", data);
-    },
-  });
 
   const {
     data: challengeData,
@@ -218,7 +203,6 @@ const Challenge = ({
           <Box p={{ base: 1, md: 5 }} h="100%" w="100%">
             <Flex flexDirection="column" alignItems="center" w="100%">
               {!challengeLoading &&
-                !playerLoading &&
                 challengeData &&
                 challengeData.challenge.refs.map((exercise, i) => {
                   return (
@@ -250,7 +234,7 @@ const Challenge = ({
           </Box>
         </Box>
 
-        {!challengeLoading && !playerLoading && challengeData && playerData && (
+        {!challengeLoading && challengeData && (
           <Exercise
             gameId={gameId}
             exercise={activeExercise}
@@ -258,7 +242,6 @@ const Challenge = ({
             challengeRefetch={challengeRefetch}
             solved={checkIfSolved(challengeData, activeExercise)}
             setNextUnsolvedExercise={setNextUnsolvedExercise}
-            playerId={playerData.profileInGame.id}
           />
         )}
       </Flex>

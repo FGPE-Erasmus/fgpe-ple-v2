@@ -27,17 +27,51 @@ import MainLoading from "./components/MainLoading";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 
+import ClearLocalStorage from "./utilities/ClearLocalStorage";
+
+ClearLocalStorage();
+
 const wsLink = new WebSocketLink({
   uri: process.env.REACT_APP_GRAPHQL_WS,
   options: {
     reconnect: true,
     lazy: true,
-    connectionParams: () => ({
-      isWebSocket: true,
-      headers: {
-        Authorization: `bearer ${keycloak.token}`,
-      },
-    }),
+    connectionParams: () => {
+      const token = keycloak.token;
+      if (keycloak.isTokenExpired()) {
+        keycloak
+          .updateToken(1)
+          .then(function (refreshed: boolean) {
+            if (refreshed) {
+              console.log("Token was successfully refreshed");
+            } else {
+              console.log("Token is still valid");
+            }
+            return {
+              headers: {
+                authorization: token ? `bearer ${token}` : "",
+              },
+            };
+          })
+          .catch(function () {
+            console.log(
+              "Failed to refresh the token, or the session has expired"
+            );
+          });
+      } else {
+        return {
+          headers: {
+            authorization: token ? `bearer ${token}` : "",
+          },
+        };
+      }
+
+      // return {
+      //   headers: {
+      //     authorization: `bearer ${keycloak.token}`,
+      //   },
+      // };
+    },
   },
 });
 

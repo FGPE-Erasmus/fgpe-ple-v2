@@ -16,8 +16,7 @@ import useInterval from "../../utilities/useInterval";
 // import Loading from "./Loading";
 import EditorMenu from "./EditorMenu";
 import { Flex, Box, useDisclosure } from "@chakra-ui/react";
-
-import useHotKeys from "./useHotKeys";
+import { decryptWithAES, encryptWithAES } from "../../utilities/Encryption";
 
 import {
   FindChallenge,
@@ -34,6 +33,11 @@ import { useKeycloak } from "@react-keycloak/web";
 
 import { getPlayerIdQuery } from "../../generated/getPlayerIdQuery";
 import { validationSubscription } from "../../generated/validationSubscription";
+import { evaluationSubscription } from "../../generated/evaluationSubscription";
+import { latestValidationQuery } from "../../generated/latestValidationQuery";
+import { languages } from "prismjs";
+import { parse } from "graphql";
+import { clear } from "console";
 
 const GET_VALIDATION_BY_ID = gql`
   query getValidationByIdQuery($gameId: String!, $validationId: String!) {
@@ -140,8 +144,8 @@ const VALIDATE_SUBMISSION = gql`
 `;
 
 const VALIDATION_SUBSCRIPTION = gql`
-  subscription validationSubscription($gameId: String!, $playerId: String!) {
-    validationProcessedStudent(gameId: $gameId, playerId: $playerId) {
+  subscription validationSubscription($gameId: String!) {
+    validationProcessedStudent(gameId: $gameId) {
       id
       player {
         id
@@ -156,8 +160,8 @@ const VALIDATION_SUBSCRIPTION = gql`
 `;
 
 const EVALUATION_SUBSCRIPTION = gql`
-  subscription evaluationSubscription($gameId: String!, $playerId: String!) {
-    submissionEvaluatedStudent(gameId: $gameId, playerId: $playerId) {
+  subscription evaluationSubscription($gameId: String!) {
+    submissionEvaluatedStudent(gameId: $gameId) {
       id
       player {
         id
@@ -170,7 +174,32 @@ const EVALUATION_SUBSCRIPTION = gql`
   }
 `;
 
-const MAX_FETCHING_COUNT = 30;
+const LATEST_VALIDATION = gql`
+  query latestValidationQuery($gameId: String!, $exerciseId: String!) {
+    latestValidation(gameId: $gameId, exerciseId: $exerciseId) {
+      createdAt
+      feedback
+      result
+      outputs
+      language
+      program
+      id
+    }
+  }
+`;
+
+const LATEST_SUBMISSION = gql`
+  query latestSubmissionQuery($gameId: String!, $exerciseId: String!) {
+    latestSubmission(gameId: $gameId, exerciseId: $exerciseId) {
+      createdAt
+      feedback
+      result
+      language
+      program
+      id
+    }
+  }
+`;
 
 const getEditorTheme = () => {
   const editorTheme = localStorage.getItem("editorTheme");
@@ -188,6 +217,14 @@ const getTerminalTheme = () => {
   return "light";
 };
 
+const getTerminalFontSize = () => {
+  const terminalFontSize = localStorage.getItem("terminalFontSize");
+  if (terminalFontSize) {
+    return terminalFontSize;
+  }
+  return "14";
+};
+
 const Exercise = ({
   gameId,
   exercise,
@@ -195,7 +232,6 @@ const Exercise = ({
   challengeRefetch,
   solved,
   setNextUnsolvedExercise,
-  playerId,
 }: {
   gameId: string;
   exercise: FindChallenge_challenge_refs | null;
@@ -205,26 +241,36 @@ const Exercise = ({
   ) => Promise<ApolloQueryResult<FindChallenge>>;
   solved: boolean;
   setNextUnsolvedExercise: () => void;
-  playerId: string;
 }) => {
+  const [
+    activeLanguage,
+    setActiveLanguage,
+  ] = useState<FindChallenge_programmingLanguages>(programmingLanguages[0]);
   const [code, setCode] = useState("");
-  const [activeLanguage, setActiveLanguage] = useState(programmingLanguages[0]);
-  const { keycloak, initialized } = useKeycloak();
 
-  const [fetchingCount, setFetchingCount] = useState(0);
+  const { keycloak } = useKeycloak();
 
   const [submissionFeedback, setSubmissionFeedback] = useState("Ready");
   const [submissionResult, setSubmissionResult] = useState<Result | null>(null);
   const [validationOutputs, setValidationOutputs] = useState<null | any>(null);
 
-  const [isEvaluationFetching, setEvaluationFetching] = useState(false);
-  const [isValidationFetching, setValidationFetching] = useState(false);
+  const [
+    isWaitingForEvaluationResult,
+    setWaitingForEvaluationResult,
+  ] = useState(false);
+  const [
+    isWaitingForValidationResult,
+    setWaitingForValidationResult,
+  ] = useState(false);
+
+  const [connectionProblem, setConnectionProblem] = useState(false);
 
   const [evaluationId, setEvaluationId] = useState<null | string>(null);
   const [validationId, setValidationId] = useState<null | string>(null);
 
   const [editorTheme, setEditorTheme] = useState("light");
   const [terminalTheme, setTerminalTheme] = useState("light");
+  const [terminalFontSize, setTerminalFontSize] = useState("18");
 
   const [testValues, setTestValues] = useState<string[]>([""]);
 
@@ -232,61 +278,211 @@ const Exercise = ({
   const activeLanguageRef = useRef<FindChallenge_programmingLanguages>(
     activeLanguage
   );
-  const isEvaluationFetchingRef = useRef<boolean>(isEvaluationFetching);
-  const isValidationFetchingRef = useRef<boolean>(isValidationFetching);
+  const isEvaluationFetchingRef = useRef<boolean>(isWaitingForEvaluationResult);
+  const isValidationFetchingRef = useRef<boolean>(isWaitingForValidationResult);
   const codeRef = useRef<string>(code);
+  const [isRestoreAvailable, setRestoreAvailable] = useState(false);
+
+  const reloadCode = () => {
+    setCode("");
+    clearPlayground();
+    saveSubmissionDataInLocalStorage("", null, true, null, "");
+  };
+
+  const getCodeSkeleton = () => {
+    if (exercise) {
+      if (exercise.codeSkeletons) {
+        const codeSkeletons = exercise.codeSkeletons;
+        for (let i = 0; i < codeSkeletons.length; i++) {
+          if (codeSkeletons[i].extension == activeLanguage.extension) {
+            return codeSkeletons[i].code;
+          }
+        }
+      }
+    }
+
+    return "";
+  };
+
+  const saveCodeToLocalStorage = (codeToSave: string) => {
+    if (exercise && keycloak.profile?.email) {
+      const userDataLocalStorage = localStorage.getItem(
+        `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`
+      );
+      if (userDataLocalStorage) {
+        const userData = JSON.parse(userDataLocalStorage);
+        const encryptedCode = encryptWithAES(
+          codeToSave,
+          keycloak.profile?.email
+        );
+        const userDataWithNewCode = {
+          ...userData,
+          code: encryptedCode,
+          language: activeLanguage.name,
+        };
+        localStorage.setItem(
+          `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`,
+          JSON.stringify(userDataWithNewCode)
+        );
+      } else {
+        saveSubmissionDataInLocalStorage("", null, true, null, codeToSave);
+      }
+    }
+  };
+
+  const restoreLatestSubmissionOrValidation = async () => {
+    const latestValidation = await refetchLastValidation();
+
+    if (!latestValidation.data) {
+      return;
+    }
+
+    const latestValidationData = latestValidation.data.latestValidation;
+
+    if (!latestValidationData) {
+      return;
+    }
+
+    setCode(latestValidationData.program || "");
+
+    for (let i = 0; i < programmingLanguages.length; i++) {
+      if (programmingLanguages[i].name == latestValidationData.language) {
+        setActiveLanguage(programmingLanguages[i]);
+      }
+    }
+
+    if (latestValidationData.outputs) {
+      setValidationOutputs(latestValidationData.outputs);
+    } else {
+      setValidationOutputs(null);
+    }
+
+    if (latestValidationData.feedback) {
+      setSubmissionFeedback(latestValidationData.feedback);
+    } else {
+      setSubmissionFeedback("");
+    }
+
+    if (latestValidationData.result) {
+      if (latestValidationData.result === Result.ACCEPT) {
+        setSubmissionResult(null);
+      } else {
+        setSubmissionResult(latestValidationData.result);
+      }
+    } else {
+      setSubmissionResult(null);
+    }
+
+    saveSubmissionDataInLocalStorage(
+      latestValidationData.feedback || "",
+      latestValidationData.result,
+      true,
+      latestValidationData.outputs,
+      latestValidationData.program || ""
+    );
+  };
 
   useEffect(() => {
-    isEvaluationFetchingRef.current = isEvaluationFetching;
-    isValidationFetchingRef.current = isValidationFetching;
+    isEvaluationFetchingRef.current = isWaitingForEvaluationResult;
+    isValidationFetchingRef.current = isWaitingForValidationResult;
     exerciseRef.current = exercise;
     activeLanguageRef.current = activeLanguage;
     codeRef.current = code;
   });
 
   useEffect(() => {
+    setTimeout(() => {
+      if (
+        !isValidationFetchingRef.current ||
+        !isEvaluationFetchingRef.current
+      ) {
+        setConnectionProblem(true);
+      }
+    }, 1000 * 120);
+  }, [isWaitingForEvaluationResult, isWaitingForValidationResult]);
+
+  const {
+    data: lastValidationData,
+    error: lastValidationError,
+    loading: lastValidationLoading,
+    refetch: refetchLastValidation,
+  } = useQuery<latestValidationQuery>(LATEST_VALIDATION, {
+    variables: { gameId, exerciseId: exercise?.id },
+    skip: exercise ? false : true,
+    fetchPolicy: "no-cache",
+  });
+
+  const getLastStateFromLocalStorage = (
+    lastSubmissionFeedbackUnparsed: any
+  ) => {
+    try {
+      if (lastSubmissionFeedbackUnparsed) {
+        const parsedLastSubmission = JSON.parse(lastSubmissionFeedbackUnparsed);
+        if (parsedLastSubmission.code) {
+          if (keycloak.profile?.email) {
+            const encryptedCode = decryptWithAES(
+              parsedLastSubmission.code,
+              keycloak.profile.email
+            );
+            setCode(encryptedCode);
+          }
+        }
+
+        // console.log("GOT", parsedLastSubmission);
+        if (parsedLastSubmission.submissionFeedback != undefined) {
+          setSubmissionFeedback(parsedLastSubmission.submissionFeedback);
+          // console.log("setting feedback");
+        } else {
+          setSubmissionFeedback("Ready");
+          // console.log("setting feedback - ready");
+        }
+
+        if (parsedLastSubmission.language) {
+          for (let i = 0; i < programmingLanguages.length; i++) {
+            if (programmingLanguages[i].name == parsedLastSubmission.language) {
+              setActiveLanguage(programmingLanguages[i]);
+            }
+          }
+        }
+
+        if (parsedLastSubmission.submissionResult) {
+          if (parsedLastSubmission.isValidation) {
+            if (parsedLastSubmission.submissionResult === Result.ACCEPT) {
+              setSubmissionResult(null);
+            } else {
+              setSubmissionResult(parsedLastSubmission.submissionResult);
+            }
+          } else {
+            setSubmissionResult(parsedLastSubmission.submissionResult);
+          }
+        } else {
+          setSubmissionResult(null);
+        }
+
+        if (parsedLastSubmission.validationOutputs) {
+          setValidationOutputs(parsedLastSubmission.validationOutputs);
+        } else {
+          setValidationOutputs(null);
+        }
+      } else {
+        clearPlayground();
+      }
+    } catch (err) {
+      clearPlayground();
+    }
+  };
+
+  useEffect(() => {
     setCode("");
     // setSubmissionResult(null);
-    setEvaluationFetching(false);
-    setValidationFetching(false);
-    setFetchingCount(0);
-    // setValidationOutputs(null);
+    setWaitingForEvaluationResult(false);
+    setWaitingForValidationResult(false);
 
     if (exercise?.id) {
       const lastSubmissionFeedbackUnparsed = localStorage.getItem(
-        `${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`
+        `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`
       );
-      try {
-        if (lastSubmissionFeedbackUnparsed) {
-          const parsedLastSubmission = JSON.parse(
-            lastSubmissionFeedbackUnparsed
-          );
-          console.log("GOT", parsedLastSubmission);
-          if (parsedLastSubmission.submissionFeedback != undefined) {
-            setSubmissionFeedback(parsedLastSubmission.submissionFeedback);
-            console.log("setting feedback");
-          } else {
-            setSubmissionFeedback("Ready");
-            console.log("setting feedback - ready");
-          }
-
-          if (parsedLastSubmission.submissionResult) {
-            setSubmissionResult(parsedLastSubmission.submissionResult);
-          } else {
-            setSubmissionResult(null);
-          }
-
-          if (parsedLastSubmission.validationOutputs) {
-            setValidationOutputs(parsedLastSubmission.validationOutputs);
-          } else {
-            setValidationOutputs(null);
-          }
-        } else {
-          clearPlayground();
-        }
-      } catch (err) {
-        clearPlayground();
-      }
+      getLastStateFromLocalStorage(lastSubmissionFeedbackUnparsed);
     } else {
       clearPlayground();
     }
@@ -294,124 +490,38 @@ const Exercise = ({
 
   useEffect(() => {
     if (submissionResult == Result.ACCEPT) {
+      // console.log("Challenge refresh!");
       challengeRefetch();
     }
   }, [submissionResult]);
 
-  // const setSubmissionFeedbackWithLocalStorage = (value: string) => {
-  //   if (exercise?.id) {
-  //     console.log("saving to localstorage...", value);
-  //     console.log(value);
-  //     localStorage.setItem(exercise.id, value);
-  //   }
-
-  //   setSubmissionFeedback(value);
-  // };
-
   const saveSubmissionDataInLocalStorage = (
     submissionFeedback: string,
-    submissionResult: Result,
-    validationOutputs?: any
+    submissionResult: Result | null,
+    isValidation: boolean,
+    validationOutputs?: any,
+    codeToSave?: string
   ) => {
     if (exercise?.id) {
-      localStorage.setItem(
-        `${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`,
-        JSON.stringify({
-          submissionFeedback,
-          submissionResult,
-          validationOutputs,
-        })
-      );
+      if (keycloak.profile?.email) {
+        localStorage.setItem(
+          `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`,
+          JSON.stringify({
+            code: encryptWithAES(
+              typeof codeToSave != undefined ? codeToSave : code,
+              keycloak.profile.email
+            ),
+            submissionFeedback,
+            submissionResult,
+            validationOutputs,
+            isValidation,
+            time: new Date(),
+            language: activeLanguage.name,
+          })
+        );
+      }
     }
   };
-
-  // EVALUATION (SUBMIT) POLLING
-  useInterval(
-    () => {
-      if (evaluationError) {
-        console.log("Stopping interval", evaluationError);
-        setFetchingCount(0);
-        setEvaluationFetching(false);
-      }
-
-      if (fetchingCount > MAX_FETCHING_COUNT) {
-        setFetchingCount(0);
-        setEvaluationFetching(false);
-      }
-
-      console.log("[POLLING EVALUATION]", evaluationData);
-
-      if (!evaluationData?.submission.result) {
-        console.log("[NO EVALUATION DATA]", evaluationData);
-        setFetchingCount(fetchingCount + 1);
-        getEvaluationById({
-          variables: { gameId, submissionId: evaluationId },
-        });
-      } else {
-        console.log("Submission", evaluationData);
-        setEvaluationFetching(false);
-        setSubmissionFeedback(evaluationData.submission.feedback || "");
-        setSubmissionResult(evaluationData.submission.result);
-
-        saveSubmissionDataInLocalStorage(
-          evaluationData.submission.feedback || "",
-          evaluationData.submission.result
-        );
-      }
-    },
-    // Delay in milliseconds or null to stop it
-    isEvaluationFetching ? 1000 : null
-  );
-
-  // VALIDATION (RUN) POLLING
-  useInterval(
-    () => {
-      if (evaluationError) {
-        setFetchingCount(0);
-        setValidationFetching(false);
-      }
-
-      if (fetchingCount > MAX_FETCHING_COUNT) {
-        setFetchingCount(0);
-        setValidationFetching(false);
-      }
-
-      console.log("[POLLING VALIDATION]", validationData);
-      // console.log("validation data", validationData);
-
-      if (!validationData?.validation.result) {
-        console.log("[NO VALIDAION DATA]", validationData);
-        // console.log("Checking the result...");
-        setFetchingCount(fetchingCount + 1);
-        getValidationById({
-          variables: { gameId, validationId: validationId },
-        });
-      } else {
-        console.log("Validation", validationData);
-        setValidationFetching(false);
-
-        if (validationData.validation.result === Result.ACCEPT) {
-          setSubmissionResult(null);
-        } else {
-          setSubmissionResult(validationData.validation.result);
-        }
-
-        setSubmissionFeedback(validationData.validation.feedback || "");
-
-        setValidationOutputs(validationData.validation.outputs);
-
-        saveSubmissionDataInLocalStorage(
-          validationData.validation.feedback || "",
-          validationData.validation.result,
-          validationData.validation.outputs
-        );
-
-        // setSubmissionResult(validationData.validation.);
-      }
-    },
-    // Delay in milliseconds or null to stop it
-    isValidationFetching ? 1000 : null
-  );
 
   const [
     getEvaluationById,
@@ -431,14 +541,69 @@ const Exercise = ({
   });
 
   const {
-    data: subscriptionData,
-    loading: subscriptionLoading,
-    error: subError,
-  } = useSubscription<validationSubscription>(VALIDATION_SUBSCRIPTION, {
-    variables: { gameId, playerId },
+    data: subEvaluationData,
+    loading: subEvaluationLoading,
+    error: subEvaluationError,
+  } = useSubscription<evaluationSubscription>(EVALUATION_SUBSCRIPTION, {
+    variables: { gameId },
+    onSubscriptionData: ({ subscriptionData }) => {
+      if (isWaitingForEvaluationResult) {
+        if (subscriptionData.data) {
+          setRestoreAvailable(true);
+
+          const evaluationData =
+            subscriptionData.data.submissionEvaluatedStudent;
+          setSubmissionResult(evaluationData.result);
+          setSubmissionFeedback(evaluationData.feedback || "");
+          setValidationOutputs(null);
+          setWaitingForEvaluationResult(false);
+
+          saveSubmissionDataInLocalStorage(
+            evaluationData.feedback || "",
+            evaluationData.result,
+            false,
+            null
+          );
+        }
+      }
+    },
   });
-  console.log("SUB", subscriptionData, subscriptionLoading);
-  console.log("error", subError);
+
+  const {
+    data: subValidationData,
+    loading: subValidationLoading,
+    error: subValidationError,
+  } = useSubscription<validationSubscription>(VALIDATION_SUBSCRIPTION, {
+    variables: { gameId },
+    onSubscriptionData: ({ subscriptionData }) => {
+      if (isWaitingForValidationResult) {
+        console.log("Sub data", subscriptionData);
+
+        if (subscriptionData.data) {
+          setRestoreAvailable(true);
+          const validationData =
+            subscriptionData.data.validationProcessedStudent;
+
+          setValidationOutputs(validationData?.outputs);
+          setSubmissionFeedback(validationData?.feedback || "");
+          setWaitingForValidationResult(false);
+
+          if (validationData.result === Result.ACCEPT) {
+            setSubmissionResult(null);
+          } else {
+            setSubmissionResult(validationData.result);
+          }
+
+          saveSubmissionDataInLocalStorage(
+            validationData?.feedback || "",
+            validationData.result,
+            true,
+            validationData?.outputs
+          );
+        }
+      }
+    },
+  });
 
   const [
     getValidationById,
@@ -465,8 +630,8 @@ const Exercise = ({
       console.log("QUERY DATA", {
         variables: { gameId, submissionId },
       });
-      setEvaluationFetching(true);
-      setFetchingCount(0);
+      setWaitingForEvaluationResult(true);
+      // setFetchingCount(0);
       setEvaluationId(submissionId);
       getEvaluationById({
         variables: { gameId, submissionId },
@@ -477,14 +642,14 @@ const Exercise = ({
   const [validateSubmissionMutation] = useMutation(VALIDATE_SUBMISSION, {
     onCompleted(data) {
       const validationId = data.validate.id;
-      console.log("[VALIDATE MUTATION DATA]", data);
-      console.log("[VALIDATION ID]", validationId);
-      setValidationFetching(true);
-      setFetchingCount(0);
-      setValidationId(validationId);
-      getValidationById({
-        variables: { gameId, validationId },
-      });
+      // console.log("[VALIDATE MUTATION DATA]", data);
+      // console.log("[VALIDATION ID]", validationId);
+      setWaitingForValidationResult(true);
+      // setFetchingCount(0);
+      // setValidationId(validationId);
+      // getValidationById({
+      //   variables: { gameId, validationId },
+      // });
     },
   });
 
@@ -518,8 +683,6 @@ const Exercise = ({
 
   const validateSubmission = () => {
     clearPlayground();
-    // setValidationFetching(true);
-    // setFetchingCount(0);
 
     if (isValidationFetchingRef.current) {
       return;
@@ -529,7 +692,7 @@ const Exercise = ({
     } else console.log("[VALIDATE SUBMISSION]");
 
     const file = getFileFromCode();
-
+    // console.log("INPUTS", testValues);
     validateSubmissionMutation({
       variables: {
         file,
@@ -553,26 +716,40 @@ const Exercise = ({
         setEditorTheme,
         terminalTheme: getTerminalTheme(),
         setTerminalTheme,
+        terminalFontSize: getTerminalFontSize(),
+        setTerminalFontSize,
       }}
     >
+      {/* {!subValidationLoading && (
+        <span>{subValidationData?.validationProcessedStudent.result}</span>
+      )} */}
       <Box width={"100%"} height={"100%"} m={0} p={0}>
         <Statement exercise={exercise} />
         <EditorMenu
+          reload={reloadCode}
           submissionResult={submissionResult}
           activeLanguage={activeLanguage}
           setActiveLanguage={setActiveLanguage}
           evaluateSubmission={evaluateSubmission}
           validateSubmission={validateSubmission}
-          isValidationFetching={isValidationFetching}
-          isEvaluationFetching={isEvaluationFetching}
-          setFetchingCount={setFetchingCount}
-          setSubmissionFetching={setEvaluationFetching}
+          isValidationFetching={isWaitingForValidationResult}
+          isEvaluationFetching={isWaitingForEvaluationResult}
+          // setFetchingCount={setFetchingCount}
+          restore={restoreLatestSubmissionOrValidation}
+          setSubmissionFetching={setWaitingForEvaluationResult}
           programmingLanguages={programmingLanguages}
-          setValidationFetching={setValidationFetching}
+          setValidationFetching={setWaitingForValidationResult}
           testValues={testValues}
           setTestValues={setTestValues}
           solved={solved}
           setNextUnsolvedExercise={setNextUnsolvedExercise}
+          connectionError={
+            subValidationError || subEvaluationError || connectionProblem
+          }
+          isRestoreAvailable={
+            (isRestoreAvailable || (lastValidationError ? false : true)) &&
+            !lastValidationLoading
+          }
         />
 
         <Flex
@@ -589,8 +766,11 @@ const Exercise = ({
           >
             <CodeEditor
               language={activeLanguage}
-              code={code}
-              setCode={setCode}
+              code={code == "" ? getCodeSkeleton() : code}
+              setCode={(code) => {
+                saveCodeToLocalStorage(code);
+                setCode(code);
+              }}
               evaluateSubmission={evaluateSubmission}
               validateSubmission={validateSubmission}
             />
@@ -604,16 +784,10 @@ const Exercise = ({
               submissionFeedback={submissionFeedback}
               submissionResult={submissionResult}
               validationOutputs={validationOutputs}
+              loading={
+                isWaitingForValidationResult || isWaitingForEvaluationResult
+              }
             />
-            {/* <Terminal terminalTheme={terminalTheme}>
-              <div>
-                {submissionResult == Result.COMPILATION_ERROR
-                  ? submissionFeedback
-                  : ReactHtmlParser(
-                      submissionFeedback ? submissionFeedback : "Waiting..."
-                    )}
-              </div>
-            </Terminal> */}
           </Box>
         </Flex>
       </Box>

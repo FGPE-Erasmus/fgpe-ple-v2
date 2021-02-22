@@ -42,6 +42,17 @@ export enum Result {
   WRONG_ANSWER = "WRONG_ANSWER",
 }
 
+export enum RewardType {
+  BADGE = "BADGE",
+  COUPON = "COUPON",
+  HINT = "HINT",
+  MESSAGE = "MESSAGE",
+  POINT = "POINT",
+  REVEAL = "REVEAL",
+  UNLOCK = "UNLOCK",
+  VIRTUAL_ITEM = "VIRTUAL_ITEM",
+}
+
 export enum State {
   AVAILABLE = "AVAILABLE",
   COMPLETED = "COMPLETED",

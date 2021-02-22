@@ -14,8 +14,12 @@ import ProfileInGame from "./components/ProfileInGame";
 import Challenge from "./components/Challenge";
 import PrivateRoute from "./utilities/PrivateRoute";
 
-import NavContext from "./context/NavContext";
-import MainContext from "./context/MainContext";
+import ZoomContext from "./context/ZoomContext";
+
+const getZoomFactorFromLocalStorage = () => {
+  const zoomFactor = localStorage.getItem("zoom");
+  return zoomFactor ? Number(zoomFactor) : null;
+};
 
 const MainWrapper = styled.div`
   max-width: 1140px;
@@ -25,6 +29,9 @@ const MainWrapper = styled.div`
 
 function App() {
   const { ready } = useTranslation();
+  const [zoomFactor, setZoomFactor] = useState(
+    getZoomFactorFromLocalStorage() || 1
+  );
   // const [activeChallenge, setActiveChallenge] = useState<{
   //   id: string;
   //   name: string;
@@ -33,7 +40,7 @@ function App() {
   //   id: string;
   //   name: string;
   // } | null>(null);
-  const [playerId, setPlayerId] = useState<null | string>(null);
+  // const [playerId, setPlayerId] = useState<null | string>(null);
 
   // console.log(process.env.REACT_APP_KEYCLOAK_CLIENT_ID);
   if (!ready) {
@@ -54,46 +61,57 @@ function App() {
                 setActiveGame: setActiveGame,
               }}
             > */}
-            <MainContext.Provider
+            {/* <MainContext.Provider
               value={{
                 playerId: null,
                 setPlayerId: setPlayerId,
               }}
+            > */}
+            <ZoomContext.Provider
+              value={{
+                zoomFactor,
+                setZoomFactor: (value: number) => {
+                  setZoomFactor(value);
+                },
+              }}
             >
-              <Navbar />
-              <MainWrapper>
-                <AnimatePresence exitBeforeEnter initial={false}>
-                  <Switch location={location} key={location.pathname}>
-                    <Route exact path="/" component={Homepage} />
-                    <PrivateRoute
-                      exact
-                      path="/profile"
-                      roles={["student", "teacher"]}
-                      component={Profile}
-                    />
-                    <PrivateRoute
-                      exact
-                      path="/game/:gameId"
-                      roles={["student"]}
-                      component={ProfileInGame}
-                    />
-                    <PrivateRoute
-                      exact
-                      path="/game/:gameId/challenge/:challengeId"
-                      roles={["student"]}
-                      component={Challenge}
-                    />
+              <ZoomWrapper zoomFactor={zoomFactor}>
+                <Navbar />
+                <MainWrapper>
+                  <AnimatePresence exitBeforeEnter initial={false}>
+                    <Switch location={location} key={location.pathname}>
+                      <Route exact path="/" component={Homepage} />
+                      <PrivateRoute
+                        exact
+                        path="/profile"
+                        roles={["student", "teacher"]}
+                        component={Profile}
+                      />
+                      <PrivateRoute
+                        exact
+                        path="/game/:gameId"
+                        roles={["student"]}
+                        component={ProfileInGame}
+                      />
+                      <PrivateRoute
+                        exact
+                        path="/game/:gameId/challenge/:challengeId"
+                        roles={["student"]}
+                        component={Challenge}
+                      />
 
-                    {/* <PrivateRoute
+                      {/* <PrivateRoute
                       exact
                       path="/profile/game/challenge"
                       roles={["student"]}
                       component={Challenge}
                     /> */}
-                  </Switch>
-                </AnimatePresence>
-              </MainWrapper>
-            </MainContext.Provider>
+                    </Switch>
+                  </AnimatePresence>
+                </MainWrapper>
+              </ZoomWrapper>
+            </ZoomContext.Provider>
+            {/* </MainContext.Provider> */}
             {/* </NavContext.Provider> */}
           </>
         )}
@@ -119,5 +137,9 @@ function App() {
     //   </button> */}
   );
 }
+
+const ZoomWrapper = styled.div<{ zoomFactor: number }>`
+  zoom: ${({ zoomFactor }) => zoomFactor};
+`;
 
 export default App;

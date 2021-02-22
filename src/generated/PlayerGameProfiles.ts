@@ -3,6 +3,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { RewardType } from "./globalTypes";
+
 // ====================================================
 // GraphQL query operation: PlayerGameProfiles
 // ====================================================
@@ -33,6 +35,7 @@ export interface PlayerGameProfiles_myGameProfiles_rewards_reward {
   name: string;
   description: string | null;
   image: string | null;
+  kind: RewardType;
 }
 
 export interface PlayerGameProfiles_myGameProfiles_rewards {
