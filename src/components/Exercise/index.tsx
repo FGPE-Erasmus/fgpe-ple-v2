@@ -391,14 +391,13 @@ const Exercise = ({
   });
 
   useEffect(() => {
-    setTimeout(() => {
-      if (
-        !isValidationFetchingRef.current ||
-        !isEvaluationFetchingRef.current
-      ) {
+    const maxTime = 120;
+    const timeoutID = setTimeout(() => {
+      if (isValidationFetchingRef.current || isEvaluationFetchingRef.current) {
         setConnectionProblem(true);
       }
-    }, 1000 * 120);
+    }, 1000 * maxTime);
+    return () => clearInterval(timeoutID);
   }, [isWaitingForEvaluationResult, isWaitingForValidationResult]);
 
   const {
@@ -424,6 +423,7 @@ const Exercise = ({
               parsedLastSubmission.code,
               keycloak.profile.email
             );
+
             setCode(encryptedCode);
           }
         }
@@ -508,7 +508,7 @@ const Exercise = ({
           `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`,
           JSON.stringify({
             code: encryptWithAES(
-              typeof codeToSave != undefined ? codeToSave : code,
+              typeof codeToSave != "undefined" ? codeToSave : code,
               keycloak.profile.email
             ),
             submissionFeedback,
@@ -631,6 +631,7 @@ const Exercise = ({
         variables: { gameId, submissionId },
       });
       setWaitingForEvaluationResult(true);
+
       // setFetchingCount(0);
       setEvaluationId(submissionId);
       getEvaluationById({
@@ -645,6 +646,7 @@ const Exercise = ({
       // console.log("[VALIDATE MUTATION DATA]", data);
       // console.log("[VALIDATION ID]", validationId);
       setWaitingForValidationResult(true);
+
       // setFetchingCount(0);
       // setValidationId(validationId);
       // getValidationById({
