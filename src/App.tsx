@@ -8,13 +8,15 @@ import styled from "@emotion/styled";
 import { AnimatePresence } from "framer-motion";
 
 import Homepage from "./components/HomePage";
-import Profile from "./components/Profile";
 // import MainLoading from "./components/MainLoading";
 import ProfileInGame from "./components/ProfileInGame";
 import Challenge from "./components/Challenge";
 import PrivateRoute from "./utilities/PrivateRoute";
 
 import ZoomContext from "./context/ZoomContext";
+import StudentProfile from "./components/StudentProfile";
+import TeacherProfile from "./components/TeacherProfile";
+import Profile from "./components/Profile";
 
 const getZoomFactorFromLocalStorage = () => {
   const zoomFactor = localStorage.getItem("zoom");
@@ -87,6 +89,7 @@ function App() {
                         roles={["student", "teacher"]}
                         component={Profile}
                       />
+
                       <PrivateRoute
                         exact
                         path="/game/:gameId"
@@ -99,13 +102,6 @@ function App() {
                         roles={["student"]}
                         component={Challenge}
                       />
-
-                      {/* <PrivateRoute
-                      exact
-                      path="/profile/game/challenge"
-                      roles={["student"]}
-                      component={Challenge}
-                    /> */}
                     </Switch>
                   </AnimatePresence>
                 </MainWrapper>

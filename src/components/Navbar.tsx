@@ -90,16 +90,16 @@ const Navbar = () => {
         </Box>
         <Box width={1 / 2} textAlign="right">
           <UserMenu>
-            <NavLink to="/profile" onClick={resetActiveGameAndChallenge}>
-              {/* {userProfile?.firstName} {userProfile?.lastName} */}
+            {keycloak.authenticated && (
+              <NavLink to="/profile" onClick={resetActiveGameAndChallenge}>
+                {/* {userProfile?.firstName} {userProfile?.lastName} */}
 
-              {keycloak.authenticated && (
                 <BiUserCircle
                   fontSize={24}
                   color={colorMode == "dark" ? "white" : "black"}
                 />
-              )}
-            </NavLink>
+              </NavLink>
+            )}
 
             {keycloak.authenticated ? (
               <button onClick={() => keycloak.logout()}>Logout</button>
