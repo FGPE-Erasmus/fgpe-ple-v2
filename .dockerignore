@@ -1,0 +1,10 @@
+# environment
+.env*
+.env.development
+
+# editor
+.vscode/
+.idea
+
+# docker
+docker/
