@@ -85,9 +85,7 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
     setRewardForModal,
   ] = useState<null | PlayerGameProfiles_myGameProfiles_rewards_reward>(null);
 
-  const gameProfiles = data.myGameProfiles
-    .flatMap((i) => [i, i])
-    .flatMap((i) => [i, i]);
+  const gameProfiles = data.myGameProfiles;
 
   // .splice(0, 23);
   // .flatMap((i) => [i, i]);
