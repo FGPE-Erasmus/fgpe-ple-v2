@@ -9,6 +9,7 @@ import NavContext from "../context/NavContext";
 
 import {
   Box,
+  Divider,
   Heading,
   StackDivider,
   useColorModeValue,
@@ -54,37 +55,41 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
   // }
 
   return (
-    <VStack
-      divider={<StackDivider borderColor="gray.200" />}
-      spacing={4}
-      align="stretch"
-    >
-      {data.myGameProfiles.map((gameProfile, i) => {
-        return (
-          <Link
-            key={i}
-            to={{
-              pathname: `/game/${gameProfile.game.id}`,
-            }}
-            onClick={() =>
-              setActiveGame({
-                id: gameProfile.game.id,
-                name: gameProfile.game.name,
-              })
-            }
-          >
-            <Game
-              name={gameProfile.game.name}
-              description={
-                gameProfile.game.description
-                  ? gameProfile.game.description
-                  : "No description"
+    <Box>
+      <Divider marginTop={4} />
+
+      <VStack
+        divider={<StackDivider />}
+        spacing={4}
+        align="stretch"
+        marginTop={4}
+      >
+        {data.myGameProfiles.map((gameProfile, i) => {
+          return (
+            <Link
+              key={i}
+              to={{
+                pathname: `/game/${gameProfile.game.id}`,
+              }}
+              onClick={() =>
+                setActiveGame({
+                  id: gameProfile.game.id,
+                  name: gameProfile.game.name,
+                })
               }
-            />
-          </Link>
-        );
-      })}
-      {/* <Box h="40px" bg="yellow.200">
+            >
+              <Game
+                name={gameProfile.game.name}
+                description={
+                  gameProfile.game.description
+                    ? gameProfile.game.description
+                    : "No description"
+                }
+              />
+            </Link>
+          );
+        })}
+        {/* <Box h="40px" bg="yellow.200">
         1
       </Box>
       <Box h="40px" bg="tomato">
@@ -93,7 +98,8 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
       <Box h="40px" bg="pink.100">
         3
       </Box> */}
-    </VStack>
+      </VStack>
+    </Box>
     // <GamesWrapper>
     //   <h4 style={{ margin: 10, marginTop: 30 }}>Available games:</h4>
     //   {data.myGameProfiles.map((gameProfile, i) => {

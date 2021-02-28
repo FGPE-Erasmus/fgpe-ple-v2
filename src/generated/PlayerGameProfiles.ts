@@ -29,6 +29,16 @@ export interface PlayerGameProfiles_myGameProfiles_group {
   name: string;
 }
 
+export interface PlayerGameProfiles_myGameProfiles_rewards_reward_game {
+  __typename: "Game";
+  name: string;
+}
+
+export interface PlayerGameProfiles_myGameProfiles_rewards_reward_parentChallenge {
+  __typename: "Challenge";
+  name: string;
+}
+
 export interface PlayerGameProfiles_myGameProfiles_rewards_reward {
   __typename: "Reward";
   id: string;
@@ -36,6 +46,10 @@ export interface PlayerGameProfiles_myGameProfiles_rewards_reward {
   description: string | null;
   image: string | null;
   kind: RewardType;
+  cost: number | null;
+  createdAt: any;
+  game: PlayerGameProfiles_myGameProfiles_rewards_reward_game;
+  parentChallenge: PlayerGameProfiles_myGameProfiles_rewards_reward_parentChallenge | null;
 }
 
 export interface PlayerGameProfiles_myGameProfiles_rewards {

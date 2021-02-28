@@ -32,6 +32,14 @@ const PLAYER_GAME_PROFILES = gql`
           description
           image
           kind
+          cost
+          createdAt
+          game {
+            name
+          }
+          parentChallenge {
+            name
+          }
         }
       }
     }

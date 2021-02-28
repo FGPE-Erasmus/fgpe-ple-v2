@@ -6,6 +6,7 @@ import { NavLink } from "react-router-dom";
 import UserIcon from "../images/user.svg";
 
 import { BiUserCircle } from "react-icons/bi";
+import { VscColorMode } from "react-icons/vsc";
 
 import NavContext from "../context/NavContext";
 
@@ -29,7 +30,7 @@ const Navbar = () => {
     activeGameAndChallenge.setActiveChallenge(null);
     activeGameAndChallenge.setActiveGame(null);
   };
-  const { colorMode } = useColorMode();
+  const { colorMode, toggleColorMode } = useColorMode();
   const [
     userProfile,
     setUserProfile,
@@ -100,6 +101,15 @@ const Navbar = () => {
                 />
               </NavLink>
             )}
+
+            <Box marginLeft={-5}>
+              <VscColorMode
+                fontSize={24}
+                color={colorMode == "dark" ? "white" : "black"}
+                onClick={toggleColorMode}
+                cursor="pointer"
+              />
+            </Box>
 
             {keycloak.authenticated ? (
               <button onClick={() => keycloak.logout()}>Logout</button>
