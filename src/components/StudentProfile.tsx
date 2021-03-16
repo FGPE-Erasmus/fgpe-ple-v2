@@ -5,6 +5,7 @@ import GamesList from "./GamesList";
 import { useQuery, gql } from "@apollo/client";
 import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
 import Rewards from "./Rewards";
+import { Heading, Spacer } from "@chakra-ui/react";
 
 const PLAYER_GAME_PROFILES = gql`
   query PlayerGameProfiles {
@@ -82,10 +83,18 @@ const StudentProfile: React.ComponentType = () => {
   return (
     <div>
       {/* Hello, {userProfile?.firstName} {userProfile?.lastName} */}
+      <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
+        Rewards
+      </Heading>
+      <Rewards data={data} />
+
+      <Heading as="h3" size="md" marginTop={10}>
+        Games
+      </Heading>
+
+      <GamesList data={data} />
       {data.myGameProfiles.length < 1 &&
         "Unfortunately you are not enrolled in any games at the moment."}
-      <Rewards data={data} />
-      <GamesList data={data} />
     </div>
   );
 };

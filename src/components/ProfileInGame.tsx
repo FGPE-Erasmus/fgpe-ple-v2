@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import { useQuery, gql } from "@apollo/client";
+
 import {
   ProfileInGameQuery,
   ProfileInGameQuery_profileInGame_learningPath,
   ProfileInGameQuery_profileInGame_learningPath_challenge_parentChallenge,
 } from "../generated/ProfileInGameQuery";
+
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import { State } from "../generated/globalTypes";
@@ -20,6 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { LockIcon, CheckIcon } from "@chakra-ui/icons";
 import { useParams } from "react-router-dom";
+import Leaderboards from "./Leaderboards";
 
 interface ParamTypes {
   gameId: string;
@@ -112,38 +115,47 @@ const isChallengeWithoutChildren = (children: any) => {
   }
 };
 
-const ProfileInGame = ({
-  location,
-}: {
-  location: { state: { gameId: string } };
-}) => {
+const ProfileInGame = () => {
   const { setActiveChallenge } = useContext(NavContext);
   const { gameId } = useParams<ParamTypes>();
 
-  const { loading, error, data } = useQuery<ProfileInGameQuery>(
-    PROFILE_IN_GAME,
-    {
-      variables: { gameId },
-    }
-  );
+  const {
+    loading: loadingProfile,
+    error: errorProfile,
+    data: dataProfile,
+  } = useQuery<ProfileInGameQuery>(PROFILE_IN_GAME, {
+    variables: { gameId },
+  });
+
   if (!gameId) {
     return <Text>Game ID not provided</Text>;
   }
 
-  if (loading) return null;
-  if (error) {
-    console.log("error", error);
-    return <Text>error</Text>;
+  if (loadingProfile) return <div>Loading...</div>;
+
+  if (errorProfile) {
+    console.log("error", errorProfile);
+    return (
+      <Text>
+        An unexpected error has occured. Please contact administration if this
+        error persists.
+      </Text>
+    );
   }
-  if (!data) return <Text>no data</Text>;
+
+  if (!dataProfile) return <Text>no data</Text>;
 
   return (
     <Box>
       <Heading as="h3" size="lg">
-        Game: {data.profileInGame.game.name}
+        Game: {dataProfile.profileInGame.game.name}
       </Heading>
       <Box>
-        {data.profileInGame.learningPath.map((learningPath, i) => {
+        <Leaderboards gameId={gameId} />
+      </Box>
+
+      <Box>
+        {dataProfile.profileInGame.learningPath.map((learningPath, i) => {
           return (
             !learningPath.challenge.parentChallenge && (
               <ParentChallenge
@@ -152,7 +164,7 @@ const ProfileInGame = ({
                 withoutChildren={isChallengeWithoutChildren(
                   getChallengeChildren(
                     learningPath.challenge,
-                    data.profileInGame.learningPath
+                    dataProfile.profileInGame.learningPath
                   )
                 )}
               >
@@ -166,7 +178,7 @@ const ProfileInGame = ({
                 {!isChallengeWithoutChildren(
                   getChallengeChildren(
                     learningPath.challenge,
-                    data.profileInGame.learningPath
+                    dataProfile.profileInGame.learningPath
                   )
                 ) && (
                   <div className="challenge-info">
@@ -177,7 +189,7 @@ const ProfileInGame = ({
 
                 {getChallengeChildren(
                   learningPath.challenge,
-                  data.profileInGame.learningPath
+                  dataProfile.profileInGame.learningPath
                 )?.map((childChallenge, i) => {
                   return (
                     childChallenge && (
@@ -187,7 +199,7 @@ const ProfileInGame = ({
                           to={{
                             pathname: "/profile/game/challenge",
                             state: {
-                              gameId: data.profileInGame.game.id,
+                              gameId: dataProfile.profileInGame.game.id,
                               challengeId: childChallenge.id,
                             },
                           }}
@@ -209,12 +221,12 @@ const ProfileInGame = ({
                 {isChallengeWithoutChildren(
                   getChallengeChildren(
                     learningPath.challenge,
-                    data.profileInGame.learningPath
+                    dataProfile.profileInGame.learningPath
                   )
                 ) && (
                   <Link
                     to={{
-                      pathname: `/game/${data.profileInGame.game.id}/challenge/${learningPath.challenge.id}`,
+                      pathname: `/game/${dataProfile.profileInGame.game.id}/challenge/${learningPath.challenge.id}`,
                     }}
                     onClick={() =>
                       setActiveChallenge({
@@ -299,7 +311,7 @@ const ParentChallenge = styled.div<{
   }
 
   border-radius: 5px;
-  padding: 25px;
+  padding: 15px;
   transition: transform 0.5s;
   cursor: ${({ available }) => (available ? "pointer" : "initial")};
   h3 {

@@ -9,6 +9,7 @@ import { BiUserCircle } from "react-icons/bi";
 import { VscColorMode } from "react-icons/vsc";
 
 import NavContext from "../context/NavContext";
+import LogoSVG from "../images/logo.svg";
 
 import {
   Button,
@@ -20,6 +21,17 @@ import {
 } from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import useBreadcrumbs from "use-react-router-breadcrumbs";
+
+const Logo = styled.div`
+  background: url(${LogoSVG});
+  width: 100px;
+  height: 50px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  top: 8px;
+`;
 
 const Navbar = () => {
   const breadcrumbs = useBreadcrumbs();
@@ -51,11 +63,12 @@ const Navbar = () => {
       <Flex px={2} alignItems="center" height="100%">
         <Box width={1 / 2}>
           <NavLink to="/" onClick={resetActiveGameAndChallenge}>
-            <b>
+            <Logo />
+            {/* <b>
               <Text as="span" color={colorMode == "dark" ? "white" : "black"}>
                 FGPE
               </Text>
-            </b>
+            </b> */}
           </NavLink>
           {/* {breadcrumbs.map(({ match, breadcrumb }) => {
             return (

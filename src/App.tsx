@@ -17,6 +17,8 @@ import ZoomContext from "./context/ZoomContext";
 import StudentProfile from "./components/StudentProfile";
 import TeacherProfile from "./components/TeacherProfile";
 import Profile from "./components/Profile";
+import Alerts from "./components/Alerts";
+import InstructorGame from "./components/InstructorGame";
 
 const getZoomFactorFromLocalStorage = () => {
   const zoomFactor = localStorage.getItem("zoom");
@@ -78,11 +80,16 @@ function App() {
               }}
             >
               <ZoomWrapper zoomFactor={zoomFactor}>
+                {/* <Alerts /> */}
                 <Navbar />
                 <MainWrapper>
                   <AnimatePresence exitBeforeEnter initial={false}>
                     <Switch location={location} key={location.pathname}>
-                      <Route exact path="/" component={Homepage} />
+                      <Route
+                        exact
+                        path="/(|learning-platform)/"
+                        component={Homepage}
+                      />
                       <PrivateRoute
                         exact
                         path="/profile"
@@ -96,6 +103,14 @@ function App() {
                         roles={["student"]}
                         component={ProfileInGame}
                       />
+
+                      <PrivateRoute
+                        exact
+                        path="/teacher/game/:gameId"
+                        roles={["teacher"]}
+                        component={InstructorGame}
+                      />
+
                       <PrivateRoute
                         exact
                         path="/game/:gameId/challenge/:challengeId"

@@ -295,6 +295,7 @@ const Exercise = ({
         const codeSkeletons = exercise.codeSkeletons;
         for (let i = 0; i < codeSkeletons.length; i++) {
           if (codeSkeletons[i].extension == activeLanguage.extension) {
+            setCode(codeSkeletons[i].code || "");
             return codeSkeletons[i].code;
           }
         }

@@ -49,7 +49,7 @@ import { RiGamepadFill } from "react-icons/ri";
 import dayjs from "dayjs";
 
 const getRewardsCount = (gameProfiles: PlayerGameProfiles_myGameProfiles[]) => {
-  const rewards = gameProfiles.map((gameProfile, i, array) => {
+  const rewards = gameProfiles.filter((gameProfile, i, array) => {
     return (
       gameProfile.rewards.length > 0 &&
       gameProfile.rewards.map(({ reward }, i) => {
@@ -57,9 +57,9 @@ const getRewardsCount = (gameProfiles: PlayerGameProfiles_myGameProfiles[]) => {
           reward.kind != RewardType.BADGE &&
           reward.kind != RewardType.VIRTUAL_ITEM
         ) {
-          return;
+          return false;
         }
-        return reward;
+        return true;
       })
     );
   });
@@ -74,6 +74,7 @@ const getGridDimensions = (rewardsCount: number) => {
   const sqrt = Math.sqrt(rewardsCount);
   // Math.ceil(Math.sqrt(arrayLength) * 2)}
   const columns = Math.floor(sqrt * 2) || 1;
+  console.log(columns);
   const rows = Math.ceil(sqrt / 2) || 1;
   return { columns, rows };
 };
@@ -86,8 +87,9 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
   ] = useState<null | PlayerGameProfiles_myGameProfiles_rewards_reward>(null);
 
   const gameProfiles = data.myGameProfiles;
-
-  // .splice(0, 23);
+  // .flatMap((i) => [i, i])
+  // .flatMap((i) => [i, i])
+  // .splice(0, 2);
   // .flatMap((i) => [i, i]);
 
   const color = useColorModeValue("gray.100", "gray.700");
@@ -104,9 +106,6 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
         reward={rewardForModal}
       />
       <Box>
-        <Heading as="h3" size="md">
-          Rewards
-        </Heading>
         <Box position="relative">
           <Button
             onClick={() => setZoom(!zoom)}
@@ -189,13 +188,24 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
                   );
                 })}
             </DynamicGrid>
-            {showRewardsAlert && "You will see your rewards here"}
+            {showRewardsAlert && (
+              <RewardsAlert>You will see your rewards here</RewardsAlert>
+            )}
           </RewardsWrapper>
         </Box>
       </Box>
     </>
   );
 };
+
+const RewardsAlert = styled.div`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const RewardModal = ({
   isOpen,
@@ -214,7 +224,11 @@ const RewardModal = ({
           <ModalContent>
             <ModalHeader>{reward.name}</ModalHeader>
             <ModalCloseButton />
-            <ModalBody>
+            <ModalBody
+              display="flex"
+              alignItems="center"
+              flexDirection="column"
+            >
               <Box width="100%" height="250px">
                 <RewardImage imageData={reward.image} />
               </Box>
@@ -239,10 +253,10 @@ const RewardModal = ({
                   Game: {reward.game.name}
                 </ListItem>
 
-                <ListItem>
+                {/* <ListItem>
                   <ListIcon as={VscDebugBreakpointLog} color="green.500" />
                   Cost: {reward.cost}
-                </ListItem>
+                </ListItem> */}
               </List>
             </ModalBody>
             <ModalFooter>
@@ -267,7 +281,7 @@ const RewardImage = styled.div<{ imageData: string | null; zoom?: boolean }>`
   background-position: center;
   background-size: cover;
   border-radius: 5px;
-
+  margin: auto;
   @media only screen and (max-width: 600px) {
     height: 95%;
     width: 95%;
