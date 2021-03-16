@@ -84,5 +84,5 @@
     "@types/reflexbox": "^4.0.2",
     "apollo": "^2.32.0"
   },
-  "homepage": "/learning-platform"
+  "homepage": "https://python.usz.edu.pl/learning-platform"
 }

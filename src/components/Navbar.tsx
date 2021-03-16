@@ -130,7 +130,7 @@ const Navbar = () => {
               <button
                 onClick={() => {
                   keycloak.login({
-                    redirectUri: `${window.location.origin.toString()}/profile`,
+                    redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
                   });
                 }}
               >
