@@ -6,7 +6,6 @@ import InstructorGames from "./InstructorGames";
 const TeacherProfile = () => {
   return (
     <div>
-      Hello teacher
       <InstructorGames />
     </div>
   );

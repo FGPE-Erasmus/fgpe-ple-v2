@@ -3,17 +3,6 @@ import Backend from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 
-type language = {
-  code: string;
-  language: string;
-};
-
-export const SUPPORTED_LANGUAGES: language[] = [
-  { code: "en", language: "English" },
-  { code: "pl", language: "Polski" },
-  { code: "de", language: "Deutsch" },
-];
-
 i18n
   // load translation using http -> see /public/locales
   // learn more: https://github.com/i18next/i18next-http-backend

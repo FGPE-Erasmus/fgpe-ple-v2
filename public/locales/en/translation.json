@@ -8,6 +8,16 @@
   "No games": "Unfortunately you are not enrolled in any games at the moment.",
   "Rewards": "Rewards",
   "Games": "Games",
+  "Provide test values": "Provide test values",
+  "No games available": "No games available",
+  "error": {
+    "title": "An unexpected error has occured.",
+    "description": "Try to refresh the page. Please contact administration if this error persists.",
+    "notFound": {
+      "title": "Page not found",
+      "description": "The page you were looking for doesn't exist."
+    }
+  },
   "description": {
     "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
     "part2": "Switch language between english and german using buttons above."

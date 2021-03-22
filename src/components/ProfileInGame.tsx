@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import { useQuery, gql } from "@apollo/client";
+import Error from "./Error";
 
 import {
   ProfileInGameQuery,
@@ -135,12 +136,7 @@ const ProfileInGame = () => {
 
   if (errorProfile) {
     console.log("error", errorProfile);
-    return (
-      <Text>
-        An unexpected error has occured. Please contact administration if this
-        error persists.
-      </Text>
-    );
+    return <Error errorContent={JSON.stringify(errorProfile)} />;
   }
 
   if (!dataProfile) return <Text>no data</Text>;

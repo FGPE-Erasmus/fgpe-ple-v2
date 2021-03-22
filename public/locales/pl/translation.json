@@ -8,6 +8,16 @@
   "No games": "Niestety nie jesteś zapisany/a jeszcze do żadnej gry.",
   "Rewards": "Nagrody",
   "Games": "Gry",
+  "Provide test values": "Wpisz wartości testowe",
+  "No games available": "Brak dostępnych gier",
+  "error": {
+    "title": "Wystąpił nieoczekiwany błąd.",
+    "description": "Spróbuj odświeżyć stronę. Skontaktuj się z administracją jeśli błąd będzie nadal występować.",
+    "notFound": {
+      "title": "Nie znaleziono strony",
+      "description": "Strona, której szukasz nie istnieje."
+    }
+  },
   "description": {
     "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
     "part2": "Switch language between english and german using buttons above."

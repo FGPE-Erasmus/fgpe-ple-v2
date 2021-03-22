@@ -10,20 +10,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 This app is using the react-i18next package for internationalization.
 You can check its documentation [here](https://react.i18next.com/).
 
-To add new translations, create a new file `public/locales/<language_code>/translation.json`.
-
-Remember to add a new language object to the `SUPPORTED_LANGUAGES` array in `src/i18n/config.ts`.
-
-```
-[
-    {
-        code: "en",
-        language: "English"
-    }
-]
-```
+To add new translations, create a new file: `public/locales/<language_code>/translation.json`, and then add a new language object inside `public/locales/supported-languages.json` file.
 
 The `language` parameter should be in original language, not translated to English. The `code` parameter should be same as the name of the folder inside locales catalog, for instance for German language:
+
+`public/locales/supported-languages.json`
 
 ```
 [
@@ -38,13 +29,13 @@ The `language` parameter should be in original language, not translated to Engli
 ]
 ```
 
+Translations file:
+
 ```
 public/locales/de/translation.json
 ```
 
-Language Modal is using this array to display all available languages to the user.
-
-Remember to build the app after adding new translations.
+You can add translations to the built version of the app (the `locales` folder is present in the built version), you don't have to run the build process to add new translations (but if you do so - it will work as well).
 
 ## Available Scripts
 

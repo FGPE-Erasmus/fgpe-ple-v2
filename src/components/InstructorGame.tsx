@@ -1,5 +1,6 @@
 import React from "react";
 import withChangeAnimation from "../utilities/withChangeAnimation";
+import Error from "./Error";
 
 import {
   Progress,
@@ -36,21 +37,24 @@ const InstructorGame = () => {
     variables: {
       gameId,
     },
+    skip: !gameId,
   });
 
   if (!gameId) {
-    return <Text>Game ID not provided</Text>;
+    return <div>Game ID not provided</div>;
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   if (!loading && error) {
-    return <div>Error</div>;
+    return <Error errorContent={JSON.stringify(error)} />;
   }
 
   return (
     <div>
-      <Skeleton isLoaded={!loading}>
-        <Box>Game: {data?.game.name}</Box>
-      </Skeleton>
+      <Box>Game: {data?.game.name}</Box>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import {
   FindChallenge,
   FindChallenge_challenge_refs,
 } from "../generated/FindChallenge";
+import Error from "./Error";
 
 import styled from "@emotion/styled";
 import { Flex, Box, Button, Stack, Skeleton } from "@chakra-ui/react";
@@ -176,6 +177,10 @@ const Challenge = ({
       setShouldRedirect(true);
     }
   };
+
+  if (challengeError && !challengeLoading) {
+    return <Error errorContent={JSON.stringify(challengeError)} />;
+  }
 
   if (!challengeData && !challengeLoading) {
     return <div>Couldn't load challengeData</div>;

@@ -10,8 +10,10 @@ import {
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { getInstructorGames } from "../generated/getInstructorGames";
+import Error from "./Error";
 
 const INSTRUCTOR_GAMES = gql`
   query getInstructorGames {
@@ -27,17 +29,18 @@ const InstructorGames = () => {
   const { data, error, loading } = useQuery<getInstructorGames>(
     INSTRUCTOR_GAMES
   );
+  const { t } = useTranslation();
 
   if (!loading && error) {
-    return <div>Error</div>;
+    return <Error errorContent={JSON.stringify(error)} />;
   }
 
   return (
     <Box>
       <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-        Games
+        {t("Games")}
       </Heading>
-      {data?.games.length == 0 && <div>No games available</div>}
+      {data?.games.length == 0 && <div>{t("No games available")}</div>}
       <VStack
         divider={<StackDivider />}
         spacing={4}
@@ -46,13 +49,12 @@ const InstructorGames = () => {
       >
         {data?.games.map((game, i) => {
           return (
-            <Skeleton key={i} isLoaded={!loading}>
-              <Game
-                id={game.id}
-                name={game.name}
-                description={game.description}
-              />
-            </Skeleton>
+            <Game
+              id={game.id}
+              name={game.name}
+              description={game.description}
+              key={i}
+            />
           );
         })}
       </VStack>

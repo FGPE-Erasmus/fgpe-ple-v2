@@ -19,6 +19,7 @@ import TeacherProfile from "./components/TeacherProfile";
 import Profile from "./components/Profile";
 import Alerts from "./components/Alerts";
 import InstructorGame from "./components/InstructorGame";
+import NotFound from "./components/NotFound";
 
 const getZoomFactorFromLocalStorage = () => {
   const zoomFactor = localStorage.getItem("zoom");
@@ -117,6 +118,8 @@ function App() {
                         roles={["student"]}
                         component={Challenge}
                       />
+
+                      <Route component={NotFound} />
                     </Switch>
                   </AnimatePresence>
                 </MainWrapper>

@@ -14,6 +14,7 @@ import {
   IconButton,
   Box,
 } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
 import { CloseIcon } from "@chakra-ui/icons";
 
@@ -71,11 +72,13 @@ const TextareaModal = ({
   testValues: string[];
   setTestValues: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Provide test values</ModalHeader>
+        <ModalHeader>{t("Provide test values")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Textarea
