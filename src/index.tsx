@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import { ThemeProvider } from "@emotion/react";
@@ -26,6 +26,8 @@ import {
 import MainLoading from "./components/MainLoading";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
+
+import "./i18n/config";
 
 import ClearLocalStorage from "./utilities/ClearLocalStorage";
 
@@ -157,7 +159,9 @@ ReactDOM.render(
         LoadingComponent={<MainLoading />}
       >
         <ApolloProvider client={client}>
-          <App />
+          <Suspense fallback="loading">
+            <App />
+          </Suspense>
         </ApolloProvider>
       </ReactKeycloakProvider>
     </ChakraProvider>

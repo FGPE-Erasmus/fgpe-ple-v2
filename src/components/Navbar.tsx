@@ -7,6 +7,7 @@ import UserIcon from "../images/user.svg";
 
 import { BiUserCircle } from "react-icons/bi";
 import { VscColorMode } from "react-icons/vsc";
+import { IoLanguage } from "react-icons/io5";
 
 import NavContext from "../context/NavContext";
 import LogoSVG from "../images/logo.svg";
@@ -18,9 +19,12 @@ import {
   Flex,
   Box,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import useBreadcrumbs from "use-react-router-breadcrumbs";
+import { useTranslation } from "react-i18next";
+import ChangeLanguageModal from "./ChangeLanguageModal";
 
 const Logo = styled.div`
   background: url(${LogoSVG});
@@ -35,6 +39,13 @@ const Logo = styled.div`
 
 const Navbar = () => {
   const breadcrumbs = useBreadcrumbs();
+  const {
+    isOpen: isOpenLanguageModal,
+    onOpen: onOpenLanguageModal,
+    onClose: onCloseLanguageModal,
+  } = useDisclosure();
+
+  const { t, i18n } = useTranslation();
 
   const activeGameAndChallenge = useContext(NavContext);
   const { keycloak, initialized } = useKeycloak();
@@ -59,18 +70,24 @@ const Navbar = () => {
   }, [initialized]);
 
   return (
-    <NavbarStyled>
-      <Flex px={2} alignItems="center" height="100%">
-        <Box width={1 / 2}>
-          <NavLink to="/" onClick={resetActiveGameAndChallenge}>
-            <Logo />
-            {/* <b>
+    <>
+      <ChangeLanguageModal
+        onClose={onCloseLanguageModal}
+        onOpen={onOpenLanguageModal}
+        isOpen={isOpenLanguageModal}
+      />
+      <NavbarStyled>
+        <Flex px={2} alignItems="center" height="100%">
+          <Box width={1 / 2}>
+            <NavLink to="/" onClick={resetActiveGameAndChallenge}>
+              <Logo />
+              {/* <b>
               <Text as="span" color={colorMode == "dark" ? "white" : "black"}>
                 FGPE
               </Text>
             </b> */}
-          </NavLink>
-          {/* {breadcrumbs.map(({ match, breadcrumb }) => {
+            </NavLink>
+            {/* {breadcrumbs.map(({ match, breadcrumb }) => {
             return (
               <NavLink key={match.url} to={match.url}>
                 {breadcrumb}
@@ -78,7 +95,7 @@ const Navbar = () => {
             );
           })} */}
 
-          {/* <NavLink
+            {/* <NavLink
             to={{
               pathname: "/profile/game",
               state: {
@@ -96,15 +113,16 @@ const Navbar = () => {
               " > " + activeGameAndChallenge.activeChallenge.name}
           </NavLink> */}
 
-          {/* {keycloak.authenticated && (
+            {/* {keycloak.authenticated && (
             <NavLink to="/profile">
               {userProfile?.firstName} {userProfile?.lastName}
             </NavLink>
           )} */}
-        </Box>
-        <Box width={1 / 2} textAlign="right">
-          <UserMenu>
+          </Box>
+          {/* <UserMenu> */}
+          <Flex width={1 / 2} justifyContent="flex-end" alignItems="flex-end">
             {keycloak.authenticated && (
+              // <Box>
               <NavLink to="/profile" onClick={resetActiveGameAndChallenge}>
                 {/* {userProfile?.firstName} {userProfile?.lastName} */}
 
@@ -113,9 +131,10 @@ const Navbar = () => {
                   color={colorMode == "dark" ? "white" : "black"}
                 />
               </NavLink>
+              // </Box>
             )}
 
-            <Box marginLeft={-5}>
+            <Box marginLeft={5}>
               <VscColorMode
                 fontSize={24}
                 color={colorMode == "dark" ? "white" : "black"}
@@ -123,34 +142,46 @@ const Navbar = () => {
                 cursor="pointer"
               />
             </Box>
+            <Box marginLeft={5}>
+              <IoLanguage
+                fontSize={24}
+                color={colorMode == "dark" ? "white" : "black"}
+                onClick={onOpenLanguageModal}
+                cursor="pointer"
+              />
+            </Box>
 
-            {keycloak.authenticated ? (
-              <button onClick={() => keycloak.logout()}>Logout</button>
-            ) : (
-              <button
-                onClick={() => {
-                  keycloak.login({
-                    redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
-                  });
-                }}
-              >
-                Login
-              </button>
-            )}
+            <Box marginLeft={5}>
+              {keycloak.authenticated ? (
+                <button onClick={() => keycloak.logout()}>{t("Logout")}</button>
+              ) : (
+                <button
+                  onClick={() => {
+                    keycloak.login({
+                      redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
+                    });
+                  }}
+                >
+                  {t("Login")}
+                </button>
+              )}
+            </Box>
+
             {/* <IconButton
               onClick={toggleColorMode}
               aria-label="Toggle theme"
               icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}
             /> */}
-          </UserMenu>
-        </Box>
-      </Flex>
-    </NavbarStyled>
+          </Flex>
+          {/* </UserMenu> */}
+        </Flex>
+      </NavbarStyled>
+    </>
   );
 };
 
 const UserMenu = styled.div`
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
   width: 150px;
@@ -173,7 +204,7 @@ const UserIconStyled = styled.img`
 
 const NavbarStyled = styled.div`
   a {
-    margin-right: 15px;
+    /* margin-right: 15px; */
     color: black;
   }
 

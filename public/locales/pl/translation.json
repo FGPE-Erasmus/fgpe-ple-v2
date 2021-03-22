@@ -1,0 +1,15 @@
+{
+  "Language": "Język",
+  "Close": "Zamknij",
+  "Login": "Zaloguj",
+  "Logout": "Wyloguj",
+  "Toggle view": "Przełącz widok",
+  "No rewards": "To miejsce na Twoje nagrody, na razie nic tu nie ma",
+  "No games": "Niestety nie jesteś zapisany/a jeszcze do żadnej gry.",
+  "Rewards": "Nagrody",
+  "Games": "Gry",
+  "description": {
+    "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
+    "part2": "Switch language between english and german using buttons above."
+  }
+}

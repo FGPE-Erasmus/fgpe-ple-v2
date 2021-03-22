@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./i18n/config";
+// import "./i18n/config";
 import { useTranslation } from "react-i18next";
 
 import { BrowserRouter, Route, Switch } from "react-router-dom";

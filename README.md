@@ -1,9 +1,50 @@
 # Getting Started
 
-This is an FGPE Learning Platform user interface. This project uses react, typescript, keycloak (auth) and emotion / chakra-ui (styling).
+This is an FGPE Learning Platform user interface. This project uses react, typescript, keycloak (auth), react-i18next and emotion / chakra-ui (styling).
 
 You need Node.js installed to run this project.
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Adding translations
+
+This app is using the react-i18next package for internationalization.
+You can check its documentation [here](https://react.i18next.com/).
+
+To add new translations, create a new file `public/locales/<language_code>/translation.json`.
+
+Remember to add a new language object to the `SUPPORTED_LANGUAGES` array in `src/i18n/config.ts`.
+
+```
+[
+    {
+        code: "en",
+        language: "English"
+    }
+]
+```
+
+The `language` parameter should be in original language, not translated to English. The `code` parameter should be same as the name of the folder inside locales catalog, for instance for German language:
+
+```
+[
+    {
+        code: "en",
+        language: "English"
+    },
+    {
+        code: "de",
+        language: "Deutsch"
+    }
+]
+```
+
+```
+public/locales/de/translation.json
+```
+
+Language Modal is using this array to display all available languages to the user.
+
+Remember to build the app after adding new translations.
 
 ## Available Scripts
 
@@ -43,11 +84,13 @@ Instead, it will copy all the configuration files and the transitive dependencie
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
 ### Compiles and minifies for production with Docker
+
 ```
 docker build -t fgpe/learning-platform:latest .
 ```
 
 ### Serves for production with Docker
+
 ```
 docker run -it -p 8080:80 \
     -v $(pwd)/docker/nginx.conf:/etc/nginx/nginx.conf \

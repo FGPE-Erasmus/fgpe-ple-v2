@@ -1,11 +1,11 @@
 import React from "react";
-import { useKeycloak } from "@react-keycloak/web";
 import styled from "@emotion/styled";
 
 import withChangeAnimation from "../utilities/withChangeAnimation";
+import { useTranslation } from "react-i18next";
 
 const HomePage = () => {
-  const { keycloak, initialized } = useKeycloak();
+  const { t, i18n } = useTranslation();
 
   return (
     <div>

@@ -6,6 +6,7 @@ import { useQuery, gql } from "@apollo/client";
 import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
 import Rewards from "./Rewards";
 import { Heading, Spacer } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
 const PLAYER_GAME_PROFILES = gql`
   query PlayerGameProfiles {
@@ -48,6 +49,7 @@ const PLAYER_GAME_PROFILES = gql`
 `;
 
 const StudentProfile: React.ComponentType = () => {
+  const { t, i18n } = useTranslation();
   const { keycloak, initialized } = useKeycloak();
   const { data, error, loading } = useQuery<PlayerGameProfiles>(
     PLAYER_GAME_PROFILES
@@ -84,17 +86,16 @@ const StudentProfile: React.ComponentType = () => {
     <div>
       {/* Hello, {userProfile?.firstName} {userProfile?.lastName} */}
       <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-        Rewards
+        {t("Rewards")}
       </Heading>
       <Rewards data={data} />
 
       <Heading as="h3" size="md" marginTop={10}>
-        Games
+        {t("Games")}
       </Heading>
 
       <GamesList data={data} />
-      {data.myGameProfiles.length < 1 &&
-        "Unfortunately you are not enrolled in any games at the moment."}
+      {data.myGameProfiles.length < 1 && t("No games")}
     </div>
   );
 };

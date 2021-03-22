@@ -1,0 +1,15 @@
+{
+  "Close": "Close",
+  "Language": "Language",
+  "Login": "Login",
+  "Logout": "Logout",
+  "Toggle view": "Toggle view",
+  "No rewards": "You will see your rewards here",
+  "No games": "Unfortunately you are not enrolled in any games at the moment.",
+  "Rewards": "Rewards",
+  "Games": "Games",
+  "description": {
+    "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
+    "part2": "Switch language between english and german using buttons above."
+  }
+}

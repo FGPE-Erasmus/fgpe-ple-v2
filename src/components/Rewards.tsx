@@ -47,6 +47,7 @@ import { MdCheckCircle, MdDateRange } from "react-icons/md";
 import { RiGamepadFill } from "react-icons/ri";
 
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 
 const getRewardsCount = (gameProfiles: PlayerGameProfiles_myGameProfiles[]) => {
   const rewards = gameProfiles.filter((gameProfile, i, array) => {
@@ -80,6 +81,8 @@ const getGridDimensions = (rewardsCount: number) => {
 };
 
 const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
+  const { t, i18n } = useTranslation();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [
     rewardForModal,
@@ -118,7 +121,7 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
             opacity={0.7}
             _hover={{ opacity: 1 }}
           >
-            Toggle view
+            {t("Toggle view")}
           </Button>
 
           <RewardsWrapper bg={color}>
@@ -188,9 +191,7 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
                   );
                 })}
             </DynamicGrid>
-            {showRewardsAlert && (
-              <RewardsAlert>You will see your rewards here</RewardsAlert>
-            )}
+            {showRewardsAlert && <RewardsAlert>{t("No rewards")}</RewardsAlert>}
           </RewardsWrapper>
         </Box>
       </Box>
