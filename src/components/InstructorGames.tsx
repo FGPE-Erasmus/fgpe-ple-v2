@@ -15,25 +15,12 @@ import { Link } from "react-router-dom";
 import { getInstructorGames } from "../generated/getInstructorGames";
 import Error from "./Error";
 
-const INSTRUCTOR_GAMES = gql`
-  query getInstructorGames {
-    games {
-      id
-      name
-      description
-    }
-  }
-`;
-
-const InstructorGames = () => {
-  const { data, error, loading } = useQuery<getInstructorGames>(
-    INSTRUCTOR_GAMES
-  );
+const InstructorGames = ({
+  data,
+}: {
+  data: getInstructorGames | undefined;
+}) => {
   const { t } = useTranslation();
-
-  if (!loading && error) {
-    return <Error errorContent={JSON.stringify(error)} />;
-  }
 
   return (
     <Box>
@@ -43,7 +30,7 @@ const InstructorGames = () => {
       {data?.games.length == 0 && <div>{t("No games available")}</div>}
       <VStack
         divider={<StackDivider />}
-        spacing={4}
+        spacing={2}
         align="stretch"
         marginTop={4}
       >
@@ -82,7 +69,7 @@ const Game = ({
     >
       <GameStyled bg={color}>
         <div>
-          <Heading size="lg">{name}</Heading>
+          <Heading size="sm">{name}</Heading>
           {description && <div>{description}</div>}
         </div>
       </GameStyled>
@@ -91,7 +78,7 @@ const Game = ({
 };
 
 const GameStyled = styled(Box)`
-  height: 80px;
+  height: 50px;
   width: 100%;
   border-radius: 5px;
   /* background-color: white; */

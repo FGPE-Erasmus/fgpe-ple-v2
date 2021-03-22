@@ -20,6 +20,7 @@ import Profile from "./components/Profile";
 import Alerts from "./components/Alerts";
 import InstructorGame from "./components/InstructorGame";
 import NotFound from "./components/NotFound";
+import AddPlayersToGame from "./components/AddPlayersToGame";
 
 const getZoomFactorFromLocalStorage = () => {
   const zoomFactor = localStorage.getItem("zoom");
@@ -117,6 +118,13 @@ function App() {
                         path="/game/:gameId/challenge/:challengeId"
                         roles={["student"]}
                         component={Challenge}
+                      />
+
+                      <PrivateRoute
+                        exact
+                        path="/teacher/game/:gameId/add-players"
+                        roles={["teacher"]}
+                        component={AddPlayersToGame}
                       />
 
                       <Route component={NotFound} />

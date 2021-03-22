@@ -81,7 +81,7 @@ const getGridDimensions = (rewardsCount: number) => {
 };
 
 const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [
