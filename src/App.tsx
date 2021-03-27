@@ -22,6 +22,7 @@ import NotFound from "./components/NotFound";
 import AddPlayersToGame from "./components/AddPlayersToGame";
 import Alerts from "./components/Alerts";
 import { ToastProvider, useToasts } from "./components/Notifications";
+import MainLoading from "./components/MainLoading";
 
 const getZoomFactorFromLocalStorage = () => {
   const zoomFactor = localStorage.getItem("zoom");
@@ -51,7 +52,7 @@ function App() {
 
   // console.log(process.env.REACT_APP_KEYCLOAK_CLIENT_ID);
   if (!ready) {
-    return <div>Loading...</div>;
+    return <MainLoading />;
   }
 
   return (

@@ -33,27 +33,6 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
   const { keycloak } = useKeycloak();
   const { setActiveGame } = useContext(NavContext);
 
-  // const { data, error, loading } = useQuery<PlayerGameProfiles>(
-  //   PLAYER_GAME_PROFILES
-  // );
-  // if (error) {
-  //   console.log("ERROR", error.graphQLErrors);
-  //   // console.log("CRAZY TOKEN", keycloak);
-  //   // if (error.message === "Forbidden resource") {
-  //   //   keycloak.updateToken(1).then((res) => {
-  //   //     console.log("token?", res);
-  //   //   });
-  //   //   console.log("siup");
-  //   // }
-  // }
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  // if (!data) {
-  //   return <div>No data.</div>;
-  // }
-
   return (
     <Box>
       <Divider marginTop={4} />

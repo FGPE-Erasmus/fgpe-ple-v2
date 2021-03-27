@@ -1,7 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { getGroupRankingsQuery } from "../generated/getGroupRankingsQuery";
 import { getLeaderboardsQuery } from "../generated/getLeaderboardsQuery";
+import Error from "./Error";
 
 const GET_LEADERBOARDS = gql`
   query getLeaderboardsQuery($gameId: String!) {
@@ -52,11 +54,11 @@ const Leaderboards = ({ gameId }: { gameId: string }) => {
   }
 
   if (errorLeaderboards) {
-    return <div>Error.</div>;
+    return <Error errorContent={JSON.stringify(errorLeaderboards)} />;
   }
 
   if (!dataLeaderboards && !loadingLeaderboards) {
-    return <div>Error.</div>;
+    return <Error errorContent={"Unknown error"} />;
   }
 
   return (
@@ -79,6 +81,8 @@ const Ranking = ({
   gameId: string;
   leaderboardId: string;
 }) => {
+  const { t } = useTranslation();
+
   const {
     loading: loadingGroupRankings,
     error: errorGroupRankings,
@@ -88,16 +92,16 @@ const Ranking = ({
   });
 
   if (loadingGroupRankings) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading")}</div>;
   }
 
   if (errorGroupRankings) {
     console.log("ERROR", errorGroupRankings);
-    return <div>Error. Error.</div>;
+    return <Error errorContent={JSON.stringify(errorGroupRankings)} />;
   }
 
   if (!dataGroupRankings && !loadingGroupRankings) {
-    return <div>Error. No data</div>;
+    return <Error errorContent={JSON.stringify("No data")} />;
   }
 
   return (

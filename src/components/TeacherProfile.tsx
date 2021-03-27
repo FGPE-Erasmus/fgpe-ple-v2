@@ -55,7 +55,7 @@ const TeacherProfile = () => {
   }
 
   if (loading) {
-    return <div>loading</div>;
+    return <div>{t("Loading")}</div>;
   }
 
   return (

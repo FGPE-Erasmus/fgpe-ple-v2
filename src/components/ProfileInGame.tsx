@@ -134,7 +134,7 @@ const ProfileInGame = () => {
     return <Text>Game ID not provided</Text>;
   }
 
-  if (loadingProfile) return <div>Loading...</div>;
+  if (loadingProfile) return <div>{t("Loading")}</div>;
 
   if (errorProfile) {
     console.log("error", errorProfile);

@@ -7,6 +7,7 @@ import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
 import Rewards from "./Rewards";
 import { Heading, Spacer } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
+import Error from "./Error";
 
 const PLAYER_GAME_PROFILES = gql`
   query PlayerGameProfiles {
@@ -71,11 +72,11 @@ const StudentProfile: React.ComponentType = () => {
   }, [initialized]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading")}</div>;
   }
 
   if (error) {
-    console.log("ERROR", error);
+    <Error errorContent={JSON.stringify(error)} />;
   }
 
   if (!data) {

@@ -72,7 +72,7 @@ const InstructorGame = () => {
   }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading")}</div>;
   }
 
   if (!loading && error) {
