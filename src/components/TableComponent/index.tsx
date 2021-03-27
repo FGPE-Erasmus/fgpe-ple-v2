@@ -84,10 +84,13 @@ const TableComponent = ({
                 {headerGroup.headers.map((column: any, i) => (
                   <Th {...column.getHeaderProps(column.getSortByToggleProps())}>
                     <Flex justifyContent="space-between">
-                      {column.render("Header")}
+                      <Box color={column.isSorted ? "deepskyblue" : "default"}>
+                        {column.render("Header")}
+                      </Box>
+
                       <Box float="right" textAlign="right">
                         {column.isSorted ? (
-                          <>
+                          <Box color="deepskyblue">
                             <AnimatedSortIcon
                               icon={<TiArrowSortedDown fontSize={16} />}
                               isVisible={column.isSortedDesc}
@@ -96,7 +99,7 @@ const TableComponent = ({
                               icon={<TiArrowSortedUp fontSize={16} />}
                               isVisible={!column.isSortedDesc}
                             />
-                          </>
+                          </Box>
                         ) : (
                           <TiArrowUnsorted fontSize={16} />
                         )}
@@ -190,9 +193,9 @@ const AnimatedSortIcon = ({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, y: -25, maxHeight: 0, maxWidth: 0 }}
-          animate={{ opacity: 1, y: 0, maxHeight: 15, maxWidth: 15 }}
-          exit={{ opacity: 0, y: -25, maxHeight: 0, maxWidth: 0 }}
+          initial={{ opacity: 0, maxHeight: 0, maxWidth: 0 }}
+          animate={{ opacity: 1, maxHeight: 5, maxWidth: 20 }}
+          exit={{ opacity: 0, maxHeight: 0, maxWidth: 0 }}
         >
           {icon}
         </motion.div>

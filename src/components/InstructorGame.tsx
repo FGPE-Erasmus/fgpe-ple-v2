@@ -103,6 +103,15 @@ const InstructorGame = () => {
         <Box>
           <Link
             to={{
+              pathname: "/profile",
+            }}
+          >
+            <Button marginRight={2} variant="outline">
+              {t("Back")}
+            </Button>
+          </Link>
+          <Link
+            to={{
               pathname: `/teacher/game/${gameId}/add-players`,
             }}
             onClick={() => {}}

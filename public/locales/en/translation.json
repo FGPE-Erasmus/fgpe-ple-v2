@@ -1,4 +1,5 @@
 {
+  "Back": "Back",
   "Close": "Close",
   "Language": "Language",
   "Login": "Login",
@@ -28,6 +29,12 @@
     "editorMenu": "Editor Menu"
   },
   "playground": {
+    "terminal": {
+      "waitingForResult": "Waiting for result...",
+      "feedback": {
+        "Ready": "Ready"
+      }
+    },
     "menu": {
       "run": "Run",
       "submit": "Submit",
@@ -67,14 +74,16 @@
     "validations": "Validations",
     "group": "Group",
     "progress": "Progress",
-    "enrolled": "Enrolled"
+    "enrolled": "Enrolled",
+    "email": "E-Mail"
   },
   "placeholders": {
     "name": "John",
     "lastName": "Smith",
     "game": "Game",
     "group": "Group",
-    "provideTestValues": "Provide your test values here..."
+    "provideTestValues": "Provide your test values here...",
+    "email": "john@smith.com"
   },
   "error": {
     "title": "An unexpected error has occured.",

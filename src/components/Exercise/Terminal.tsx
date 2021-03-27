@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import ReactHtmlParser from "react-html-parser";
 import { SettingsContext } from "./SettingsContext";
 import { Result } from "../../generated/globalTypes";
+import { useTranslation } from "react-i18next";
 
 const Terminal = ({
   submissionResult,
@@ -15,6 +16,7 @@ const Terminal = ({
   validationOutputs: null | any;
   loading: boolean;
 }) => {
+  const { t } = useTranslation();
   const { terminalTheme, terminalFontSize } = useContext(SettingsContext);
   return (
     <TerminalStyled
@@ -35,7 +37,9 @@ const Terminal = ({
           : ReactHtmlParser(
               submissionFeedback
                 ? loading
-                  ? "Waiting for result..."
+                  ? t("playground.terminal.waitingForResult")
+                  : submissionFeedback == "Ready"
+                  ? t("playground.terminal.feedback.Ready")
                   : submissionFeedback
                 : ""
             )}

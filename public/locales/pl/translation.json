@@ -1,4 +1,5 @@
 {
+  "Back": "Wróć",
   "Language": "Język",
   "Close": "Zamknij",
   "Login": "Zaloguj",
@@ -28,6 +29,12 @@
     "editorMenu": "Menu Edytora"
   },
   "playground": {
+    "terminal": {
+      "waitingForResult": "Czekam na odpowiedź...",
+      "feedback": {
+        "Ready": "Gotowy"
+      }
+    },
     "menu": {
       "run": "Uruchom",
       "submit": "Zatwierdź",
@@ -67,14 +74,16 @@
     "validations": "Walidacje",
     "group": "Grupa",
     "progress": "Postęp",
-    "enrolled": "Zapisany"
+    "enrolled": "Zapisany",
+    "email": "E-Mail"
   },
   "placeholders": {
     "name": "Jan",
     "lastName": "Kowalski",
     "game": "Nazwa gry",
     "group": "Nazwa grupy",
-    "provideTestValues": "Wprowadź wartości testowe w tym miejscu..."
+    "provideTestValues": "Wprowadź wartości testowe w tym miejscu...",
+    "email": "jan@kowalski.pl"
   },
   "error": {
     "title": "Wystąpił nieoczekiwany błąd.",

@@ -124,7 +124,7 @@ const TeacherStudents = ({
               disableFilters: true,
             },
           ]}
-          data={players.flatMap((i) => [i, i])}
+          data={players}
         />
       </Box>
 
