@@ -14,6 +14,48 @@
   "All your students": "All your students",
   "Proceed": "Proceed",
   "Add or remove players": "Add or remove players",
+  "Add more": "Add more",
+  "settings": {
+    "darkMode": "Dark mode",
+    "editorTheme": "Editor theme",
+    "terminalTheme": "Terminal theme",
+    "platformZoom": "Platform zoom",
+    "terminalFontSize": "Terminal font size",
+    "editorMenuTip": "Use the editor menu to change its zoom and other parameters",
+    "keyCombination": "Key combination",
+    "action": "Action",
+    "inEditor": "(in editor)",
+    "editorMenu": "Editor Menu"
+  },
+  "playground": {
+    "menu": {
+      "run": "Run",
+      "submit": "Submit",
+      "reload": "Reload",
+      "restore": "Restore",
+      "ready": "Ready",
+      "next": "Next",
+      "addTestValues": "Add test values",
+      "status": {
+        "status": "Status",
+        "CONNECTION_PROBLEM": "CONNECTION PROBLEM",
+        "COMPILATION_ERROR": "COMPILATION ERROR",
+        "RUNTIME_ERROR": "RUNTIME ERROR",
+        "READY": "READY",
+        "ACCEPT": "ACCEPT",
+        "ASK_FOR_REEVALUATION": "ASK FOR REEVALUATION",
+        "OUTPUT_LIMIT_OVERFLOW": "OUTPUT LIMIT OVERFLOW",
+        "PROCESSING": "PROCESSING",
+        "RESOURCE_USAGE_EXCEEDED": "RESOURCE USAGE EXCEEDED",
+        "TIMEOUT": "TIMEOUT",
+        "WRONG_ANSWER": "WRONG ANSWER"
+      },
+      "connection": {
+        "success": "Connected successfully",
+        "error": "There's a problem with your connection, try to refresh"
+      }
+    }
+  },
   "teacher": {
     "noPlayersAlert": "This game has no players. Add any to start."
   },
@@ -31,7 +73,8 @@
     "name": "John",
     "lastName": "Smith",
     "game": "Game",
-    "group": "Group"
+    "group": "Group",
+    "provideTestValues": "Provide your test values here..."
   },
   "error": {
     "title": "An unexpected error has occured.",

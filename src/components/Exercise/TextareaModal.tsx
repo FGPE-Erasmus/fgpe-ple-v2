@@ -29,6 +29,8 @@ const TextareaWithButton = ({
   changeValue: (value: string) => void;
   remove: () => void;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <AnimatePresence>
       <motion.div
@@ -43,7 +45,7 @@ const TextareaWithButton = ({
               changeValue(e.target.value);
             }}
             w="90%"
-            placeholder="Provide your test values here..."
+            placeholder={t("placeholders.provideTestValues")}
           />
 
           <IconButton
@@ -88,7 +90,7 @@ const TextareaModal = ({
               newTestValues[0] = e.target.value;
               setTestValues(newTestValues);
             }}
-            placeholder="Provide your test values here..."
+            placeholder={t("placeholders.provideTestValues")}
           />
           {testValues.map((item, i) => {
             if (i != 0) {
@@ -129,10 +131,10 @@ const TextareaModal = ({
             colorScheme="gray"
             onClick={() => setTestValues([...testValues, ""])}
           >
-            Add more
+            {t("Add more")}
           </Button>
           <Button colorScheme="gray" onClick={onClose}>
-            Close
+            {t("Close")}
           </Button>
         </ModalFooter>
       </ModalContent>

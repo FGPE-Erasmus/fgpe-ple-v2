@@ -14,6 +14,48 @@
   "All your students": "Twoi wszyscy uczniowie",
   "Proceed": "Dalej",
   "Add or remove players": "Dodaj lub usuń graczy",
+  "Add more": "Dodaj więcej",
+  "settings": {
+    "darkMode": "Ciemny motyw",
+    "editorTheme": "Motyw edytora",
+    "terminalTheme": "Motyw terminala",
+    "platformZoom": "Przybliżenie platformy",
+    "terminalFontSize": "Wielkość czcionki terminala",
+    "editorMenuTip": "Wykorzystaj menu edytora by powiększyć jego czcionkę lub zmienić inne parametry",
+    "keyCombination": "Kombinacja klawiszy",
+    "action": "Akcja",
+    "inEditor": "(w edytorze)",
+    "editorMenu": "Menu Edytora"
+  },
+  "playground": {
+    "menu": {
+      "run": "Uruchom",
+      "submit": "Zatwierdź",
+      "reload": "Przeładuj",
+      "restore": "Przywróć",
+      "ready": "Gotowy",
+      "next": "Dalej",
+      "addTestValues": "Dodaj wartości testowe",
+      "status": {
+        "status": "Status",
+        "CONNECTION_PROBLEM": "PROBLEM Z POŁĄCZENIEM",
+        "COMPILATION_ERROR": "BŁĄD KOMPILACJI",
+        "RUNTIME_ERROR": "BŁĄD WYKONANIA",
+        "READY": "GOTOWY",
+        "ACCEPT": "ZAAKCEPTOWANO",
+        "ASK_FOR_REEVALUATION": "PROŚBA REEWALUACJI",
+        "OUTPUT_LIMIT_OVERFLOW": "PRZEKROCZONO LIMIT WYJŚCIA",
+        "PROCESSING": "PRZETWARZANIE",
+        "RESOURCE_USAGE_EXCEEDED": "PRZEKROCZONO ZASOBY",
+        "TIMEOUT": "KONIEC CZASU",
+        "WRONG_ANSWER": "BŁĘDNA ODPOWIEDŹ"
+      },
+      "connection": {
+        "success": "Połączono pomyślnie",
+        "error": "Wystąpił problem z Twoim połączeniem, spróbuj odświeżyć"
+      }
+    }
+  },
   "teacher": {
     "noPlayersAlert": "Ta gra nie ma jeszcze graczy. Dodaj ich by rozpocząć."
   },
@@ -31,7 +73,8 @@
     "name": "Jan",
     "lastName": "Kowalski",
     "game": "Nazwa gry",
-    "group": "Nazwa grupy"
+    "group": "Nazwa grupy",
+    "provideTestValues": "Wprowadź wartości testowe w tym miejscu..."
   },
   "error": {
     "title": "Wystąpił nieoczekiwany błąd.",

@@ -24,6 +24,7 @@ import {
 import { LockIcon, CheckIcon } from "@chakra-ui/icons";
 import { useParams } from "react-router-dom";
 import Leaderboards from "./Leaderboards";
+import { useTranslation } from "react-i18next";
 
 interface ParamTypes {
   gameId: string;
@@ -119,6 +120,7 @@ const isChallengeWithoutChildren = (children: any) => {
 const ProfileInGame = () => {
   const { setActiveChallenge } = useContext(NavContext);
   const { gameId } = useParams<ParamTypes>();
+  const { t } = useTranslation();
 
   const {
     loading: loadingProfile,
@@ -144,7 +146,7 @@ const ProfileInGame = () => {
   return (
     <Box>
       <Heading as="h3" size="lg">
-        Game: {dataProfile.profileInGame.game.name}
+        {t("Game")}: {dataProfile.profileInGame.game.name}
       </Heading>
       <Box>
         <Leaderboards gameId={gameId} />

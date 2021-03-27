@@ -30,6 +30,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import Settings from "./Settings";
 import { getColorSchemeForSubmissionResult } from "./helpers/EditorMenu";
+import { useTranslation } from "react-i18next";
 
 const EditorMenu = ({
   submissionResult,
@@ -73,6 +74,8 @@ const EditorMenu = ({
   reload: () => void;
   isRestoreAvailable: boolean;
 }) => {
+  const { t } = useTranslation();
+
   const {
     isOpen: isSettingsOpen,
     onOpen: openSettings,
@@ -160,10 +163,10 @@ const EditorMenu = ({
                   }
                   fontSize={{ base: 12, md: 14 }}
                 >
-                  Run
+                  {t("playground.menu.run")}
                 </Button>
                 <Tooltip
-                  label="Add test values"
+                  label={t("playground.menu.addTestValues")}
                   aria-label="A tooltip"
                   bg="gray.300"
                   color="black"
@@ -204,7 +207,7 @@ const EditorMenu = ({
                 }
                 fontSize={{ base: 12, md: 14 }}
               >
-                Submit
+                {t("playground.menu.submit")}
               </Button>
             </Center>
             <Center width={1 / 6.5}>
@@ -215,7 +218,7 @@ const EditorMenu = ({
                 fontSize={{ base: 12, md: 14 }}
                 onClick={reload}
               >
-                Reload
+                {t("playground.menu.reload")}
               </Button>
             </Center>
             <Center width={1 / 6.5}>
@@ -227,7 +230,7 @@ const EditorMenu = ({
                 onClick={restore}
                 disabled={!isRestoreAvailable}
               >
-                Restore
+                {t("playground.menu.restore")}
               </Button>
             </Center>
             <Center width={1 / 6 / 2}>
@@ -248,7 +251,7 @@ const EditorMenu = ({
         >
           <Flex w="100%" alignItems="center" justifyContent="center">
             <Box width={3 / 4} textAlign="left">
-              Status:
+              {t("playground.menu.status.status")}:
               {/* <div style={{ display: "inline-block", width: 50 }}>
                 <AnimatePresence>
                   {(isValidationFetching || isEvaluationFetching) && (
@@ -300,21 +303,25 @@ const EditorMenu = ({
                     submissionResult
                   )}
                 >
-                  {connectionError ? "CONNECTION PROBLEM" : submissionResult}
+                  {connectionError
+                    ? t("playground.menu.status.CONNECTION_PROBLEM")
+                    : t(`playground.menu.status.${submissionResult}`)}
                 </Badge>
               ) : isWaitingForValidationResult ||
                 isWaitingForEvaluationResult ? (
                 <Spinner marginRight={3} marginLeft={3} size="xs" />
               ) : (
                 <Badge m={1} colorScheme={connectionError ? "red" : "green"}>
-                  {connectionError ? "CONNECTION PROBLEM" : "READY"}
+                  {connectionError
+                    ? t("playground.menu.status.CONNECTION_PROBLEM")
+                    : t("playground.menu.status.READY")}
                 </Badge>
               )}
               <Tooltip
                 label={
                   connectionError
-                    ? "There's a problem with your connection, try to refresh"
-                    : "Connected succesfully"
+                    ? t("playground.menu.connection.error")
+                    : t("playground.menu.connection.success")
                 }
                 aria-label="A tooltip"
                 bg="gray.300"
@@ -341,7 +348,7 @@ const EditorMenu = ({
                 fontSize={{ base: 12, md: 14 }}
                 onClick={setNextUnsolvedExercise}
               >
-                Next
+                {t("playground.menu.next")}
               </Button>
             </Box>
           </Flex>

@@ -31,6 +31,7 @@ import {
 import React, { useContext } from "react";
 import { SettingsContext } from "./SettingsContext";
 import ZoomContext from "../../context/ZoomContext";
+import { useTranslation } from "react-i18next";
 
 // import monacoThemes from "monaco-themes/themes/themelist.json";
 
@@ -43,6 +44,8 @@ const Settings = ({
   onOpen: () => void;
   onClose: () => void;
 }) => {
+  const { t } = useTranslation();
+
   const { zoomFactor, setZoomFactor } = useContext(ZoomContext);
   const { colorMode, toggleColorMode } = useColorMode();
   const {
@@ -80,7 +83,7 @@ const Settings = ({
             <Stack spacing="24px">
               <FormControl display="flex" alignItems="center" w="100%">
                 <FormLabel htmlFor="dark-mode" mb="0">
-                  Dark mode
+                  {t("settings.darkMode")}
                 </FormLabel>
                 <Switch
                   id="dark-mode"
@@ -90,7 +93,7 @@ const Settings = ({
               </FormControl>
 
               <FormControl display="flex" flexDirection="column" w="100%">
-                <FormLabel mb="0">Editor theme</FormLabel>
+                <FormLabel mb="0">{t("settings.editorTheme")}</FormLabel>
                 <Select
                   value={editorTheme}
                   onChange={(e) => changeEditorTheme(e.target.value)}
@@ -109,7 +112,7 @@ const Settings = ({
               </FormControl>
 
               <FormControl display="flex" flexDirection="column" w="100%">
-                <FormLabel mb="0">Terminal theme</FormLabel>
+                <FormLabel mb="0">{t("settings.terminalTheme")}</FormLabel>
                 <Select
                   value={terminalTheme}
                   onChange={(e) => changeTerminalTheme(e.target.value)}
@@ -120,7 +123,7 @@ const Settings = ({
               </FormControl>
 
               <FormControl display="flex" flexDirection="column" w="100%">
-                <FormLabel mb="0">Platform zoom</FormLabel>
+                <FormLabel mb="0">{t("settings.platformZoom")}</FormLabel>
                 <Select
                   value={zoomFactor}
                   onChange={(e) => {
@@ -141,7 +144,7 @@ const Settings = ({
               </FormControl>
 
               <FormControl display="flex" flexDirection="column" w="100%">
-                <FormLabel mb="0">Terminal font size</FormLabel>
+                <FormLabel mb="0">{t("settings.terminalFontSize")}</FormLabel>
                 <Select
                   value={terminalFontSize}
                   onChange={(e) => changeTerminalFontSize(e.target.value)}
@@ -154,10 +157,7 @@ const Settings = ({
                     );
                   })}
                 </Select>
-                <Text fontSize="xs">
-                  Use the <b>editor menu</b> to change its zoom and other
-                  parameters
-                </Text>
+                <Text fontSize="xs">{t("settings.editorMenuTip")}</Text>
               </FormControl>
 
               <Box>
@@ -168,8 +168,8 @@ const Settings = ({
                   <Table variant="simple" size="sm">
                     <Thead>
                       <Tr>
-                        <Th>Key combination</Th>
-                        <Th>Action</Th>
+                        <Th>{t("settings.keyCombination")}</Th>
+                        <Th>{t("settings.action")}</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -177,34 +177,34 @@ const Settings = ({
                         <Td>
                           <Kbd>ctrl</Kbd> + <Kbd>enter</Kbd>
                         </Td>
-                        <Td>Run</Td>
+                        <Td>{t("playground.menu.run")}</Td>
                       </Tr>
                       <Tr>
                         <Td>
                           <Kbd>ctrl</Kbd> + <Kbd>\</Kbd>
                         </Td>
-                        <Td>Submit</Td>
+                        <Td>{t("playground.menu.submit")}</Td>
                       </Tr>
                       <Tr>
                         <Td>
                           <Kbd>ctrl</Kbd> + <Kbd>m</Kbd>
                         </Td>
-                        <Td>Save</Td>
+                        <Td>{t("playground.menu.reload")}</Td>
                       </Tr>
                       <Tr>
                         <Td>
                           <Kbd>ctrl</Kbd> + <Kbd>,</Kbd>
                         </Td>
-                        <Td>Restore</Td>
+                        <Td>{t("playground.menu.restore")}</Td>
                       </Tr>
                       <Tr>
                         <Td>
                           <Kbd>F1</Kbd>{" "}
                           <Text as="span" fontSize={11}>
-                            (in editor)
+                            {t("settings.inEditor")}
                           </Text>
                         </Td>
-                        <Td>Editor Menu</Td>
+                        <Td>{t("settings.editorMenu")}</Td>
                       </Tr>
                     </Tbody>
                   </Table>
