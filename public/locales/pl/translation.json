@@ -11,6 +11,28 @@
   "Game": "Gra",
   "Provide test values": "Wpisz wartości testowe",
   "No games available": "Brak dostępnych gier",
+  "All your students": "Twoi wszyscy uczniowie",
+  "Proceed": "Dalej",
+  "Add or remove players": "Dodaj lub usuń graczy",
+  "teacher": {
+    "noPlayersAlert": "Ta gra nie ma jeszcze graczy. Dodaj ich by rozpocząć."
+  },
+  "table": {
+    "name": "Imię",
+    "lastName": "Nazwisko",
+    "game": "Gra",
+    "submissions": "Ewaluacje",
+    "validations": "Walidacje",
+    "group": "Grupa",
+    "progress": "Postęp",
+    "enrolled": "Zapisany"
+  },
+  "placeholders": {
+    "name": "Jan",
+    "lastName": "Kowalski",
+    "game": "Nazwa gry",
+    "group": "Nazwa grupy"
+  },
   "error": {
     "title": "Wystąpił nieoczekiwany błąd.",
     "description": "Spróbuj odświeżyć stronę. Skontaktuj się z administracją jeśli błąd będzie nadal występować.",

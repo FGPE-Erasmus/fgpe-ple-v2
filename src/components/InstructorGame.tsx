@@ -27,6 +27,8 @@ import { gql, useQuery } from "@apollo/client";
 import { getGameByIdQuery } from "../generated/getGameByIdQuery";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import TableComponent from "./TableComponent";
+import ColumnFilter from "./TableComponent/ColumnFilter";
 
 interface ParamTypes {
   gameId: string;
@@ -87,7 +89,7 @@ const InstructorGame = () => {
         <>
           <Alert status="info">
             <AlertIcon />
-            This game has not players. Add any to start.
+            {t("teacher.noPlayersAlert")}
           </Alert>
         </>
       )}
@@ -105,49 +107,64 @@ const InstructorGame = () => {
             }}
             onClick={() => {}}
           >
-            <Button>Add or remove players</Button>
+            <Button>{t("Add or remove players")}</Button>
           </Link>
         </Box>
       </Flex>
 
-      <Table variant="simple">
-        {/* <TableCaption>Players enrolled in this game</TableCaption> */}
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-            <Th>Last Name</Th>
-            <Th>Email</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data.game.players.length < 1 && (
-            <Tr>
-              <Td>-</Td>
-              <Td>-</Td>
-              <Td>-</Td>
-            </Tr>
-          )}
+      <Box>
+        <TableComponent
+          dontRecomputeChange
+          columns={[
+            {
+              Header: t("table.name"),
+              accessor: "user.firstName",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter
+                  column={column}
+                  placeholder={t("placeholders.name")}
+                />
+              ),
+            },
+            {
+              Header: t("table.lastName"),
+              accessor: "user.lastName",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter
+                  column={column}
+                  placeholder={t("placeholders.lastName")}
+                />
+              ),
+            },
 
-          {data.game.players.map((player, i) => {
-            return (
-              <Tr key={i}>
-                <Td>{player.user.firstName}</Td>
-                <Td>{player.user.lastName}</Td>
-                <Td>{player.user.email}</Td>
-              </Tr>
-            );
-          })}
-        </Tbody>
-        {data.game.players.length > 7 && (
-          <Tfoot>
-            <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th>multiply by</Th>
-            </Tr>
-          </Tfoot>
-        )}
-      </Table>
+            {
+              Header: t("table.submissions"),
+              accessor: "submissions.length",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter column={column} placeholder="123" />
+              ),
+            },
+            {
+              Header: t("table.validations"),
+              accessor: "validations.length",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter column={column} placeholder="123" />
+              ),
+            },
+            {
+              Header: t("table.group"),
+              accessor: "group.name",
+              Cell: ({ value }: { value: any }) => {
+                return value ? value : "-";
+              },
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter column={column} placeholder={t("table.group")} />
+              ),
+            },
+          ]}
+          data={data.game.players}
+        />
+      </Box>
     </div>
   );
 };

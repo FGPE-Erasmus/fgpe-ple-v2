@@ -43,7 +43,10 @@ const INSTRUCTOR_GAMES = gql`
 
 const TeacherProfile = () => {
   const { data, error, loading } = useQuery<getInstructorGames>(
-    INSTRUCTOR_GAMES
+    INSTRUCTOR_GAMES,
+    {
+      fetchPolicy: "no-cache",
+    }
   );
   const { t } = useTranslation();
 

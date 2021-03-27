@@ -29,6 +29,9 @@ import { gameQuery } from "../generated/gameQuery";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { table } from "console";
+import TableComponent from "./TableComponent";
+import ColumnFilter from "./TableComponent/ColumnFilter";
+import { useTranslation } from "react-i18next";
 
 interface ParamTypes {
   gameId: string;
@@ -86,6 +89,8 @@ const REMOVE_PLAYER_FROM_GAME = gql`
 `;
 
 const AddPlayersToGame = () => {
+  const { t } = useTranslation();
+
   const { gameId } = useParams<ParamTypes>();
   const [tableFilters, setTableFilters] = useState({
     firstName: "",
@@ -107,6 +112,7 @@ const AddPlayersToGame = () => {
     data: dataGame,
     error: errorGame,
     loading: loadingGame,
+    refetch: refetchGame,
   } = useQuery<gameQuery>(GAME_QUERY, {
     variables: { gameId },
     fetchPolicy: "no-cache",
@@ -134,7 +140,7 @@ const AddPlayersToGame = () => {
       <Flex justifyContent="space-between" alignItems="center">
         <Box>
           <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-            Add players
+            {t("Game")}: {dataGame.game.name}
           </Heading>
         </Box>
         <Box>
@@ -143,13 +149,102 @@ const AddPlayersToGame = () => {
               pathname: `/teacher/game/${gameId}`,
             }}
           >
-            <Button>Go to game info</Button>
+            <Button>{t("Proceed")}</Button>
           </Link>
         </Box>
       </Flex>
 
+      <Box>
+        <TableComponent
+          dontRecomputeChange
+          columns={[
+            {
+              Header: t("table.enrolled"),
+              accessor: "id",
+              disableFilters: true,
+              width: 100,
+
+              Cell: ({ value }: { value: any }) => {
+                return (
+                  <PlayerCheckbox
+                    addPlayer={addPlayer}
+                    removePlayer={removePlayer}
+                    refetchGame={refetchGame}
+                    gameId={gameId}
+                    userId={value}
+                    initialChecked={
+                      !!dataGame.game.players.find(
+                        (gamePlayer) => gamePlayer.user.id === value
+                      )
+                    }
+                  />
+                );
+              },
+            },
+            {
+              Header: t("table.name"),
+              accessor: "firstName",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter
+                  column={column}
+                  placeholder={t("placeholders.name")}
+                />
+              ),
+            },
+            {
+              Header: t("table.lastName"),
+              accessor: "lastName",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter
+                  column={column}
+                  placeholder={t("placeholders.lastName")}
+                />
+              ),
+            },
+            {
+              Header: t("table.email"),
+              accessor: "email",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter
+                  column={column}
+                  placeholder={t("placeholders.email")}
+                />
+              ),
+            },
+
+            // {
+            //   Header: t("table.submissions"),
+            //   accessor: "submissions.length",
+            //   Filter: ({ column }: { column: any }) => (
+            //     <ColumnFilter column={column} placeholder="123" />
+            //   ),
+            // },
+            // {
+            //   Header: t("table.validations"),
+            //   accessor: "validations.length",
+            //   Filter: ({ column }: { column: any }) => (
+            //     <ColumnFilter column={column} placeholder="123" />
+            //   ),
+            // },
+            // {
+            //   Header: t("table.group"),
+            //   accessor: "group.name",
+            //   Cell: ({ value }: { value: any }) => {
+            //     return value ? value : "-";
+            //   },
+            //   Filter: ({ column }: { column: any }) => (
+            //     <ColumnFilter
+            //       column={column}
+            //       placeholder={t("placeholders.group")}
+            //     />
+            //   ),
+            // },
+          ]}
+          data={dataUsers.usersByRole}
+        />
+      </Box>
+      {/* 
       <Table variant="simple">
-        {/* <TableCaption>Players enrolled in this game</TableCaption> */}
         <Thead>
           <Tr>
             <Th width={30}>Enrolled</Th>
@@ -261,7 +356,7 @@ const AddPlayersToGame = () => {
             );
           })}
         </Tbody>
-      </Table>
+      </Table> */}
     </Box>
   );
 };
@@ -272,6 +367,7 @@ const PlayerCheckbox = ({
   gameId,
   addPlayer,
   removePlayer,
+  refetchGame,
 }: {
   initialChecked: boolean;
   userId: string | null;
@@ -282,6 +378,7 @@ const PlayerCheckbox = ({
   removePlayer: (
     options?: MutationFunctionOptions<any, Record<string, any>> | undefined
   ) => Promise<FetchResult<any, Record<string, any>, Record<string, any>>>;
+  refetchGame: () => void;
 }) => {
   const [checked, setChecked] = useState(initialChecked);
   const [loading, setLoading] = useState(false);
@@ -296,6 +393,7 @@ const PlayerCheckbox = ({
         },
       });
       setLoading(false);
+
       if (!res.errors) {
         setChecked(true);
       }
@@ -307,6 +405,7 @@ const PlayerCheckbox = ({
         },
       });
       setLoading(false);
+
       if (!res.errors) {
         setChecked(false);
       }

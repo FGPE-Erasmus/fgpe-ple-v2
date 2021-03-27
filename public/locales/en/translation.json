@@ -11,6 +11,28 @@
   "Game": "Game",
   "Provide test values": "Provide test values",
   "No games available": "No games available",
+  "All your students": "All your students",
+  "Proceed": "Proceed",
+  "Add or remove players": "Add or remove players",
+  "teacher": {
+    "noPlayersAlert": "This game has no players. Add any to start."
+  },
+  "table": {
+    "name": "Name",
+    "lastName": "Last name",
+    "game": "Game",
+    "submissions": "Submissions",
+    "validations": "Validations",
+    "group": "Group",
+    "progress": "Progress",
+    "enrolled": "Enrolled"
+  },
+  "placeholders": {
+    "name": "John",
+    "lastName": "Smith",
+    "game": "Game",
+    "group": "Group"
+  },
   "error": {
     "title": "An unexpected error has occured.",
     "description": "Try to refresh the page. Please contact administration if this error persists.",

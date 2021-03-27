@@ -10,7 +10,10 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { getInstructorGames } from "../generated/getInstructorGames";
+import TableComponent from "./TableComponent";
+import ColumnFilter from "./TableComponent/ColumnFilter";
 
 const getPlayers = (data: getInstructorGames | undefined) => {
   if (!data) {
@@ -45,21 +48,92 @@ const TeacherStudents = ({
   gamesData: getInstructorGames | undefined;
 }) => {
   const players = getPlayers(gamesData);
+  const { t } = useTranslation();
 
   return (
     <Box>
       <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-        Your all students
+        {t("All your students")}
       </Heading>
+      <Box>
+        <TableComponent
+          columns={[
+            {
+              Header: t("table.name"),
+              accessor: "user.firstName",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter
+                  column={column}
+                  placeholder={t("placeholders.name")}
+                />
+              ),
+            },
+            {
+              Header: t("table.lastName"),
+              accessor: "user.lastName",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter
+                  column={column}
+                  placeholder={t("placeholders.lastName")}
+                />
+              ),
+            },
+            {
+              Header: t("table.game"),
+              accessor: "game.name",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter
+                  column={column}
+                  placeholder={t("placeholders.game")}
+                />
+              ),
+            },
+            {
+              Header: t("table.submissions"),
+              accessor: "submissions.length",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter column={column} placeholder="123" />
+              ),
+            },
+            {
+              Header: t("table.validations"),
+              accessor: "validations.length",
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter column={column} placeholder="123" />
+              ),
+            },
+            {
+              Header: t("table.group"),
+              accessor: "group.name",
+              Cell: ({ value }: { value: any }) => {
+                return value ? value : "-";
+              },
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter
+                  column={column}
+                  placeholder={t("placeholders.group")}
+                />
+              ),
+            },
+            {
+              Header: t("table.progress"),
+              accessor: "progress",
+              Cell: ({ value }: { value: any }) => {
+                return `${value.progress}/${value.total}`;
+              },
+              disableFilters: true,
+            },
+          ]}
+          data={players}
+        />
+      </Box>
 
-      <Box width="100%" overflowY="scroll">
+      {/* <Box width="100%" overflow="auto">
         <Table variant="simple">
-          {/* <TableCaption>Players enrolled in this game</TableCaption> */}
           <Thead>
             <Tr>
               <Th>Name</Th>
               <Th>Last Name</Th>
-              {/* <Th>Email</Th> */}
               <Th>Game</Th>
               <Th>Submissions</Th>
               <Th>Validations</Th>
@@ -73,7 +147,6 @@ const TeacherStudents = ({
                 <Tr>
                   <Td>{player.user.firstName}</Td>
                   <Td>{player.user.lastName}</Td>
-                  {/* <Td>{player.user.email}</Td> */}
                   <Td>{player.game.name}</Td>
                   <Td>{player.submissions.length}</Td>
                   <Td>{player.validations.length}</Td>
@@ -85,35 +158,11 @@ const TeacherStudents = ({
               );
             })}
 
-            {/* {data?.games < 1 && (
-            <Tr>
-              <Td>-</Td>
-              <Td>-</Td>
-              <Td>-</Td>
-            </Tr>
-          )} */}
-
-            {/* {data.game.players.map((player, i) => {
-            return (
-              <Tr key={i}>
-                <Td>inches</Td>
-                <Td>millimetres (mm)</Td>
-                <Td>25.4</Td>
-              </Tr>
-            );
-          })} */}
+  
           </Tbody>
-          {/* {data.game.players.length > 7 && (
-          <Tfoot>
-            <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th>multiply by</Th>
-            </Tr>
-          </Tfoot>
-        )} */}
+     
         </Table>
-      </Box>
+      </Box> */}
     </Box>
   );
 };
