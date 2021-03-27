@@ -17,10 +17,11 @@ import ZoomContext from "./context/ZoomContext";
 import StudentProfile from "./components/StudentProfile";
 import TeacherProfile from "./components/TeacherProfile";
 import Profile from "./components/Profile";
-import Alerts from "./components/Alerts";
 import InstructorGame from "./components/InstructorGame";
 import NotFound from "./components/NotFound";
 import AddPlayersToGame from "./components/AddPlayersToGame";
+import Alerts from "./components/Alerts";
+import { ToastProvider, useToasts } from "./components/Notifications";
 
 const getZoomFactorFromLocalStorage = () => {
   const zoomFactor = localStorage.getItem("zoom");
@@ -83,54 +84,56 @@ function App() {
             >
               <ZoomWrapper zoomFactor={zoomFactor}>
                 {/* <Alerts /> */}
-                <Navbar />
-                <MainWrapper>
-                  <AnimatePresence exitBeforeEnter initial={false}>
-                    <Switch location={location} key={location.pathname}>
-                      <Route
-                        exact
-                        path="/(|learning-platform)/"
-                        component={Homepage}
-                      />
-                      <PrivateRoute
-                        exact
-                        path="/profile"
-                        roles={["student", "teacher"]}
-                        component={Profile}
-                      />
+                <ToastProvider>
+                  <Navbar />
+                  <MainWrapper>
+                    <AnimatePresence exitBeforeEnter initial={false}>
+                      <Switch location={location} key={location.pathname}>
+                        <Route
+                          exact
+                          path="/(|learning-platform)/"
+                          component={Homepage}
+                        />
+                        <PrivateRoute
+                          exact
+                          path="/profile"
+                          roles={["student", "teacher"]}
+                          component={Profile}
+                        />
 
-                      <PrivateRoute
-                        exact
-                        path="/game/:gameId"
-                        roles={["student"]}
-                        component={ProfileInGame}
-                      />
+                        <PrivateRoute
+                          exact
+                          path="/game/:gameId"
+                          roles={["student"]}
+                          component={ProfileInGame}
+                        />
 
-                      <PrivateRoute
-                        exact
-                        path="/teacher/game/:gameId"
-                        roles={["teacher"]}
-                        component={InstructorGame}
-                      />
+                        <PrivateRoute
+                          exact
+                          path="/teacher/game/:gameId"
+                          roles={["teacher"]}
+                          component={InstructorGame}
+                        />
 
-                      <PrivateRoute
-                        exact
-                        path="/game/:gameId/challenge/:challengeId"
-                        roles={["student"]}
-                        component={Challenge}
-                      />
+                        <PrivateRoute
+                          exact
+                          path="/game/:gameId/challenge/:challengeId"
+                          roles={["student"]}
+                          component={Challenge}
+                        />
 
-                      <PrivateRoute
-                        exact
-                        path="/teacher/game/:gameId/add-players"
-                        roles={["teacher"]}
-                        component={AddPlayersToGame}
-                      />
+                        <PrivateRoute
+                          exact
+                          path="/teacher/game/:gameId/add-players"
+                          roles={["teacher"]}
+                          component={AddPlayersToGame}
+                        />
 
-                      <Route component={NotFound} />
-                    </Switch>
-                  </AnimatePresence>
-                </MainWrapper>
+                        <Route component={NotFound} />
+                      </Switch>
+                    </AnimatePresence>
+                  </MainWrapper>
+                </ToastProvider>
               </ZoomWrapper>
             </ZoomContext.Provider>
             {/* </MainContext.Provider> */}

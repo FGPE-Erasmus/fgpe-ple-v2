@@ -9,8 +9,9 @@ import {
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React, { useRef } from "react";
-import RewardExample from "../images/reward-example.jpeg";
+import RewardExample from "../../images/reward-example.jpeg";
 import Reward from "react-rewards";
+import { AnimatePresence } from "framer-motion";
 
 const Alerts = () => {
   const rewardRef = useRef<any>();
@@ -25,8 +26,7 @@ const Alerts = () => {
     <Box
       position="absolute"
       width="100%"
-      bottom="66px"
-      left="calc(6%)"
+      top={0}
       zIndex="999"
       pointerEvents="none"
     >
@@ -38,15 +38,15 @@ const Alerts = () => {
         pointerEvents="all"
       >
         {/* <Alert
-          status="info"
-          textAlign="left"
-          // boxShadow="0px 0px 34px 5px #70acfb"
-        >
-          <AlertIcon />
-          Hint: This editor has a lot of features: code completion, parameter
-          info, quick info, and member lists. Click F1 to show!
-          <CloseButton position="absolute" right="8px" top="8px" />
-        </Alert> */}
+            status="info"
+            textAlign="left"
+            // boxShadow="0px 0px 34px 5px #70acfb"
+          >
+            <AlertIcon />
+            Hint: This editor has a lot of features: code completion, parameter
+            info, quick info, and member lists. Click F1 to show!
+            <CloseButton position="absolute" right="8px" top="8px" />
+          </Alert> */}
         <Reward
           ref={(ref) => {
             rewardRef.current = ref;

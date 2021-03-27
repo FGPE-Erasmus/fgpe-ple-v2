@@ -3,17 +3,15 @@ import styled from "@emotion/styled";
 
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import { useTranslation } from "react-i18next";
+import { useToasts } from "./Notifications";
 
 const HomePage = () => {
-  const { t, i18n } = useTranslation();
-
   return (
     <div>
       <div>
         <h3>Home Page</h3>
         <p>Anyone can access this page</p>
       </div>
-
       {/* {initialized ? (
         keycloak.authenticated && (
           <pre>{JSON.stringify(keycloak, undefined, 2)}</pre>
