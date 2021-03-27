@@ -3,6 +3,8 @@ import styled from "@emotion/styled";
 import React from "react";
 import ReactHtmlParser from "react-html-parser";
 import { FindChallenge_challenge_refs } from "../../generated/FindChallenge";
+import ScrollbarWrapper from "../ScrollbarWrapper";
+import ReactMarkdown from "react-markdown";
 
 const Statement = ({
   exercise,
@@ -12,50 +14,162 @@ const Statement = ({
   const { colorMode } = useColorMode();
 
   return (
-    <ScrollbarStyled colorMode={colorMode}>
+    <ScrollbarWrapper>
       <Flex
         height={150 + getStatementLength(exercise) / 5}
         maxHeight={250}
         overflowY={"auto"}
         borderBottom="1px solid rgba(0,0,0,0.1)"
       >
-        <Box
+        <MarkdownStyled
           h="100%"
           w="100%"
           bgColor={colorMode == "dark" ? "gray.900" : "gray.100"}
         >
           <Box bgColor={colorMode == "dark" ? "gray.900" : "gray.100"} p={5}>
-            {ReactHtmlParser(getStatement(exercise))}
+            <ReactMarkdown allowDangerousHtml>
+              {getStatement(exercise)}
+            </ReactMarkdown>
           </Box>
-        </Box>
+        </MarkdownStyled>
       </Flex>
-    </ScrollbarStyled>
+    </ScrollbarWrapper>
   );
 };
 
-const ScrollbarStyled = styled.span<{ colorMode: string }>`
-  & > * {
-    ::-webkit-scrollbar {
-      width: 13px;
-      height: 13px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: ${({ colorMode }) =>
-        colorMode != "dark"
-          ? "rgba(0, 0, 0, 0.1)"
-          : "rgba(255, 255, 255, 0.1)"};
-      border-radius: 1px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #323232;
-    }
-    ::-webkit-scrollbar-track {
-      background: ${({ colorMode }) =>
-        colorMode != "dark"
-          ? "rgba(0, 0, 0, 0.1)"
-          : "rgba(255, 255, 255, 0.1)"};
-      border-radius: 1px;
-    }
+const MarkdownStyled = styled(Box)`
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  td {
+    vertical-align: top;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: normal;
+
+    line-height: 1em;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-weight: bold;
+  }
+
+  h1 {
+    font-size: 2.5em;
+  }
+
+  h2 {
+    font-size: 2em;
+  }
+
+  h3 {
+    font-size: 1.5em;
+  }
+
+  h4 {
+    font-size: 1.2em;
+  }
+
+  h5 {
+    font-size: 1em;
+  }
+
+  h6 {
+    font-size: 0.9em;
+  }
+
+  blockquote {
+    color: #666666;
+    margin: 0;
+    padding-left: 3em;
+    border-left: 0.1em #aaa solid;
+  }
+
+  hr {
+    display: block;
+    border: 0;
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #eee;
+    margin: 1em 0;
+    padding: 0;
+  }
+
+  pre,
+  code,
+  kbd,
+  samp {
+    color: lightgray;
+    font-family: monospace, monospace;
+    _font-family: "courier new", monospace;
+    font-size: 0.98em;
+  }
+
+  pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  b,
+  strong {
+    font-weight: bold;
+  }
+
+  dfn {
+    font-style: italic;
+  }
+
+  ins {
+    background: #ff9;
+    color: #000;
+    text-decoration: none;
+  }
+
+  mark {
+    background: #ff0;
+    color: #000;
+    font-style: italic;
+    font-weight: bold;
+  }
+
+  sub,
+  sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+
+  sup {
+    top: -0.5em;
+  }
+
+  sub {
+    bottom: -0.25em;
+  }
+
+  ul,
+  ol {
+    margin: 1em 0;
+    padding: 0 0 0 2em;
+  }
+
+  li p:last-child {
+    margin: 0;
+  }
+
+  dd {
+    margin: 0 0 0 2em;
   }
 `;
 

@@ -144,6 +144,7 @@ const CodeEditor = ({
         className="editor"
         options={{
           fixedOverflowWidgets: true,
+          wordWrap: "on",
           minimap: {
             enabled: false,
           },
@@ -159,6 +160,7 @@ const EditorStyled = styled.div`
   textarea:focus {
     outline: none;
   } */
+
   height: 100%;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 `;
