@@ -7,17 +7,35 @@
 // GraphQL query operation: getGameByIdQuery
 // ====================================================
 
+export interface getGameByIdQuery_game_players_submissions {
+  __typename: "Submission";
+  id: string;
+}
+
+export interface getGameByIdQuery_game_players_validations {
+  __typename: "Validation";
+  id: string;
+}
+
+export interface getGameByIdQuery_game_players_group {
+  __typename: "Group";
+  name: string;
+}
+
 export interface getGameByIdQuery_game_players_user {
   __typename: "User";
-  email: string | null;
-  id: string | null;
   firstName: string | null;
   lastName: string | null;
+  email: string | null;
 }
 
 export interface getGameByIdQuery_game_players {
   __typename: "Player";
   id: string;
+  submissions: getGameByIdQuery_game_players_submissions[];
+  validations: getGameByIdQuery_game_players_validations[];
+  points: number;
+  group: getGameByIdQuery_game_players_group | null;
   user: getGameByIdQuery_game_players_user;
 }
 

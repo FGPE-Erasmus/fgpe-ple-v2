@@ -44,11 +44,20 @@ const GET_GAME_BY_ID = gql`
       updatedAt
       players {
         id
-        user {
-          email
+        submissions {
           id
+        }
+        validations {
+          id
+        }
+        points
+        group {
+          name
+        }
+        user {
           firstName
           lastName
+          email
         }
       }
     }
@@ -93,7 +102,6 @@ const InstructorGame = () => {
           </Alert>
         </>
       )}
-
       <Flex width="100%" justifyContent="space-between" alignItems="center">
         <Box>
           <Heading as="h3" size="md" marginTop={5} marginBottom={5}>

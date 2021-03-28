@@ -80,7 +80,7 @@ const StudentProfile: React.ComponentType = () => {
   }
 
   if (!data) {
-    return <div>Couldn't fetch data</div>;
+    return <Error errorContent={"No data"} />;
   }
 
   return (
