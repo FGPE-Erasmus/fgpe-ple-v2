@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useSubscription } from "@apollo/client";
 import React, { useState } from "react";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import {
@@ -14,6 +14,9 @@ import Exercise from "./Exercise";
 import { Redirect, useParams } from "react-router-dom";
 import { CheckIcon } from "@chakra-ui/icons";
 import { getPlayerIdQuery } from "../generated/getPlayerIdQuery";
+import { rewardReceivedStudentSubscription } from "../generated/rewardReceivedStudentSubscription";
+import { useNotifications } from "./Notifications";
+import { RewardType } from "../generated/globalTypes";
 
 interface ParamTypes {
   gameId: string;
@@ -84,17 +87,63 @@ const checkIfSolved = (
   return solved;
 };
 
+const REWARD_RECEIVED_STUDENT_SUB = gql`
+  subscription rewardReceivedStudentSubscription($gameId: String!) {
+    rewardReceivedStudent(gameId: $gameId) {
+      count
+      id
+      reward {
+        kind
+        image
+        name
+        message
+        description
+      }
+    }
+  }
+`;
+
 const Challenge = ({
   location,
 }: {
   location: { state: { gameId: string; challengeId: string } };
 }) => {
   const { gameId, challengeId } = useParams<ParamTypes>();
+  const { add: addNotification } = useNotifications();
+
   const [
     activeExercise,
     setActiveExercise,
   ] = useState<null | FindChallenge_challenge_refs>(null);
   const [shouldRedirect, setShouldRedirect] = useState(false);
+
+  const {
+    data: subRewardsData,
+    loading: subRewardsLoading,
+    error: subRewardsError,
+  } = useSubscription<rewardReceivedStudentSubscription>(
+    REWARD_RECEIVED_STUDENT_SUB,
+    {
+      variables: { gameId },
+      onSubscriptionData: ({ subscriptionData }) => {
+        if (subscriptionData.data) {
+          addNotification({
+            title: subscriptionData.data.rewardReceivedStudent.reward.name,
+            description:
+              subscriptionData.data.rewardReceivedStudent.reward.description,
+            rewardImage:
+              subscriptionData.data.rewardReceivedStudent.reward.image,
+            rewardKind: subscriptionData.data.rewardReceivedStudent.reward.kind,
+            showFireworks:
+              subscriptionData.data.rewardReceivedStudent.reward.kind ===
+                RewardType.BADGE ||
+              subscriptionData.data.rewardReceivedStudent.reward.kind ===
+                RewardType.VIRTUAL_ITEM,
+          });
+        }
+      },
+    }
+  );
 
   const {
     data: challengeData,

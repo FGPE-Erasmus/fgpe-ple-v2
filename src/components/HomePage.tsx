@@ -3,26 +3,31 @@ import styled from "@emotion/styled";
 
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import { useTranslation } from "react-i18next";
-import { useToasts } from "./Notifications";
+import { useNotifications } from "./Notifications";
 
 const HomePage = () => {
+  const { t } = useTranslation();
+  const { add } = useNotifications();
+
   return (
     <div>
       <div>
-        <h3>Home Page</h3>
-        <p>Anyone can access this page</p>
+        <button
+          onClick={() =>
+            add({
+              title: "testbfsadbhfasbhjfbhjadsbhdasf`bhjbhjsfdbhjsafafa",
+              description:
+                "dhjksfhjkashfjhjkdashjkdfahjkfadhj hf kskj fhjkas fdjkashdkjf sahdhkfj ahksjfk ah fjka",
+            })
+          }
+        >
+          elo
+        </button>
+        <h3>{t("home.title")}</h3>
+        <p>{t("home.description")}</p>
       </div>
-      {/* {initialized ? (
-        keycloak.authenticated && (
-          <pre>{JSON.stringify(keycloak, undefined, 2)}</pre>
-        )
-      ) : (
-        <h2>keycloak's initializing...</h2>
-      )} */}
     </div>
   );
 };
-
-const Info = styled.div``;
 
 export default withChangeAnimation(HomePage);

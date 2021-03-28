@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import "./i18n/config";
 import { useTranslation } from "react-i18next";
 
@@ -21,8 +21,10 @@ import InstructorGame from "./components/InstructorGame";
 import NotFound from "./components/NotFound";
 import AddPlayersToGame from "./components/AddPlayersToGame";
 import Alerts from "./components/Alerts";
-import { ToastProvider, useToasts } from "./components/Notifications";
+import { NotificationsProvider } from "./components/Notifications";
 import MainLoading from "./components/MainLoading";
+import { useKeycloak } from "@react-keycloak/web";
+import { gql } from "@apollo/client";
 
 const getZoomFactorFromLocalStorage = () => {
   const zoomFactor = localStorage.getItem("zoom");
@@ -40,18 +42,10 @@ function App() {
   const [zoomFactor, setZoomFactor] = useState(
     getZoomFactorFromLocalStorage() || 1
   );
-  // const [activeChallenge, setActiveChallenge] = useState<{
-  //   id: string;
-  //   name: string;
-  // } | null>(null);
-  // const [activeGame, setActiveGame] = useState<{
-  //   id: string;
-  //   name: string;
-  // } | null>(null);
-  // const [playerId, setPlayerId] = useState<null | string>(null);
 
-  // console.log(process.env.REACT_APP_KEYCLOAK_CLIENT_ID);
-  if (!ready) {
+  const { keycloak, initialized: keycloakInitialized } = useKeycloak();
+
+  if (!ready || !keycloakInitialized) {
     return <MainLoading />;
   }
 
@@ -85,7 +79,7 @@ function App() {
             >
               <ZoomWrapper zoomFactor={zoomFactor}>
                 {/* <Alerts /> */}
-                <ToastProvider>
+                <NotificationsProvider>
                   <Navbar />
                   <MainWrapper>
                     <AnimatePresence exitBeforeEnter initial={false}>
@@ -134,7 +128,7 @@ function App() {
                       </Switch>
                     </AnimatePresence>
                   </MainWrapper>
-                </ToastProvider>
+                </NotificationsProvider>
               </ZoomWrapper>
             </ZoomContext.Provider>
             {/* </MainContext.Provider> */}

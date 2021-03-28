@@ -1,4 +1,9 @@
 {
+  "Challenges": "Challenges",
+  "home": {
+    "title": "Home Page",
+    "description": "Anyone can access this page"
+  },
   "Back": "Back",
   "Loading": "Loading...",
   "Close": "Close",
@@ -68,6 +73,8 @@
     "noPlayersAlert": "This game has no players. Add any to start."
   },
   "table": {
+    "username": "Username",
+    "points": "Points",
     "name": "Name",
     "lastName": "Last name",
     "game": "Game",

@@ -57,7 +57,6 @@ const TableComponent = ({
       data,
     },
     useFilters,
-    useSortBy,
     usePagination
   );
 
@@ -79,47 +78,14 @@ const TableComponent = ({
             {headerGroups.map((headerGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column: any, i) => (
-                  <Th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  <Th {...column.getHeaderProps()}>
                     <Flex justifyContent="space-between">
                       <Box color={column.isSorted ? "deepskyblue" : "default"}>
                         {column.render("Header")}
                       </Box>
-
-                      <Box float="right" textAlign="right">
-                        {column.isSorted ? (
-                          <Box color="deepskyblue">
-                            <AnimatedSortIcon
-                              icon={<TiArrowSortedDown fontSize={16} />}
-                              isVisible={column.isSortedDesc}
-                            />
-                            <AnimatedSortIcon
-                              icon={<TiArrowSortedUp fontSize={16} />}
-                              isVisible={!column.isSortedDesc}
-                            />
-                          </Box>
-                        ) : (
-                          <TiArrowUnsorted fontSize={16} />
-                        )}
-
-                        {/* {column.canFilter ? column.render("Filter") : null} */}
-                      </Box>
                     </Flex>
                   </Th>
                 ))}
-              </Tr>
-            ))}
-
-            {headerGroups.map((headerGroup) => (
-              <Tr {...headerGroup.getHeaderGroupProps()} padding={0}>
-                {headerGroup.headers.map((column: any, i) =>
-                  column.canFilter ? (
-                    <Th {...column.getHeaderProps()} padding={2}>
-                      {column.render("Filter")}
-                    </Th>
-                  ) : (
-                    <Th key={i}>- </Th>
-                  )
-                )}
               </Tr>
             ))}
           </Thead>

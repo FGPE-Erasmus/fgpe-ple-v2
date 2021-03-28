@@ -1,4 +1,9 @@
 {
+  "Challenges": "Wyzwania",
+  "home": {
+    "title": "Strona Główna",
+    "description": "Każdy może zobaczyć tę stronę"
+  },
   "Back": "Wróć",
   "Loading": "Ładowanie...",
   "Language": "Język",
@@ -68,6 +73,8 @@
     "noPlayersAlert": "Ta gra nie ma jeszcze graczy. Dodaj ich by rozpocząć."
   },
   "table": {
+    "username": "Nazwa użytkownika",
+    "points": "Punkty",
     "name": "Imię",
     "lastName": "Nazwisko",
     "game": "Gra",

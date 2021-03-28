@@ -152,6 +152,9 @@ const ProfileInGame = () => {
         <Leaderboards gameId={gameId} />
       </Box>
 
+      <Heading as="h3" size="md">
+        {t("Challenges")}
+      </Heading>
       <Box>
         {dataProfile.profileInGame.learningPath.map((learningPath, i) => {
           return (
