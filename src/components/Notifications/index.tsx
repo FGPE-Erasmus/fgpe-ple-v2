@@ -48,7 +48,6 @@ const Toast = ({
   content: NotificationI;
   onDismiss: any;
 }) => {
-  console.log("CONTENT", content);
   const rewardRef = useRef<any>();
 
   useEffect(() => {

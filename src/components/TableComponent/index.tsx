@@ -98,7 +98,9 @@ const TableComponent = ({
                             />
                           </Box>
                         ) : (
-                          <TiArrowUnsorted fontSize={16} />
+                          !column.disableSortBy && (
+                            <TiArrowUnsorted fontSize={16} />
+                          )
                         )}
 
                         {/* {column.canFilter ? column.render("Filter") : null} */}

@@ -1,11 +1,13 @@
 import { gql, useQuery } from "@apollo/client";
 import {
   Box,
+  Button,
   Flex,
   Heading,
   Skeleton,
   StackDivider,
   useColorModeValue,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
@@ -13,6 +15,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { getInstructorGames } from "../generated/getInstructorGames";
+import AddGameModal from "./AddGameModal";
 import Error from "./Error";
 
 const InstructorGames = ({
@@ -21,31 +24,48 @@ const InstructorGames = ({
   data: getInstructorGames | undefined;
 }) => {
   const { t } = useTranslation();
+  const {
+    isOpen: isAddGameModalOpen,
+    onOpen: onAddGameModalOpen,
+    onClose: onAddGameModalClose,
+  } = useDisclosure();
 
   return (
-    <Box>
-      <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-        {t("Games")}
-      </Heading>
-      {data?.games.length == 0 && <div>{t("No games available")}</div>}
-      <VStack
-        divider={<StackDivider />}
-        spacing={2}
-        align="stretch"
-        marginTop={4}
-      >
-        {data?.games.map((game, i) => {
-          return (
-            <Game
-              id={game.id}
-              name={game.name}
-              description={game.description}
-              key={i}
-            />
-          );
-        })}
-      </VStack>
-    </Box>
+    <>
+      <AddGameModal
+        isOpen={isAddGameModalOpen}
+        onOpen={onAddGameModalOpen}
+        onClose={onAddGameModalClose}
+      />
+      <Box>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
+            {t("Games")}
+          </Heading>
+
+          <Button onClick={onAddGameModalOpen}>{t("Add new game")}</Button>
+        </Flex>
+
+        {data?.games.length == 0 && <div>{t("No games available")}</div>}
+        <VStack
+          divider={<StackDivider />}
+          spacing={2}
+          align="stretch"
+          marginTop={4}
+        >
+          {data?.games.map((game, i) => {
+            return (
+              <Game
+                id={game.id}
+                name={game.name}
+                description={game.description}
+                key={i}
+              />
+            );
+          })}
+        </VStack>
+      </Box>
+    </>
   );
 };
 

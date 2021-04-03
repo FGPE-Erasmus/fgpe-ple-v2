@@ -164,6 +164,7 @@ const AddPlayersToGame = () => {
               disableFilters: true,
               width: 100,
 
+              disableSortBy: true,
               Cell: ({ value }: { value: any }) => {
                 return (
                   <PlayerCheckbox
