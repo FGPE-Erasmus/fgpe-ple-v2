@@ -1,6 +1,9 @@
 import React, { useContext } from "react";
 import { useQuery, gql } from "@apollo/client";
-import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
+import {
+  PlayerGameProfiles,
+  PlayerGameProfiles_myGameProfiles_game,
+} from "../generated/PlayerGameProfiles";
 import { useKeycloak } from "@react-keycloak/web";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
@@ -10,21 +13,43 @@ import NavContext from "../context/NavContext";
 import {
   Box,
   Divider,
+  Flex,
   Heading,
   StackDivider,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
-const Game = ({ name, description }: { name: string; description: string }) => {
+// name={gameProfile.game.name}
+//                 description={
+//                   gameProfile.game.description
+//                     ? gameProfile.game.description
+//                     : "No description"
+//                 }
+
+const Game = ({ game }: { game: PlayerGameProfiles_myGameProfiles_game }) => {
   const color = useColorModeValue("gray.100", "gray.700");
+  const { t } = useTranslation();
 
   return (
     <GameStyled bg={color}>
-      <div>
-        <Heading size="lg">{name}</Heading>
-        <div>{description}</div>
-      </div>
+      <Flex justifyContent="space-between" width="100%" alignItems="center">
+        <Box>
+          <div>
+            <Heading size="lg">{game.name}</Heading>
+            <div>
+              {game.description ? game.description : t("No description")}
+            </div>
+          </div>
+        </Box>
+        <Box paddingRight={4} display={{ base: "none", sm: "block" }}>
+          <Flex flexDirection="column" fontSize={14}>
+            <Box>Challenges: 2/4</Box>
+            <Box>Rank: 1/43</Box>
+          </Flex>
+        </Box>
+      </Flex>
     </GameStyled>
   );
 };
@@ -57,63 +82,14 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
                 })
               }
             >
-              <Game
-                name={gameProfile.game.name}
-                description={
-                  gameProfile.game.description
-                    ? gameProfile.game.description
-                    : "No description"
-                }
-              />
+              <Game game={gameProfile.game} />
             </Link>
           );
         })}
-        {/* <Box h="40px" bg="yellow.200">
-        1
-      </Box>
-      <Box h="40px" bg="tomato">
-        2
-      </Box>
-      <Box h="40px" bg="pink.100">
-        3
-      </Box> */}
       </VStack>
     </Box>
-    // <GamesWrapper>
-    //   <h4 style={{ margin: 10, marginTop: 30 }}>Available games:</h4>
-    //   {data.myGameProfiles.map((gameProfile, i) => {
-    //     return (
-    //       <Link
-    //         key={i}
-    //         to={{
-    //           pathname: "/profile/game",
-    //           state: { gameId: gameProfile.game.id },
-    //         }}
-    //         onClick={() =>
-    //           setActiveGame({
-    //             id: gameProfile.game.id,
-    //             name: gameProfile.game.name,
-    //           })
-    //         }
-    //       >
-    //         <Game variant="outline">
-    //           <div>
-    //             <h3>{gameProfile.game.name}</h3>
-    //             <div>{gameProfile.game.description}</div>
-    //           </div>
-    //         </Game>
-    //       </Link>
-    //     );
-    //   })}
-    // </GamesWrapper>
   );
 };
-
-const GamesWrapper = styled(Box)`
-  /* a {
-    color: black;
-  } */
-`;
 
 const GameStyled = styled(Box)`
   height: 100px;

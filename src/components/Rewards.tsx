@@ -8,18 +8,8 @@ import {
 import {
   Box,
   Flex,
-  Heading,
-  Tooltip,
   useColorModeValue,
-  IconButton,
   Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverHeader,
-  PopoverBody,
   useDisclosure,
   Modal,
   ModalBody,
@@ -28,13 +18,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Divider,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
   List,
   ListIcon,
   ListItem,
@@ -42,12 +25,12 @@ import {
 import { RewardType } from "../generated/globalTypes";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { VscDebugBreakpointLog } from "react-icons/vsc";
 import { MdCheckCircle, MdDateRange } from "react-icons/md";
 import { RiGamepadFill } from "react-icons/ri";
 
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
+import ScrollbarWrapper from "./ScrollbarWrapper";
 
 const getRewardsCount = (gameProfiles: PlayerGameProfiles_myGameProfiles[]) => {
   const rewards = gameProfiles.filter((gameProfile, i, array) => {
@@ -92,7 +75,7 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
   const gameProfiles = data.myGameProfiles;
   // .flatMap((i) => [i, i])
   // .flatMap((i) => [i, i])
-  // .splice(0, 2);
+  // .flatMap((i) => [i, i])
   // .flatMap((i) => [i, i]);
 
   const color = useColorModeValue("gray.100", "gray.700");
@@ -125,72 +108,76 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
           </Button>
 
           <RewardsWrapper bg={color}>
-            <DynamicGrid
-              gridDimensions={getGridDimensions(getRewardsCount(gameProfiles))}
-              className={zoom ? "zoom" : ""}
-            >
-              {data &&
-                gameProfiles.map((gameProfile, i, array) => {
-                  return (
-                    gameProfile.rewards.length > 0 &&
-                    gameProfile.rewards.map(({ reward }, i) => {
-                      if (
-                        reward.kind != RewardType.BADGE &&
-                        reward.kind != RewardType.VIRTUAL_ITEM
-                      ) {
-                        return;
-                      }
-                      if (showRewardsAlert) {
-                        setShowRewardsAlert(false);
-                      }
-                      return (
-                        <RewardStyle
-                          textAlign="center"
-                          bg={rewardColor}
-                          cursor="pointer"
-                          key={i}
-                          onClick={() => {
-                            setRewardForModal(reward);
-                            onOpen();
-                          }}
-                        >
-                          <RewardImage imageData={reward.image} zoom={zoom} />
-                          <AnimatePresence>
-                            {(zoom || gameProfiles.length < 12) && (
-                              <motion.div
-                                initial={{
-                                  opacity: 0,
-                                  maxHeight: 0,
-                                  maxWidth: 0,
-                                  transform: "scale(0)",
-                                }}
-                                animate={{
-                                  opacity: 1,
-                                  maxHeight: 40,
-                                  maxWidth: 120,
-                                  transform: "scale(1)",
-                                }}
-                                exit={{
-                                  opacity: 0,
-                                  maxHeight: 0,
-                                  maxWidth: 0,
-                                  transform: "scale(0)",
-                                }}
-                                transition={{ duration: 0.2 }}
-                                className={"name" + (zoom ? " show" : "")}
-                              >
-                                <div>{reward.name}</div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+            <ScrollbarWrapper thin>
+              <DynamicGrid
+                gridDimensions={getGridDimensions(
+                  getRewardsCount(gameProfiles)
+                )}
+                className={zoom ? "zoom" : ""}
+              >
+                {data &&
+                  gameProfiles.map((gameProfile, i, array) => {
+                    return (
+                      gameProfile.rewards.length > 0 &&
+                      gameProfile.rewards.map(({ reward }, i) => {
+                        if (
+                          reward.kind != RewardType.BADGE &&
+                          reward.kind != RewardType.VIRTUAL_ITEM
+                        ) {
+                          return;
+                        }
+                        if (showRewardsAlert) {
+                          setShowRewardsAlert(false);
+                        }
+                        return (
+                          <RewardStyle
+                            textAlign="center"
+                            bg={rewardColor}
+                            cursor="pointer"
+                            key={i}
+                            onClick={() => {
+                              setRewardForModal(reward);
+                              onOpen();
+                            }}
+                          >
+                            <RewardImage imageData={reward.image} zoom={zoom} />
+                            <AnimatePresence>
+                              {(zoom || gameProfiles.length < 12) && (
+                                <motion.div
+                                  initial={{
+                                    opacity: 0,
+                                    maxHeight: 0,
+                                    maxWidth: 0,
+                                    transform: "scale(0)",
+                                  }}
+                                  animate={{
+                                    opacity: 1,
+                                    maxHeight: 40,
+                                    maxWidth: 120,
+                                    transform: "scale(1)",
+                                  }}
+                                  exit={{
+                                    opacity: 0,
+                                    maxHeight: 0,
+                                    maxWidth: 0,
+                                    transform: "scale(0)",
+                                  }}
+                                  transition={{ duration: 0.2 }}
+                                  className={"name" + (zoom ? " show" : "")}
+                                >
+                                  <div>{reward.name}</div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
 
-                          {/* <p>{reward.description}</p> */}
-                        </RewardStyle>
-                      );
-                    })
-                  );
-                })}
-            </DynamicGrid>
+                            {/* <p>{reward.description}</p> */}
+                          </RewardStyle>
+                        );
+                      })
+                    );
+                  })}
+              </DynamicGrid>
+            </ScrollbarWrapper>
             {showRewardsAlert && <RewardsAlert>{t("No rewards")}</RewardsAlert>}
           </RewardsWrapper>
         </Box>
@@ -322,6 +309,9 @@ const DynamicGrid = styled.div<{
     margin: auto;
     justify-content: center;
   }
+
+  overflow-y: scroll;
+  overflow-x: hidden;
 `;
 
 const RewardsWrapper = styled(Box)`
@@ -338,33 +328,8 @@ const RewardsWrapper = styled(Box)`
     z-index: 999;
   }
 
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
-
-  /* display: flex;
-  flex-wrap: wrap;
-
-  justify-content: center;
-  align-items: center; */
-  position: relative;
-
-  /* .area {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-  }
-
-  .content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  } */
-  /* color: black; */
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: hidden;
 `;
 
 const RewardStyle = styled(Flex)`

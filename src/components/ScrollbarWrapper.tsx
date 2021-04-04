@@ -2,17 +2,27 @@ import { useColorMode } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React from "react";
 
-const ScrollbarWrapper = ({ children }: { children: React.ReactNode }) => {
+const ScrollbarWrapper = ({
+  children,
+  thin,
+}: {
+  children: React.ReactNode;
+  thin?: boolean;
+}) => {
   const { colorMode } = useColorMode();
 
-  return <ScrollbarStyled colorMode={colorMode}>{children}</ScrollbarStyled>;
+  return (
+    <ScrollbarStyled colorMode={colorMode} thin={thin}>
+      {children}
+    </ScrollbarStyled>
+  );
 };
 
-const ScrollbarStyled = styled.span<{ colorMode: string }>`
+const ScrollbarStyled = styled.span<{ colorMode: string; thin?: boolean }>`
   & > * {
     ::-webkit-scrollbar {
-      width: 13px;
-      height: 13px;
+      width: ${({ thin }) => (thin ? 6 : 13)}px;
+      height: ${({ thin }) => (thin ? 6 : 13)}px;
     }
     ::-webkit-scrollbar-thumb {
       background: ${({ colorMode }) =>

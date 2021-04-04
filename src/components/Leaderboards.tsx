@@ -46,6 +46,8 @@ const GET_GROUP_RANKINGS = gql`
 `;
 
 const Leaderboards = ({ gameId }: { gameId: string }) => {
+  const { t } = useTranslation();
+
   const {
     loading: loadingLeaderboards,
     error: errorLeaderboards,
@@ -55,7 +57,7 @@ const Leaderboards = ({ gameId }: { gameId: string }) => {
   });
 
   if (loadingLeaderboards) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading")}</div>;
   }
 
   if (errorLeaderboards) {
@@ -124,7 +126,7 @@ const Ranking = ({
         dontRecomputeChange
         columns={[
           {
-            Header: "Index",
+            Header: t("Rank"),
             accessor: "",
             Cell: (row: { row: { id: string } }) => {
               return <div>{Number(row.row.id) + 1}</div>;
