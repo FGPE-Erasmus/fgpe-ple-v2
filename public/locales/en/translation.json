@@ -1,4 +1,6 @@
 {
+  "NA": "N/A",
+  "points": "points",
   "No description": "No description",
   "Rank": "Rank",
   "Add new game": "Add new game",
@@ -10,6 +12,7 @@
   "Back": "Back",
   "Loading": "Loading...",
   "Close": "Close",
+  "Cancel": "Cancel",
   "Language": "Language",
   "Login": "Login",
   "Logout": "Logout",
@@ -77,7 +80,6 @@
   },
   "table": {
     "username": "Username",
-    "points": "Points",
     "name": "Name",
     "lastName": "Last name",
     "game": "Game",
@@ -86,7 +88,8 @@
     "group": "Group",
     "progress": "Progress",
     "enrolled": "Enrolled",
-    "email": "E-Mail"
+    "email": "E-Mail",
+    "metrics": "Metrics"
   },
   "placeholders": {
     "name": "John",

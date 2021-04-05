@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import { LockIcon, CheckIcon } from "@chakra-ui/icons";
 import { useParams } from "react-router-dom";
-import Leaderboards from "./Leaderboards";
+import RankingTable from "./RankingTable";
 import { useTranslation } from "react-i18next";
 
 interface ParamTypes {
@@ -149,7 +149,7 @@ const ProfileInGame = () => {
         {t("Game")}: {dataProfile.profileInGame.game.name}
       </Heading>
       <Box>
-        <Leaderboards gameId={gameId} />
+        <RankingTable gameId={gameId} />
       </Box>
 
       <Heading as="h3" size="md">

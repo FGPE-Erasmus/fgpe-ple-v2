@@ -215,7 +215,7 @@ const Settings = ({
 
           <DrawerFooter>
             <Button variant="outline" mr={3} onClick={onClose}>
-              Cancel
+              {t("Cancel")}
             </Button>
             {/* <Button color="blue">Save</Button> */}
           </DrawerFooter>

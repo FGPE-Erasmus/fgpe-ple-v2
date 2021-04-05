@@ -1,4 +1,6 @@
 {
+  "NA": "b.d.",
+  "points": "punkty",
   "No description": "Brak opisu",
   "Rank": "Pozycja",
   "Add new game": "Dodaj nową grę",
@@ -11,6 +13,7 @@
   "Loading": "Ładowanie...",
   "Language": "Język",
   "Close": "Zamknij",
+  "Cancel": "Anuluj",
   "Login": "Zaloguj",
   "Logout": "Wyloguj",
   "Toggle view": "Przełącz widok",
@@ -77,7 +80,6 @@
   },
   "table": {
     "username": "Nazwa użytkownika",
-    "points": "Punkty",
     "name": "Imię",
     "lastName": "Nazwisko",
     "game": "Gra",
@@ -86,7 +88,8 @@
     "group": "Grupa",
     "progress": "Postęp",
     "enrolled": "Zapisany",
-    "email": "E-Mail"
+    "email": "E-Mail",
+    "metrics": "Metryka"
   },
   "placeholders": {
     "name": "Jan",

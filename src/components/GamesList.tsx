@@ -3,6 +3,7 @@ import { useQuery, gql } from "@apollo/client";
 import {
   PlayerGameProfiles,
   PlayerGameProfiles_myGameProfiles_game,
+  PlayerGameProfiles_myGameProfiles_learningPath,
 } from "../generated/PlayerGameProfiles";
 import { useKeycloak } from "@react-keycloak/web";
 import { Link } from "react-router-dom";
@@ -28,7 +29,28 @@ import { useTranslation } from "react-i18next";
 //                     : "No description"
 //                 }
 
-const Game = ({ game }: { game: PlayerGameProfiles_myGameProfiles_game }) => {
+const getProgress = (
+  learningPaths: PlayerGameProfiles_myGameProfiles_learningPath[]
+) => {
+  let exercisesCount = 0;
+  let solvedExercisesCount = 0;
+
+  for (let i = 0; i < learningPaths.length; i++) {
+    exercisesCount += learningPaths[i].refs.length;
+    solvedExercisesCount += learningPaths[i].refs.filter((ref) => ref.solved)
+      .length;
+  }
+
+  return { solved: solvedExercisesCount, total: exercisesCount };
+};
+
+const Game = ({
+  game,
+  progress,
+}: {
+  game: PlayerGameProfiles_myGameProfiles_game;
+  progress: { solved: number; total: number };
+}) => {
   const color = useColorModeValue("gray.100", "gray.700");
   const { t } = useTranslation();
 
@@ -45,8 +67,9 @@ const Game = ({ game }: { game: PlayerGameProfiles_myGameProfiles_game }) => {
         </Box>
         <Box paddingRight={4} display={{ base: "none", sm: "block" }}>
           <Flex flexDirection="column" fontSize={14}>
-            <Box>Challenges: 2/4</Box>
-            <Box>Rank: 1/43</Box>
+            <Box>
+              {t("Challenges")}: {progress.solved + "/" + progress.total}
+            </Box>
           </Flex>
         </Box>
       </Flex>
@@ -82,7 +105,10 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
                 })
               }
             >
-              <Game game={gameProfile.game} />
+              <Game
+                game={gameProfile.game}
+                progress={getProgress(gameProfile.learningPath)}
+              />
             </Link>
           );
         })}

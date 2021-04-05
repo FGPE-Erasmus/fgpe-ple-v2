@@ -6,17 +6,34 @@ import {
   Box,
   Button,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 const Error = ({
   errorContent,
   status,
+
+  refreshTimeout,
 }: {
   errorContent?: string;
   status?: "error" | "info" | "warning" | "success";
+
+  /** Refreshes the page after specified time (in ms) if provided */
+  refreshTimeout?: number;
 }) => {
   const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    if (refreshTimeout) {
+      const refresh = setTimeout(() => {
+        window.location.reload();
+      }, refreshTimeout);
+
+      return () => {
+        clearTimeout(refresh);
+      };
+    }
+  }, []);
 
   return (
     <Alert

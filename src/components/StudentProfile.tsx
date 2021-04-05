@@ -8,6 +8,7 @@ import Rewards from "./Rewards";
 import { Heading, Spacer } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import Error from "./Error";
+import { SERVER_ERRORS } from "../utilities/ErrorMessages";
 
 const PLAYER_GAME_PROFILES = gql`
   query PlayerGameProfiles {
@@ -26,6 +27,13 @@ const PLAYER_GAME_PROFILES = gql`
       group {
         id
         name
+      }
+      learningPath {
+        id
+        progress
+        refs {
+          solved
+        }
       }
       rewards {
         id
@@ -76,7 +84,11 @@ const StudentProfile: React.ComponentType = () => {
   }
 
   if (error) {
-    <Error errorContent={JSON.stringify(error)} />;
+    if (error.graphQLErrors[0].message.includes(SERVER_ERRORS.ECONNABORTED)) {
+      return <Error refreshTimeout={10000} />;
+    } else {
+      return <Error errorContent={JSON.stringify(error)} />;
+    }
   }
 
   if (!data) {

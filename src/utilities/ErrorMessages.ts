@@ -1,0 +1,3 @@
+export enum SERVER_ERRORS {
+  ECONNABORTED = "ECONNABORTED",
+}

@@ -45,7 +45,7 @@ const GET_GROUP_RANKINGS = gql`
   }
 `;
 
-const Leaderboards = ({ gameId }: { gameId: string }) => {
+const RankingTable = ({ gameId }: { gameId: string }) => {
   const { t } = useTranslation();
 
   const {
@@ -81,6 +81,35 @@ const Leaderboards = ({ gameId }: { gameId: string }) => {
   );
 };
 
+const getMetrics = (
+  groupRankings: any,
+  tFunction: (value: string) => string
+) => {
+  let metricsArray: any = [];
+  if (groupRankings.length < 1) {
+    return metricsArray;
+  }
+
+  const score = groupRankings[0].score;
+  const keys = Object.keys(score);
+
+  for (let i = 0; i < keys.length; i++) {
+    metricsArray.push({
+      Header: `${tFunction("table.metrics")} [${tFunction(keys[i])}]`,
+      accessor: `score.${keys[i]}`,
+      Cell: ({ value }: { value: any }) => {
+        if (typeof value != "undefined") {
+          return <span key={i}>{JSON.stringify(value)}</span>;
+        } else {
+          return <span key={i}>{tFunction("NA")}</span>;
+        }
+      },
+    });
+  }
+
+  return metricsArray;
+};
+
 const Ranking = ({
   gameId,
   leaderboardId,
@@ -90,10 +119,6 @@ const Ranking = ({
 }) => {
   const { t } = useTranslation();
   const { keycloak } = useKeycloak();
-
-  // useEffect(() => {
-  //   keycloak.loadUserInfo();
-  // }, []);
 
   const {
     loading: loadingGroupRankings,
@@ -119,6 +144,8 @@ const Ranking = ({
   if (!dataGroupRankings) {
     return <Error errorContent={JSON.stringify("No data")} />;
   }
+
+  const metrics = getMetrics(dataGroupRankings.groupRankings, t);
 
   return (
     <Box>
@@ -150,16 +177,8 @@ const Ranking = ({
               />
             ),
           },
-          // {
-          //   Header: t("table.points"),
-          //   accessor: "score.points",
-          //   Filter: ({ column }: { column: any }) => (
-          //     <ColumnFilter
-          //       column={column}
-          //       placeholder={t("placeholders.points")}
-          //     />
-          //   ),
-          // },
+
+          ...metrics,
         ]}
         data={dataGroupRankings.groupRankings}
       />
@@ -167,4 +186,4 @@ const Ranking = ({
   );
 };
 
-export default Leaderboards;
+export default RankingTable;
