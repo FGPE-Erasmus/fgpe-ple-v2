@@ -14,20 +14,24 @@ const Error = ({
   status,
 
   refreshTimeout,
+  serverConnectionError,
 }: {
   errorContent?: string;
   status?: "error" | "info" | "warning" | "success";
 
-  /** Refreshes the page after specified time (in ms) if provided */
+  /** Refreshes the page after specified time (in ms) if provided. If serverConnectionError param is true this has a default value of 10 seconds. */
   refreshTimeout?: number;
+
+  /** Shows friendly looking error about problem with server connection. */
+  serverConnectionError?: boolean;
 }) => {
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    if (refreshTimeout) {
+    if (refreshTimeout || serverConnectionError) {
       const refresh = setTimeout(() => {
         window.location.reload();
-      }, refreshTimeout);
+      }, refreshTimeout || 10000);
 
       return () => {
         clearTimeout(refresh);
@@ -37,23 +41,26 @@ const Error = ({
 
   return (
     <Alert
-      status={status ? status : "error"}
+      status={status ? status : serverConnectionError ? "info" : "error"}
       variant="subtle"
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
       textAlign="center"
-      //   height="200px"
       maxWidth="700px"
       margin="auto"
       borderRadius={5}
     >
       <AlertIcon boxSize="40px" mr={0} />
       <AlertTitle mt={4} mb={1} fontSize="lg">
-        {t("error.title")}
+        {serverConnectionError
+          ? t("error.serverConnection.title")
+          : t("error.title")}
       </AlertTitle>
       <AlertDescription maxWidth="sm">
-        {t("error.description")}
+        {serverConnectionError
+          ? t("error.serverConnection.description")
+          : t("error.description")}
         {errorContent && (
           <Box
             maxHeight="200px"

@@ -29,6 +29,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
+import { SERVER_ERRORS } from "../utilities/ErrorMessages";
 
 interface ParamTypes {
   gameId: string;
@@ -85,7 +86,15 @@ const InstructorGame = () => {
   }
 
   if (!loading && error) {
-    return <Error errorContent={JSON.stringify(error)} />;
+    const isServerConnectionError = error.graphQLErrors[0].message.includes(
+      SERVER_ERRORS.ECONNABORTED
+    );
+
+    if (isServerConnectionError) {
+      return <Error serverConnectionError />;
+    } else {
+      return <Error errorContent={JSON.stringify(error)} />;
+    }
   }
 
   if (!data) {

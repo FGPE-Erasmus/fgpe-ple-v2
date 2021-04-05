@@ -105,6 +105,10 @@
     "notFound": {
       "title": "Nie znaleziono strony",
       "description": "Strona, której szukasz nie istnieje."
+    },
+    "serverConnection": {
+      "title": "Wystąpił problem podczas połączenia z serwerem",
+      "description": "Strona odświeży się automatycznie za kilka sekund."
     }
   },
   "description": {

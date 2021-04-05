@@ -83,9 +83,13 @@ const StudentProfile: React.ComponentType = () => {
     return <div>{t("Loading")}</div>;
   }
 
-  if (error) {
-    if (error.graphQLErrors[0].message.includes(SERVER_ERRORS.ECONNABORTED)) {
-      return <Error refreshTimeout={10000} />;
+  if (!loading && error) {
+    const isServerConnectionError = error.graphQLErrors[0].message.includes(
+      SERVER_ERRORS.ECONNABORTED
+    );
+
+    if (isServerConnectionError) {
+      return <Error serverConnectionError />;
     } else {
       return <Error errorContent={JSON.stringify(error)} />;
     }

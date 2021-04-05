@@ -7,6 +7,7 @@ import GamesList from "./GamesList";
 import InstructorGames from "./InstructorGames";
 import TeacherStudents from "./TeacherStudents";
 import Error from "./Error";
+import { SERVER_ERRORS } from "../utilities/ErrorMessages";
 
 const INSTRUCTOR_GAMES = gql`
   query getInstructorGames {
@@ -51,7 +52,15 @@ const TeacherProfile = () => {
   const { t } = useTranslation();
 
   if (!loading && error) {
-    return <Error errorContent={JSON.stringify(error)} />;
+    const isServerConnectionError = error.graphQLErrors[0].message.includes(
+      SERVER_ERRORS.ECONNABORTED
+    );
+
+    if (isServerConnectionError) {
+      return <Error serverConnectionError />;
+    } else {
+      return <Error errorContent={JSON.stringify(error)} />;
+    }
   }
 
   if (loading) {
