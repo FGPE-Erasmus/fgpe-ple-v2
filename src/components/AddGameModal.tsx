@@ -30,16 +30,18 @@ import {
 } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { importGame } from "../generated/importGame";
+import { useNotifications } from "./Notifications";
 
 const IMPORT_GAME = gql`
   mutation importGame(
     $file: Upload!
     $gameName: String!
     $courseId: String!
-    $evaluationEngine: String!
+    $evaluationEngine: EvaluationEngine!
     $gameDescription: String
-    $startDate: String
-    $endDate: String
+    $startDate: Date
+    $endDate: Date
+    $private: Boolean
   ) {
     importGEdILArchive(
       gameInput: {
@@ -49,6 +51,7 @@ const IMPORT_GAME = gql`
         endDate: $endDate
         evaluationEngine: $evaluationEngine
         courseId: $courseId
+        private: $private
       }
       file: $file
     ) {
@@ -69,17 +72,20 @@ const AddGameModal = ({
   isOpen,
   onOpen,
   onClose,
+  refetchGames,
 }: {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
+  refetchGames: () => void;
 }) => {
+  const { add: addNotification } = useNotifications();
+
   const { t } = useTranslation();
   const {
     acceptedFiles,
     getRootProps,
     getInputProps,
-    fileRejections,
     isDragAccept,
     isDragReject,
   } = useDropzone({
@@ -90,6 +96,13 @@ const AddGameModal = ({
       "multipart/x-zip",
     ],
     maxFiles: 1,
+    onDropRejected: () => {
+      addNotification({
+        status: "error",
+        title: t("addGame.error.fileRejected.title"),
+        description: t("addGame.error.fileRejected.description"),
+      });
+    },
   });
 
   const [
@@ -98,8 +111,22 @@ const AddGameModal = ({
   ] = useMutation<importGame>(IMPORT_GAME, {
     onError(data) {
       console.log("[IMPORT ERROR]", data);
+
+      addNotification({
+        status: "error",
+        title: t("addGame.error.cannotAddGame.title"),
+        description: t("addGame.error.cannotAddGame.description"),
+      });
     },
-    onCompleted(data) {},
+    onCompleted(data) {
+      onClose();
+      refetchGames();
+      addNotification({
+        status: "success",
+        title: t("addGame.success.title"),
+        description: t("addGame.success.description"),
+      });
+    },
   });
 
   const { colorMode } = useColorMode();
@@ -132,18 +159,18 @@ const AddGameModal = ({
         <ModalBody>
           <VStack spacing={1}>
             <FormControl id="name" isRequired>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t("addGame.name")}</FormLabel>
               <Input
                 type="text"
-                placeholder="Awesome game name"
+                placeholder={t("addGame.namePlaceholder")}
                 value={gameName}
                 onChange={(e) => setGameName(e.target.value)}
               />
             </FormControl>
             <FormControl id="description">
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t("addGame.description")}</FormLabel>
               <Textarea
-                placeholder="Description of your game"
+                placeholder={t("addGame.descriptionPlaceholder")}
                 value={gameDescription}
                 onChange={(e) => setGameDescription(e.target.value)}
               />
@@ -151,7 +178,7 @@ const AddGameModal = ({
 
             <Flex>
               <FormControl paddingRight={1}>
-                <FormLabel id="start">Start date</FormLabel>
+                <FormLabel id="start">{t("addGame.startDate")}</FormLabel>
                 <Input
                   value={startDate || ""}
                   type="text"
@@ -161,7 +188,8 @@ const AddGameModal = ({
               </FormControl>
 
               <FormControl paddingLeft={1}>
-                <FormLabel id="start">End date</FormLabel>
+                add validation
+                <FormLabel id="end">{t("addGame.endDate")}</FormLabel>
                 <Input
                   type="text"
                   placeholder="YYYY-MM-DD"
@@ -172,9 +200,9 @@ const AddGameModal = ({
             </Flex>
 
             <FormControl isRequired>
-              <FormLabel id="start">Evaluation engine</FormLabel>
+              <FormLabel id="engine">{t("addGame.evaluationEngine")}</FormLabel>
               <Select
-                placeholder="Select option"
+                placeholder={t("Select option")}
                 value={evaluationEngine}
                 onChange={(e: any) => {
                   setEvaluationEngine(e.target.value);
@@ -183,11 +211,11 @@ const AddGameModal = ({
                 <option value="MOOSHAK">MOOSHAK</option>
               </Select>
             </FormControl>
-            <FormControl id="name" isRequired marginBottom={2}>
-              <FormLabel>Course ID</FormLabel>
+            <FormControl id="course" isRequired marginBottom={2}>
+              <FormLabel>{t("addGame.courseId")}</FormLabel>
               <Input
                 type="text"
-                placeholder="Unique course id"
+                placeholder={t("addGame.courseIdPlaceholder")}
                 value={courseId}
                 onChange={(e) => setCourseId(e.target.value)}
               />
@@ -225,12 +253,12 @@ const AddGameModal = ({
                 <input {...getInputProps()} />
                 <p style={{ textAlign: "center" }}>
                   {isDragReject
-                    ? "Wrong file type"
+                    ? t("addGame.wrongFileType")
                     : acceptedFiles.length > 0
                     ? acceptedFiles.map((file: any) => (
                         <span key={file.path}>{file.path}</span>
                       ))
-                    : "Drag your file here, or click for file selection dialog"}
+                    : t("addGame.dragFileOrClick")}
                 </p>
               </div>
             </DragAndDropField>
@@ -240,7 +268,7 @@ const AddGameModal = ({
                 isChecked={isPrivate}
                 onChange={(e) => setIsPrivate(e.target.checked)}
               >
-                Set private
+                {t("addGame.setPrivate")}
               </Checkbox>
             </Flex>
           </VStack>
@@ -248,24 +276,25 @@ const AddGameModal = ({
 
         <ModalFooter>
           <Button mr={3} onClick={onClose} disabled={importGameLoading}>
-            Close
+            {t("Close")}
           </Button>
           <Button
             onClick={() => {
               importNewGame({
                 variables: {
                   file: acceptedFiles[0],
-                  gameName,
-                  courseId,
-                  evaluationEngine,
-                  gameDescription,
-                  startDate,
-                  endDate,
+                  gameName: gameName,
+                  courseId: courseId,
+                  evaluationEngine: evaluationEngine,
+                  gameDescription: gameDescription || undefined,
+                  startDate: startDate || undefined,
+                  endDate: endDate || undefined,
+                  private: isPrivate,
                 },
               });
             }}
             isLoading={importGameLoading}
-            loadingText="Adding"
+            loadingText={t("Adding")}
             colorScheme="blue"
             disabled={
               !(
@@ -277,7 +306,7 @@ const AddGameModal = ({
               )
             }
           >
-            Add
+            {t("Add")}
           </Button>
         </ModalFooter>
       </ModalContent>

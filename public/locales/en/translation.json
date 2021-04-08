@@ -9,6 +9,9 @@
     "title": "Home Page",
     "description": "Anyone can access this page"
   },
+  "Add": "Add",
+  "Adding": "Adding",
+  "Select option": "Select option",
   "Back": "Back",
   "Loading": "Loading...",
   "Close": "Close",
@@ -110,6 +113,34 @@
       "title": "There was a problem connecting to the server",
       "description": "This page will refresh itself in couple of seconds."
     }
+  },
+  "addGame": {
+    "error": {
+      "fileRejected": {
+        "title": "File rejected",
+        "description": "Please check if its a valid ZIP archive."
+      },
+      "cannotAddGame": {
+        "title": "Cannot add game",
+        "description": "There was an error adding the game."
+      }
+    },
+    "success": {
+      "title": "Success!",
+      "description": "Game has been added successfully"
+    },
+    "name": "Name",
+    "namePlaceholder": "Awesome game name",
+    "description": "Description",
+    "descriptionPlaceholder": "Description of your game",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "evaluationEngine": "Evaluation engine",
+    "courseId": "Course ID",
+    "courseIdPlaceholder": "Unique course id",
+    "wrongFileType": "Wrong file type",
+    "dragFileOrClick": "Drag your file here, or click for file selection dialog",
+    "setPrivate": "Set private"
   },
   "description": {
     "part1": "To get started, edit <1>src/App.js</1> and save to reload.",

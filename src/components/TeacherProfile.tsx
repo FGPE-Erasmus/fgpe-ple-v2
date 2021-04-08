@@ -11,7 +11,7 @@ import { SERVER_ERRORS } from "../utilities/ErrorMessages";
 
 const INSTRUCTOR_GAMES = gql`
   query getInstructorGames {
-    games {
+    myGames {
       id
       name
       description
@@ -43,7 +43,7 @@ const INSTRUCTOR_GAMES = gql`
 `;
 
 const TeacherProfile = () => {
-  const { data, error, loading } = useQuery<getInstructorGames>(
+  const { data, error, loading, refetch } = useQuery<getInstructorGames>(
     INSTRUCTOR_GAMES,
     {
       fetchPolicy: "no-cache",
@@ -69,7 +69,7 @@ const TeacherProfile = () => {
 
   return (
     <div>
-      <InstructorGames data={data} />
+      <InstructorGames data={data} refetch={refetch} />
       <TeacherStudents gamesData={data} />
     </div>
   );

@@ -30,8 +30,9 @@ export interface importGameVariables {
   file: any;
   gameName: string;
   courseId: string;
-  evaluationEngine: string;
+  evaluationEngine: EvaluationEngine;
   gameDescription?: string | null;
-  startDate?: string | null;
-  endDate?: string | null;
+  startDate?: any | null;
+  endDate?: any | null;
+  private?: boolean | null;
 }

@@ -20,8 +20,10 @@ import Error from "./Error";
 
 const InstructorGames = ({
   data,
+  refetch,
 }: {
   data: getInstructorGames | undefined;
+  refetch: () => void;
 }) => {
   const { t } = useTranslation();
   const {
@@ -36,6 +38,7 @@ const InstructorGames = ({
         isOpen={isAddGameModalOpen}
         onOpen={onAddGameModalOpen}
         onClose={onAddGameModalClose}
+        refetchGames={refetch}
       />
       <Box>
         <Flex justifyContent="space-between" alignItems="center">
@@ -46,14 +49,14 @@ const InstructorGames = ({
           <Button onClick={onAddGameModalOpen}>{t("Add new game")}</Button>
         </Flex>
 
-        {data?.games.length == 0 && <div>{t("No games available")}</div>}
+        {data?.myGames.length == 0 && <div>{t("No games available")}</div>}
         <VStack
           divider={<StackDivider />}
           spacing={2}
           align="stretch"
           marginTop={4}
         >
-          {data?.games.map((game, i) => {
+          {data?.myGames.map((game, i) => {
             return (
               <Game
                 id={game.id}

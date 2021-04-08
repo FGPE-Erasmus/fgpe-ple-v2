@@ -37,6 +37,7 @@ const ToastContainer = (props: any) => (
     top="0"
     left="50%"
     transform="translateX(-50%)"
+    zIndex={9999}
     {...props}
   />
 );
@@ -57,7 +58,10 @@ const Toast = ({
   }, []);
 
   return (
-    <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }}>
+    <motion.div
+      initial={{ opacity: 0, y: -50, zIndex: 999 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
       {content.showFireworks ? (
         <Reward
           ref={(ref) => {
@@ -102,8 +106,9 @@ const NotificationContent = ({
     width="100%"
     maxWidth="600px"
     minWidth="200px"
-    margin={4}
+    marginTop={4}
     padding={12}
+    zIndex={999}
   >
     {content.rewardImage && <RewardImage src={content.rewardImage} />}
     <AlertTitle mt={4} mb={1} fontSize="lg">

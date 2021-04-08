@@ -20,7 +20,7 @@ const getPlayers = (data: getInstructorGames | undefined) => {
     return [];
   }
 
-  const players = data.games.flatMap((game) => {
+  const players = data.myGames.flatMap((game) => {
     return game.players.flatMap((player) => {
       const totalExercises = player.learningPath.flatMap((learningPath) =>
         learningPath.refs.flatMap((ref) => ref)
