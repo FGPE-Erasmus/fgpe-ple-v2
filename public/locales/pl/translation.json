@@ -123,6 +123,7 @@
   },
   "addGame": {
     "error": {
+      "startLaterThanEnd": "Data zakończenia powinna być później niż data rozpoczęcia",
       "fileRejected": {
         "title": "Plik został odrzucony",
         "description": "Sprawdź czy jest to archiwum ZIP."

@@ -16,6 +16,7 @@ import {
   Checkbox,
   Flex,
   useColorMode,
+  Collapse,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React, { useState } from "react";
@@ -31,6 +32,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { importGame } from "../generated/importGame";
 import { useNotifications } from "./Notifications";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 const IMPORT_GAME = gql`
   mutation importGame(
@@ -132,7 +136,12 @@ const AddGameModal = ({
   const { colorMode } = useColorMode();
 
   const [startDate, setStartDate] = useState("");
+  const [startDateError, setStartDateError] = useState(false);
+
   const [endDate, setEndDate] = useState("");
+  const [endDateError, setEndDateError] = useState(false);
+
+  const [isEndLaterThanStart, setEndLaterThanStart] = useState(true);
 
   const [gameName, setGameName] = useState("");
   const [gameDescription, setGameDescription] = useState("");
@@ -140,14 +149,40 @@ const AddGameModal = ({
   const [courseId, setCourseId] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
 
-  const setStartDateRegex = (value: string) => {
-    if (value == "") {
-      setStartDate("");
+  const isDateValid = (date: string) => {
+    return dayjs(date, "YYYY-MM-DD", true).isValid();
+  };
+
+  const validateAndSetStartDate = (value: string) => {
+    if (isDateValid(value)) {
+      if (endDate) {
+        setEndLaterThanStart(
+          dayjs(endDate, "YYYY-MM-DD").isAfter(dayjs(value, "YYYY-MM-DD"))
+        );
+      }
+
+      setStartDateError(false);
+    } else {
+      setStartDateError(true);
     }
 
-    if (value.match(new RegExp(/^-?(\d+-?)+$/gm)) != null) {
-      setStartDate(value);
+    setStartDate(value);
+  };
+
+  const validateAndSetEndDate = (value: string) => {
+    if (isDateValid(value)) {
+      if (startDate) {
+        setEndLaterThanStart(
+          dayjs(value, "YYYY-MM-DD").isAfter(dayjs(startDate, "YYYY-MM-DD"))
+        );
+      }
+
+      setEndDateError(false);
+    } else {
+      setEndDateError(true);
     }
+
+    setEndDate(value);
   };
 
   return (
@@ -180,24 +215,31 @@ const AddGameModal = ({
               <FormControl paddingRight={1}>
                 <FormLabel id="start">{t("addGame.startDate")}</FormLabel>
                 <Input
+                  isInvalid={!!(startDateError && startDate)}
                   value={startDate || ""}
                   type="text"
                   placeholder="YYYY-MM-DD"
-                  onChange={(e) => setStartDateRegex(e.target.value)}
+                  onChange={(e) => validateAndSetStartDate(e.target.value)}
                 />
               </FormControl>
 
               <FormControl paddingLeft={1}>
-                add validation
                 <FormLabel id="end">{t("addGame.endDate")}</FormLabel>
                 <Input
+                  isInvalid={!!(endDateError && endDate)}
                   type="text"
                   placeholder="YYYY-MM-DD"
                   value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
+                  onChange={(e) => validateAndSetEndDate(e.target.value)}
                 />
               </FormControl>
             </Flex>
+
+            <Collapse in={!isEndLaterThanStart} animateOpacity>
+              <p style={{ color: "red", textAlign: "center" }}>
+                {t("addGame.error.startLaterThanEnd")}
+              </p>
+            </Collapse>
 
             <FormControl isRequired>
               <FormLabel id="engine">{t("addGame.evaluationEngine")}</FormLabel>
@@ -248,6 +290,7 @@ const AddGameModal = ({
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  fontSize: 13,
                 }}
               >
                 <input {...getInputProps()} />

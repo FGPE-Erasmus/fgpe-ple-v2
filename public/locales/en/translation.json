@@ -123,6 +123,7 @@
   },
   "addGame": {
     "error": {
+      "startLaterThanEnd": "End date should be later than the start date",
       "fileRejected": {
         "title": "File rejected",
         "description": "Please check if its a valid ZIP archive."
