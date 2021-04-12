@@ -13,10 +13,12 @@ import {
 import styled from "@emotion/styled";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { getInstructorGames } from "../generated/getInstructorGames";
 import AddGameModal from "./AddGameModal";
 import Error from "./Error";
+import ColumnFilter from "./TableComponent/ColumnFilter";
+import TableComponent from "./TableComponent";
 
 const InstructorGames = ({
   data,
@@ -25,6 +27,8 @@ const InstructorGames = ({
   data: getInstructorGames | undefined;
   refetch: () => void;
 }) => {
+  const history = useHistory();
+
   const { t } = useTranslation();
   const {
     isOpen: isAddGameModalOpen,
@@ -32,6 +36,7 @@ const InstructorGames = ({
     onClose: onAddGameModalClose,
   } = useDisclosure();
 
+  console.log("DATA", data);
   return (
     <>
       <AddGameModal
@@ -43,14 +48,61 @@ const InstructorGames = ({
       <Box>
         <Flex justifyContent="space-between" alignItems="center">
           <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-            {t("Games")}
+            {t("Your games")}
           </Heading>
 
           <Button onClick={onAddGameModalOpen}>{t("Add new game")}</Button>
         </Flex>
 
+        <Box>
+          <TableComponent
+            onClickFunc={(row) => {
+              history.push({
+                pathname: `/teacher/game/${row.id}`,
+              });
+            }}
+            columns={[
+              {
+                Header: t("table.gameName"),
+                accessor: "name",
+                onClick: () => console.log("xd"),
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter
+                    column={column}
+                    placeholder={t("placeholders.gameName")}
+                  />
+                ),
+              },
+              {
+                Header: t("table.gameDescription"),
+                accessor: "description",
+                Cell: ({ value }: { value: any }) => {
+                  return <span>{value ? value : "-"}</span>;
+                },
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter
+                    column={column}
+                    placeholder={t("placeholders.gameDescription")}
+                  />
+                ),
+              },
+              {
+                Header: t("table.numberOfPlayers"),
+                accessor: "players.length",
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter
+                    column={column}
+                    placeholder={t("placeholders.numberOfPlayers")}
+                  />
+                ),
+              },
+            ]}
+            data={data?.myGames}
+          />
+        </Box>
+
         {data?.myGames.length == 0 && <div>{t("No games available")}</div>}
-        <VStack
+        {/* <VStack
           divider={<StackDivider />}
           spacing={2}
           align="stretch"
@@ -66,7 +118,7 @@ const InstructorGames = ({
               />
             );
           })}
-        </VStack>
+        </VStack> */}
       </Box>
     </>
   );

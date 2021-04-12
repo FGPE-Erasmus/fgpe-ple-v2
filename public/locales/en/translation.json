@@ -1,4 +1,5 @@
 {
+  "Your games": "Your games",
   "NA": "N/A",
   "points": "points",
   "No description": "No description",
@@ -82,6 +83,9 @@
     "noPlayersAlert": "This game has no players. Add any to start."
   },
   "table": {
+    "gameName": "Game name",
+    "gameDescription": "Game description",
+    "numberOfPlayers": "Number of players",
     "username": "Username",
     "name": "Name",
     "lastName": "Last name",
@@ -95,6 +99,9 @@
     "metrics": "Metrics"
   },
   "placeholders": {
+    "gameName": "Awesome game",
+    "gameDescription": "Detailed description",
+    "numberOfPlayers": "123",
     "name": "John",
     "lastName": "Smith",
     "game": "Game",

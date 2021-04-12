@@ -1,4 +1,5 @@
 {
+  "Your games": "Twoje gry",
   "NA": "b.d.",
   "points": "punkty",
   "No description": "Brak opisu",
@@ -82,6 +83,9 @@
     "noPlayersAlert": "Ta gra nie ma jeszcze graczy. Dodaj ich by rozpocząć."
   },
   "table": {
+    "gameName": "Nazwa gry",
+    "gameDescription": "Opis gry",
+    "numberOfPlayers": "Liczba graczy",
     "username": "Nazwa użytkownika",
     "name": "Imię",
     "lastName": "Nazwisko",
@@ -95,6 +99,9 @@
     "metrics": "Metryka"
   },
   "placeholders": {
+    "gameName": "Niesamowita gra",
+    "gameDescription": "Szczegółowy opis",
+    "numberOfPlayers": "123",
     "name": "Jan",
     "lastName": "Kowalski",
     "game": "Nazwa gry",

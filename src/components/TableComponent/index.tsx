@@ -36,10 +36,14 @@ const TableComponent = ({
   columns: columnsProp,
   data: dataProp,
   dontRecomputeChange,
+  onClickFunc,
 }: {
   columns: any;
   data: any;
   dontRecomputeChange?: boolean;
+
+  /** Function invoked after clicking on row (has access to row.original)  */
+  onClickFunc?: (row: any) => void;
 }) => {
   const { i18n } = useTranslation();
   const columns = useMemo(() => columnsProp, [
@@ -129,7 +133,17 @@ const TableComponent = ({
             {page.map((row: any) => {
               prepareRow(row);
               return (
-                <Tr {...row.getRowProps()}>
+                <Tr
+                  {...row.getRowProps()}
+                  style={{
+                    cursor: onClickFunc ? "pointer" : "inherit",
+                  }}
+                  onClick={() =>
+                    onClickFunc ? onClickFunc(row.original) : null
+                  }
+                  transition="all 0.5s"
+                  _hover={onClickFunc ? { bg: "gray.700" } : {}}
+                >
                   {row.cells.map((cell: any) => (
                     <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
                   ))}
