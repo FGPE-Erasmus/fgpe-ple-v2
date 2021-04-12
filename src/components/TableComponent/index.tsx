@@ -7,6 +7,7 @@ import {
   Th,
   Thead,
   Tr,
+  useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
 import React, { Fragment, useMemo } from "react";
@@ -45,6 +46,7 @@ const TableComponent = ({
   /** Function invoked after clicking on row (has access to row.original)  */
   onClickFunc?: (row: any) => void;
 }) => {
+  const { colorMode } = useColorMode();
   const { i18n } = useTranslation();
   const columns = useMemo(() => columnsProp, [
     dontRecomputeChange ? null : columnsProp,
@@ -142,7 +144,11 @@ const TableComponent = ({
                     onClickFunc ? onClickFunc(row.original) : null
                   }
                   transition="all 0.5s"
-                  _hover={onClickFunc ? { bg: "gray.700" } : {}}
+                  _hover={
+                    onClickFunc
+                      ? { bg: colorMode == "dark" ? "gray.700" : "gray.200" }
+                      : {}
+                  }
                 >
                   {row.cells.map((cell: any) => (
                     <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
