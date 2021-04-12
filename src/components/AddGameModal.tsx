@@ -345,7 +345,10 @@ const AddGameModal = ({
                 acceptedFiles.length > 0 &&
                 gameName &&
                 evaluationEngine &&
-                courseId
+                courseId &&
+                (startDate ? !startDateError : true) &&
+                (endDate ? !endDateError : true) &&
+                (startDate || endDate ? isEndLaterThanStart : true)
               )
             }
           >
