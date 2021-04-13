@@ -13,7 +13,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import {
@@ -30,8 +30,11 @@ import { gameQuery } from "../generated/gameQuery";
 import { motion, AnimatePresence } from "framer-motion";
 import { table } from "console";
 import TableComponent from "./TableComponent";
-import ColumnFilter from "./TableComponent/ColumnFilter";
+import ColumnFilter, {
+  ColumnSelectFilter,
+} from "./TableComponent/ColumnFilter";
 import { useTranslation } from "react-i18next";
+import { Cell } from "react-table";
 
 interface ParamTypes {
   gameId: string;
@@ -156,29 +159,99 @@ const AddPlayersToGame = () => {
 
       <Box>
         <TableComponent
-          dontRecomputeChange
+          // dontRecomputeChange
           columns={[
             {
               Header: t("table.enrolled"),
               accessor: "id",
-              disableFilters: true,
+              // disableFilters: true,
               width: 100,
-
               disableSortBy: true,
-              Cell: ({ value }: { value: any }) => {
+              filter: (rows: any[], id: string, filterValue: any) => {
+                return rows.filter((row) => {
+                  if (filterValue == "all") {
+                    return true;
+                  }
+                  const isEnrolled = !!dataGame.game.players.find(
+                    (gamePlayer) => gamePlayer.user.id === row.original.id
+                  );
+                  if (isEnrolled && filterValue == "true") {
+                    return true;
+                  }
+
+                  if (!isEnrolled && filterValue != "true") {
+                    return true;
+                  }
+
+                  return false;
+                });
+              },
+              Filter: ({ column }: { column: any }) => (
+                <ColumnSelectFilter
+                  column={column}
+                  options={[
+                    {
+                      text: t("All"),
+                      value: "all",
+                    },
+                    {
+                      text: t("Enrolled"),
+                      value: true,
+                    },
+                    { text: t("Not enrolled"), value: false },
+                  ]}
+                />
+              ),
+              Cell: ({
+                cell,
+                value,
+                row,
+                state,
+                setState,
+                setRowState,
+              }: {
+                cell: Cell;
+                value: any;
+                row: number;
+                state: any;
+                setState: (value: any) => void;
+                setRowState: (value: any) => void;
+              }) => {
                 return (
-                  <PlayerCheckbox
-                    addPlayer={addPlayer}
-                    removePlayer={removePlayer}
-                    refetchGame={refetchGame}
-                    gameId={gameId}
-                    userId={value}
-                    initialChecked={
-                      !!dataGame.game.players.find(
-                        (gamePlayer) => gamePlayer.user.id === value
-                      )
-                    }
-                  />
+                  <>
+                    <Checkbox
+                      isChecked={
+                        !!dataGame.game.players.find(
+                          (gamePlayer) => gamePlayer.user.id === value
+                        )
+                      }
+                      disabled={cell.state.loading ? true : false}
+                      colorScheme={cell.state.loading ? "orange" : "blue"}
+                      onChange={async (e) => {
+                        cell.setState({ loading: true });
+
+                        if (!e.target.checked) {
+                          await removePlayer({
+                            variables: {
+                              gameId,
+                              userId: value,
+                            },
+                          });
+                        } else {
+                          await addPlayer({
+                            variables: {
+                              gameId,
+                              userId: value,
+                            },
+                          });
+                        }
+
+                        cell.setState({ loading: false });
+                        refetchGame();
+                      }}
+                    />
+                    {cell.state.loading && <Spinner size="sm" marginLeft={2} />}
+                  </>
                 );
               },
             },
@@ -244,187 +317,7 @@ const AddPlayersToGame = () => {
           data={dataUsers.usersByRole}
         />
       </Box>
-      {/* 
-      <Table variant="simple">
-        <Thead>
-          <Tr>
-            <Th width={30}>Enrolled</Th>
-            <Th>First Name</Th>
-            <Th>Last Name</Th>
-            <Th>Email</Th>
-          </Tr>
-          <Tr>
-            <Th>-</Th>
-            <Th>
-              <Input
-                size="xs"
-                placeholder="John"
-                value={tableFilters.firstName}
-                onChange={(e) =>
-                  setTableFilters({
-                    ...tableFilters,
-                    firstName: e.target.value,
-                  })
-                }
-              />
-            </Th>
-            <Th>
-              <Input
-                size="xs"
-                placeholder="Smith"
-                value={tableFilters.lastName}
-                onChange={(e) =>
-                  setTableFilters({
-                    ...tableFilters,
-                    lastName: e.target.value,
-                  })
-                }
-              />
-            </Th>
-            <Th>
-              <Input
-                size="xs"
-                placeholder="E-Mail"
-                value={tableFilters.email}
-                onChange={(e) =>
-                  setTableFilters({
-                    ...tableFilters,
-                    email: e.target.value,
-                  })
-                }
-              />
-            </Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {dataUsers?.usersByRole.map((user, i) => {
-            if (!user.email) {
-              user.email = "N/A";
-            }
-            if (!user.firstName) {
-              user.firstName = "N/A";
-            }
-
-            if (!user.lastName) {
-              user.lastName = "N/A";
-            }
-
-            if (
-              !user.firstName
-                .toLowerCase()
-                .includes(tableFilters.firstName.toLowerCase())
-            ) {
-              return;
-            }
-
-            if (
-              !user.lastName
-                .toLowerCase()
-                .includes(tableFilters.lastName.toLowerCase())
-            ) {
-              return;
-            }
-
-            if (
-              !user.email
-                .toLowerCase()
-                .includes(tableFilters.email.toLowerCase())
-            ) {
-              return;
-            }
-
-            return (
-              <Tr key={i}>
-                <Td>
-                  <Box display="flex">
-                    <PlayerCheckbox
-                      addPlayer={addPlayer}
-                      removePlayer={removePlayer}
-                      gameId={gameId}
-                      userId={user.id}
-                      initialChecked={
-                        !!dataGame.game.players.find(
-                          (gamePlayer) => gamePlayer.user.id === user.id
-                        )
-                      }
-                    />
-                  </Box>
-                </Td>
-                <Td>{user.firstName}</Td>
-                <Td>{user.lastName}</Td>
-                <Td>{user.email}</Td>
-              </Tr>
-            );
-          })}
-        </Tbody>
-      </Table> */}
     </Box>
-  );
-};
-
-const PlayerCheckbox = ({
-  initialChecked,
-  userId,
-  gameId,
-  addPlayer,
-  removePlayer,
-  refetchGame,
-}: {
-  initialChecked: boolean;
-  userId: string | null;
-  gameId: string;
-  addPlayer: (
-    options?: MutationFunctionOptions<any, Record<string, any>> | undefined
-  ) => Promise<FetchResult<any, Record<string, any>, Record<string, any>>>;
-  removePlayer: (
-    options?: MutationFunctionOptions<any, Record<string, any>> | undefined
-  ) => Promise<FetchResult<any, Record<string, any>, Record<string, any>>>;
-  refetchGame: () => void;
-}) => {
-  const [checked, setChecked] = useState(initialChecked);
-  const [loading, setLoading] = useState(false);
-
-  const addOrRemovePlayer = async (add: boolean) => {
-    setLoading(true);
-    if (add) {
-      const res = await addPlayer({
-        variables: {
-          gameId,
-          userId,
-        },
-      });
-      setLoading(false);
-
-      if (!res.errors) {
-        setChecked(true);
-      }
-    } else {
-      const res = await removePlayer({
-        variables: {
-          gameId,
-          userId,
-        },
-      });
-      setLoading(false);
-
-      if (!res.errors) {
-        setChecked(false);
-      }
-    }
-  };
-
-  return (
-    <>
-      <Checkbox
-        disabled={loading}
-        isChecked={checked}
-        colorScheme={loading ? "orange" : "blue"}
-        onChange={(e) => {
-          addOrRemovePlayer(e.target.checked);
-        }}
-      />
-      {loading && <Spinner size="sm" marginLeft={2} />}
-    </>
   );
 };
 

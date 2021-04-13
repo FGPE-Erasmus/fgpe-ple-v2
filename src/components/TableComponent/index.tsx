@@ -20,6 +20,7 @@ import {
   useFlexLayout,
   usePagination,
   TableInstance,
+  useRowState,
 } from "react-table";
 import Pagination from "react-js-pagination";
 
@@ -35,14 +36,13 @@ import ScrollbarWrapper from "../ScrollbarWrapper";
 
 const TableComponent = ({
   columns: columnsProp,
-  data: dataProp,
+  data,
   dontRecomputeChange,
   onClickFunc,
 }: {
   columns: any;
   data: any;
   dontRecomputeChange?: boolean;
-
   /** Function invoked after clicking on row (has access to row.original)  */
   onClickFunc?: (row: any) => void;
 }) => {
@@ -52,10 +52,11 @@ const TableComponent = ({
     dontRecomputeChange ? null : columnsProp,
     i18n.language,
   ]);
-  const data = useMemo(() => dataProp, [
-    dontRecomputeChange ? null : dataProp,
-    i18n.language,
-  ]);
+
+  // const data = useMemo(() => dataProp, [
+  //   dontRecomputeChange ? null : dataProp,
+  //   i18n.language,
+  // ]);
 
   const tableInstance = useTable(
     {
@@ -64,7 +65,8 @@ const TableComponent = ({
     },
     useFilters,
     useSortBy,
-    usePagination
+    usePagination,
+    useRowState
   );
 
   const {
@@ -74,7 +76,7 @@ const TableComponent = ({
     prepareRow,
   } = tableInstance;
 
-  const { page, state, gotoPage }: any = tableInstance;
+  const { page, state, gotoPage } = tableInstance;
   const { pageSize, pageIndex } = state;
 
   return (
@@ -84,7 +86,7 @@ const TableComponent = ({
           <Thead userSelect="none">
             {headerGroups.map((headerGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column: any, i) => (
+                {headerGroup.headers.map((column, i) => (
                   <Th {...column.getHeaderProps(column.getSortByToggleProps())}>
                     <Flex justifyContent="space-between">
                       <Box color={column.isSorted ? "deepskyblue" : "default"}>
@@ -96,11 +98,11 @@ const TableComponent = ({
                           <Box color="deepskyblue">
                             <AnimatedSortIcon
                               icon={<TiArrowSortedDown fontSize={16} />}
-                              isVisible={column.isSortedDesc}
+                              isVisible={column.isSortedDesc ? true : false}
                             />
                             <AnimatedSortIcon
                               icon={<TiArrowSortedUp fontSize={16} />}
-                              isVisible={!column.isSortedDesc}
+                              isVisible={!column.isSortedDesc ? true : false}
                             />
                           </Box>
                         ) : (
@@ -119,7 +121,7 @@ const TableComponent = ({
 
             {headerGroups.map((headerGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()} padding={0}>
-                {headerGroup.headers.map((column: any, i) =>
+                {headerGroup.headers.map((column, i) =>
                   column.canFilter ? (
                     <Th {...column.getHeaderProps()} padding={2}>
                       {column.render("Filter")}
@@ -132,7 +134,7 @@ const TableComponent = ({
             ))}
           </Thead>
           <Tbody {...getTableBodyProps()}>
-            {page.map((row: any) => {
+            {page.map((row) => {
               prepareRow(row);
               return (
                 <Tr
@@ -150,7 +152,7 @@ const TableComponent = ({
                       : {}
                   }
                 >
-                  {row.cells.map((cell: any) => (
+                  {row.cells.map((cell) => (
                     <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
                   ))}
                 </Tr>
