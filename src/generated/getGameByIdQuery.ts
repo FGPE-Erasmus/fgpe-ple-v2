@@ -3,40 +3,44 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { EvaluationEngine, Result } from "./globalTypes";
+
 // ====================================================
 // GraphQL query operation: getGameByIdQuery
 // ====================================================
-
-export interface getGameByIdQuery_game_players_submissions {
-  __typename: "Submission";
-  id: string;
-}
 
 export interface getGameByIdQuery_game_players_validations {
   __typename: "Validation";
   id: string;
 }
 
-export interface getGameByIdQuery_game_players_group {
-  __typename: "Group";
-  name: string;
+export interface getGameByIdQuery_game_players_submissions {
+  __typename: "Submission";
+  exerciseId: string;
+  feedback: string | null;
+  result: Result | null;
 }
 
 export interface getGameByIdQuery_game_players_user {
   __typename: "User";
+  email: string | null;
+  id: string | null;
   firstName: string | null;
   lastName: string | null;
-  email: string | null;
 }
 
 export interface getGameByIdQuery_game_players {
   __typename: "Player";
   id: string;
-  submissions: getGameByIdQuery_game_players_submissions[];
   validations: getGameByIdQuery_game_players_validations[];
-  points: number;
-  group: getGameByIdQuery_game_players_group | null;
+  submissions: getGameByIdQuery_game_players_submissions[];
   user: getGameByIdQuery_game_players_user;
+}
+
+export interface getGameByIdQuery_game_instructors {
+  __typename: "User";
+  id: string | null;
+  username: string | null;
 }
 
 export interface getGameByIdQuery_game {
@@ -44,9 +48,15 @@ export interface getGameByIdQuery_game {
   id: string;
   name: string;
   description: string | null;
+  gedilLayerId: string | null;
+  gedilLayerDescription: string | null;
+  startDate: any | null;
+  endDate: any | null;
+  evaluationEngine: EvaluationEngine;
+  players: getGameByIdQuery_game_players[];
+  instructors: getGameByIdQuery_game_instructors[];
   createdAt: any;
   updatedAt: any | null;
-  players: getGameByIdQuery_game_players[];
 }
 
 export interface getGameByIdQuery {

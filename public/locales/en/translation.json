@@ -1,4 +1,6 @@
 {
+  "Students": "Students",
+  "Exercises": "Exercises",
   "All": "All",
   "Enrolled": "Enrolled",
   "Not enrolled": "Not enrolled",
@@ -86,6 +88,10 @@
     "noPlayersAlert": "This game has no players. Add any to start."
   },
   "table": {
+    "Exercise": "Exercise ID",
+    "totalSubmissions": "Total submissions",
+    "acceptedResults": "Accepted submissions",
+    "difficulty": "Difficulty",
     "gameName": "Game name",
     "gameDescription": "Game description",
     "numberOfPlayers": "Number of players",
@@ -102,6 +108,7 @@
     "metrics": "Metrics"
   },
   "placeholders": {
+    "exercise": "ABC",
     "gameName": "Awesome game",
     "gameDescription": "Detailed description",
     "numberOfPlayers": "123",

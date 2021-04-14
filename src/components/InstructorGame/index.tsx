@@ -1,6 +1,6 @@
 import React from "react";
-import withChangeAnimation from "../utilities/withChangeAnimation";
-import Error from "./Error";
+import withChangeAnimation from "../../utilities/withChangeAnimation";
+import Error from "../Error";
 
 import {
   Progress,
@@ -21,15 +21,17 @@ import {
   Button,
   Alert,
   AlertIcon,
+  Divider,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
-import { getGameByIdQuery } from "../generated/getGameByIdQuery";
+import { getGameByIdQuery } from "../../generated/getGameByIdQuery";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import TableComponent from "./TableComponent";
-import ColumnFilter from "./TableComponent/ColumnFilter";
-import { SERVER_ERRORS } from "../utilities/ErrorMessages";
+import TableComponent from "../TableComponent";
+import ColumnFilter from "../TableComponent/ColumnFilter";
+import { SERVER_ERRORS } from "../../utilities/ErrorMessages";
+import ExercisesStats from "./ExercisesStats";
 
 interface ParamTypes {
   gameId: string;
@@ -41,26 +43,34 @@ const GET_GAME_BY_ID = gql`
       id
       name
       description
-      createdAt
-      updatedAt
+      gedilLayerId
+      gedilLayerDescription
+      startDate
+      endDate
+      evaluationEngine
       players {
         id
-        submissions {
-          id
-        }
         validations {
           id
         }
-        points
-        group {
-          name
+        submissions {
+          exerciseId
+          feedback
+          result
         }
         user {
+          email
+          id
           firstName
           lastName
-          email
         }
       }
+      instructors {
+        id
+        username
+      }
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -69,7 +79,11 @@ const InstructorGame = () => {
   const { gameId } = useParams<ParamTypes>();
   const { t } = useTranslation();
 
-  const { data, error, loading } = useQuery<getGameByIdQuery>(GET_GAME_BY_ID, {
+  const {
+    data: gameData,
+    error: gameError,
+    loading: gameLoading,
+  } = useQuery<getGameByIdQuery>(GET_GAME_BY_ID, {
     variables: {
       gameId,
     },
@@ -81,29 +95,29 @@ const InstructorGame = () => {
     return <div>Game ID not provided</div>;
   }
 
-  if (loading) {
+  if (gameLoading) {
     return <div>{t("Loading")}</div>;
   }
 
-  if (!loading && error) {
-    const isServerConnectionError = error.graphQLErrors[0].message.includes(
+  if (!gameLoading && gameError) {
+    const isServerConnectionError = gameError.graphQLErrors[0].message.includes(
       SERVER_ERRORS.ECONNABORTED
     );
 
     if (isServerConnectionError) {
       return <Error serverConnectionError />;
     } else {
-      return <Error errorContent={JSON.stringify(error)} />;
+      return <Error errorContent={JSON.stringify(gameError)} />;
     }
   }
 
-  if (!data) {
+  if (!gameData) {
     return <Error status="warning" errorContent={"No data"} />;
   }
 
   return (
     <div>
-      {data.game.players.length < 1 && (
+      {gameData.game.players.length < 1 && (
         <>
           <Alert status="info">
             <AlertIcon />
@@ -114,7 +128,7 @@ const InstructorGame = () => {
       <Flex width="100%" justifyContent="space-between" alignItems="center">
         <Box>
           <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-            {t("Game")}: {data.game.name}
+            {t("Game")}: {gameData.game.name}
           </Heading>
         </Box>
         <Box>
@@ -137,10 +151,18 @@ const InstructorGame = () => {
           </Link>
         </Box>
       </Flex>
+      <Divider marginBottom={50} />
 
+      <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
+        {t("Exercises")}
+      </Heading>
+      <ExercisesStats gameData={gameData} gameId={gameId} />
+
+      <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
+        {t("Students")}
+      </Heading>
       <Box>
         <TableComponent
-          dontRecomputeChange
           columns={[
             {
               Header: t("table.name"),
@@ -188,7 +210,7 @@ const InstructorGame = () => {
               ),
             },
           ]}
-          data={data.game.players}
+          data={gameData.game.players}
         />
       </Box>
     </div>

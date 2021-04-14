@@ -1,4 +1,6 @@
 {
+  "Students": "Uczniowie",
+  "Exercises": "Ćwiczenia",
   "All": "Wszyscy",
   "Enrolled": "Zapisani",
   "Not enrolled": "Niezapisani",
@@ -86,6 +88,10 @@
     "noPlayersAlert": "Ta gra nie ma jeszcze graczy. Dodaj ich by rozpocząć."
   },
   "table": {
+    "Exercise": "Ćwiczenie",
+    "totalSubmissions": "Ewaluacje",
+    "acceptedResults": "Zaakceptowane ewaluacje",
+    "difficulty": "Trudność",
     "gameName": "Nazwa gry",
     "gameDescription": "Opis gry",
     "numberOfPlayers": "Liczba graczy",
@@ -102,6 +108,7 @@
     "metrics": "Metryka"
   },
   "placeholders": {
+    "exercise": "ABC",
     "gameName": "Niesamowita gra",
     "gameDescription": "Szczegółowy opis",
     "numberOfPlayers": "123",
