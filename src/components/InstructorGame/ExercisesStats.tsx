@@ -13,77 +13,12 @@ const GET_CHALLENGES = gql`
     challenges(gameId: $gameId) {
       id
       name
-      description
-      difficulty
-      mode
-      modeParameters
-      locked
-      hidden
       refs {
         id
       }
     }
   }
 `;
-
-const getExerciseStats = (
-  gameData: getGameByIdQuery,
-  challengesData: getChallengesQuery | undefined
-) => {
-  //   console.log(data.game.players);
-
-  let exercisesStats: {
-    id: string;
-    acceptedResults: number;
-    resultsTotal: number;
-  }[] = [];
-
-  gameData.game.players.forEach((player) => {
-    player.submissions.forEach((submission) => {
-      console.log(
-        "PLAYER",
-        player.user.firstName,
-        player.user.lastName,
-        submission.result == "ACCEPT"
-      );
-
-      const foundIndex = exercisesStats.findIndex(
-        (e) => e.id === submission.exerciseId
-      );
-
-      if (foundIndex == -1) {
-        exercisesStats.push({
-          id: submission.exerciseId,
-          acceptedResults: submission.result == "ACCEPT" ? 1 : 0,
-          resultsTotal: 1,
-        });
-      } else {
-        exercisesStats[foundIndex] = {
-          id: submission.exerciseId,
-          acceptedResults:
-            submission.result == "ACCEPT"
-              ? exercisesStats[foundIndex].acceptedResults + 1
-              : exercisesStats[foundIndex].acceptedResults,
-          resultsTotal: exercisesStats[foundIndex].resultsTotal + 1,
-        };
-      }
-    });
-  });
-
-  challengesData?.challenges.forEach((challenge) => {
-    challenge.refs.forEach((ref) => {
-      if (exercisesStats.findIndex((e) => e.id === ref.id) == -1) {
-        exercisesStats.push({
-          id: ref.id || "-",
-          acceptedResults: 0,
-          resultsTotal: 0,
-        });
-      }
-    });
-  });
-
-  return exercisesStats;
-};
 
 const ExercisesStats = ({
   gameData,
@@ -114,7 +49,7 @@ const ExercisesStats = ({
     return <Error errorContent={JSON.stringify(challengesError)} />;
   }
 
-  const exercisesStats = getExerciseStats(gameData, challengesData);
+  // const exercisesStats = getExerciseStats(gameData, challengesData);
 
   return (
     <Box>
@@ -149,7 +84,7 @@ const ExercisesStats = ({
             disableFilters: true,
           },
         ]}
-        data={exercisesStats}
+        data={[]}
       />
     </Box>
   );

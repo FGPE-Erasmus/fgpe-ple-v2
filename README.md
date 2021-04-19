@@ -74,6 +74,12 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+### `npm run apollo:generate`
+
+Generates typescript .ts files with the necessary types to the `src/generated/` folder (based on queries, mutations, and subscriptions used in the app).
+
+You can change the host from which the graphql schema is downloaded from by simply changing the `--endpoint` flag.
+
 ### Compiles and minifies for production with Docker
 
 ```
@@ -87,3 +93,24 @@ docker run -it -p 8080:80 \
     -v $(pwd)/docker/nginx.conf:/etc/nginx/nginx.conf \
     --rm fgpe/learning-platform:latest
 ```
+
+## Acknowledgments
+
+<table cellspacing="0" cellpadding="0" border=0>
+<tr border=0>
+<td border=0>
+
+This software has been developed as a part of the Framework for Gamified Programming Education project ([https://fgpe.usz.edu.pl/](https://fgpe.usz.edu.pl/)), co-funded by the Erasmus+ Programme of the European Union.
+
+</td>
+<td border=0>
+
+![Framework for Gamified Programming Education project](docs/logo_FGPE.jpg) ![Erasmus+](docs/logo_erasmus.jpg)
+
+</td>
+</tr>
+</table>
+
+## License
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)

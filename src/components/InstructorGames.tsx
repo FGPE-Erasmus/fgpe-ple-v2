@@ -65,7 +65,6 @@ const InstructorGames = ({
               {
                 Header: t("table.gameName"),
                 accessor: "name",
-                onClick: () => console.log("xd"),
                 Filter: ({ column }: { column: any }) => (
                   <ColumnFilter
                     column={column}

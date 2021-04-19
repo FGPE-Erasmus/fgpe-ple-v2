@@ -45,22 +45,25 @@ const GET_GAME_BY_ID = gql`
       description
       gedilLayerId
       gedilLayerDescription
+      courseId
       startDate
       endDate
+      state
       evaluationEngine
       players {
-        id
-        validations {
-          id
+        group {
+          name
         }
-        submissions {
-          exerciseId
-          feedback
-          result
+        id
+        stats {
+          nrOfSubmissions
+          nrOfValidations
+          nrOfSubmissionsByActivity
+          nrOfValidationsByActivity
+          nrOfSubmissionsByActivityAndResult
+          nrOfValidationsByActivityAndResult
         }
         user {
-          email
-          id
           firstName
           lastName
         }
@@ -114,6 +117,8 @@ const InstructorGame = () => {
   if (!gameData) {
     return <Error status="warning" errorContent={"No data"} />;
   }
+
+  console.log("game data", gameData);
 
   return (
     <div>
@@ -187,14 +192,14 @@ const InstructorGame = () => {
 
             {
               Header: t("table.submissions"),
-              accessor: "submissions.length",
+              accessor: "stats.nrOfSubmissions",
               Filter: ({ column }: { column: any }) => (
                 <ColumnFilter column={column} placeholder="123" />
               ),
             },
             {
               Header: t("table.validations"),
-              accessor: "validations.length",
+              accessor: "stats.nrOfValidations",
               Filter: ({ column }: { column: any }) => (
                 <ColumnFilter column={column} placeholder="123" />
               ),
