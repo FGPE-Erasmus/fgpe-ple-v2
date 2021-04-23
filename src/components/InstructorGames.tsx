@@ -1,5 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Flex,
@@ -54,6 +56,13 @@ const InstructorGames = ({
           <Button onClick={onAddGameModalOpen}>{t("Add new game")}</Button>
         </Flex>
 
+        {data?.myGames.length == 0 && (
+          <Alert status="info">
+            <AlertIcon />
+            {t("No games available")}
+          </Alert>
+        )}
+
         <Box>
           <TableComponent
             onClickFunc={(row) => {
@@ -100,7 +109,6 @@ const InstructorGames = ({
           />
         </Box>
 
-        {data?.myGames.length == 0 && <div>{t("No games available")}</div>}
         {/* <VStack
           divider={<StackDivider />}
           spacing={2}

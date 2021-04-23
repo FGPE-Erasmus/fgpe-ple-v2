@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Heading,
   Table,
@@ -55,6 +57,14 @@ const TeacherStudents = ({
       <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
         {t("All your students")}
       </Heading>
+
+      {players.length == 0 && (
+        <Alert status="info">
+          <AlertIcon />
+          {t("You have no students yet")}
+        </Alert>
+      )}
+
       <Box>
         <TableComponent
           columns={[

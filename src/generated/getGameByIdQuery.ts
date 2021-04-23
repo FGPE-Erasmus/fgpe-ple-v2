@@ -9,6 +9,18 @@ import { GameStateEnum, EvaluationEngine } from "./globalTypes";
 // GraphQL query operation: getGameByIdQuery
 // ====================================================
 
+export interface getGameByIdQuery_game_challenges_refs {
+  __typename: "Activity";
+  name: string | null;
+  id: string | null;
+}
+
+export interface getGameByIdQuery_game_challenges {
+  __typename: "Challenge";
+  name: string;
+  refs: getGameByIdQuery_game_challenges_refs[];
+}
+
 export interface getGameByIdQuery_game_players_group {
   __typename: "Group";
   name: string;
@@ -24,11 +36,18 @@ export interface getGameByIdQuery_game_players_stats {
   nrOfValidationsByActivityAndResult: any | null;
 }
 
+export interface getGameByIdQuery_game_players_user {
+  __typename: "User";
+  firstName: string | null;
+  lastName: string | null;
+}
+
 export interface getGameByIdQuery_game_players {
   __typename: "Player";
   group: getGameByIdQuery_game_players_group | null;
   id: string;
   stats: getGameByIdQuery_game_players_stats;
+  user: getGameByIdQuery_game_players_user;
 }
 
 export interface getGameByIdQuery_game_instructors {
@@ -49,6 +68,7 @@ export interface getGameByIdQuery_game {
   endDate: any | null;
   state: GameStateEnum;
   evaluationEngine: EvaluationEngine;
+  challenges: getGameByIdQuery_game_challenges[];
   players: getGameByIdQuery_game_players[];
   instructors: getGameByIdQuery_game_instructors[];
   createdAt: any;

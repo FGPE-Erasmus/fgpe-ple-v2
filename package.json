@@ -1,7 +1,7 @@
 {
   "name": "fgpe-ple-v2",
   "version": "0.1.0",
-  "private": true,
+  "license": "GPL-3.0",
   "dependencies": {
     "@apollo/client": "^3.3.9",
     "@chakra-ui/icons": "^1.0.3",

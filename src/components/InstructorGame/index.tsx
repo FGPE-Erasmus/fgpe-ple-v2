@@ -31,7 +31,7 @@ import { Link } from "react-router-dom";
 import TableComponent from "../TableComponent";
 import ColumnFilter from "../TableComponent/ColumnFilter";
 import { SERVER_ERRORS } from "../../utilities/ErrorMessages";
-import ExercisesStats from "./ExercisesStats";
+import ActivitiesStats from "./ActivitiesStats";
 
 interface ParamTypes {
   gameId: string;
@@ -50,6 +50,13 @@ const GET_GAME_BY_ID = gql`
       endDate
       state
       evaluationEngine
+      challenges {
+        name
+        refs {
+          name
+          id
+        }
+      }
       players {
         group {
           name
@@ -159,9 +166,9 @@ const InstructorGame = () => {
       <Divider marginBottom={50} />
 
       <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
-        {t("Exercises")}
+        {t("Activities")}
       </Heading>
-      <ExercisesStats gameData={gameData} gameId={gameId} />
+      <ActivitiesStats gameData={gameData} gameId={gameId} />
 
       <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
         {t("Students")}
