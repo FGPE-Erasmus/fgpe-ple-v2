@@ -37,10 +37,6 @@ const getPlayers = (data: getInstructorGames | undefined) => {
     });
   });
 
-  //   const playersNoDuplicates =  Array.from(new Set(players.map(JSON.stringify))).map(JSON.parse);
-
-  console.log("PLAYERS", players);
-
   return players;
 };
 

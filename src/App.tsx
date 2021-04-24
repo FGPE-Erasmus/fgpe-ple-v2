@@ -25,6 +25,7 @@ import { NotificationsProvider } from "./components/Notifications";
 import MainLoading from "./components/MainLoading";
 import { useKeycloak } from "@react-keycloak/web";
 import { gql } from "@apollo/client";
+import ManageGames from "./components/ManageGames";
 
 const getZoomFactorFromLocalStorage = () => {
   const zoomFactor = localStorage.getItem("zoom");
@@ -122,6 +123,13 @@ function App() {
                           path="/teacher/game/:gameId/add-players"
                           roles={["teacher"]}
                           component={AddPlayersToGame}
+                        />
+
+                        <PrivateRoute
+                          exact
+                          path="/teacher/manage-games"
+                          roles={["teacher"]}
+                          component={ManageGames}
                         />
 
                         <Route component={NotFound} />

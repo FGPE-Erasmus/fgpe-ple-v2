@@ -67,7 +67,6 @@ const getActivitiesStats = (
     }
   });
 
-  console.log("asa", activitiesStatsArray);
   return activitiesStatsArray;
 };
 

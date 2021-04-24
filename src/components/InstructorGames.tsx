@@ -32,28 +32,19 @@ const InstructorGames = ({
   const history = useHistory();
 
   const { t } = useTranslation();
-  const {
-    isOpen: isAddGameModalOpen,
-    onOpen: onAddGameModalOpen,
-    onClose: onAddGameModalClose,
-  } = useDisclosure();
 
   console.log("DATA", data);
   return (
     <>
-      <AddGameModal
-        isOpen={isAddGameModalOpen}
-        onOpen={onAddGameModalOpen}
-        onClose={onAddGameModalClose}
-        refetchGames={refetch}
-      />
       <Box>
         <Flex justifyContent="space-between" alignItems="center">
           <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
             {t("Your games")}
           </Heading>
 
-          <Button onClick={onAddGameModalOpen}>{t("Add new game")}</Button>
+          <Link to="/teacher/manage-games">
+            <Button marginRight={5}>{t("Manage games")}</Button>
+          </Link>
         </Flex>
 
         {data?.myGames.length == 0 && (
@@ -108,24 +99,6 @@ const InstructorGames = ({
             data={data?.myGames}
           />
         </Box>
-
-        {/* <VStack
-          divider={<StackDivider />}
-          spacing={2}
-          align="stretch"
-          marginTop={4}
-        >
-          {data?.myGames.map((game, i) => {
-            return (
-              <Game
-                id={game.id}
-                name={game.name}
-                description={game.description}
-                key={i}
-              />
-            );
-          })}
-        </VStack> */}
       </Box>
     </>
   );
