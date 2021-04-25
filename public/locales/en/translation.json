@@ -1,4 +1,6 @@
 {
+  "Assign me": "Assign me",
+  "You're assigned": "You're assigned",
   "All available games": "All available games",
   "Manage games": "Manage games",
   "You have no students yet": "You have no students yet",
@@ -91,6 +93,8 @@
     "noPlayersAlert": "This game has no players. Add any to start."
   },
   "table": {
+    "removeGame": "Remove",
+    "assigned": "Assigned",
     "Exercise": "Exercise ID",
     "totalSubmissions": "Total submissions",
     "acceptedResults": "Accepted submissions",
@@ -132,6 +136,10 @@
     "serverConnection": {
       "title": "There was a problem connecting to the server",
       "description": "This page will refresh itself in couple of seconds."
+    },
+    "removeGame": {
+      "title": "An error occured in the game removing process",
+      "description": "You cannot remove game with players enrolled."
     }
   },
   "addGame": {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import withChangeAnimation from "../../utilities/withChangeAnimation";
 import Error from "../Error";
 
@@ -96,7 +96,8 @@ const GET_GAME_BY_ID = gql`
 const InstructorGame = () => {
   const { gameId } = useParams<ParamTypes>();
   const { t } = useTranslation();
-  const [selectedStudents, setSelectedStudents] = useState<any[]>([]);
+
+  const [isStudentSelected, setIsStudentSelected] = useState<boolean>(false);
 
   const {
     data: gameData,
@@ -132,7 +133,7 @@ const InstructorGame = () => {
     return <Error status="warning" errorContent={"No data"} />;
   }
 
-  console.log("game data", gameData);
+  // console.log("game data", gameData);
 
   return (
     <div>
@@ -183,7 +184,7 @@ const InstructorGame = () => {
           </Button>
           <Menu>
             <MenuButton
-              disabled
+              disabled={!isStudentSelected}
               size="sm"
               as={Button}
               rightIcon={<ChevronDownIcon />}
@@ -197,10 +198,11 @@ const InstructorGame = () => {
           </Menu>
         </Flex>
       </Flex>
-
+      {/* {JSON.stringify(selectedStudents)} */}
       <Box>
         <TableComponent
           selectableRows
+          setIsAnythingSelected={setIsStudentSelected}
           columns={[
             {
               Header: t("table.name"),

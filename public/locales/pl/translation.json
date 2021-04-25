@@ -1,4 +1,6 @@
 {
+  "Assign me": "Przypisz mnie",
+  "You're assigned": "Przypisano",
   "All available games": "Wszystkie dostępne gry",
   "Manage games": "Zmień listę gier",
   "You have no students yet": "Nie masz jeszcze żadnych uczniów",
@@ -91,6 +93,8 @@
     "noPlayersAlert": "Ta gra nie ma jeszcze graczy. Dodaj ich by rozpocząć."
   },
   "table": {
+    "removeGame": "Usuń",
+    "assigned": "Przypisany",
     "Exercise": "Ćwiczenie",
     "totalSubmissions": "Ewaluacje",
     "acceptedResults": "Zaakceptowane ewaluacje",
@@ -132,6 +136,10 @@
     "serverConnection": {
       "title": "Wystąpił problem podczas połączenia z serwerem",
       "description": "Strona odświeży się automatycznie za kilka sekund."
+    },
+    "removeGame": {
+      "title": "Wystąpił błąd podczas usuwania gry",
+      "description": "Nie możesz usunąć gry jeśli są zapisani do niej gracze."
     }
   },
   "addGame": {

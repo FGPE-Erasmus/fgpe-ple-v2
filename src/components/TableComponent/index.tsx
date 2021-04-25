@@ -10,7 +10,7 @@ import {
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { Fragment, useMemo } from "react";
+import React, { Fragment, useEffect, useLayoutEffect, useMemo } from "react";
 import {
   useTable,
   useSortBy,
@@ -42,13 +42,17 @@ const TableComponent = ({
   dontRecomputeChange,
   onRowClick,
   selectableRows,
+  setIsAnythingSelected,
 }: {
   columns: any;
   data: any;
   dontRecomputeChange?: boolean;
-  /** Function invoked after clicking on row (has access to row.original)  */
+  /** Function invoked after clicking on a row (has an access to row.original)  */
   onRowClick?: (row: any) => void;
   selectableRows?: boolean;
+
+  /** Function invoked after selecting a row, should be a ref to prevent a rerender loop  */
+  setIsAnythingSelected?: (isAnythingSelected: boolean) => void;
 }) => {
   const { colorMode } = useColorMode();
   const { i18n } = useTranslation();
@@ -99,10 +103,22 @@ const TableComponent = ({
     headerGroups,
     prepareRow,
     selectedFlatRows,
+    page,
+    state,
+    gotoPage,
   } = tableInstance;
 
-  const { page, state, gotoPage } = tableInstance;
   const { pageSize, pageIndex } = state;
+
+  useEffect(() => {
+    if (setIsAnythingSelected) {
+      if (selectedFlatRows.length > 0) {
+        setIsAnythingSelected(true);
+      } else {
+        setIsAnythingSelected(false);
+      }
+    }
+  }, [selectedFlatRows.length]);
 
   return (
     <ScrollbarWrapper>

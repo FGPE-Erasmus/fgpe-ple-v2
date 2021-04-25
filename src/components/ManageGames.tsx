@@ -1,8 +1,9 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { Button, Checkbox, Heading, useDisclosure } from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { Box, Flex } from "reflexbox";
 import { getAllAvailableGames } from "../generated/getAllAvailableGames";
 import {
@@ -12,6 +13,7 @@ import {
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import AddGameModal from "./AddGameModal";
 import Error from "./Error";
+import { useNotifications } from "./Notifications";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
 
@@ -37,15 +39,58 @@ const GET_ALL_AVAILABLE_GAMES = gql`
   }
 `;
 
-const ManageGames = () => {
-  const { data, error, loading, refetch } = useQuery<getAllAvailableGames>(
-    GET_ALL_AVAILABLE_GAMES,
-    {
-      fetchPolicy: "no-cache",
+const ASSIGN_INSTRUCTOR = gql`
+  mutation assignInstructorMutation($gameId: String!, $userId: String!) {
+    assignInstructor(gameId: $gameId, userId: $userId) {
+      id
     }
-  );
+  }
+`;
+
+const REMOVE_GAME = gql`
+  mutation removeGameMutation($gameId: String!) {
+    removeGame(gameId: $gameId) {
+      id
+    }
+  }
+`;
+
+const ManageGames = () => {
+  const { add: addNotification } = useNotifications();
+
+  const {
+    data: availableGamesData,
+    error,
+    loading,
+    refetch,
+  } = useQuery<getAllAvailableGames>(GET_ALL_AVAILABLE_GAMES, {
+    fetchPolicy: "no-cache",
+  });
   const { t } = useTranslation();
   const { keycloak } = useKeycloak();
+
+  const [
+    assignInstructor,
+    { data: assignInstructorData, loading: assignInstructorLoading },
+  ] = useMutation(ASSIGN_INSTRUCTOR);
+
+  const [
+    removeGame,
+    { data: removeGameData, loading: removeGameLoading },
+  ] = useMutation(REMOVE_GAME);
+
+  const memoizedRowChecking = useCallback(
+    (row: any) => {
+      return (
+        row.instructors.filter(
+          (instructor: any) =>
+            instructor.email == keycloak.profile?.email || false
+        ).length > 0
+      );
+    },
+    [availableGamesData]
+  );
+
   const {
     isOpen: isAddGameModalOpen,
     onOpen: onAddGameModalOpen,
@@ -78,7 +123,15 @@ const ManageGames = () => {
         <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
           {t("All available games")}
         </Heading>
-        <Button onClick={onAddGameModalOpen}>{t("Add new game")}</Button>
+        <Flex>
+          <Link to="/profile">
+            <Button variant="outline" marginRight={2}>
+              {t("Back")}
+            </Button>
+          </Link>
+
+          <Button onClick={onAddGameModalOpen}>{t("Add new game")}</Button>
+        </Flex>
       </Flex>
 
       <Box>
@@ -106,36 +159,93 @@ const ManageGames = () => {
               ),
             },
             {
-              Header: t("table.enrolled"),
+              Header: t("table.assigned"),
               accessor: (row: any) => {
-                const enrolled =
-                  row.instructors.filter(
-                    (instructor: any) =>
-                      instructor.email == keycloak.profile?.email || false
-                  ).length > 0;
+                const enrolled = memoizedRowChecking(row);
 
-                return (
-                  <Checkbox
-                    colorScheme={enrolled ? "green" : "blue"}
-                    disabled={enrolled}
-                    isChecked={enrolled}
-                  />
-                );
+                return enrolled;
               },
+              Cell: ({
+                value,
+                cell,
+                row,
+              }: {
+                value: boolean;
+                cell: any;
+                row: any;
+              }) => (
+                <Button
+                  size="sm"
+                  disabled={value}
+                  isLoading={cell.state.loading}
+                  onClick={async () => {
+                    const gameId = row.original.id;
+                    cell.setState({ loading: true });
+
+                    if (!keycloak.userInfo) {
+                      await keycloak.loadUserInfo();
+                    }
+
+                    const userInfo = keycloak.userInfo as any;
+                    const userId = userInfo.sub;
+                    await assignInstructor({
+                      variables: {
+                        gameId,
+                        userId,
+                      },
+                    });
+                    await refetch();
+                    cell.setState({ loading: false });
+                  }}
+                >
+                  {value ? t("You're assigned") : t("Assign me")}
+                </Button>
+              ),
               disableFilters: true,
-              //   Cell: ({ row }: { row: any }) => {
-              //     console.log(row);
-              //     return "-";
-              //   },
-              //   Filter: ({ column }: { column: any }) => (
-              //     <ColumnFilter
-              //       column={column}
-              //       placeholder={t("placeholders.gameDescription")}
-              //     />
-              //   ),
+            },
+            {
+              Header: t("table.removeGame"),
+              // accessor: "id",
+              Cell: ({ cell, row }: { cell: any; row: any }) => (
+                <Button
+                  size="sm"
+                  isLoading={cell.state.loading}
+                  onClick={async () => {
+                    const gameId = row.original.id;
+                    cell.setState({ loading: true });
+
+                    try {
+                      await removeGame({
+                        variables: {
+                          gameId,
+                        },
+                      });
+
+                      await refetch();
+                    } catch (err) {
+                      addNotification({
+                        status: "error",
+                        title: t("error.removeGame.title"),
+                        description: t("error.removeGame.description"),
+                      });
+                      console.log("Error!");
+                    }
+
+                    cell.setState({ loading: false });
+                  }}
+                >
+                  {t("table.removeGame")}
+                </Button>
+              ),
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter
+                  column={column}
+                  placeholder={t("placeholders.gameDescription")}
+                />
+              ),
             },
           ]}
-          data={data?.games}
+          data={availableGamesData?.games}
         />
       </Box>
     </Box>

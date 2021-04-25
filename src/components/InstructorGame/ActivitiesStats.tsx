@@ -47,7 +47,7 @@ const getActivitiesStats = (
 ) => {
   const stats = statsData.stats;
 
-  console.log("stats", stats);
+  // console.log("stats", stats);
   let activitiesStatsArray: StatsInterface[] = [];
 
   activitiesList.forEach(({ name }) => {
@@ -136,7 +136,7 @@ const ActivitiesStats = ({
           {
             Header: t("table.difficulty"),
             accessor: (row: any) => {
-              console.log("row", row);
+              // console.log("row", row);
               const acceptedSubmissions =
                 row.nrOfSubmissionsByActivityAndResult.ACCEPT || 0;
               const totalSubmissions = row.nrOfSubmissionsByActivity;
