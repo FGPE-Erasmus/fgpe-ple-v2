@@ -1,4 +1,9 @@
 {
+  "Name": "Name",
+  "Display name": "Display name",
+  "Auto-assign groups": "Auto-assign groups",
+  "Add new group": "Add new group",
+  "Actions": "Actions",
   "Assign me": "Assign me",
   "You're assigned": "You're assigned",
   "All available games": "All available games",
@@ -115,6 +120,8 @@
     "metrics": "Metrics"
   },
   "placeholders": {
+    "groupName": "Amazing programmers",
+    "displayGroupName": "Programmers",
     "exercise": "ABC",
     "gameName": "Awesome game",
     "gameDescription": "Detailed description",
@@ -125,6 +132,12 @@
     "group": "Group",
     "provideTestValues": "Provide your test values here...",
     "email": "john@smith.com"
+  },
+  "success": {
+    "addGroup": {
+      "title": "Successfully added your new group!",
+      "description": "Great! You can auto-assign players or manually add them to your new group."
+    }
   },
   "error": {
     "title": "An unexpected error has occured.",
@@ -140,6 +153,14 @@
     "removeGame": {
       "title": "An error occured in the game removing process",
       "description": "You cannot remove game with players enrolled."
+    },
+    "autoAssign": {
+      "title": "An error occured in the auto-assign process",
+      "description": "Check if you've created any groups."
+    },
+    "addGroup": {
+      "title": "An error occured in the group adding process",
+      "description": "Unfortunately there's a problem with your request. Try again with different settings."
     }
   },
   "addGame": {

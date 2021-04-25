@@ -1,4 +1,9 @@
 {
+  "Name": "Nazwa",
+  "Display name": "Nazwa wyświetlana",
+  "Auto-assign groups": "Automatycznie przypisz grupy",
+  "Add new group": "Dodaj nową grupę",
+  "Actions": "Akcje",
   "Assign me": "Przypisz mnie",
   "You're assigned": "Przypisano",
   "All available games": "Wszystkie dostępne gry",
@@ -115,6 +120,8 @@
     "metrics": "Metryka"
   },
   "placeholders": {
+    "groupName": "Świetni programiści",
+    "displayGroupName": "Programiści",
     "exercise": "ABC",
     "gameName": "Niesamowita gra",
     "gameDescription": "Szczegółowy opis",
@@ -125,6 +132,12 @@
     "group": "Nazwa grupy",
     "provideTestValues": "Wprowadź wartości testowe w tym miejscu...",
     "email": "jan@kowalski.pl"
+  },
+  "success": {
+    "addGroup": {
+      "title": "Pomyślnie dodano nową grupę!",
+      "description": "Świetnie! Możesz teraz dodać do niej graczy za pomocą automatycznego przypisana lub zrobić to manualnie."
+    }
   },
   "error": {
     "title": "Wystąpił nieoczekiwany błąd.",
@@ -140,6 +153,10 @@
     "removeGame": {
       "title": "Wystąpił błąd podczas usuwania gry",
       "description": "Nie możesz usunąć gry jeśli są zapisani do niej gracze."
+    },
+    "addGroup": {
+      "title": "Wystąpił błąd podczas dodawania grupy",
+      "description": "Niestety wystąpił problem z Twoim żądaniem. Spróbuj ponownie z innymi ustawieniami."
     }
   },
   "addGame": {
