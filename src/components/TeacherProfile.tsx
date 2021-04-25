@@ -7,7 +7,10 @@ import GamesList from "./GamesList";
 import InstructorGames from "./InstructorGames";
 import TeacherStudents from "./TeacherStudents";
 import Error from "./Error";
-import { SERVER_ERRORS } from "../utilities/ErrorMessages";
+import {
+  checkIfConnectionAborted,
+  SERVER_ERRORS,
+} from "../utilities/ErrorMessages";
 
 const INSTRUCTOR_GAMES = gql`
   query getInstructorGames {
@@ -30,6 +33,7 @@ const INSTRUCTOR_GAMES = gql`
           firstName
           lastName
           email
+          id
         }
 
         learningPath {
@@ -52,9 +56,7 @@ const TeacherProfile = () => {
   const { t } = useTranslation();
 
   if (!loading && error) {
-    const isServerConnectionError = error.graphQLErrors[0].message.includes(
-      SERVER_ERRORS.ECONNABORTED
-    );
+    const isServerConnectionError = checkIfConnectionAborted(error);
 
     if (isServerConnectionError) {
       return <Error serverConnectionError />;

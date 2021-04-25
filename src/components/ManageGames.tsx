@@ -5,7 +5,10 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Box, Flex } from "reflexbox";
 import { getAllAvailableGames } from "../generated/getAllAvailableGames";
-import { SERVER_ERRORS } from "../utilities/ErrorMessages";
+import {
+  checkIfConnectionAborted,
+  SERVER_ERRORS,
+} from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import AddGameModal from "./AddGameModal";
 import Error from "./Error";
@@ -50,9 +53,7 @@ const ManageGames = () => {
   } = useDisclosure();
 
   if (!loading && error) {
-    const isServerConnectionError = error.graphQLErrors[0].message.includes(
-      SERVER_ERRORS.ECONNABORTED
-    );
+    const isServerConnectionError = checkIfConnectionAborted(error);
 
     if (isServerConnectionError) {
       return <Error serverConnectionError />;

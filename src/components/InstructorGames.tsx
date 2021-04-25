@@ -56,7 +56,7 @@ const InstructorGames = ({
 
         <Box>
           <TableComponent
-            onClickFunc={(row) => {
+            onRowClick={(row) => {
               history.push({
                 pathname: `/teacher/game/${row.id}`,
               });

@@ -8,7 +8,10 @@ import Rewards from "./Rewards";
 import { Heading, Spacer } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import Error from "./Error";
-import { SERVER_ERRORS } from "../utilities/ErrorMessages";
+import {
+  checkIfConnectionAborted,
+  SERVER_ERRORS,
+} from "../utilities/ErrorMessages";
 
 const PLAYER_GAME_PROFILES = gql`
   query PlayerGameProfiles {
@@ -84,9 +87,7 @@ const StudentProfile: React.ComponentType = () => {
   }
 
   if (!loading && error) {
-    const isServerConnectionError = error.graphQLErrors[0].message.includes(
-      SERVER_ERRORS.ECONNABORTED
-    );
+    const isServerConnectionError = checkIfConnectionAborted(error);
 
     if (isServerConnectionError) {
       return <Error serverConnectionError />;

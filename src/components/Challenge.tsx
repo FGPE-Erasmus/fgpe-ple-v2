@@ -17,7 +17,10 @@ import { getPlayerIdQuery } from "../generated/getPlayerIdQuery";
 import { rewardReceivedStudentSubscription } from "../generated/rewardReceivedStudentSubscription";
 import { useNotifications } from "./Notifications";
 import { RewardType } from "../generated/globalTypes";
-import { SERVER_ERRORS } from "../utilities/ErrorMessages";
+import {
+  checkIfConnectionAborted,
+  SERVER_ERRORS,
+} from "../utilities/ErrorMessages";
 
 interface ParamTypes {
   gameId: string;
@@ -229,9 +232,7 @@ const Challenge = ({
   };
 
   if (!challengeLoading && challengeError) {
-    const isServerConnectionError = challengeError.graphQLErrors[0].message.includes(
-      SERVER_ERRORS.ECONNABORTED
-    );
+    const isServerConnectionError = checkIfConnectionAborted(challengeError);
 
     if (isServerConnectionError) {
       return <Error serverConnectionError />;

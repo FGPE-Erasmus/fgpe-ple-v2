@@ -10,10 +10,13 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
 import { getInstructorGames } from "../generated/getInstructorGames";
+import PlayerInfoModal from "./PlayerInfoModal";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
 
@@ -45,131 +48,104 @@ const TeacherStudents = ({
 }: {
   gamesData: getInstructorGames | undefined;
 }) => {
+  const history = useHistory();
+
   const players = getPlayers(gamesData);
   const { t } = useTranslation();
 
   return (
-    <Box>
-      <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-        {t("All your students")}
-      </Heading>
-
-      {players.length == 0 && (
-        <Alert status="info">
-          <AlertIcon />
-          {t("You have no students yet")}
-        </Alert>
-      )}
-
+    <>
       <Box>
-        <TableComponent
-          columns={[
-            {
-              Header: t("table.name"),
-              accessor: "user.firstName",
-              Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.name")}
-                />
-              ),
-            },
-            {
-              Header: t("table.lastName"),
-              accessor: "user.lastName",
-              Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.lastName")}
-                />
-              ),
-            },
-            {
-              Header: t("table.game"),
-              accessor: "game.name",
-              Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.game")}
-                />
-              ),
-            },
-            {
-              Header: t("table.submissions"),
-              accessor: "submissions.length",
-              Filter: ({ column }: { column: any }) => (
-                <ColumnFilter column={column} placeholder="123" />
-              ),
-            },
-            {
-              Header: t("table.validations"),
-              accessor: "validations.length",
-              Filter: ({ column }: { column: any }) => (
-                <ColumnFilter column={column} placeholder="123" />
-              ),
-            },
-            {
-              Header: t("table.group"),
-              accessor: "group.name",
-              Cell: ({ value }: { value: any }) => {
-                return value ? value : "-";
+        <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
+          {t("All your students")}
+        </Heading>
+
+        {players.length == 0 && (
+          <Alert status="info">
+            <AlertIcon />
+            {t("You have no students yet")}
+          </Alert>
+        )}
+
+        <Box>
+          <TableComponent
+            onRowClick={(row: typeof players[number]) => {
+              history.push({
+                pathname: `/teacher/student-details/${row.user.id}`,
+              });
+            }}
+            columns={[
+              {
+                Header: t("table.name"),
+                accessor: "user.firstName",
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter
+                    column={column}
+                    placeholder={t("placeholders.name")}
+                  />
+                ),
               },
-              Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.group")}
-                />
-              ),
-            },
-            {
-              Header: t("table.progress"),
-              accessor: "progress",
-              Cell: ({ value }: { value: any }) => {
-                return `${value.progress}/${value.total}`;
+              {
+                Header: t("table.lastName"),
+                accessor: "user.lastName",
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter
+                    column={column}
+                    placeholder={t("placeholders.lastName")}
+                  />
+                ),
               },
-              disableFilters: true,
-            },
-          ]}
-          data={players}
-        />
+              {
+                Header: t("table.game"),
+                accessor: "game.name",
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter
+                    column={column}
+                    placeholder={t("placeholders.game")}
+                  />
+                ),
+              },
+              {
+                Header: t("table.submissions"),
+                accessor: "submissions.length",
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter column={column} placeholder="123" />
+                ),
+              },
+              {
+                Header: t("table.validations"),
+                accessor: "validations.length",
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter column={column} placeholder="123" />
+                ),
+              },
+              {
+                Header: t("table.group"),
+                accessor: "group.name",
+                Cell: ({ value }: { value: any }) => {
+                  return value ? value : "-";
+                },
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter
+                    column={column}
+                    placeholder={t("placeholders.group")}
+                  />
+                ),
+              },
+              {
+                Header: t("table.progress"),
+                accessor: "progress",
+                Cell: ({ value }: { value: any }) => {
+                  return `${value.progress}/${value.total}`;
+                },
+                disableFilters: true,
+              },
+            ]}
+            data={players}
+          />
+        </Box>
       </Box>
-
-      {/* <Box width="100%" overflow="auto">
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-              <Th>Last Name</Th>
-              <Th>Game</Th>
-              <Th>Submissions</Th>
-              <Th>Validations</Th>
-              <Th>Group</Th>
-              <Th>Progress</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {players?.map((player, i) => {
-              return (
-                <Tr>
-                  <Td>{player.user.firstName}</Td>
-                  <Td>{player.user.lastName}</Td>
-                  <Td>{player.game.name}</Td>
-                  <Td>{player.submissions.length}</Td>
-                  <Td>{player.validations.length}</Td>
-                  <Td>{player.group?.name || "-"}</Td>
-                  <Td>
-                    {player.progress.progress}/{player.progress.total}
-                  </Td>
-                </Tr>
-              );
-            })}
-
-  
-          </Tbody>
-     
-        </Table>
-      </Box> */}
-    </Box>
+    </>
   );
 };
 

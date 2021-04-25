@@ -146,15 +146,21 @@ const AddPlayersToGame = () => {
             {t("Game")}: {dataGame.game.name}
           </Heading>
         </Box>
-        <Box>
-          <Link
-            to={{
-              pathname: `/teacher/game/${gameId}`,
-            }}
-          >
-            <Button>{t("Proceed")}</Button>
-          </Link>
-        </Box>
+        <Flex>
+          <Box marginRight={2}>
+            <Button>{t("Generate invite link")}</Button>
+          </Box>
+
+          <Box>
+            <Link
+              to={{
+                pathname: `/teacher/game/${gameId}`,
+              }}
+            >
+              <Button>{t("Proceed")}</Button>
+            </Link>
+          </Box>
+        </Flex>
       </Flex>
 
       <Box>
@@ -285,34 +291,6 @@ const AddPlayersToGame = () => {
                 />
               ),
             },
-
-            // {
-            //   Header: t("table.submissions"),
-            //   accessor: "submissions.length",
-            //   Filter: ({ column }: { column: any }) => (
-            //     <ColumnFilter column={column} placeholder="123" />
-            //   ),
-            // },
-            // {
-            //   Header: t("table.validations"),
-            //   accessor: "validations.length",
-            //   Filter: ({ column }: { column: any }) => (
-            //     <ColumnFilter column={column} placeholder="123" />
-            //   ),
-            // },
-            // {
-            //   Header: t("table.group"),
-            //   accessor: "group.name",
-            //   Cell: ({ value }: { value: any }) => {
-            //     return value ? value : "-";
-            //   },
-            //   Filter: ({ column }: { column: any }) => (
-            //     <ColumnFilter
-            //       column={column}
-            //       placeholder={t("placeholders.group")}
-            //     />
-            //   ),
-            // },
           ]}
           data={dataUsers.usersByRole}
         />

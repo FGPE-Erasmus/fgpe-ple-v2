@@ -27,6 +27,7 @@ export interface getInstructorGames_myGames_players_user {
   firstName: string | null;
   lastName: string | null;
   email: string | null;
+  id: string | null;
 }
 
 export interface getInstructorGames_myGames_players_learningPath_refs {

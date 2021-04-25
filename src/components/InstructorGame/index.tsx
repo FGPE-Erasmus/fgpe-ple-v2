@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import withChangeAnimation from "../../utilities/withChangeAnimation";
 import Error from "../Error";
 
@@ -22,6 +22,10 @@ import {
   Alert,
   AlertIcon,
   Divider,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
@@ -30,8 +34,12 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import TableComponent from "../TableComponent";
 import ColumnFilter from "../TableComponent/ColumnFilter";
-import { SERVER_ERRORS } from "../../utilities/ErrorMessages";
+import {
+  checkIfConnectionAborted,
+  SERVER_ERRORS,
+} from "../../utilities/ErrorMessages";
 import ActivitiesStats from "./ActivitiesStats";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 interface ParamTypes {
   gameId: string;
@@ -88,6 +96,7 @@ const GET_GAME_BY_ID = gql`
 const InstructorGame = () => {
   const { gameId } = useParams<ParamTypes>();
   const { t } = useTranslation();
+  const [selectedStudents, setSelectedStudents] = useState<any[]>([]);
 
   const {
     data: gameData,
@@ -110,9 +119,7 @@ const InstructorGame = () => {
   }
 
   if (!gameLoading && gameError) {
-    const isServerConnectionError = gameError.graphQLErrors[0].message.includes(
-      SERVER_ERRORS.ECONNABORTED
-    );
+    const isServerConnectionError = checkIfConnectionAborted(gameError);
 
     if (isServerConnectionError) {
       return <Error serverConnectionError />;
@@ -165,16 +172,35 @@ const InstructorGame = () => {
       </Flex>
       <Divider marginBottom={50} />
 
-      <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
-        {t("Activities")}
-      </Heading>
-      <ActivitiesStats gameData={gameData} gameId={gameId} />
+      <Flex justifyContent="space-between" alignItems="center">
+        <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
+          {t("Students")}
+        </Heading>
 
-      <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
-        {t("Students")}
-      </Heading>
+        <Flex>
+          <Button marginRight={2} size="sm">
+            Add new group
+          </Button>
+          <Menu>
+            <MenuButton
+              disabled
+              size="sm"
+              as={Button}
+              rightIcon={<ChevronDownIcon />}
+            >
+              Actions
+            </MenuButton>
+            <MenuList>
+              <MenuItem>Set group</MenuItem>
+              <MenuItem>Remove from the game</MenuItem>
+            </MenuList>
+          </Menu>
+        </Flex>
+      </Flex>
+
       <Box>
         <TableComponent
+          selectableRows
           columns={[
             {
               Header: t("table.name"),
@@ -225,6 +251,11 @@ const InstructorGame = () => {
           data={gameData.game.players}
         />
       </Box>
+
+      <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
+        {t("Activities")}
+      </Heading>
+      <ActivitiesStats gameData={gameData} gameId={gameId} />
     </div>
   );
 };

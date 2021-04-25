@@ -25,7 +25,10 @@ import { LockIcon, CheckIcon } from "@chakra-ui/icons";
 import { useParams } from "react-router-dom";
 import RankingTable from "./RankingTable";
 import { useTranslation } from "react-i18next";
-import { SERVER_ERRORS } from "../utilities/ErrorMessages";
+import {
+  checkIfConnectionAborted,
+  SERVER_ERRORS,
+} from "../utilities/ErrorMessages";
 
 interface ParamTypes {
   gameId: string;
@@ -138,9 +141,7 @@ const ProfileInGame = () => {
   if (loadingProfile) return <div>{t("Loading")}</div>;
 
   if (!loadingProfile && errorProfile) {
-    const isServerConnectionError = errorProfile.graphQLErrors[0].message.includes(
-      SERVER_ERRORS.ECONNABORTED
-    );
+    const isServerConnectionError = checkIfConnectionAborted(errorProfile);
 
     if (isServerConnectionError) {
       return <Error serverConnectionError />;

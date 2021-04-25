@@ -21,6 +21,7 @@ import {
   usePagination,
   TableInstance,
   useRowState,
+  useRowSelect,
 } from "react-table";
 import Pagination from "react-js-pagination";
 
@@ -33,18 +34,21 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import styled from "@emotion/styled";
 import ScrollbarWrapper from "../ScrollbarWrapper";
+import CheckboxForTable from "./CheckboxForTable";
 
 const TableComponent = ({
   columns: columnsProp,
   data,
   dontRecomputeChange,
-  onClickFunc,
+  onRowClick,
+  selectableRows,
 }: {
   columns: any;
   data: any;
   dontRecomputeChange?: boolean;
   /** Function invoked after clicking on row (has access to row.original)  */
-  onClickFunc?: (row: any) => void;
+  onRowClick?: (row: any) => void;
+  selectableRows?: boolean;
 }) => {
   const { colorMode } = useColorMode();
   const { i18n } = useTranslation();
@@ -66,7 +70,27 @@ const TableComponent = ({
     useFilters,
     useSortBy,
     usePagination,
-    useRowState
+    useRowState,
+    useRowSelect,
+    (hooks) => {
+      hooks.visibleColumns.push((columns) => {
+        return selectableRows
+          ? [
+              {
+                id: "selection",
+                Header: ({ getToggleAllRowsSelectedProps }) => (
+                  <CheckboxForTable {...getToggleAllRowsSelectedProps()} />
+                ),
+                disableSortBy: true,
+                Cell: ({ row }) => (
+                  <CheckboxForTable {...row.getToggleRowSelectedProps()} />
+                ),
+              },
+              ...columns,
+            ]
+          : [...columns];
+      });
+    }
   );
 
   const {
@@ -74,6 +98,7 @@ const TableComponent = ({
     getTableBodyProps,
     headerGroups,
     prepareRow,
+    selectedFlatRows,
   } = tableInstance;
 
   const { page, state, gotoPage } = tableInstance;
@@ -140,14 +165,12 @@ const TableComponent = ({
                 <Tr
                   {...row.getRowProps()}
                   style={{
-                    cursor: onClickFunc ? "pointer" : "inherit",
+                    cursor: onRowClick ? "pointer" : "inherit",
                   }}
-                  onClick={() =>
-                    onClickFunc ? onClickFunc(row.original) : null
-                  }
+                  onClick={() => (onRowClick ? onRowClick(row.original) : null)}
                   transition="all 0.5s"
                   _hover={
-                    onClickFunc
+                    onRowClick
                       ? { bg: colorMode == "dark" ? "gray.700" : "gray.200" }
                       : {}
                   }
@@ -161,6 +184,9 @@ const TableComponent = ({
           </Tbody>
         </Table>
       </Box>
+      {/* {JSON.stringify({
+        selectedFlatRows: selectedFlatRows.map((row) => row.original),
+      })} */}
       <PaginationStyled>
         <Pagination
           activePage={pageIndex + 1}
