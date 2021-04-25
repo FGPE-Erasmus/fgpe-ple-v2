@@ -44,10 +44,22 @@ import ActivitiesStats from "./ActivitiesStats";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useNotifications } from "../Notifications";
 import AddGroupModal from "./AddGroupModal";
+import { getGroupsQuery } from "../../generated/getGroupsQuery";
+import SetGroupModal from "./SetGroupModal";
 
 interface ParamTypes {
   gameId: string;
 }
+
+const GET_GROUPS = gql`
+  query getGroupsQuery($gameId: String!) {
+    groups(gameId: $gameId) {
+      id
+      name
+      displayName
+    }
+  }
+`;
 
 const AUTO_ASSIGN_GROUPS = gql`
   mutation autoAssignGroupsMutation($gameId: String!) {
@@ -111,17 +123,38 @@ const InstructorGame = () => {
     onOpen: onAddGroupModalOpen,
     onClose: onAddGroupModalClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isSetGroupModalOpen,
+    onOpen: onSetGroupModalOpen,
+    onClose: onSetGroupModalClose,
+  } = useDisclosure();
+
   const { add: addNotification } = useNotifications();
 
   const { gameId } = useParams<ParamTypes>();
   const { t } = useTranslation();
 
+  const selectedStudentsRef = useRef([]);
   const [isStudentSelected, setIsStudentSelected] = useState<boolean>(false);
 
   const [
     autoAssignGroups,
     { data: autoAssignGroupsData, loading: autoAssignGroupsLoading },
   ] = useMutation(AUTO_ASSIGN_GROUPS);
+
+  const {
+    data: groupsData,
+    error: groupsError,
+    loading: groupsLoading,
+    refetch: groupsRefetch,
+  } = useQuery<getGroupsQuery>(GET_GROUPS, {
+    variables: {
+      gameId,
+    },
+    skip: !gameId,
+    fetchPolicy: "no-cache",
+  });
 
   const {
     data: gameData,
@@ -140,7 +173,7 @@ const InstructorGame = () => {
     return <div>Game ID not provided</div>;
   }
 
-  if (gameLoading) {
+  if (gameLoading || groupsLoading) {
     return <div>{t("Loading")}</div>;
   }
 
@@ -154,7 +187,7 @@ const InstructorGame = () => {
     }
   }
 
-  if (!gameData) {
+  if (!gameData || !groupsData) {
     return <Error status="warning" errorContent={"No data"} />;
   }
 
@@ -167,6 +200,15 @@ const InstructorGame = () => {
         onClose={onAddGroupModalClose}
         gameId={gameId}
       />
+      <SetGroupModal
+        gameId={gameId}
+        groupsData={groupsData}
+        onClose={onSetGroupModalClose}
+        isOpen={isSetGroupModalOpen}
+        selectedStudentsRef={selectedStudentsRef}
+        refetch={gameRefetch}
+      />
+
       <div>
         {gameData.game.players.length < 1 && (
           <>
@@ -249,7 +291,9 @@ const InstructorGame = () => {
               </MenuButton>
 
               <MenuList>
-                <MenuItem>Set group</MenuItem>
+                <MenuItem onClick={onSetGroupModalOpen}>
+                  {t("Set group")}
+                </MenuItem>
                 <MenuItem>Remove from the game</MenuItem>
               </MenuList>
             </Menu>
@@ -260,6 +304,9 @@ const InstructorGame = () => {
           <TableComponent
             selectableRows
             setIsAnythingSelected={setIsStudentSelected}
+            setSelectedStudents={(rows: any) => {
+              selectedStudentsRef.current = rows;
+            }}
             columns={[
               {
                 Header: t("table.name"),

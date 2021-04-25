@@ -43,6 +43,7 @@ const TableComponent = ({
   onRowClick,
   selectableRows,
   setIsAnythingSelected,
+  setSelectedStudents,
 }: {
   columns: any;
   data: any;
@@ -53,6 +54,8 @@ const TableComponent = ({
 
   /** Function invoked after selecting a row, should be a ref to prevent a rerender loop  */
   setIsAnythingSelected?: (isAnythingSelected: boolean) => void;
+
+  setSelectedStudents?: (rows: any[]) => void;
 }) => {
   const { colorMode } = useColorMode();
   const { i18n } = useTranslation();
@@ -111,6 +114,9 @@ const TableComponent = ({
   const { pageSize, pageIndex } = state;
 
   useEffect(() => {
+    setSelectedStudents &&
+      setSelectedStudents(selectedFlatRows.map((row) => row.original));
+
     if (setIsAnythingSelected) {
       if (selectedFlatRows.length > 0) {
         setIsAnythingSelected(true);

@@ -63,6 +63,8 @@ const StudentDetails = () => {
           Student: {data?.user.firstName} {data?.user.lastName}
         </Heading>
       </Flex>
+
+      <Box>This section is not ready yet.</Box>
     </div>
   );
 };
