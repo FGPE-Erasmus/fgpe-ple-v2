@@ -46,20 +46,11 @@ import { useNotifications } from "../Notifications";
 import AddGroupModal from "./AddGroupModal";
 import { getGroupsQuery } from "../../generated/getGroupsQuery";
 import SetGroupModal from "./SetGroupModal";
+import { GET_GROUPS } from "../../graphql/GET_GROUPS";
 
 interface ParamTypes {
   gameId: string;
 }
-
-const GET_GROUPS = gql`
-  query getGroupsQuery($gameId: String!) {
-    groups(gameId: $gameId) {
-      id
-      name
-      displayName
-    }
-  }
-`;
 
 const AUTO_ASSIGN_GROUPS = gql`
   mutation autoAssignGroupsMutation($gameId: String!) {

@@ -12,6 +12,7 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -35,6 +36,9 @@ import ColumnFilter, {
 } from "./TableComponent/ColumnFilter";
 import { useTranslation } from "react-i18next";
 import { Cell } from "react-table";
+import GenerateInviteLinkModal from "./GenerateInviteLinkModal";
+import { getGroupsQuery } from "../generated/getGroupsQuery";
+import { GET_GROUPS } from "../graphql/GET_GROUPS";
 
 interface ParamTypes {
   gameId: string;
@@ -92,6 +96,12 @@ const REMOVE_PLAYER_FROM_GAME = gql`
 `;
 
 const AddPlayersToGame = () => {
+  const {
+    isOpen: isGenerateInviteModalOpen,
+    onOpen: onGenerateInviteModalOpen,
+    onClose: onGenerateInviteModalClose,
+  } = useDisclosure();
+
   const { t } = useTranslation();
 
   const { gameId } = useParams<ParamTypes>();
@@ -122,6 +132,15 @@ const AddPlayersToGame = () => {
   });
 
   const {
+    data: dataGroups,
+    error: errorGroups,
+    loading: loadingGroups,
+  } = useQuery<getGroupsQuery>(GET_GROUPS, {
+    variables: { gameId },
+    fetchPolicy: "no-cache",
+  });
+
+  const {
     data: dataUsers,
     error: errorUsers,
     loading: loadingUsers,
@@ -130,172 +149,184 @@ const AddPlayersToGame = () => {
     fetchPolicy: "no-cache",
   });
 
-  if (loadingUsers || loadingGame) {
+  if (loadingUsers || loadingGame || loadingGroups) {
     return <div>Loading...</div>;
   }
 
-  if (!dataGame || !dataUsers) {
+  if (!dataGame || !dataUsers || !dataGroups) {
     return <div>No data</div>;
   }
 
   return (
-    <Box>
-      <Flex justifyContent="space-between" alignItems="center">
-        <Box>
-          <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-            {t("Game")}: {dataGame.game.name}
-          </Heading>
-        </Box>
-        <Flex>
-          <Box marginRight={2}>
-            <Button>{t("Generate invite link")}</Button>
-          </Box>
-
-          <Box>
-            <Link
-              to={{
-                pathname: `/teacher/game/${gameId}`,
-              }}
-            >
-              <Button>{t("Proceed")}</Button>
-            </Link>
-          </Box>
-        </Flex>
-      </Flex>
-
+    <>
+      <GenerateInviteLinkModal
+        onClose={onGenerateInviteModalClose}
+        isOpen={isGenerateInviteModalOpen}
+        groupsData={dataGroups}
+        gameId={gameId}
+      />
       <Box>
-        <TableComponent
-          // dontRecomputeChange
-          columns={[
-            {
-              Header: t("table.enrolled"),
-              accessor: "id",
-              // disableFilters: true,
-              width: 100,
-              disableSortBy: true,
-              filter: (rows: any[], id: string, filterValue: any) => {
-                return rows.filter((row) => {
-                  if (filterValue == "all") {
-                    return true;
-                  }
-                  const isEnrolled = !!dataGame.game.players.find(
-                    (gamePlayer) => gamePlayer.user.id === row.original.id
-                  );
-                  if (isEnrolled && filterValue == "true") {
-                    return true;
-                  }
+        <Flex justifyContent="space-between" alignItems="center">
+          <Box>
+            <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
+              {t("Game")}: {dataGame.game.name}
+            </Heading>
+          </Box>
+          <Flex>
+            <Box marginRight={2}>
+              <Button onClick={onGenerateInviteModalOpen}>
+                {t("Generate invite link")}
+              </Button>
+            </Box>
 
-                  if (!isEnrolled && filterValue != "true") {
-                    return true;
-                  }
+            <Box>
+              <Link
+                to={{
+                  pathname: `/teacher/game/${gameId}`,
+                }}
+              >
+                <Button>{t("Proceed")}</Button>
+              </Link>
+            </Box>
+          </Flex>
+        </Flex>
 
-                  return false;
-                });
-              },
-              Filter: ({ column }: { column: any }) => (
-                <ColumnSelectFilter
-                  column={column}
-                  options={[
-                    {
-                      text: t("All"),
-                      value: "all",
-                    },
-                    {
-                      text: t("Enrolled"),
-                      value: true,
-                    },
-                    { text: t("Not enrolled"), value: false },
-                  ]}
-                />
-              ),
-              Cell: ({
-                cell,
-                value,
-                row,
-                state,
-                setState,
-                setRowState,
-              }: {
-                cell: Cell;
-                value: any;
-                row: number;
-                state: any;
-                setState: (value: any) => void;
-                setRowState: (value: any) => void;
-              }) => {
-                return (
-                  <>
-                    <Checkbox
-                      isChecked={
-                        !!dataGame.game.players.find(
-                          (gamePlayer) => gamePlayer.user.id === value
-                        )
-                      }
-                      disabled={cell.state.loading ? true : false}
-                      colorScheme={cell.state.loading ? "orange" : "blue"}
-                      onChange={async (e) => {
-                        cell.setState({ loading: true });
+        <Box>
+          <TableComponent
+            // dontRecomputeChange
+            columns={[
+              {
+                Header: t("table.enrolled"),
+                accessor: "id",
+                // disableFilters: true,
+                width: 100,
+                disableSortBy: true,
+                filter: (rows: any[], id: string, filterValue: any) => {
+                  return rows.filter((row) => {
+                    if (filterValue == "all") {
+                      return true;
+                    }
+                    const isEnrolled = !!dataGame.game.players.find(
+                      (gamePlayer) => gamePlayer.user.id === row.original.id
+                    );
+                    if (isEnrolled && filterValue == "true") {
+                      return true;
+                    }
 
-                        if (!e.target.checked) {
-                          await removePlayer({
-                            variables: {
-                              gameId,
-                              userId: value,
-                            },
-                          });
-                        } else {
-                          await addPlayer({
-                            variables: {
-                              gameId,
-                              userId: value,
-                            },
-                          });
+                    if (!isEnrolled && filterValue != "true") {
+                      return true;
+                    }
+
+                    return false;
+                  });
+                },
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnSelectFilter
+                    column={column}
+                    options={[
+                      {
+                        text: t("All"),
+                        value: "all",
+                      },
+                      {
+                        text: t("Enrolled"),
+                        value: true,
+                      },
+                      { text: t("Not enrolled"), value: false },
+                    ]}
+                  />
+                ),
+                Cell: ({
+                  cell,
+                  value,
+                  row,
+                  state,
+                  setState,
+                  setRowState,
+                }: {
+                  cell: Cell;
+                  value: any;
+                  row: number;
+                  state: any;
+                  setState: (value: any) => void;
+                  setRowState: (value: any) => void;
+                }) => {
+                  return (
+                    <>
+                      <Checkbox
+                        isChecked={
+                          !!dataGame.game.players.find(
+                            (gamePlayer) => gamePlayer.user.id === value
+                          )
                         }
+                        disabled={cell.state.loading ? true : false}
+                        colorScheme={cell.state.loading ? "orange" : "blue"}
+                        onChange={async (e) => {
+                          cell.setState({ loading: true });
 
-                        cell.setState({ loading: false });
-                        refetchGame();
-                      }}
-                    />
-                    {cell.state.loading && <Spinner size="sm" marginLeft={2} />}
-                  </>
-                );
+                          if (!e.target.checked) {
+                            await removePlayer({
+                              variables: {
+                                gameId,
+                                userId: value,
+                              },
+                            });
+                          } else {
+                            await addPlayer({
+                              variables: {
+                                gameId,
+                                userId: value,
+                              },
+                            });
+                          }
+
+                          cell.setState({ loading: false });
+                          refetchGame();
+                        }}
+                      />
+                      {cell.state.loading && (
+                        <Spinner size="sm" marginLeft={2} />
+                      )}
+                    </>
+                  );
+                },
               },
-            },
-            {
-              Header: t("table.name"),
-              accessor: "firstName",
-              Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.name")}
-                />
-              ),
-            },
-            {
-              Header: t("table.lastName"),
-              accessor: "lastName",
-              Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.lastName")}
-                />
-              ),
-            },
-            {
-              Header: t("table.email"),
-              accessor: "email",
-              Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.email")}
-                />
-              ),
-            },
-          ]}
-          data={dataUsers.usersByRole}
-        />
+              {
+                Header: t("table.name"),
+                accessor: "firstName",
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter
+                    column={column}
+                    placeholder={t("placeholders.name")}
+                  />
+                ),
+              },
+              {
+                Header: t("table.lastName"),
+                accessor: "lastName",
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter
+                    column={column}
+                    placeholder={t("placeholders.lastName")}
+                  />
+                ),
+              },
+              {
+                Header: t("table.email"),
+                accessor: "email",
+                Filter: ({ column }: { column: any }) => (
+                  <ColumnFilter
+                    column={column}
+                    placeholder={t("placeholders.email")}
+                  />
+                ),
+              },
+            ]}
+            data={dataUsers.usersByRole}
+          />
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

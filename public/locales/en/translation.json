@@ -1,4 +1,7 @@
 {
+  "Generate": "Generate",
+  "linkGenerateDescription": "Choose a group or leave the selection blank to add to the game only",
+  "Generate invite link": "Generate invite link",
   "youveChosenAmountStudents": "You've chosen {{amount}} students",
   "Set group": "Set group",
   "Set": "Set",

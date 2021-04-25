@@ -1,4 +1,7 @@
 {
+  "Generate": "Wygeneruj",
+  "linkGenerateDescription": "Wybierz grupę lub pozostaw to pole puste jeśli chcesz by uczeń dołączył tylko do gry",
+  "Generate invite link": "Wygeneruj link z zaproszeniem",
   "youveChosenAmountStudents": "Wybrano {{amount}} uczniów",
   "Set group": "Ustaw grupę",
   "Set": "Ustaw",
