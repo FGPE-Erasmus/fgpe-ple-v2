@@ -80,11 +80,13 @@ const SetGroupModal = ({
         <ModalHeader>{t("Set group")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          You've chosen {selectedStudents.length} students.
+          {t("youveChosenAmountStudents", {
+            amount: selectedStudents.length,
+          })}
           <Select
             value={groupId}
             onChange={(e) => setGroupId(e.target.value)}
-            placeholder="Choose group"
+            placeholder={t("placeholders.chooseGroup")}
           >
             {groupsData.groups.map((group, i) => {
               return (

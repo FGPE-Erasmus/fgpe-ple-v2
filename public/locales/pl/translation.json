@@ -1,4 +1,5 @@
 {
+  "youveChosenAmountStudents": "Wybrano {{amount}} uczniów",
   "Set group": "Ustaw grupę",
   "Set": "Ustaw",
   "Name": "Nazwa",
@@ -122,6 +123,7 @@
     "metrics": "Metryka"
   },
   "placeholders": {
+    "chooseGroup": "Wybierz grupę",
     "groupName": "Świetni programiści",
     "displayGroupName": "Programiści",
     "exercise": "ABC",

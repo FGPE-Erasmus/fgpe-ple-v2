@@ -1,4 +1,5 @@
 {
+  "youveChosenAmountStudents": "You've chosen {{amount}} students",
   "Set group": "Set group",
   "Set": "Set",
   "Name": "Name",
@@ -122,6 +123,7 @@
     "metrics": "Metrics"
   },
   "placeholders": {
+    "chooseGroup": "Choose group",
     "groupName": "Amazing programmers",
     "displayGroupName": "Programmers",
     "exercise": "ABC",

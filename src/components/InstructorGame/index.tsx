@@ -294,7 +294,6 @@ const InstructorGame = () => {
                 <MenuItem onClick={onSetGroupModalOpen}>
                   {t("Set group")}
                 </MenuItem>
-                <MenuItem>Remove from the game</MenuItem>
               </MenuList>
             </Menu>
           </Flex>
