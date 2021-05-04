@@ -14,6 +14,23 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getGameByIdQuery_game_groups } from "../../generated/getGameByIdQuery";
 import { getGroupsQuery } from "../../generated/getGroupsQuery";
+import { setGroupForMultipleMutation } from "../../generated/setGroupForMultipleMutation";
+
+const SET_GROUP_FOR_MULTIPLE = gql`
+  mutation setGroupForMultipleMutation(
+    $gameId: String!
+    $groupId: String!
+    $playersIds: [String!]!
+  ) {
+    setGroupForMultiple(
+      gameId: $gameId
+      groupId: $groupId
+      playersIds: $playersIds
+    ) {
+      id
+    }
+  }
+`;
 
 const SET_GROUP = gql`
   mutation setGroupMutation(
@@ -47,24 +64,24 @@ const SetGroupModal = ({
   const [groupId, setGroupId] = useState("");
 
   const [
-    setGroup,
+    setGroupForMultiple,
     { data: setGroupData, loading: setGroupLoading },
-  ] = useMutation(SET_GROUP);
+  ] = useMutation<setGroupForMultipleMutation>(SET_GROUP_FOR_MULTIPLE);
 
   const [selectedStudents, setSelectedStudents] = useState<any[]>([]);
 
   const setGroupLoop = async () => {
     setLoading(true);
-    for (let i = 0; i < selectedStudents.length; i++) {
-      await setGroup({
-        variables: {
-          gameId,
-          groupId,
-          playerId: selectedStudents[i].id,
-        },
-      });
-      // selectedStudents[i];
-    }
+
+    const selectedStudentsIds = selectedStudents.map((student) => student.id);
+    await setGroupForMultiple({
+      variables: {
+        gameId,
+        groupId,
+        playersIds: selectedStudentsIds,
+      },
+    });
+
     await refetch();
     setLoading(false);
     onClose();
