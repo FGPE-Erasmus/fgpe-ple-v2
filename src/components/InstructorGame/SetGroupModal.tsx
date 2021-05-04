@@ -15,34 +15,7 @@ import { useTranslation } from "react-i18next";
 import { getGameByIdQuery_game_groups } from "../../generated/getGameByIdQuery";
 import { getGroupsQuery } from "../../generated/getGroupsQuery";
 import { setGroupForMultipleMutation } from "../../generated/setGroupForMultipleMutation";
-
-const SET_GROUP_FOR_MULTIPLE = gql`
-  mutation setGroupForMultipleMutation(
-    $gameId: String!
-    $groupId: String!
-    $playersIds: [String!]!
-  ) {
-    setGroupForMultiple(
-      gameId: $gameId
-      groupId: $groupId
-      playersIds: $playersIds
-    ) {
-      id
-    }
-  }
-`;
-
-const SET_GROUP = gql`
-  mutation setGroupMutation(
-    $gameId: String!
-    $groupId: String!
-    $playerId: String!
-  ) {
-    setGroup(gameId: $gameId, groupId: $groupId, playerId: $playerId) {
-      id
-    }
-  }
-`;
+import { SET_GROUP_FOR_MULTIPLE } from "../../graphql/setGroupForMultiple";
 
 const SetGroupModal = ({
   isOpen,

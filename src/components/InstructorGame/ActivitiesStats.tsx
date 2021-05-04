@@ -143,7 +143,10 @@ const ActivitiesStats = ({
 
               return `${
                 totalSubmissions > 0
-                  ? `${100 - (acceptedSubmissions / totalSubmissions) * 100}%`
+                  ? `${(
+                      100 -
+                      (acceptedSubmissions / totalSubmissions) * 100
+                    ).toFixed(1)}%`
                   : "-"
               }`;
             },

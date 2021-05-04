@@ -31,7 +31,10 @@ import {
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { getGameByIdQuery } from "../../generated/getGameByIdQuery";
+import {
+  getGameByIdQuery,
+  getGameByIdQuery_game_players,
+} from "../../generated/getGameByIdQuery";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import TableComponent from "../TableComponent";
@@ -42,71 +45,15 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useNotifications } from "../Notifications";
 import AddGroupModal from "./AddGroupModal";
 import SetGroupModal from "./SetGroupModal";
+import { AUTO_ASSIGN_GROUPS } from "../../graphql/autoAssignGroups";
+import { GET_GAME_BY_ID } from "../../graphql/getGameById";
+import { REMOVE_MULTIPLE_FROM_GROUP } from "../../graphql/removeMultipleFromGroup";
+import { REMOVE_MULTIPLE_FROM_GAME } from "../../graphql/removeMultipleFromGame";
+import { removeMultipleFromGameMutation } from "../../generated/removeMultipleFromGameMutation";
 
 interface ParamTypes {
   gameId: string;
 }
-
-const AUTO_ASSIGN_GROUPS = gql`
-  mutation autoAssignGroupsMutation($gameId: String!) {
-    autoAssignGroups(gameId: $gameId) {
-      id
-    }
-  }
-`;
-
-const GET_GAME_BY_ID = gql`
-  query getGameByIdQuery($gameId: String!) {
-    game(id: $gameId) {
-      id
-      name
-      description
-      gedilLayerId
-      gedilLayerDescription
-      courseId
-      startDate
-      endDate
-      state
-      evaluationEngine
-      groups {
-        id
-        name
-        displayName
-      }
-      challenges {
-        name
-        refs {
-          name
-          id
-        }
-      }
-      players {
-        group {
-          name
-        }
-        id
-        stats {
-          nrOfSubmissions
-          nrOfValidations
-          nrOfSubmissionsByActivity
-          nrOfValidationsByActivity
-          nrOfSubmissionsByActivityAndResult
-          nrOfValidationsByActivityAndResult
-        }
-        user {
-          firstName
-          lastName
-        }
-      }
-      instructors {
-        id
-        username
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
 
 const InstructorGame = () => {
   const {
@@ -128,6 +75,12 @@ const InstructorGame = () => {
 
   const selectedStudentsRef = useRef([]);
   const [isStudentSelected, setIsStudentSelected] = useState<boolean>(false);
+
+  const [removeMultipleFromGame] = useMutation<removeMultipleFromGameMutation>(
+    REMOVE_MULTIPLE_FROM_GAME
+  );
+
+  const [removeMultipleFromGroup] = useMutation(REMOVE_MULTIPLE_FROM_GROUP);
 
   const [
     autoAssignGroups,
@@ -169,7 +122,20 @@ const InstructorGame = () => {
     return <Error status="warning" errorContent={"No data"} />;
   }
 
-  // console.log("game data", gameData);
+  const getSelectedStudentAndRemoveFromGame = async () => {
+    const selectedStudentsUserIds = selectedStudentsRef.current.map(
+      (student: getGameByIdQuery_game_players) => student.user.id
+    );
+
+    await removeMultipleFromGame({
+      variables: {
+        gameId,
+        usersIds: selectedStudentsUserIds,
+      },
+    });
+
+    gameRefetch();
+  };
 
   return (
     <>
@@ -271,6 +237,10 @@ const InstructorGame = () => {
               <MenuList>
                 <MenuItem onClick={onSetGroupModalOpen}>
                   {t("Set group")}
+                </MenuItem>
+                {/* <MenuItem>{t("Remove from the group")}</MenuItem> */}
+                <MenuItem onClick={getSelectedStudentAndRemoveFromGame}>
+                  {t("Remove from the game")}
                 </MenuItem>
               </MenuList>
             </Menu>

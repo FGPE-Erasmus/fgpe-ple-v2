@@ -45,6 +45,7 @@ export interface getGameByIdQuery_game_players_stats {
 
 export interface getGameByIdQuery_game_players_user {
   __typename: "User";
+  id: string | null;
   firstName: string | null;
   lastName: string | null;
 }

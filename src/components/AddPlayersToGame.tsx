@@ -38,7 +38,7 @@ import { useTranslation } from "react-i18next";
 import { Cell } from "react-table";
 import GenerateInviteLinkModal from "./GenerateInviteLinkModal";
 import { getGroupsQuery } from "../generated/getGroupsQuery";
-import { GET_GROUPS } from "../graphql/GET_GROUPS";
+import { GET_GROUPS } from "../graphql/getGroups";
 
 interface ParamTypes {
   gameId: string;
