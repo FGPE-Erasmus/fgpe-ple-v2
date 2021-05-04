@@ -123,7 +123,7 @@
     "progress": "Postęp",
     "enrolled": "Zapisany",
     "email": "E-Mail",
-    "metrics": "Metryka"
+    "metric": "Metryka"
   },
   "placeholders": {
     "chooseGroup": "Wybierz grupę",

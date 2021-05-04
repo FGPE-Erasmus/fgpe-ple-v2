@@ -9,6 +9,13 @@ import { GameStateEnum, EvaluationEngine } from "./globalTypes";
 // GraphQL query operation: getGameByIdQuery
 // ====================================================
 
+export interface getGameByIdQuery_game_groups {
+  __typename: "Group";
+  id: string;
+  name: string;
+  displayName: string | null;
+}
+
 export interface getGameByIdQuery_game_challenges_refs {
   __typename: "Activity";
   name: string | null;
@@ -68,6 +75,7 @@ export interface getGameByIdQuery_game {
   endDate: any | null;
   state: GameStateEnum;
   evaluationEngine: EvaluationEngine;
+  groups: getGameByIdQuery_game_groups[];
   challenges: getGameByIdQuery_game_challenges[];
   players: getGameByIdQuery_game_players[];
   instructors: getGameByIdQuery_game_instructors[];

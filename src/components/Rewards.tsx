@@ -33,22 +33,35 @@ import { useTranslation } from "react-i18next";
 import ScrollbarWrapper from "./ScrollbarWrapper";
 
 const getRewardsCount = (gameProfiles: PlayerGameProfiles_myGameProfiles[]) => {
-  const rewards = gameProfiles.filter((gameProfile, i, array) => {
-    return (
-      gameProfile.rewards.length > 0 &&
-      gameProfile.rewards.map(({ reward }, i) => {
-        if (
-          reward.kind != RewardType.BADGE &&
-          reward.kind != RewardType.VIRTUAL_ITEM
-        ) {
-          return false;
-        }
-        return true;
-      })
-    );
+  let rewardsCount = 0;
+  gameProfiles.forEach((gameProfile) => {
+    gameProfile.rewards.forEach(({ reward }) => {
+      if (
+        reward.kind == RewardType.BADGE ||
+        reward.kind == RewardType.VIRTUAL_ITEM
+      ) {
+        rewardsCount++;
+      }
+    });
   });
 
-  return rewards.length;
+  return rewardsCount;
+  // const rewards = gameProfiles.filter((gameProfile, i, array) => {
+  //   return (
+  //     gameProfile.rewards.length > 0 &&
+  //     gameProfile.rewards.map(({ reward }, i) => {
+  //       if (
+  //         reward.kind != RewardType.BADGE &&
+  //         reward.kind != RewardType.VIRTUAL_ITEM
+  //       ) {
+  //         return false;
+  //       }
+  //       return true;
+  //     })
+  //   );
+  // });
+  // console.log(rewards.length);
+  // return rewards.length;
 };
 
 const getGridDimensions = (rewardsCount: number) => {
@@ -73,6 +86,8 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
   ] = useState<null | PlayerGameProfiles_myGameProfiles_rewards_reward>(null);
 
   const gameProfiles = data.myGameProfiles;
+  // .flatMap((i) => [i, i])
+  // .flatMap((i) => [i, i])
   // .flatMap((i) => [i, i])
   // .flatMap((i) => [i, i])
   // .flatMap((i) => [i, i])
@@ -319,6 +334,12 @@ const RewardsWrapper = styled(Box)`
   height: 250px;
   margin-bottom: 10px;
   border-radius: 5px;
+
+  .highlight {
+    width: 100%;
+    height: 100%;
+    filter: brightness(1.75);
+  }
 
   .zoom-icon {
     position: absolute;

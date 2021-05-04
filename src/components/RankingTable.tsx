@@ -53,6 +53,7 @@ const RankingTable = ({ gameId }: { gameId: string }) => {
     error: errorLeaderboards,
     data: dataLeaderboards,
   } = useQuery<getLeaderboardsQuery>(GET_LEADERBOARDS, {
+    fetchPolicy: "network-only",
     variables: { gameId },
   });
 
@@ -95,10 +96,18 @@ const getMetrics = (
 
   for (let i = 0; i < keys.length; i++) {
     metricsArray.push({
-      Header: `${tFunction("table.metrics")} [${tFunction(keys[i])}]`,
+      Header: `${tFunction("table.metric")} [${tFunction(keys[i])}]`,
       accessor: `score.${keys[i]}`,
       Cell: ({ value }: { value: any }) => {
         if (typeof value != "undefined") {
+          if (typeof value == "object") {
+            let sum = 0;
+            Object.keys(value).map((key) => {
+              sum += value[key];
+            });
+
+            return <span key={i}>{sum}</span>;
+          }
           return <span key={i}>{JSON.stringify(value)}</span>;
         } else {
           return <span key={i}>{tFunction("NA")}</span>;
@@ -125,6 +134,7 @@ const Ranking = ({
     error: errorGroupRankings,
     data: dataGroupRankings,
   } = useQuery<getGroupRankingsQuery>(GET_GROUP_RANKINGS, {
+    fetchPolicy: "network-only",
     variables: { gameId, leaderboardId },
   });
 

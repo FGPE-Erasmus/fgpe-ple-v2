@@ -64,7 +64,10 @@ const StudentProfile: React.ComponentType = () => {
   const { t, i18n } = useTranslation();
   const { keycloak, initialized } = useKeycloak();
   const { data, error, loading } = useQuery<PlayerGameProfiles>(
-    PLAYER_GAME_PROFILES
+    PLAYER_GAME_PROFILES,
+    {
+      fetchPolicy: "network-only",
+    }
   );
 
   const [

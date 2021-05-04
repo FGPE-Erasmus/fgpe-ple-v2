@@ -36,17 +36,12 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import TableComponent from "../TableComponent";
 import ColumnFilter from "../TableComponent/ColumnFilter";
-import {
-  checkIfConnectionAborted,
-  SERVER_ERRORS,
-} from "../../utilities/ErrorMessages";
+import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
 import ActivitiesStats from "./ActivitiesStats";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { useNotifications } from "../Notifications";
 import AddGroupModal from "./AddGroupModal";
-import { getGroupsQuery } from "../../generated/getGroupsQuery";
 import SetGroupModal from "./SetGroupModal";
-import { GET_GROUPS } from "../../graphql/GET_GROUPS";
 
 interface ParamTypes {
   gameId: string;
@@ -73,6 +68,11 @@ const GET_GAME_BY_ID = gql`
       endDate
       state
       evaluationEngine
+      groups {
+        id
+        name
+        displayName
+      }
       challenges {
         name
         refs {
@@ -135,19 +135,6 @@ const InstructorGame = () => {
   ] = useMutation(AUTO_ASSIGN_GROUPS);
 
   const {
-    data: groupsData,
-    error: groupsError,
-    loading: groupsLoading,
-    refetch: groupsRefetch,
-  } = useQuery<getGroupsQuery>(GET_GROUPS, {
-    variables: {
-      gameId,
-    },
-    skip: !gameId,
-    fetchPolicy: "no-cache",
-  });
-
-  const {
     data: gameData,
     error: gameError,
     loading: gameLoading,
@@ -164,7 +151,7 @@ const InstructorGame = () => {
     return <div>Game ID not provided</div>;
   }
 
-  if (gameLoading || groupsLoading) {
+  if (gameLoading) {
     return <div>{t("Loading")}</div>;
   }
 
@@ -178,7 +165,7 @@ const InstructorGame = () => {
     }
   }
 
-  if (!gameData || !groupsData) {
+  if (!gameData) {
     return <Error status="warning" errorContent={"No data"} />;
   }
 
@@ -193,7 +180,7 @@ const InstructorGame = () => {
       />
       <SetGroupModal
         gameId={gameId}
-        groupsData={groupsData}
+        groupsData={gameData.game.groups}
         onClose={onSetGroupModalClose}
         isOpen={isSetGroupModalOpen}
         selectedStudentsRef={selectedStudentsRef}

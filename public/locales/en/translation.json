@@ -123,7 +123,7 @@
     "progress": "Progress",
     "enrolled": "Enrolled",
     "email": "E-Mail",
-    "metrics": "Metrics"
+    "metric": "Metric"
   },
   "placeholders": {
     "chooseGroup": "Choose group",

@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getGameByIdQuery_game_groups } from "../../generated/getGameByIdQuery";
 import { getGroupsQuery } from "../../generated/getGroupsQuery";
 
 const SET_GROUP = gql`
@@ -37,7 +38,7 @@ const SetGroupModal = ({
   isOpen: boolean;
   onClose: () => void;
   gameId: string;
-  groupsData: getGroupsQuery;
+  groupsData: getGameByIdQuery_game_groups[];
   selectedStudentsRef: any;
   refetch: () => Promise<any>;
 }) => {
@@ -88,7 +89,7 @@ const SetGroupModal = ({
             onChange={(e) => setGroupId(e.target.value)}
             placeholder={t("placeholders.chooseGroup")}
           >
-            {groupsData.groups.map((group, i) => {
+            {groupsData.map((group, i) => {
               return (
                 <option value={group.id} key={i}>
                   {group.displayName} ({group.name})
