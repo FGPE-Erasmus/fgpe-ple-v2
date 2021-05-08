@@ -18,6 +18,5 @@ export interface removeMultipleFromGroupMutation {
 
 export interface removeMultipleFromGroupMutationVariables {
   gameId: string;
-  groupId: string;
   playersIds: string[];
 }

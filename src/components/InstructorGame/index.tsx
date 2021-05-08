@@ -56,6 +56,8 @@ interface ParamTypes {
 }
 
 const InstructorGame = () => {
+  const [loading, setLoading] = useState(false);
+
   const {
     isOpen: isAddGroupModalOpen,
     onOpen: onAddGroupModalOpen,
@@ -122,10 +124,21 @@ const InstructorGame = () => {
     return <Error status="warning" errorContent={"No data"} />;
   }
 
-  const getSelectedStudentAndRemoveFromGame = async () => {
-    const selectedStudentsUserIds = selectedStudentsRef.current.map(
+  const getSelectedPlayers = () => {
+    return selectedStudentsRef.current.map(
+      (student: getGameByIdQuery_game_players) => student.id
+    );
+  };
+
+  const getSelectedUsers = () => {
+    return selectedStudentsRef.current.map(
       (student: getGameByIdQuery_game_players) => student.user.id
     );
+  };
+
+  const getSelectedStudentAndRemoveFromGame = async () => {
+    setLoading(true);
+    const selectedStudentsUserIds = getSelectedUsers();
     try {
       await removeMultipleFromGame({
         variables: {
@@ -134,7 +147,7 @@ const InstructorGame = () => {
         },
       });
 
-      gameRefetch();
+      await gameRefetch();
     } catch (err) {
       addNotification({
         status: "error",
@@ -142,6 +155,29 @@ const InstructorGame = () => {
         description: t("error.removePlayers.description"),
       });
     }
+    setLoading(false);
+  };
+
+  const getSelectedStudentsAndRemoveFromGroups = async () => {
+    setLoading(true);
+    const selectedStudentsPlayerIds = getSelectedPlayers();
+    try {
+      await removeMultipleFromGroup({
+        variables: {
+          gameId,
+          playersIds: selectedStudentsPlayerIds,
+        },
+      });
+
+      await gameRefetch();
+    } catch (err) {
+      addNotification({
+        status: "error",
+        title: t("error.title"),
+        description: t("error.description"),
+      });
+    }
+    setLoading(false);
   };
 
   return (
@@ -209,13 +245,14 @@ const InstructorGame = () => {
               isLoading={autoAssignGroupsLoading}
               disabled={autoAssignGroupsLoading}
               onClick={async () => {
+                setLoading(true);
                 try {
                   await autoAssignGroups({
                     variables: {
                       gameId,
                     },
                   });
-                  gameRefetch();
+                  await gameRefetch();
                 } catch (err) {
                   addNotification({
                     status: "error",
@@ -223,6 +260,7 @@ const InstructorGame = () => {
                     description: t("error.autoAssign.description"),
                   });
                 }
+                setLoading(false);
               }}
             >
               {t("Auto-assign groups")}
@@ -245,7 +283,9 @@ const InstructorGame = () => {
                 <MenuItem onClick={onSetGroupModalOpen}>
                   {t("Set group")}
                 </MenuItem>
-                {/* <MenuItem>{t("Remove from the group")}</MenuItem> */}
+                <MenuItem onClick={getSelectedStudentsAndRemoveFromGroups}>
+                  {t("Remove from the group")}
+                </MenuItem>
                 <MenuItem onClick={getSelectedStudentAndRemoveFromGame}>
                   {t("Remove from the game")}
                 </MenuItem>
@@ -256,6 +296,7 @@ const InstructorGame = () => {
 
         <Box>
           <TableComponent
+            loading={loading}
             onRowClick={(row: getGameByIdQuery_game_players) => {}}
             selectableRows
             setIsAnythingSelected={setIsStudentSelected}
