@@ -1,5 +1,6 @@
 import {
   Box,
+  CircularProgress,
   Flex,
   Table,
   Tbody,
@@ -35,8 +36,37 @@ import { useTranslation } from "react-i18next";
 import styled from "@emotion/styled";
 import ScrollbarWrapper from "../ScrollbarWrapper";
 import CheckboxForTable from "./CheckboxForTable";
+import MainLoading from "../MainLoading";
 
-const TableComponent = ({
+type TableComponentProps = {
+  columns: any;
+  data: any;
+  dontRecomputeChange?: boolean;
+
+  /** Disables the table and shows a loading indicator  */
+  loading?: boolean;
+
+  /** Function invoked after clicking on a row (has an access to row.original)  */
+  onRowClick?: (row: any) => void;
+} & (
+  | {
+      selectableRows?: false | undefined;
+      setIsAnythingSelected?: undefined;
+      setSelectedStudents?: undefined;
+    }
+  | {
+      /** Adds a column with checkboxes if true.  */
+      selectableRows: true;
+
+      /** Function invoked after rows selection change. Returns a boolean value. Needs selectableRows enabled.  */
+      setIsAnythingSelected?: (isAnythingSelected: boolean) => void;
+
+      /** Function invoked after rows selection change. Returns a boolean value. Needs selectableRows enabled.  */
+      setSelectedStudents?: (rows: any[]) => void;
+    }
+);
+
+const TableComponent: React.FC<TableComponentProps> = ({
   columns: columnsProp,
   data,
   dontRecomputeChange,
@@ -44,18 +74,7 @@ const TableComponent = ({
   selectableRows,
   setIsAnythingSelected,
   setSelectedStudents,
-}: {
-  columns: any;
-  data: any;
-  dontRecomputeChange?: boolean;
-  /** Function invoked after clicking on a row (has an access to row.original)  */
-  onRowClick?: (row: any) => void;
-  selectableRows?: boolean;
-
-  /** Function invoked after selecting a row, should be a ref to prevent a rerender loop  */
-  setIsAnythingSelected?: (isAnythingSelected: boolean) => void;
-
-  setSelectedStudents?: (rows: any[]) => void;
+  loading,
 }) => {
   const { colorMode } = useColorMode();
   const { i18n } = useTranslation();
@@ -128,8 +147,36 @@ const TableComponent = ({
 
   return (
     <ScrollbarWrapper>
-      <Box overflowX="auto">
-        <Table {...getTableProps()} maxWidth="100%">
+      <Box overflowX="auto" position="relative">
+        <AnimatePresence>
+          {loading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{ zIndex: 9999 }}
+            >
+              <CircularProgress
+                size="35px"
+                isIndeterminate
+                color="blue.300"
+                position="absolute"
+                left="50%"
+                top="50%"
+                transform="translate3d(-50%, -50%, 0)"
+                zIndex="9999"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <Table
+          {...getTableProps()}
+          maxWidth="100%"
+          transition="opacity 0.5s"
+          pointerEvents={loading ? "none" : "all"}
+          opacity={loading ? 0.3 : 1}
+        >
           <Thead userSelect="none">
             {headerGroups.map((headerGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()}>

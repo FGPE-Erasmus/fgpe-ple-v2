@@ -126,15 +126,22 @@ const InstructorGame = () => {
     const selectedStudentsUserIds = selectedStudentsRef.current.map(
       (student: getGameByIdQuery_game_players) => student.user.id
     );
+    try {
+      await removeMultipleFromGame({
+        variables: {
+          gameId,
+          usersIds: selectedStudentsUserIds,
+        },
+      });
 
-    await removeMultipleFromGame({
-      variables: {
-        gameId,
-        usersIds: selectedStudentsUserIds,
-      },
-    });
-
-    gameRefetch();
+      gameRefetch();
+    } catch (err) {
+      addNotification({
+        status: "error",
+        title: t("error.removePlayers.title"),
+        description: t("error.removePlayers.description"),
+      });
+    }
   };
 
   return (
@@ -246,7 +253,7 @@ const InstructorGame = () => {
             </Menu>
           </Flex>
         </Flex>
-        {/* {JSON.stringify(selectedStudents)} */}
+
         <Box>
           <TableComponent
             selectableRows

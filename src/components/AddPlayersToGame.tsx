@@ -2,9 +2,14 @@ import {
   Box,
   Button,
   Checkbox,
+  Divider,
   Flex,
   Heading,
   Input,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Spinner,
   Table,
   Tbody,
@@ -14,7 +19,7 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import {
@@ -39,6 +44,10 @@ import { Cell } from "react-table";
 import GenerateInviteLinkModal from "./GenerateInviteLinkModal";
 import { getGroupsQuery } from "../generated/getGroupsQuery";
 import { GET_GROUPS } from "../graphql/getGroups";
+import { AddIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import { REMOVE_MULTIPLE_FROM_GAME } from "../graphql/removeMultipleFromGame";
+import { ADD_MULTIPLE_TO_GAME } from "../graphql/addMultipleToGame";
+import { useNotifications } from "./Notifications";
 
 interface ParamTypes {
   gameId: string;
@@ -73,29 +82,12 @@ const USERS_BY_ROLE_QUERY = gql`
   }
 `;
 
-const ADD_PLAYER_TO_GAME = gql`
-  mutation addPlayerToGameMutation($gameId: String!, $userId: String!) {
-    addToGame(gameId: $gameId, userId: $userId) {
-      id
-      game {
-        id
-      }
-      user {
-        username
-      }
-    }
-  }
-`;
-
-const REMOVE_PLAYER_FROM_GAME = gql`
-  mutation removePlayerFromGameMutation($gameId: String!, $userId: String!) {
-    removeFromGame(gameId: $gameId, userId: $userId) {
-      id
-    }
-  }
-`;
-
 const AddPlayersToGame = () => {
+  const [isUserSelected, setIsUserSelected] = useState<boolean>(false);
+  const selectedUsersRef = useRef<any>([]);
+  const { add: addNotification } = useNotifications();
+  const [loading, setLoading] = useState(false);
+
   const {
     isOpen: isGenerateInviteModalOpen,
     onOpen: onGenerateInviteModalOpen,
@@ -112,14 +104,14 @@ const AddPlayersToGame = () => {
   });
 
   const [
-    addPlayer,
+    addUsersToGame,
     { data: addPlayerData, loading: addPlayerLoading },
-  ] = useMutation(ADD_PLAYER_TO_GAME);
+  ] = useMutation(ADD_MULTIPLE_TO_GAME);
 
   const [
-    removePlayer,
+    removeUsersFromGame,
     { data: removePlayerData, loading: removePlayerLoading },
-  ] = useMutation(REMOVE_PLAYER_FROM_GAME);
+  ] = useMutation(REMOVE_MULTIPLE_FROM_GAME);
 
   const {
     data: dataGame,
@@ -148,6 +140,49 @@ const AddPlayersToGame = () => {
     variables: { role: "student" },
     fetchPolicy: "no-cache",
   });
+
+  const getSelectedUsersIds = () => {
+    return selectedUsersRef.current.map((user: any) => user.id);
+  };
+
+  const getSelectedUsersAndRemoveFromGame = async () => {
+    setLoading(true);
+    const selectedUsersIds = getSelectedUsersIds();
+
+    try {
+      await removeUsersFromGame({
+        variables: {
+          gameId,
+          usersIds: selectedUsersIds,
+        },
+      });
+
+      await refetchGame();
+    } catch (err) {
+      addNotification({
+        status: "error",
+        title: t("error.removePlayers.title"),
+        description: t("error.removePlayers.description"),
+      });
+    }
+
+    setLoading(false);
+  };
+
+  const getSelectedUsersAndAddToGame = async () => {
+    setLoading(true);
+    const selectedUsersIds = getSelectedUsersIds();
+
+    await addUsersToGame({
+      variables: {
+        gameId,
+        usersIds: selectedUsersIds,
+      },
+    });
+
+    await refetchGame();
+    setLoading(false);
+  };
 
   if (loadingUsers || loadingGame || loadingGroups) {
     return <div>Loading...</div>;
@@ -191,13 +226,49 @@ const AddPlayersToGame = () => {
           </Flex>
         </Flex>
 
+        <Divider marginBottom={25} />
+
+        <Flex justifyContent="space-between" alignItems="center">
+          <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
+            {t("Students")}
+          </Heading>
+
+          <Menu>
+            <MenuButton
+              disabled={!isUserSelected}
+              size="sm"
+              as={Button}
+              rightIcon={<ChevronDownIcon />}
+            >
+              {t("Actions")}
+            </MenuButton>
+
+            <MenuList>
+              <MenuItem onClick={getSelectedUsersAndAddToGame}>
+                {t("Add to the game")}
+              </MenuItem>
+              <MenuItem onClick={getSelectedUsersAndRemoveFromGame}>
+                {t("Remove from the game")}
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </Flex>
+
         <Box>
           <TableComponent
-            // dontRecomputeChange
+            loading={loading}
+            selectableRows
+            setIsAnythingSelected={setIsUserSelected}
+            setSelectedStudents={(rows: typeof dataUsers.usersByRole[]) => {
+              selectedUsersRef.current = rows;
+            }}
             columns={[
               {
                 Header: t("table.enrolled"),
-                accessor: "id",
+                accessor: (row: any) =>
+                  !!dataGame.game.players.find(
+                    (gamePlayer) => gamePlayer.user.id === row.id
+                  ),
                 // disableFilters: true,
                 width: 100,
                 disableSortBy: true,
@@ -236,60 +307,8 @@ const AddPlayersToGame = () => {
                     ]}
                   />
                 ),
-                Cell: ({
-                  cell,
-                  value,
-                  row,
-                  state,
-                  setState,
-                  setRowState,
-                }: {
-                  cell: Cell;
-                  value: any;
-                  row: number;
-                  state: any;
-                  setState: (value: any) => void;
-                  setRowState: (value: any) => void;
-                }) => {
-                  return (
-                    <>
-                      <Checkbox
-                        isChecked={
-                          !!dataGame.game.players.find(
-                            (gamePlayer) => gamePlayer.user.id === value
-                          )
-                        }
-                        disabled={cell.state.loading ? true : false}
-                        colorScheme={cell.state.loading ? "orange" : "blue"}
-                        onChange={async (e) => {
-                          cell.setState({ loading: true });
-
-                          if (!e.target.checked) {
-                            await removePlayer({
-                              variables: {
-                                gameId,
-                                userId: value,
-                              },
-                            });
-                          } else {
-                            await addPlayer({
-                              variables: {
-                                gameId,
-                                userId: value,
-                              },
-                            });
-                          }
-
-                          cell.setState({ loading: false });
-                          refetchGame();
-                        }}
-                      />
-                      {cell.state.loading && (
-                        <Spinner size="sm" marginLeft={2} />
-                      )}
-                    </>
-                  );
-                },
+                Cell: ({ value }: { value: any }) =>
+                  value ? t("Yes") : t("No"),
               },
               {
                 Header: t("table.name"),

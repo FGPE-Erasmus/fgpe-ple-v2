@@ -1,4 +1,7 @@
 {
+  "Add to the game": "Add to the game",
+  "Yes": "Yes",
+  "No": "No",
   "Remove from the game": "Remove from the game",
   "Remove from the group": "Remove from the group",
   "Generate": "Generate",
@@ -170,6 +173,10 @@
     "addGroup": {
       "title": "An error occured in the group adding process",
       "description": "Unfortunately there's a problem with your request. Try again with different settings."
+    },
+    "removePlayers": {
+      "title": "An error occured in the user removing process",
+      "description": "Check if you are not trying to remove user that is not enrolled."
     }
   },
   "addGame": {
