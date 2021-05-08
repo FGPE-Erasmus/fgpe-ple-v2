@@ -256,6 +256,7 @@ const InstructorGame = () => {
 
         <Box>
           <TableComponent
+            onRowClick={(row: getGameByIdQuery_game_players) => {}}
             selectableRows
             setIsAnythingSelected={setIsStudentSelected}
             setSelectedStudents={(rows: any) => {

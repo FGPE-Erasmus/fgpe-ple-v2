@@ -1,11 +1,18 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Button, Checkbox, Heading, useDisclosure } from "@chakra-ui/react";
+import {
+  Button,
+  Checkbox,
+  Heading,
+  Tooltip,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Box, Flex } from "reflexbox";
 import { getAllAvailableGames } from "../generated/getAllAvailableGames";
+import { UNASSIGN_INSTRUCTOR } from "../graphql/unassignInstructor";
 import {
   checkIfConnectionAborted,
   SERVER_ERRORS,
@@ -73,6 +80,8 @@ const ManageGames = () => {
     assignInstructor,
     { data: assignInstructorData, loading: assignInstructorLoading },
   ] = useMutation(ASSIGN_INSTRUCTOR);
+
+  const [unassignInstructor] = useMutation(UNASSIGN_INSTRUCTOR);
 
   const [
     removeGame,
@@ -162,7 +171,6 @@ const ManageGames = () => {
               Header: t("table.assigned"),
               accessor: (row: any) => {
                 const enrolled = memoizedRowChecking(row);
-
                 return enrolled;
               },
               Cell: ({
@@ -176,7 +184,6 @@ const ManageGames = () => {
               }) => (
                 <Button
                   size="sm"
-                  disabled={value}
                   isLoading={cell.state.loading}
                   onClick={async () => {
                     const gameId = row.original.id;
@@ -188,17 +195,28 @@ const ManageGames = () => {
 
                     const userInfo = keycloak.userInfo as any;
                     const userId = userInfo.sub;
-                    await assignInstructor({
-                      variables: {
-                        gameId,
-                        userId,
-                      },
-                    });
+
+                    if (value) {
+                      await unassignInstructor({
+                        variables: {
+                          gameId,
+                          userId,
+                        },
+                      });
+                    } else {
+                      await assignInstructor({
+                        variables: {
+                          gameId,
+                          userId,
+                        },
+                      });
+                    }
+
                     await refetch();
                     cell.setState({ loading: false });
                   }}
                 >
-                  {value ? t("You're assigned") : t("Assign me")}
+                  {value ? t("Remove the assignment") : t("Assign me")}
                 </Button>
               ),
               disableFilters: true,

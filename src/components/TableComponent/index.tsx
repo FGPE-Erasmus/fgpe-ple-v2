@@ -236,16 +236,24 @@ const TableComponent: React.FC<TableComponentProps> = ({
                   style={{
                     cursor: onRowClick ? "pointer" : "inherit",
                   }}
-                  onClick={() => (onRowClick ? onRowClick(row.original) : null)}
                   transition="all 0.5s"
                   _hover={
                     onRowClick
-                      ? { bg: colorMode == "dark" ? "gray.700" : "gray.200" }
+                      ? { bg: colorMode == "dark" ? "gray.700" : "gray.100" }
                       : {}
                   }
                 >
                   {row.cells.map((cell) => (
-                    <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
+                    <Td
+                      {...cell.getCellProps()}
+                      onClick={() =>
+                        cell.column.id != "selection" && onRowClick
+                          ? onRowClick(row.original)
+                          : null
+                      }
+                    >
+                      {cell.render("Cell")}
+                    </Td>
                   ))}
                 </Tr>
               );
