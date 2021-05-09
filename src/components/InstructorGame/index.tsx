@@ -50,6 +50,7 @@ import { GET_GAME_BY_ID } from "../../graphql/getGameById";
 import { REMOVE_MULTIPLE_FROM_GROUP } from "../../graphql/removeMultipleFromGroup";
 import { REMOVE_MULTIPLE_FROM_GAME } from "../../graphql/removeMultipleFromGame";
 import { removeMultipleFromGameMutation } from "../../generated/removeMultipleFromGameMutation";
+import DetailsCard from "../DetailsCard";
 
 interface ParamTypes {
   gameId: string;
@@ -230,6 +231,32 @@ const InstructorGame = () => {
               <Button>{t("Add or remove players")}</Button>
             </Link>
           </Box>
+        </Flex>
+
+        <Flex
+          margin="auto"
+          width="100%"
+          justifyContent="space-between"
+          flexDirection={{ base: "column", md: "row" }}
+        >
+          <DetailsCard
+            badgeContent
+            flexDirection="row"
+            title={"Number of submissions"}
+            content={"123"}
+          />
+          <DetailsCard
+            badgeContent
+            flexDirection="row"
+            title={"Number of validations"}
+            content={"123"}
+          />
+          <DetailsCard
+            badgeContent
+            flexDirection="row"
+            title={"Number of players"}
+            content={gameData.game.players.length.toString()}
+          />
         </Flex>
         <Divider marginBottom={50} />
 

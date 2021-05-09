@@ -26,36 +26,10 @@ import {
   SERVER_ERRORS,
 } from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
+import DetailsCard from "./DetailsCard";
 import Error from "./Error";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
-
-const UserDetailCard = ({
-  title,
-  content,
-}: {
-  title: string;
-  content: string;
-}) => {
-  const { colorMode } = useColorMode();
-
-  return (
-    <Box
-      width="100%"
-      border="1px solid"
-      borderColor={colorMode == "dark" ? "gray.700" : "gray.200"}
-      padding={2}
-      margin={{ base: 0, md: 2 }}
-      marginBottom={{ base: 2, md: 2 }}
-      borderRadius={4}
-    >
-      <Heading as="h4" size="sm" marginBottom={2}>
-        {title}
-      </Heading>
-      {content}
-    </Box>
-  );
-};
 
 const UserDetails = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -130,22 +104,19 @@ const UserDetails = () => {
         justifyContent="space-between"
         flexDirection={{ base: "column", md: "row" }}
       >
-        <UserDetailCard
+        <DetailsCard
           title={"Name"}
           content={`${userData?.user.firstName} ${userData?.user.lastName}`}
         />
 
-        <UserDetailCard
-          title={"E-Mail"}
-          content={userData?.user.email || "N/A"}
-        />
+        <DetailsCard title={"E-Mail"} content={userData?.user.email || "N/A"} />
 
-        <UserDetailCard
+        <DetailsCard
           title={"E-Mail verified"}
           content={userData?.user.emailVerified ? "Yes" : "No"}
         />
 
-        <UserDetailCard
+        <DetailsCard
           title={"Username"}
           content={userData?.user.username || "N/A"}
         />

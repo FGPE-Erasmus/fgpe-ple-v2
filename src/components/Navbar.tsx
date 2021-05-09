@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useKeycloak } from "@react-keycloak/web";
-// import { Flex, Box } from "reflexbox";
 import styled from "@emotion/styled";
 import { NavLink } from "react-router-dom";
 import UserIcon from "../images/user.svg";

@@ -5,12 +5,13 @@ import {
   Heading,
   Tooltip,
   useDisclosure,
+  Flex,
+  Box,
 } from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Box, Flex } from "reflexbox";
 import { getAllAvailableGames } from "../generated/getAllAvailableGames";
 import { UNASSIGN_INSTRUCTOR } from "../graphql/unassignInstructor";
 import {
