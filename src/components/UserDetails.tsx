@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import {
   allGameProfilesQuery,
   allGameProfilesQuery_allGameProfiles,
@@ -33,6 +33,7 @@ import ColumnFilter from "./TableComponent/ColumnFilter";
 
 const UserDetails = () => {
   const { userId } = useParams<{ userId: string }>();
+  const history = useHistory();
 
   const {
     data: userData,
@@ -128,6 +129,11 @@ const UserDetails = () => {
 
       <Box>
         <TableComponent
+          onRowClick={(row: allGameProfilesQuery_allGameProfiles) => {
+            history.push({
+              pathname: `/teacher/player-details/${row.user.id}/${row.id}`,
+            });
+          }}
           columns={[
             {
               Header: t("Game"),
@@ -140,7 +146,7 @@ const UserDetails = () => {
               ),
             },
             {
-              Header: t("Group"),
+              Header: t("table.group"),
               accessor: "group.name",
               Filter: ({ column }: { column: any }) => (
                 <ColumnFilter
@@ -150,7 +156,7 @@ const UserDetails = () => {
               ),
             },
             {
-              Header: t("Points"),
+              Header: t("points"),
               accessor: "points",
               Filter: ({ column }: { column: any }) => (
                 <ColumnFilter
@@ -160,7 +166,7 @@ const UserDetails = () => {
               ),
             },
             {
-              Header: t("Submissions"),
+              Header: t("table.submissions"),
               accessor: (
                 row: allGameProfilesQuery_allGameProfiles | undefined
               ) => {
@@ -175,14 +181,29 @@ const UserDetails = () => {
                 />
               ),
             },
-            ,
             {
-              Header: t("Validations"),
+              Header: t("table.validations"),
               accessor: (
                 row: allGameProfilesQuery_allGameProfiles | undefined
               ) => {
                 if (row) {
                   return row.validations.length;
+                }
+              },
+              Filter: ({ column }: { column: any }) => (
+                <ColumnFilter
+                  column={column}
+                  placeholder={t("placeholders.name")}
+                />
+              ),
+            },
+            {
+              Header: t("Rewards"),
+              accessor: (
+                row: allGameProfilesQuery_allGameProfiles | undefined
+              ) => {
+                if (row) {
+                  return row.rewards.length;
                 }
               },
               Filter: ({ column }: { column: any }) => (

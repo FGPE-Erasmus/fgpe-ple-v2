@@ -29,7 +29,7 @@ import {
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   getGameByIdQuery,
@@ -58,6 +58,7 @@ interface ParamTypes {
 
 const InstructorGame = () => {
   const [loading, setLoading] = useState(false);
+  const history = useHistory();
 
   const {
     isOpen: isAddGroupModalOpen,
@@ -324,7 +325,11 @@ const InstructorGame = () => {
         <Box>
           <TableComponent
             loading={loading}
-            onRowClick={(row: getGameByIdQuery_game_players) => {}}
+            onRowClick={(row: getGameByIdQuery_game_players) => {
+              history.push({
+                pathname: `/teacher/player-details/${row.user.id}/${row.id}`,
+              });
+            }}
             selectableRows
             setIsAnythingSelected={setIsStudentSelected}
             setSelectedStudents={(rows: any) => {

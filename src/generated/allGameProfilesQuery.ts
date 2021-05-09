@@ -54,6 +54,7 @@ export interface allGameProfilesQuery_allGameProfiles_validations {
 
 export interface allGameProfilesQuery_allGameProfiles_user {
   __typename: "User";
+  id: string | null;
   email: string | null;
   emailVerified: boolean | null;
   firstName: string | null;
@@ -68,6 +69,7 @@ export interface allGameProfilesQuery_allGameProfiles_learningPath {
 
 export interface allGameProfilesQuery_allGameProfiles {
   __typename: "Player";
+  id: string;
   game: allGameProfilesQuery_allGameProfiles_game;
   group: allGameProfilesQuery_allGameProfiles_group | null;
   points: number;

@@ -3,6 +3,8 @@ import { gql } from "@apollo/client";
 export const GET_ALL_GAME_PROFILES = gql`
   query allGameProfilesQuery($userId: String!) {
     allGameProfiles(userId: $userId) {
+      id
+
       game {
         id
         name
@@ -41,6 +43,7 @@ export const GET_ALL_GAME_PROFILES = gql`
       }
 
       user {
+        id
         email
         emailVerified
         firstName
