@@ -14,6 +14,7 @@ import {
   IconButton,
   Input,
   useEditableControls,
+  useColorMode,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import {
@@ -69,6 +70,7 @@ const PasswordChangeForm = ({
 }) => {
   const { t } = useTranslation();
 
+  const { colorMode } = useColorMode();
   const [loading, setLoading] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -96,7 +98,7 @@ const PasswordChangeForm = ({
       <Text marginBottom={2}>{t("Change password")}</Text>
       <Box
         border="1px solid"
-        borderColor="gray.200"
+        borderColor={colorMode == "dark" ? "gray.700" : "gray.200"}
         width="100%"
         borderRadius={4}
         padding={4}
