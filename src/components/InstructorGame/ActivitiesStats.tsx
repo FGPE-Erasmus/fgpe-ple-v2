@@ -10,19 +10,7 @@ import ColumnFilter from "../TableComponent/ColumnFilter";
 import TableComponent from "../TableComponent";
 import Error from "../Error";
 import { getOverallStats } from "../../generated/getOverallStats";
-
-const GET_OVERALL_STATS = gql`
-  query getOverallStats($gameId: String!, $groupId: String) {
-    stats(gameId: $gameId, groupId: $groupId) {
-      nrOfSubmissions
-      nrOfValidations
-      nrOfSubmissionsByActivity
-      nrOfValidationsByActivity
-      nrOfSubmissionsByActivityAndResult
-      nrOfValidationsByActivityAndResult
-    }
-  }
-`;
+import { GET_OVERALL_STATS } from "../../graphql/getOverallStats";
 
 const getActivitiesList = (gameData: getGameByIdQuery) => {
   let activities: getGameByIdQuery_game_challenges_refs[] = [];

@@ -106,19 +106,19 @@ const UserDetails = () => {
         flexDirection={{ base: "column", md: "row" }}
       >
         <DetailsCard
-          title={"Name"}
+          title={t("Full name")}
           content={`${userData?.user.firstName} ${userData?.user.lastName}`}
         />
 
         <DetailsCard title={"E-Mail"} content={userData?.user.email || "N/A"} />
 
         <DetailsCard
-          title={"E-Mail verified"}
-          content={userData?.user.emailVerified ? "Yes" : "No"}
+          title={t("E-Mail verified")}
+          content={userData?.user.emailVerified ? t("Yes") : t("No")}
         />
 
         <DetailsCard
-          title={"Username"}
+          title={t("Username")}
           content={userData?.user.username || "N/A"}
         />
       </Flex>

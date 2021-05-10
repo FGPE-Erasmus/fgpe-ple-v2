@@ -51,6 +51,8 @@ import { REMOVE_MULTIPLE_FROM_GROUP } from "../../graphql/removeMultipleFromGrou
 import { REMOVE_MULTIPLE_FROM_GAME } from "../../graphql/removeMultipleFromGame";
 import { removeMultipleFromGameMutation } from "../../generated/removeMultipleFromGameMutation";
 import DetailsCard from "../DetailsCard";
+import { GET_OVERALL_STATS } from "../../graphql/getOverallStats";
+import { getOverallStats } from "../../generated/getOverallStats";
 
 interface ParamTypes {
   gameId: string;
@@ -90,6 +92,18 @@ const InstructorGame = () => {
     autoAssignGroups,
     { data: autoAssignGroupsData, loading: autoAssignGroupsLoading },
   ] = useMutation(AUTO_ASSIGN_GROUPS);
+
+  const {
+    data: overallStatsData,
+    error: overallStatsError,
+    loading: overallStatsLoading,
+  } = useQuery<getOverallStats>(GET_OVERALL_STATS, {
+    variables: {
+      gameId,
+    },
+    skip: !gameId,
+    fetchPolicy: "no-cache",
+  });
 
   const {
     data: gameData,
@@ -244,13 +258,21 @@ const InstructorGame = () => {
             badgeContent
             flexDirection="row"
             title={"Number of submissions"}
-            content={"123"}
+            content={
+              overallStatsData
+                ? overallStatsData.stats.nrOfSubmissions.toString()
+                : "..."
+            }
           />
           <DetailsCard
             badgeContent
             flexDirection="row"
             title={"Number of validations"}
-            content={"123"}
+            content={
+              overallStatsData
+                ? overallStatsData.stats.nrOfValidations.toString()
+                : "..."
+            }
           />
           <DetailsCard
             badgeContent
