@@ -28,6 +28,7 @@ import { gql } from "@apollo/client";
 import ManageGames from "./components/ManageGames";
 import UserDetails from "./components/UserDetails";
 import PlayerDetails from "./components/PlayerDetails";
+import AccountSettings from "./components/AccountSettings";
 
 const getZoomFactorFromLocalStorage = () => {
   const zoomFactor = localStorage.getItem("zoom");
@@ -146,6 +147,13 @@ function App() {
                           path="/teacher/player-details/:userId/:gameId"
                           roles={["teacher"]}
                           component={PlayerDetails}
+                        />
+
+                        <PrivateRoute
+                          exact
+                          path="/profile/settings"
+                          roles={["teacher", "student"]}
+                          component={AccountSettings}
                         />
 
                         <Route component={NotFound} />

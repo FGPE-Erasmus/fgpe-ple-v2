@@ -1,4 +1,12 @@
 {
+  "Account settings": "Accounts settings",
+  "First name": "First name",
+  "Last name": "Last name",
+  "Submit": "Submit",
+  "Change password": "Change password",
+  "Old password": "Old password",
+  "New password": "New password",
+  "Repeat new password": "Repeat new password",
   "Remove the assignment": "Remove the assignment",
   "Add to the game": "Add to the game",
   "Yes": "Yes",
@@ -155,6 +163,10 @@
   "error": {
     "title": "An unexpected error has occured.",
     "description": "Try to refresh the page. Please contact administration if this error persists.",
+    "passwordChange": {
+      "title": "An error occured in the password change process",
+      "description": "Check if you've provided correct credentials. Please contact administration if this error persists."
+    },
     "notFound": {
       "title": "Page not found",
       "description": "The page you were looking for doesn't exist."

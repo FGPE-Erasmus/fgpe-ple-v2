@@ -1,4 +1,12 @@
 {
+  "Account settings": "Ustawienia konta",
+  "First name": "Imię",
+  "Last name": "Nazwisko",
+  "Submit": "Zatwierdź",
+  "Change password": "Zmień hasło",
+  "Old password": "Stare hasło",
+  "New password": "Nowe hasło",
+  "Repeat new password": "Powtórz nowe hasło",
   "Remove the assignment": "Cofnij przypisanie",
   "Add to the game": "Dodaj do gry",
   "Yes": "Tak",
@@ -155,6 +163,10 @@
   "error": {
     "title": "Wystąpił nieoczekiwany błąd.",
     "description": "Spróbuj odświeżyć stronę. Skontaktuj się z administracją jeśli błąd będzie nadal występować.",
+    "passwordChange": {
+      "title": "Wystąpił błąd podczas zmiany hasła",
+      "description": "Sprawdź czy podano poprawne hasło. Skontaktuj się z administracją jeśli problem nadal występuje."
+    },
     "notFound": {
       "title": "Nie znaleziono strony",
       "description": "Strona, której szukasz nie istnieje."

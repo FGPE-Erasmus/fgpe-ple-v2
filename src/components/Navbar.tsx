@@ -20,7 +20,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { SunIcon, MoonIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, SettingsIcon } from "@chakra-ui/icons";
 import useBreadcrumbs from "use-react-router-breadcrumbs";
 import { useTranslation } from "react-i18next";
 import ChangeLanguageModal from "./ChangeLanguageModal";
@@ -48,10 +48,12 @@ const Navbar = () => {
 
   const activeGameAndChallenge = useContext(NavContext);
   const { keycloak, initialized } = useKeycloak();
-  const resetActiveGameAndChallenge = () => {
-    activeGameAndChallenge.setActiveChallenge(null);
-    activeGameAndChallenge.setActiveGame(null);
-  };
+
+  // const resetActiveGameAndChallenge = () => {
+  //   activeGameAndChallenge.setActiveChallenge(null);
+  //   activeGameAndChallenge.setActiveGame(null);
+  // };
+
   const { colorMode, toggleColorMode } = useColorMode();
   const [
     userProfile,
@@ -78,75 +80,62 @@ const Navbar = () => {
       <NavbarStyled>
         <Flex px={2} alignItems="center" height="100%">
           <Box width={1 / 2}>
-            <NavLink to="/" onClick={resetActiveGameAndChallenge}>
+            <NavLink to="/">
               <Logo />
-              {/* <b>
-              <Text as="span" color={colorMode == "dark" ? "white" : "black"}>
-                FGPE
-              </Text>
-            </b> */}
             </NavLink>
-            {/* {breadcrumbs.map(({ match, breadcrumb }) => {
-            return (
-              <NavLink key={match.url} to={match.url}>
-                {breadcrumb}
-              </NavLink>
-            );
-          })} */}
-
-            {/* <NavLink
-            to={{
-              pathname: "/profile/game",
-              state: {
-                gameId: activeGameAndChallenge.activeGame?.id,
-                challengeId: activeGameAndChallenge.activeChallenge?.id,
-              },
-            }}
-            onClick={() => {
-              activeGameAndChallenge.setActiveChallenge(null);
-            }}
-          >
-            {activeGameAndChallenge.activeGame &&
-              activeGameAndChallenge.activeGame.name}
-            {activeGameAndChallenge.activeChallenge &&
-              " > " + activeGameAndChallenge.activeChallenge.name}
-          </NavLink> */}
-
-            {/* {keycloak.authenticated && (
-            <NavLink to="/profile">
-              {userProfile?.firstName} {userProfile?.lastName}
-            </NavLink>
-          )} */}
           </Box>
-          {/* <UserMenu> */}
+
           <Flex width={1 / 2} justifyContent="flex-end" alignItems="flex-end">
             {keycloak.authenticated && (
-              // <Box>
-              <NavLink to="/profile" onClick={resetActiveGameAndChallenge}>
-                {/* {userProfile?.firstName} {userProfile?.lastName} */}
-
-                <BiUserCircle
-                  fontSize={24}
-                  color={colorMode == "dark" ? "white" : "black"}
-                />
-              </NavLink>
-              // </Box>
+              <Box>
+                <NavLink to="/profile">
+                  <IconButton
+                    height={6}
+                    _focus={{}}
+                    variant="link"
+                    colorScheme="gray"
+                    aria-label="Search database"
+                    icon={<BiUserCircle fontSize={24} />}
+                  />
+                </NavLink>
+              </Box>
             )}
 
-            <Box marginLeft={5}>
-              <VscColorMode
-                fontSize={24}
-                color={colorMode == "dark" ? "white" : "black"}
+            {keycloak.authenticated && (
+              <Box>
+                <NavLink to="/profile/settings">
+                  <IconButton
+                    height={6}
+                    _focus={{}}
+                    variant="link"
+                    colorScheme="gray"
+                    aria-label="Search database"
+                    icon={<SettingsIcon fontSize={20} />}
+                  />
+                </NavLink>
+              </Box>
+            )}
+
+            <Box>
+              <IconButton
+                height={6}
+                _focus={{}}
                 onClick={toggleColorMode}
-                cursor="pointer"
+                variant="link"
+                colorScheme="gray"
+                aria-label="Search database"
+                icon={<VscColorMode fontSize={24} />}
               />
             </Box>
-            <Box marginLeft={5}>
-              <IoLanguage
-                fontSize={24}
-                color={colorMode == "dark" ? "white" : "black"}
+            <Box>
+              <IconButton
+                height={6}
+                _focus={{}}
                 onClick={onOpenLanguageModal}
-                cursor="pointer"
+                variant="link"
+                colorScheme="gray"
+                aria-label="Search database"
+                icon={<IoLanguage fontSize={24} />}
               />
             </Box>
 
@@ -201,7 +190,7 @@ const UserIconStyled = styled.img`
   }
 `;
 
-const NavbarStyled = styled.div`
+const NavbarStyled = styled(Box)`
   a {
     /* margin-right: 15px; */
     color: black;
