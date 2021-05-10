@@ -9,5 +9,6 @@ declare namespace NodeJS {
     REACT_APP_KEYCLOAK_URL: string;
     REACT_APP_GRAPHQL_URI: string;
     REACT_APP_GRAPHQL_WS: string;
+    REACT_APP_KEYCLOAK_AVATAR: string;
   }
 }
