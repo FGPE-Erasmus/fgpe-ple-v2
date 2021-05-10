@@ -755,7 +755,9 @@ const Exercise = ({
         />
 
         <Flex
-          height={`calc(100% - ${200 + getStatementLength(exercise) / 5}px)`}
+          height={`calc(100% - ${
+            200 + (exercise?.pdf ? 0 : getStatementLength(exercise)) / 5
+          }px)`}
           minHeight={500}
           flexDirection={{ base: "column", md: "row" }}
         >

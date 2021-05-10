@@ -20,6 +20,7 @@ export interface FindChallenge_challenge_refs {
   id: string | null;
   name: string | null;
   statement: string | null;
+  pdf: boolean | null;
   codeSkeletons: FindChallenge_challenge_refs_codeSkeletons[] | null;
 }
 

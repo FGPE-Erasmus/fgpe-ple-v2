@@ -1,22 +1,24 @@
-import { Box, Flex, useColorMode } from "@chakra-ui/react";
+import { Box, Button, Flex, useColorMode } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React from "react";
 import ReactHtmlParser from "react-html-parser";
 import { FindChallenge_challenge_refs } from "../../generated/FindChallenge";
 import ScrollbarWrapper from "../ScrollbarWrapper";
 import ReactMarkdown from "react-markdown";
+import { useTranslation } from "react-i18next";
 
 const Statement = ({
   exercise,
 }: {
   exercise: FindChallenge_challenge_refs | null;
 }) => {
-  const { colorMode } = useColorMode();
+  const { t } = useTranslation();
 
+  const { colorMode } = useColorMode();
   return (
     <ScrollbarWrapper>
       <Flex
-        height={150 + getStatementLength(exercise) / 5}
+        height={exercise?.pdf ? 150 : 150 + getStatementLength(exercise) / 5}
         maxHeight={250}
         overflowY={"auto"}
         borderBottom="1px solid rgba(0,0,0,0.1)"
@@ -27,9 +29,28 @@ const Statement = ({
           bgColor={colorMode == "dark" ? "gray.900" : "gray.100"}
         >
           <Box bgColor={colorMode == "dark" ? "gray.900" : "gray.100"} p={5}>
-            <ReactMarkdown allowDangerousHtml>
-              {getStatement(exercise)}
-            </ReactMarkdown>
+            {exercise?.pdf ? (
+              <Button
+                colorScheme="blue"
+                variant="ghost"
+                onClick={() => {
+                  let pdfWindow = window.open("");
+                  if (pdfWindow) {
+                    pdfWindow.document.write(
+                      "<iframe width='100%' height='100%' src='data:application/pdf;base64, " +
+                        encodeURI(exercise.statement || "") +
+                        "'></iframe>"
+                    );
+                  }
+                }}
+              >
+                {t("Open PDF statement")}
+              </Button>
+            ) : (
+              <ReactMarkdown allowDangerousHtml>
+                {getStatement(exercise)}
+              </ReactMarkdown>
+            )}
           </Box>
         </MarkdownStyled>
       </Flex>

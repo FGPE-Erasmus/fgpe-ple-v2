@@ -42,6 +42,7 @@ const FIND_CHALLENGE = gql`
         id
         name
         statement
+        pdf
         codeSkeletons {
           code
           extension
