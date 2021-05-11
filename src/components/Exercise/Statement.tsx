@@ -8,8 +8,10 @@ import ScrollbarWrapper from "../ScrollbarWrapper";
 
 const Statement = ({
   exercise,
+  gameId,
 }: {
   exercise: FindChallenge_challenge_refs | null;
+  gameId: string;
 }) => {
   const { t } = useTranslation();
 
@@ -21,6 +23,7 @@ const Statement = ({
         maxHeight={250}
         overflowY={"auto"}
         borderBottom="1px solid rgba(0,0,0,0.1)"
+        position="relative"
       >
         <MarkdownStyled
           h="100%"

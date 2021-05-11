@@ -176,7 +176,6 @@ const AccountSettings = () => {
             userProfile.attributes[process.env.REACT_APP_KEYCLOAK_AVATAR] &&
             userProfile.attributes[process.env.REACT_APP_KEYCLOAK_AVATAR][0]
           }
-          loadUserProfile={loadUserProfile}
         />
 
         <PasswordChangeForm onSubmit={changePassword} />

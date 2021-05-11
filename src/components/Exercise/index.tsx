@@ -19,11 +19,13 @@ import { getSubmissionByIdQuery } from "../../generated/getSubmissionByIdQuery";
 import { getValidationByIdQuery } from "../../generated/getValidationByIdQuery";
 import { Result } from "../../generated/globalTypes";
 import { latestValidationQuery } from "../../generated/latestValidationQuery";
+import { rewardReceivedStudentSubscription_rewardReceivedStudent_reward } from "../../generated/rewardReceivedStudentSubscription";
 import { validationSubscription } from "../../generated/validationSubscription";
 import { decryptWithAES, encryptWithAES } from "../../utilities/Encryption";
 import CodeEditor from "../CodeEditor";
 // import Loading from "./Loading";
 import EditorMenu from "./EditorMenu";
+import Hints from "./Hints";
 import { SettingsContext } from "./SettingsContext";
 import Statement, { getStatementLength } from "./Statement";
 import Terminal from "./Terminal";
@@ -208,6 +210,8 @@ const Exercise = ({
   challengeRefetch,
   solved,
   setNextUnsolvedExercise,
+  challengeId,
+  hints,
 }: {
   gameId: string;
   exercise: FindChallenge_challenge_refs | null;
@@ -217,6 +221,8 @@ const Exercise = ({
   ) => Promise<ApolloQueryResult<FindChallenge>>;
   solved: boolean;
   setNextUnsolvedExercise: () => void;
+  challengeId: string;
+  hints: rewardReceivedStudentSubscription_rewardReceivedStudent_reward[];
 }) => {
   const [activeLanguage, setActiveLanguage] =
     useState<FindChallenge_programmingLanguages>(programmingLanguages[0]);
@@ -688,7 +694,11 @@ const Exercise = ({
         <span>{subValidationData?.validationProcessedStudent.result}</span>
       )} */}
       <Box width={"100%"} height={"100%"} m={0} p={0}>
-        <Statement exercise={exercise} />
+        <Box position="relative">
+          <Statement exercise={exercise} gameId={gameId} />
+          <Hints challengeId={challengeId} gameId={gameId} hints={hints} />
+        </Box>
+
         <EditorMenu
           reload={reloadCode}
           submissionResult={submissionResult}

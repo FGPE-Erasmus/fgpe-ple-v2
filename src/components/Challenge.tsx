@@ -9,7 +9,10 @@ import {
   FindChallenge_challenge_refs,
 } from "../generated/FindChallenge";
 import { RewardType } from "../generated/globalTypes";
-import { rewardReceivedStudentSubscription } from "../generated/rewardReceivedStudentSubscription";
+import {
+  rewardReceivedStudentSubscription,
+  rewardReceivedStudentSubscription_rewardReceivedStudent_reward,
+} from "../generated/rewardReceivedStudentSubscription";
 import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import Error from "./Error";
@@ -113,6 +116,9 @@ const Challenge = ({
   const [activeExercise, setActiveExercise] =
     useState<null | FindChallenge_challenge_refs>(null);
   const [shouldRedirect, setShouldRedirect] = useState(false);
+  const [hints, setHints] = useState<
+    rewardReceivedStudentSubscription_rewardReceivedStudent_reward[]
+  >([]);
 
   const { error: subRewardsError } =
     useSubscription<rewardReceivedStudentSubscription>(
@@ -135,6 +141,16 @@ const Challenge = ({
                 subscriptionData.data.rewardReceivedStudent.reward.kind ===
                   RewardType.VIRTUAL_ITEM,
             });
+          }
+
+          if (
+            subscriptionData.data?.rewardReceivedStudent.reward.kind ===
+            RewardType.HINT
+          ) {
+            setHints([
+              ...hints,
+              subscriptionData.data.rewardReceivedStudent.reward,
+            ]);
           }
         },
       }
@@ -292,11 +308,13 @@ const Challenge = ({
         {!challengeLoading && challengeData && (
           <Exercise
             gameId={gameId}
+            challengeId={challengeId}
             exercise={activeExercise}
             programmingLanguages={challengeData.programmingLanguages}
             challengeRefetch={challengeRefetch}
             solved={checkIfSolved(challengeData, activeExercise)}
             setNextUnsolvedExercise={setNextUnsolvedExercise}
+            hints={hints}
           />
         )}
       </Flex>

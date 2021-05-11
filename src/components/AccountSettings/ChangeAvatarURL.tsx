@@ -1,13 +1,4 @@
-import { CloseIcon } from "@chakra-ui/icons";
-import {
-  Avatar,
-  Box,
-  Button,
-  Flex,
-  IconButton,
-  Text,
-  useColorMode,
-} from "@chakra-ui/react";
+import { Avatar, Box, Flex, Text, useColorMode } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Editable from "./Editable";
@@ -15,14 +6,11 @@ import Editable from "./Editable";
 const ChangeAvatarURL = ({
   changeAvatar,
   avatarURL,
-  loadUserProfile,
 }: {
   avatarURL?: string;
   changeAvatar: ({ avatarURL }: { avatarURL: string }) => Promise<void>;
-  loadUserProfile: () => void;
 }) => {
   const { colorMode } = useColorMode();
-  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
 
   return (
