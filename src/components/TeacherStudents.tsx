@@ -1,18 +1,5 @@
-import {
-  Alert,
-  AlertIcon,
-  Box,
-  Heading,
-  Table,
-  Tbody,
-  Td,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
-  useDisclosure,
-} from "@chakra-ui/react";
-import React, { useState } from "react";
+import { Alert, AlertIcon, Box, Heading } from "@chakra-ui/react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { getInstructorGames } from "../generated/getInstructorGames";
@@ -59,7 +46,7 @@ const TeacherStudents = ({
           {t("All your students")}
         </Heading>
 
-        {players.length == 0 && (
+        {players.length === 0 && (
           <Alert status="info">
             <AlertIcon />
             {t("You have no students yet")}

@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { gql, useQuery } from "@apollo/client";
+import { Heading } from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
-import withChangeAnimation from "../utilities/withChangeAnimation";
-import GamesList from "./GamesList";
-import { useQuery, gql } from "@apollo/client";
-import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
-import Rewards from "./Rewards";
-import { Heading, Spacer } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { PlayerGameProfiles } from "../generated/PlayerGameProfiles";
+import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
+import withChangeAnimation from "../utilities/withChangeAnimation";
 import Error from "./Error";
-import {
-  checkIfConnectionAborted,
-  SERVER_ERRORS,
-} from "../utilities/ErrorMessages";
+import GamesList from "./GamesList";
+import Rewards from "./Rewards";
 
 const PLAYER_GAME_PROFILES = gql`
   query PlayerGameProfiles {
@@ -70,10 +67,8 @@ const StudentProfile: React.ComponentType = () => {
     }
   );
 
-  const [
-    userProfile,
-    setUserProfile,
-  ] = useState<null | Keycloak.KeycloakProfile>(null);
+  const [userProfile, setUserProfile] =
+    useState<null | Keycloak.KeycloakProfile>(null);
   //   console.log("userProfile", userProfile);
   const loadUserProfile = async () => {
     setUserProfile(await keycloak.loadUserProfile());

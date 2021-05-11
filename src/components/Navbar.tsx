@@ -1,28 +1,22 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useKeycloak } from "@react-keycloak/web";
-import styled from "@emotion/styled";
-import { NavLink } from "react-router-dom";
-import UserIcon from "../images/user.svg";
-
-import { BiUserCircle } from "react-icons/bi";
-import { VscColorMode } from "react-icons/vsc";
-import { IoLanguage } from "react-icons/io5";
-
-import NavContext from "../context/NavContext";
-import LogoSVG from "../images/logo.svg";
-
+import { SettingsIcon } from "@chakra-ui/icons";
 import {
-  Button,
-  useColorMode,
-  IconButton,
-  Flex,
   Box,
-  Text,
+  Flex,
+  IconButton,
+  useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
-import { SunIcon, MoonIcon, SettingsIcon } from "@chakra-ui/icons";
-import useBreadcrumbs from "use-react-router-breadcrumbs";
+import styled from "@emotion/styled";
+import { useKeycloak } from "@react-keycloak/web";
+import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { BiUserCircle } from "react-icons/bi";
+import { IoLanguage } from "react-icons/io5";
+import { VscColorMode } from "react-icons/vsc";
+import { NavLink } from "react-router-dom";
+import useBreadcrumbs from "use-react-router-breadcrumbs";
+import NavContext from "../context/NavContext";
+import LogoSVG from "../images/logo.svg";
 import ChangeLanguageModal from "./ChangeLanguageModal";
 
 const Logo = styled.div`
@@ -55,10 +49,8 @@ const Navbar = () => {
   // };
 
   const { colorMode, toggleColorMode } = useColorMode();
-  const [
-    userProfile,
-    setUserProfile,
-  ] = useState<null | Keycloak.KeycloakProfile>(null);
+  const [userProfile, setUserProfile] =
+    useState<null | Keycloak.KeycloakProfile>(null);
 
   const loadUserProfile = async () => {
     setUserProfile(await keycloak.loadUserProfile());

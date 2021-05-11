@@ -1,16 +1,3 @@
-import React, { useContext } from "react";
-import { useQuery, gql } from "@apollo/client";
-import {
-  PlayerGameProfiles,
-  PlayerGameProfiles_myGameProfiles_game,
-  PlayerGameProfiles_myGameProfiles_learningPath,
-} from "../generated/PlayerGameProfiles";
-import { useKeycloak } from "@react-keycloak/web";
-import { Link } from "react-router-dom";
-import styled from "@emotion/styled";
-
-import NavContext from "../context/NavContext";
-
 import {
   Box,
   Divider,
@@ -20,7 +7,17 @@ import {
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
+import styled from "@emotion/styled";
+import { useKeycloak } from "@react-keycloak/web";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import NavContext from "../context/NavContext";
+import {
+  PlayerGameProfiles,
+  PlayerGameProfiles_myGameProfiles_game,
+  PlayerGameProfiles_myGameProfiles_learningPath,
+} from "../generated/PlayerGameProfiles";
 
 // name={gameProfile.game.name}
 //                 description={
@@ -37,8 +34,9 @@ const getProgress = (
 
   for (let i = 0; i < learningPaths.length; i++) {
     exercisesCount += learningPaths[i].refs.length;
-    solvedExercisesCount += learningPaths[i].refs.filter((ref) => ref.solved)
-      .length;
+    solvedExercisesCount += learningPaths[i].refs.filter(
+      (ref) => ref.solved
+    ).length;
   }
 
   return { solved: solvedExercisesCount, total: exercisesCount };

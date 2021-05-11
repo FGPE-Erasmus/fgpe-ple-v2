@@ -9,34 +9,27 @@ import {
   Thead,
   Tr,
   useColorMode,
-  useColorModeValue,
 } from "@chakra-ui/react";
-import React, { Fragment, useEffect, useLayoutEffect, useMemo } from "react";
-import {
-  useTable,
-  useSortBy,
-  useFilters,
-  useResizeColumns,
-  useBlockLayout,
-  useFlexLayout,
-  usePagination,
-  TableInstance,
-  useRowState,
-  useRowSelect,
-} from "react-table";
-import Pagination from "react-js-pagination";
-
+import styled from "@emotion/styled";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   TiArrowSortedDown,
   TiArrowSortedUp,
   TiArrowUnsorted,
 } from "react-icons/ti";
-import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "react-i18next";
-import styled from "@emotion/styled";
+import Pagination from "react-js-pagination";
+import {
+  useFilters,
+  usePagination,
+  useRowSelect,
+  useRowState,
+  useSortBy,
+  useTable,
+} from "react-table";
 import ScrollbarWrapper from "../ScrollbarWrapper";
 import CheckboxForTable from "./CheckboxForTable";
-import MainLoading from "../MainLoading";
 
 type TableComponentProps = {
   columns: any;
@@ -78,10 +71,10 @@ const TableComponent: React.FC<TableComponentProps> = ({
 }) => {
   const { colorMode } = useColorMode();
   const { i18n } = useTranslation();
-  const columns = useMemo(() => columnsProp, [
-    dontRecomputeChange ? null : columnsProp,
-    i18n.language,
-  ]);
+  const columns = useMemo(
+    () => columnsProp,
+    [dontRecomputeChange ? null : columnsProp, i18n.language]
+  );
 
   // const data = useMemo(() => dataProp, [
   //   dontRecomputeChange ? null : dataProp,

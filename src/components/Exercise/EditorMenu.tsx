@@ -5,7 +5,6 @@ import {
   Button,
   ButtonGroup,
   Center,
-  CircularProgress,
   Flex,
   IconButton,
   Menu,
@@ -16,21 +15,16 @@ import {
   Tooltip,
   useColorMode,
   useDisclosure,
-  Text,
 } from "@chakra-ui/react";
-
-import React, { useRef } from "react";
-import { IoExitOutline } from "react-icons/io5";
+import React from "react";
+import { useTranslation } from "react-i18next";
 import { BiLink, BiUnlink } from "react-icons/bi";
+import { IoExitOutline } from "react-icons/io5";
 import { FindChallenge_programmingLanguages } from "../../generated/FindChallenge";
-import { Result } from "../../generated/globalTypes";
+import { getColorSchemeForSubmissionResult } from "./helpers/EditorMenu";
+import Settings from "./Settings";
 // import { useHotkeys } from "react-hotkeys-hook";
 import TextareaModal from "./TextareaModal";
-import { motion, AnimatePresence } from "framer-motion";
-
-import Settings from "./Settings";
-import { getColorSchemeForSubmissionResult } from "./helpers/EditorMenu";
-import { useTranslation } from "react-i18next";
 
 const EditorMenu = ({
   submissionResult,
@@ -107,7 +101,7 @@ const EditorMenu = ({
       <Flex
         height={{ base: 100, md: 50 }}
         minHeight={50}
-        backgroundColor={colorMode == "dark" ? "#1c232f" : "gray.50"}
+        backgroundColor={colorMode === "dark" ? "#1c232f" : "gray.50"}
         alignItems="center"
         p={2}
         flexDirection={{ base: "column", md: "row" }}
@@ -175,8 +169,8 @@ const EditorMenu = ({
                   visibility={isTextareaModalOpen ? "hidden" : "initial"}
                 >
                   <IconButton
-                    color={colorMode == "dark" ? "black" : "white"}
-                    bgColor={colorMode == "dark" ? "gray.500" : "gray.800"}
+                    color={colorMode === "dark" ? "black" : "white"}
+                    bgColor={colorMode === "dark" ? "gray.500" : "gray.800"}
                     onClick={openTextareaModal}
                     aria-label="Add to friends"
                     icon={<IoExitOutline fontSize={18} />}

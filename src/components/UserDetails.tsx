@@ -1,16 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Badge,
-  Heading,
-  Box,
-  Flex,
-  useColorMode,
-} from "@chakra-ui/react";
+import { useQuery } from "@apollo/client";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
@@ -21,10 +10,7 @@ import {
 import { getUserDetails } from "../generated/getUserDetails";
 import { GET_ALL_GAME_PROFILES } from "../graphql/getAllGameProfiles";
 import { GET_USER_DETAILS } from "../graphql/getUserDetails";
-import {
-  checkIfConnectionAborted,
-  SERVER_ERRORS,
-} from "../utilities/ErrorMessages";
+import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import DetailsCard from "./DetailsCard";
 import Error from "./Error";

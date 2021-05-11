@@ -1,16 +1,10 @@
-import styled from "@emotion/styled";
-import React, { useLayoutEffect, useState } from "react";
-import {
-  PlayerGameProfiles,
-  PlayerGameProfiles_myGameProfiles,
-  PlayerGameProfiles_myGameProfiles_rewards_reward,
-} from "../generated/PlayerGameProfiles";
 import {
   Box,
-  Flex,
-  useColorModeValue,
   Button,
-  useDisclosure,
+  Flex,
+  List,
+  ListIcon,
+  ListItem,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -18,18 +12,22 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  List,
-  ListIcon,
-  ListItem,
+  useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { RewardType } from "../generated/globalTypes";
+import styled from "@emotion/styled";
+import dayjs from "dayjs";
 import { AnimatePresence, motion } from "framer-motion";
-
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MdCheckCircle, MdDateRange } from "react-icons/md";
 import { RiGamepadFill } from "react-icons/ri";
-
-import dayjs from "dayjs";
-import { useTranslation } from "react-i18next";
+import { RewardType } from "../generated/globalTypes";
+import {
+  PlayerGameProfiles,
+  PlayerGameProfiles_myGameProfiles,
+  PlayerGameProfiles_myGameProfiles_rewards_reward,
+} from "../generated/PlayerGameProfiles";
 import ScrollbarWrapper from "./ScrollbarWrapper";
 
 const getRewardsCount = (gameProfiles: PlayerGameProfiles_myGameProfiles[]) => {
@@ -80,10 +78,8 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
   const { t } = useTranslation();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [
-    rewardForModal,
-    setRewardForModal,
-  ] = useState<null | PlayerGameProfiles_myGameProfiles_rewards_reward>(null);
+  const [rewardForModal, setRewardForModal] =
+    useState<null | PlayerGameProfiles_myGameProfiles_rewards_reward>(null);
 
   const gameProfiles = data.myGameProfiles;
   // .flatMap((i) => [i, i])

@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
 import styled from "@emotion/styled";
+import React, { useContext } from "react";
 import ReactHtmlParser from "react-html-parser";
-import { SettingsContext } from "./SettingsContext";
-import { Result } from "../../generated/globalTypes";
 import { useTranslation } from "react-i18next";
+import { Result } from "../../generated/globalTypes";
+import { SettingsContext } from "./SettingsContext";
 
 const Terminal = ({
   submissionResult,
@@ -32,13 +32,13 @@ const Terminal = ({
               </span>
             );
           })}
-        {submissionResult == Result.COMPILATION_ERROR
+        {submissionResult === Result.COMPILATION_ERROR
           ? submissionFeedback
           : ReactHtmlParser(
               submissionFeedback
                 ? loading
                   ? t("playground.terminal.waitingForResult")
-                  : submissionFeedback == "Ready"
+                  : submissionFeedback === "Ready"
                   ? t("playground.terminal.feedback.Ready")
                   : submissionFeedback
                 : ""
@@ -57,9 +57,9 @@ const TerminalStyled = styled.div<{
   height: 100%;
   width: 100%;
   background-color: ${({ terminalTheme }) =>
-    terminalTheme == "dark" ? "#323232" : "white"};
+    terminalTheme === "dark" ? "#323232" : "white"};
   color: ${({ terminalTheme }) =>
-    terminalTheme == "dark" ? "white" : "#121212"};
+    terminalTheme === "dark" ? "white" : "#121212"};
   padding: 12px;
   margin: 0px;
   font-size: ${({ terminalFontSize }) => terminalFontSize}px;

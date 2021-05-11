@@ -1,23 +1,21 @@
 import { gql, useMutation } from "@apollo/client";
 import { CopyIcon } from "@chakra-ui/icons";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   Button,
-  Select,
-  FormLabel,
   FormControl,
-  Box,
-  InputRightElement,
+  FormLabel,
+  IconButton,
   Input,
   InputGroup,
-  InputLeftElement,
-  IconButton,
+  InputRightElement,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Select,
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";

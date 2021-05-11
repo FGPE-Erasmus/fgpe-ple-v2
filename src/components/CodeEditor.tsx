@@ -1,14 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-// import Editor from "react-simple-code-editor";
-import Prism from "prismjs";
 import styled from "@emotion/styled";
-// import "../styles/prism.css";
-import { Controlled as CodeMirror } from "react-codemirror2";
-
-import Editor, { DiffEditor, useMonaco, loader } from "@monaco-editor/react";
+import Editor, { useMonaco } from "@monaco-editor/react";
+import React, { useContext, useEffect, useRef } from "react";
 import { FindChallenge_programmingLanguages } from "../generated/FindChallenge";
 import { SettingsContext } from "./Exercise/SettingsContext";
-import { useContext } from "react";
 // import { useHotkeys } from "react-hotkeys-hook";
 import useHotKeys from "./Exercise/useHotKeys";
 

@@ -26,9 +26,8 @@ const ChangeLanguageModal = ({
   onClose: () => void;
 }) => {
   const { t, i18n } = useTranslation();
-  const [supportedLanguages, setSupportedLanguages] = useState<
-    null | language[]
-  >(null);
+  const [supportedLanguages, setSupportedLanguages] =
+    useState<null | language[]>(null);
 
   const getSupportedLanguages = () => {
     fetch(`${process.env.PUBLIC_URL}/locales/supported-languages.json`, {

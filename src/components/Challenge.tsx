@@ -1,26 +1,20 @@
 import { gql, useQuery, useSubscription } from "@apollo/client";
+import { CheckIcon } from "@chakra-ui/icons";
+import { Box, Button, Flex } from "@chakra-ui/react";
+import styled from "@emotion/styled";
 import React, { useState } from "react";
-import withChangeAnimation from "../utilities/withChangeAnimation";
+import { Redirect, useParams } from "react-router-dom";
 import {
   FindChallenge,
   FindChallenge_challenge_refs,
 } from "../generated/FindChallenge";
-import Error from "./Error";
-
-import styled from "@emotion/styled";
-import { Flex, Box, Button, Stack, Skeleton } from "@chakra-ui/react";
-
-import Exercise from "./Exercise";
-import { Redirect, useParams } from "react-router-dom";
-import { CheckIcon } from "@chakra-ui/icons";
-import { getPlayerIdQuery } from "../generated/getPlayerIdQuery";
-import { rewardReceivedStudentSubscription } from "../generated/rewardReceivedStudentSubscription";
-import { useNotifications } from "./Notifications";
 import { RewardType } from "../generated/globalTypes";
-import {
-  checkIfConnectionAborted,
-  SERVER_ERRORS,
-} from "../utilities/ErrorMessages";
+import { rewardReceivedStudentSubscription } from "../generated/rewardReceivedStudentSubscription";
+import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
+import withChangeAnimation from "../utilities/withChangeAnimation";
+import Error from "./Error";
+import Exercise from "./Exercise";
+import { useNotifications } from "./Notifications";
 
 interface ParamTypes {
   gameId: string;
@@ -80,7 +74,7 @@ const checkIfSolved = (
   }
 
   challengeData.profileInGame.learningPath.map((learningPath) => {
-    return learningPath.refs.map((ref, i) => {
+    return learningPath.refs.forEach((ref) => {
       if (ref.activity?.id === exercise.id) {
         if (ref.solved) {
           solved = true;
@@ -116,39 +110,35 @@ const Challenge = ({
   const { gameId, challengeId } = useParams<ParamTypes>();
   const { add: addNotification } = useNotifications();
 
-  const [
-    activeExercise,
-    setActiveExercise,
-  ] = useState<null | FindChallenge_challenge_refs>(null);
+  const [activeExercise, setActiveExercise] =
+    useState<null | FindChallenge_challenge_refs>(null);
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
-  const {
-    data: subRewardsData,
-    loading: subRewardsLoading,
-    error: subRewardsError,
-  } = useSubscription<rewardReceivedStudentSubscription>(
-    REWARD_RECEIVED_STUDENT_SUB,
-    {
-      variables: { gameId },
-      onSubscriptionData: ({ subscriptionData }) => {
-        if (subscriptionData.data) {
-          addNotification({
-            title: subscriptionData.data.rewardReceivedStudent.reward.name,
-            description:
-              subscriptionData.data.rewardReceivedStudent.reward.description,
-            rewardImage:
-              subscriptionData.data.rewardReceivedStudent.reward.image,
-            rewardKind: subscriptionData.data.rewardReceivedStudent.reward.kind,
-            showFireworks:
-              subscriptionData.data.rewardReceivedStudent.reward.kind ===
-                RewardType.BADGE ||
-              subscriptionData.data.rewardReceivedStudent.reward.kind ===
-                RewardType.VIRTUAL_ITEM,
-          });
-        }
-      },
-    }
-  );
+  const { error: subRewardsError } =
+    useSubscription<rewardReceivedStudentSubscription>(
+      REWARD_RECEIVED_STUDENT_SUB,
+      {
+        variables: { gameId },
+        onSubscriptionData: ({ subscriptionData }) => {
+          if (subscriptionData.data) {
+            addNotification({
+              title: subscriptionData.data.rewardReceivedStudent.reward.name,
+              description:
+                subscriptionData.data.rewardReceivedStudent.reward.description,
+              rewardImage:
+                subscriptionData.data.rewardReceivedStudent.reward.image,
+              rewardKind:
+                subscriptionData.data.rewardReceivedStudent.reward.kind,
+              showFireworks:
+                subscriptionData.data.rewardReceivedStudent.reward.kind ===
+                  RewardType.BADGE ||
+                subscriptionData.data.rewardReceivedStudent.reward.kind ===
+                  RewardType.VIRTUAL_ITEM,
+            });
+          }
+        },
+      }
+    );
 
   const {
     data: challengeData,
@@ -201,7 +191,7 @@ const Challenge = ({
     const learningPathMap = challengeData.profileInGame.learningPath;
     const challenges = challengeData.challenge.refs;
     let foundUnsolvedExercise = false;
-    learningPathMap.map((learningPath) => {
+    learningPathMap.forEach((learningPath) => {
       for (let x = 0; x < learningPath.refs.length; x++) {
         for (let i = 0; i < challenges.length; i++) {
           if (!learningPath.refs[x].solved) {
@@ -311,39 +301,8 @@ const Challenge = ({
         )}
       </Flex>
     </Playground>
-    // <div>
-    //   Challenge: {challengeId}
-    //   <CodeEditor code={code} setCode={setCode} />
-    // </div>
   );
 };
-
-const SideMenu = styled.div`
-  display: flex;
-  justify-content: center;
-  color: rgba(0, 0, 0, 0.5);
-
-  .active {
-  }
-
-  .exercise {
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    width: 100px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.5s, color 0.5s;
-
-    &:hover {
-      transform: scale(0.9);
-    }
-  }
-
-  .exercise:first-of-type {
-    margin-top: 10px;
-  }
-`;
 
 const Playground = styled.div`
   position: absolute;

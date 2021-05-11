@@ -1,34 +1,26 @@
-import React, { Suspense } from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
-import { ThemeProvider } from "@emotion/react";
-import theme from "./styles/theme/themes";
-import GlobalStyle from "./styles/GlobalStyle";
 import {
   ApolloClient,
-  InMemoryCache,
   ApolloProvider,
-  createHttpLink,
+  InMemoryCache,
   split,
 } from "@apollo/client";
-import { createUploadLink } from "apollo-upload-client";
-
 import { setContext } from "@apollo/client/link/context";
-import keycloak from "./keycloak";
-import { ReactKeycloakProvider } from "@react-keycloak/web";
-
+import { WebSocketLink } from "@apollo/client/link/ws";
+import { getMainDefinition } from "@apollo/client/utilities";
 import {
   ChakraProvider,
   ColorModeScript,
   localStorageManager,
 } from "@chakra-ui/react";
-
+import { ReactKeycloakProvider } from "@react-keycloak/web";
+import { createUploadLink } from "apollo-upload-client";
+import React, { Suspense } from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
 import MainLoading from "./components/MainLoading";
-import { WebSocketLink } from "@apollo/client/link/ws";
-import { getMainDefinition } from "@apollo/client/utilities";
-
 import "./i18n/config";
-
+import keycloak from "./keycloak";
+import theme from "./styles/theme/themes";
 import ClearLocalStorage from "./utilities/ClearLocalStorage";
 
 ClearLocalStorage();

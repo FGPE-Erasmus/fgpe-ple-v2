@@ -1,9 +1,6 @@
 import React from "react";
-import styled from "@emotion/styled";
-
-import withChangeAnimation from "../utilities/withChangeAnimation";
 import { useTranslation } from "react-i18next";
-import { useNotifications } from "./Notifications";
+import withChangeAnimation from "../utilities/withChangeAnimation";
 
 const HomePage = () => {
   const { t } = useTranslation();

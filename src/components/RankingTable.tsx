@@ -1,14 +1,13 @@
 import { gql, useQuery } from "@apollo/client";
 import { Box } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import { useKeycloak } from "@react-keycloak/web";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { getGroupRankingsQuery } from "../generated/getGroupRankingsQuery";
 import { getLeaderboardsQuery } from "../generated/getLeaderboardsQuery";
 import Error from "./Error";
-import TableComponent from "./TableComponent/TableNoSorting";
 import ColumnFilter from "./TableComponent/ColumnFilter";
-import { m } from "framer-motion";
-import { useKeycloak } from "@react-keycloak/web";
+import TableComponent from "./TableComponent/TableNoSorting";
 
 const GET_LEADERBOARDS = gql`
   query getLeaderboardsQuery($gameId: String!) {

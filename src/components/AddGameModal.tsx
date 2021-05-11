@@ -1,39 +1,32 @@
+import { gql, useMutation } from "@apollo/client";
 import {
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
+  Checkbox,
+  Collapse,
+  Flex,
   FormControl,
   FormLabel,
   Input,
-  Textarea,
-  VStack,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Select,
-  Checkbox,
-  Flex,
+  Textarea,
   useColorMode,
-  Collapse,
+  VStack,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import {
-  gql,
-  useQuery,
-  useMutation,
-  useLazyQuery,
-  ApolloQueryResult,
-  useSubscription,
-} from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { importGame } from "../generated/importGame";
 import { useNotifications } from "./Notifications";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
 const IMPORT_GAME = gql`
@@ -109,29 +102,25 @@ const AddGameModal = ({
     },
   });
 
-  const [
-    importNewGame,
-    { loading: importGameLoading, error: importGameError },
-  ] = useMutation<importGame>(IMPORT_GAME, {
-    onError(data) {
-      console.log("[IMPORT ERROR]", data);
-
-      addNotification({
-        status: "error",
-        title: t("addGame.error.cannotAddGame.title"),
-        description: t("addGame.error.cannotAddGame.description"),
-      });
-    },
-    onCompleted(data) {
-      onClose();
-      refetchGames();
-      addNotification({
-        status: "success",
-        title: t("addGame.success.title"),
-        description: t("addGame.success.description"),
-      });
-    },
-  });
+  const [importNewGame, { loading: importGameLoading }] =
+    useMutation<importGame>(IMPORT_GAME, {
+      onError(data) {
+        addNotification({
+          status: "error",
+          title: t("addGame.error.cannotAddGame.title"),
+          description: t("addGame.error.cannotAddGame.description"),
+        });
+      },
+      onCompleted(data) {
+        onClose();
+        refetchGames();
+        addNotification({
+          status: "success",
+          title: t("addGame.success.title"),
+          description: t("addGame.success.description"),
+        });
+      },
+    });
 
   const { colorMode } = useColorMode();
 
@@ -264,18 +253,18 @@ const AddGameModal = ({
             </FormControl>
 
             <DragAndDropField
-              bgColor={colorMode == "dark" ? "blue.700" : "blue.100"}
+              bgColor={colorMode === "dark" ? "blue.700" : "blue.100"}
               width="100%"
               justifyContent="center"
               alignItems="center"
               height={50}
               borderRadius={4}
               border={`2px dashed`}
-              borderColor={colorMode == "dark" ? "blue.800" : "blue.200"}
+              borderColor={colorMode === "dark" ? "blue.800" : "blue.200"}
               marginBottom={2}
               cursor="pointer"
               userSelect="none"
-              _hover={{ bg: colorMode == "dark" ? "blue.600" : "blue.50" }}
+              _hover={{ bg: colorMode === "dark" ? "blue.600" : "blue.50" }}
               transition="background 0.5s, border 0.5s"
               className={
                 (isDragAccept ? "drop-active" : "") +

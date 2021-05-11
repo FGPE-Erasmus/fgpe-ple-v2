@@ -1,23 +1,12 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import {
-  Button,
-  Checkbox,
-  Heading,
-  Tooltip,
-  useDisclosure,
-  Flex,
-  Box,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, useDisclosure } from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { getAllAvailableGames } from "../generated/getAllAvailableGames";
 import { UNASSIGN_INSTRUCTOR } from "../graphql/unassignInstructor";
-import {
-  checkIfConnectionAborted,
-  SERVER_ERRORS,
-} from "../utilities/ErrorMessages";
+import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import AddGameModal from "./AddGameModal";
 import Error from "./Error";
@@ -84,10 +73,8 @@ const ManageGames = () => {
 
   const [unassignInstructor] = useMutation(UNASSIGN_INSTRUCTOR);
 
-  const [
-    removeGame,
-    { data: removeGameData, loading: removeGameLoading },
-  ] = useMutation(REMOVE_GAME);
+  const [removeGame, { data: removeGameData, loading: removeGameLoading }] =
+    useMutation(REMOVE_GAME);
 
   const memoizedRowChecking = useCallback(
     (row: any) => {

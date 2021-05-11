@@ -1,58 +1,43 @@
-import React, { useRef, useState } from "react";
-import withChangeAnimation from "../../utilities/withChangeAnimation";
-import Error from "../Error";
-
+import { useMutation, useQuery } from "@apollo/client";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
-  Progress,
-  Text,
-  Heading,
-  Box,
-  useColorModeValue,
-  Skeleton,
-  Flex,
-  Table,
-  TableCaption,
-  Tbody,
-  Td,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
-  Button,
   Alert,
   AlertIcon,
+  Box,
+  Button,
   Divider,
+  Flex,
+  Heading,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useHistory, useParams } from "react-router-dom";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import React, { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Link, useHistory, useParams } from "react-router-dom";
 import {
   getGameByIdQuery,
   getGameByIdQuery_game_players,
 } from "../../generated/getGameByIdQuery";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import TableComponent from "../TableComponent";
-import ColumnFilter from "../TableComponent/ColumnFilter";
-import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
-import ActivitiesStats from "./ActivitiesStats";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { useNotifications } from "../Notifications";
-import AddGroupModal from "./AddGroupModal";
-import SetGroupModal from "./SetGroupModal";
+import { getOverallStats } from "../../generated/getOverallStats";
+import { removeMultipleFromGameMutation } from "../../generated/removeMultipleFromGameMutation";
 import { AUTO_ASSIGN_GROUPS } from "../../graphql/autoAssignGroups";
 import { GET_GAME_BY_ID } from "../../graphql/getGameById";
-import { REMOVE_MULTIPLE_FROM_GROUP } from "../../graphql/removeMultipleFromGroup";
-import { REMOVE_MULTIPLE_FROM_GAME } from "../../graphql/removeMultipleFromGame";
-import { removeMultipleFromGameMutation } from "../../generated/removeMultipleFromGameMutation";
-import DetailsCard from "../DetailsCard";
 import { GET_OVERALL_STATS } from "../../graphql/getOverallStats";
-import { getOverallStats } from "../../generated/getOverallStats";
+import { REMOVE_MULTIPLE_FROM_GAME } from "../../graphql/removeMultipleFromGame";
+import { REMOVE_MULTIPLE_FROM_GROUP } from "../../graphql/removeMultipleFromGroup";
+import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
+import withChangeAnimation from "../../utilities/withChangeAnimation";
+import DetailsCard from "../DetailsCard";
+import Error from "../Error";
+import { useNotifications } from "../Notifications";
+import TableComponent from "../TableComponent";
+import ColumnFilter from "../TableComponent/ColumnFilter";
+import ActivitiesStats from "./ActivitiesStats";
+import AddGroupModal from "./AddGroupModal";
+import SetGroupModal from "./SetGroupModal";
 
 interface ParamTypes {
   gameId: string;

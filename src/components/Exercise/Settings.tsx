@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  color,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -11,27 +10,23 @@ import {
   DrawerOverlay,
   FormControl,
   FormLabel,
-  Heading,
-  Input,
+  Kbd,
   Select,
   Stack,
   Switch,
-  useColorMode,
-  Kbd,
-  useDisclosure,
-  TableCaption,
   Table,
-  Tr,
-  Td,
   Tbody,
-  Thead,
-  Th,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
+  useColorMode,
 } from "@chakra-ui/react";
 import React, { useContext } from "react";
-import { SettingsContext } from "./SettingsContext";
-import ZoomContext from "../../context/ZoomContext";
 import { useTranslation } from "react-i18next";
+import ZoomContext from "../../context/ZoomContext";
+import { SettingsContext } from "./SettingsContext";
 
 // import monacoThemes from "monaco-themes/themes/themelist.json";
 
@@ -87,7 +82,7 @@ const Settings = ({
                 </FormLabel>
                 <Switch
                   id="dark-mode"
-                  isChecked={colorMode == "dark"}
+                  isChecked={colorMode === "dark"}
                   onChange={toggleColorMode}
                 />
               </FormControl>

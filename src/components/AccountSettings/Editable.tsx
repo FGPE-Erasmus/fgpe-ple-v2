@@ -1,4 +1,4 @@
-import { EditIcon, CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Flex,
   FormControl,

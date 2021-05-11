@@ -4,7 +4,6 @@ import {
   AlertIcon,
   AlertTitle,
   Box,
-  Button,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,7 +24,7 @@ const Error = ({
   /** Shows friendly looking error about problem with server connection. */
   serverConnectionError?: boolean;
 }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (refreshTimeout || serverConnectionError) {

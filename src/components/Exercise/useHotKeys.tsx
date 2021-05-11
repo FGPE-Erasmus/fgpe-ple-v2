@@ -1,6 +1,4 @@
-import { validate } from "graphql";
-import { useState, useEffect, useRef } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
+import { useEffect } from "react";
 
 const useHotKeys = ({
   evaluateSubmission,

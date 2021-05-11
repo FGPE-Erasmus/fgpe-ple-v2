@@ -2,15 +2,15 @@
 
 import {
   Alert,
-  AlertTitle,
   AlertDescription,
-  CloseButton,
+  AlertTitle,
   Box,
+  CloseButton,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import React, { useEffect, useRef } from "react";
-import Reward, { RewardConfig } from "react-rewards";
+import Reward from "react-rewards";
 import { RewardType } from "../../generated/globalTypes";
 
 const Ctx = React.createContext({

@@ -1,16 +1,16 @@
 import { gql, useMutation } from "@apollo/client";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   Button,
   FormControl,
   FormLabel,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   VStack,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
@@ -50,10 +50,8 @@ const AddGroupModal = ({
   const [name, setName] = useState("");
   const [displayName, setDisplayName] = useState("");
 
-  const [
-    addNewGroup,
-    { data: addGroupData, loading: addGroupLoading },
-  ] = useMutation(ADD_GROUP);
+  const [addNewGroup, { data: addGroupData, loading: addGroupLoading }] =
+    useMutation(ADD_GROUP);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

@@ -25,13 +25,6 @@ const Container = {
   },
 };
 
-const Text = {
-  baseStyle: {
-    border: "1px solid rgba(0,0,0,0.2)",
-    borderRadius: 10,
-  },
-};
-
 const theme = extendTheme({
   components: {
     Container,

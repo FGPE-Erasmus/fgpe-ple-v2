@@ -1,42 +1,32 @@
-import React, { useState, useEffect, useRef } from "react";
-import ReactHtmlParser from "react-html-parser";
-import styled from "@emotion/styled";
 import {
-  gql,
-  useQuery,
-  useMutation,
-  useLazyQuery,
   ApolloQueryResult,
+  gql,
+  useLazyQuery,
+  useMutation,
+  useQuery,
   useSubscription,
 } from "@apollo/client";
-import { getSubmissionByIdQuery } from "../../generated/getSubmissionByIdQuery";
-import CodeEditor from "../CodeEditor";
-import useInterval from "../../utilities/useInterval";
-// import Loading from "./Loading";
-import EditorMenu from "./EditorMenu";
-import { Flex, Box, useDisclosure } from "@chakra-ui/react";
-import { decryptWithAES, encryptWithAES } from "../../utilities/Encryption";
-
+import { Box, Flex } from "@chakra-ui/react";
+import { useKeycloak } from "@react-keycloak/web";
+import React, { useEffect, useRef, useState } from "react";
+import { evaluationSubscription } from "../../generated/evaluationSubscription";
 import {
   FindChallenge,
   FindChallenge_challenge_refs,
   FindChallenge_programmingLanguages,
 } from "../../generated/FindChallenge";
-import Statement, { getStatementLength } from "./Statement";
-import { Result } from "../../generated/globalTypes";
-import { SettingsContext } from "./SettingsContext";
-import Terminal from "./Terminal";
+import { getSubmissionByIdQuery } from "../../generated/getSubmissionByIdQuery";
 import { getValidationByIdQuery } from "../../generated/getValidationByIdQuery";
-import { useHotkeys } from "react-hotkeys-hook";
-import { useKeycloak } from "@react-keycloak/web";
-
-import { getPlayerIdQuery } from "../../generated/getPlayerIdQuery";
-import { validationSubscription } from "../../generated/validationSubscription";
-import { evaluationSubscription } from "../../generated/evaluationSubscription";
+import { Result } from "../../generated/globalTypes";
 import { latestValidationQuery } from "../../generated/latestValidationQuery";
-import { languages } from "prismjs";
-import { parse } from "graphql";
-import { clear } from "console";
+import { validationSubscription } from "../../generated/validationSubscription";
+import { decryptWithAES, encryptWithAES } from "../../utilities/Encryption";
+import CodeEditor from "../CodeEditor";
+// import Loading from "./Loading";
+import EditorMenu from "./EditorMenu";
+import { SettingsContext } from "./SettingsContext";
+import Statement, { getStatementLength } from "./Statement";
+import Terminal from "./Terminal";
 
 const GET_VALIDATION_BY_ID = gql`
   query getValidationByIdQuery($gameId: String!, $validationId: String!) {
@@ -187,19 +177,6 @@ const LATEST_VALIDATION = gql`
   }
 `;
 
-const LATEST_SUBMISSION = gql`
-  query latestSubmissionQuery($gameId: String!, $exerciseId: String!) {
-    latestSubmission(gameId: $gameId, exerciseId: $exerciseId) {
-      createdAt
-      feedback
-      result
-      language
-      program
-      id
-    }
-  }
-`;
-
 const getEditorTheme = () => {
   const editorTheme = localStorage.getItem("editorTheme");
   if (editorTheme) {
@@ -241,10 +218,8 @@ const Exercise = ({
   solved: boolean;
   setNextUnsolvedExercise: () => void;
 }) => {
-  const [
-    activeLanguage,
-    setActiveLanguage,
-  ] = useState<FindChallenge_programmingLanguages>(programmingLanguages[0]);
+  const [activeLanguage, setActiveLanguage] =
+    useState<FindChallenge_programmingLanguages>(programmingLanguages[0]);
   const [code, setCode] = useState("");
 
   const { keycloak } = useKeycloak();
@@ -253,14 +228,10 @@ const Exercise = ({
   const [submissionResult, setSubmissionResult] = useState<Result | null>(null);
   const [validationOutputs, setValidationOutputs] = useState<null | any>(null);
 
-  const [
-    isWaitingForEvaluationResult,
-    setWaitingForEvaluationResult,
-  ] = useState(false);
-  const [
-    isWaitingForValidationResult,
-    setWaitingForValidationResult,
-  ] = useState(false);
+  const [isWaitingForEvaluationResult, setWaitingForEvaluationResult] =
+    useState(false);
+  const [isWaitingForValidationResult, setWaitingForValidationResult] =
+    useState(false);
 
   const [connectionProblem, setConnectionProblem] = useState(false);
 
@@ -274,9 +245,8 @@ const Exercise = ({
   const [testValues, setTestValues] = useState<string[]>([""]);
 
   const exerciseRef = useRef<FindChallenge_challenge_refs | null>(null);
-  const activeLanguageRef = useRef<FindChallenge_programmingLanguages>(
-    activeLanguage
-  );
+  const activeLanguageRef =
+    useRef<FindChallenge_programmingLanguages>(activeLanguage);
   const isEvaluationFetchingRef = useRef<boolean>(isWaitingForEvaluationResult);
   const isValidationFetchingRef = useRef<boolean>(isWaitingForValidationResult);
   const codeRef = useRef<string>(code);
@@ -293,7 +263,7 @@ const Exercise = ({
       if (exercise.codeSkeletons) {
         const codeSkeletons = exercise.codeSkeletons;
         for (let i = 0; i < codeSkeletons.length; i++) {
-          if (codeSkeletons[i].extension == activeLanguage.extension) {
+          if (codeSkeletons[i].extension === activeLanguage.extension) {
             setCode(codeSkeletons[i].code || "");
             return codeSkeletons[i].code;
           }
@@ -346,7 +316,7 @@ const Exercise = ({
     setCode(latestValidationData.program || "");
 
     for (let i = 0; i < programmingLanguages.length; i++) {
-      if (programmingLanguages[i].name == latestValidationData.language) {
+      if (programmingLanguages[i].name === latestValidationData.language) {
         setActiveLanguage(programmingLanguages[i]);
       }
     }
@@ -429,7 +399,7 @@ const Exercise = ({
         }
 
         // console.log("GOT", parsedLastSubmission);
-        if (parsedLastSubmission.submissionFeedback != undefined) {
+        if (parsedLastSubmission.submissionFeedback !== undefined) {
           setSubmissionFeedback(parsedLastSubmission.submissionFeedback);
           // console.log("setting feedback");
         } else {
@@ -439,7 +409,9 @@ const Exercise = ({
 
         if (parsedLastSubmission.language) {
           for (let i = 0; i < programmingLanguages.length; i++) {
-            if (programmingLanguages[i].name == parsedLastSubmission.language) {
+            if (
+              programmingLanguages[i].name === parsedLastSubmission.language
+            ) {
               setActiveLanguage(programmingLanguages[i]);
             }
           }
@@ -489,7 +461,7 @@ const Exercise = ({
   }, [exercise]);
 
   useEffect(() => {
-    if (submissionResult == Result.ACCEPT) {
+    if (submissionResult === Result.ACCEPT) {
       // console.log("Challenge refresh!");
       challengeRefetch();
     }
@@ -508,7 +480,7 @@ const Exercise = ({
           `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`,
           JSON.stringify({
             code: encryptWithAES(
-              typeof codeToSave != "undefined" ? codeToSave : code,
+              typeof codeToSave !== "undefined" ? codeToSave : code,
               keycloak.profile.email
             ),
             submissionFeedback,
@@ -523,101 +495,91 @@ const Exercise = ({
     }
   };
 
-  const [
-    getEvaluationById,
+  const [getEvaluationById] = useLazyQuery<getSubmissionByIdQuery>(
+    GET_SUBMISSION_BY_ID,
     {
-      loading: isEvaluationLoading,
-      data: evaluationData,
-      error: evaluationError,
-    },
-  ] = useLazyQuery<getSubmissionByIdQuery>(GET_SUBMISSION_BY_ID, {
-    onError(data) {
-      console.log("[GET EVALUATION BY ID ERROR]", data);
-    },
-    onCompleted(data) {
-      console.log("[GET EVALUATION BY ID]", data);
-    },
-    fetchPolicy: "network-only",
-  });
+      onError(data) {
+        console.log("[GET EVALUATION BY ID ERROR]", data);
+      },
+      onCompleted(data) {
+        console.log("[GET EVALUATION BY ID]", data);
+      },
+      fetchPolicy: "network-only",
+    }
+  );
 
-  const {
-    data: subEvaluationData,
-    loading: subEvaluationLoading,
-    error: subEvaluationError,
-  } = useSubscription<evaluationSubscription>(EVALUATION_SUBSCRIPTION, {
-    variables: { gameId },
-    onSubscriptionData: ({ subscriptionData }) => {
-      if (isWaitingForEvaluationResult) {
-        if (subscriptionData.data) {
-          setRestoreAvailable(true);
+  const { error: subEvaluationError } = useSubscription<evaluationSubscription>(
+    EVALUATION_SUBSCRIPTION,
+    {
+      variables: { gameId },
+      onSubscriptionData: ({ subscriptionData }) => {
+        if (isWaitingForEvaluationResult) {
+          if (subscriptionData.data) {
+            setRestoreAvailable(true);
 
-          const evaluationData =
-            subscriptionData.data.submissionEvaluatedStudent;
-          setSubmissionResult(evaluationData.result);
-          setSubmissionFeedback(evaluationData.feedback || "");
-          setValidationOutputs(null);
-          setWaitingForEvaluationResult(false);
+            const evaluationData =
+              subscriptionData.data.submissionEvaluatedStudent;
+            setSubmissionResult(evaluationData.result);
+            setSubmissionFeedback(evaluationData.feedback || "");
+            setValidationOutputs(null);
+            setWaitingForEvaluationResult(false);
 
-          saveSubmissionDataInLocalStorage(
-            evaluationData.feedback || "",
-            evaluationData.result,
-            false,
-            null
-          );
-        }
-      }
-    },
-  });
-
-  const {
-    data: subValidationData,
-    loading: subValidationLoading,
-    error: subValidationError,
-  } = useSubscription<validationSubscription>(VALIDATION_SUBSCRIPTION, {
-    variables: { gameId },
-    onSubscriptionData: ({ subscriptionData }) => {
-      if (isWaitingForValidationResult) {
-        console.log("Sub data", subscriptionData);
-
-        if (subscriptionData.data) {
-          setRestoreAvailable(true);
-          const validationData =
-            subscriptionData.data.validationProcessedStudent;
-
-          setValidationOutputs(validationData?.outputs);
-          setSubmissionFeedback(validationData?.feedback || "");
-          setWaitingForValidationResult(false);
-
-          if (validationData.result === Result.ACCEPT) {
-            setSubmissionResult(null);
-          } else {
-            setSubmissionResult(validationData.result);
+            saveSubmissionDataInLocalStorage(
+              evaluationData.feedback || "",
+              evaluationData.result,
+              false,
+              null
+            );
           }
-
-          saveSubmissionDataInLocalStorage(
-            validationData?.feedback || "",
-            validationData.result,
-            true,
-            validationData?.outputs
-          );
         }
-      }
-    },
-  });
+      },
+    }
+  );
 
-  const [
-    getValidationById,
+  const { error: subValidationError } = useSubscription<validationSubscription>(
+    VALIDATION_SUBSCRIPTION,
     {
-      loading: isValidationLoading,
-      data: validationData,
-      error: validationError,
-    },
-  ] = useLazyQuery<getValidationByIdQuery>(GET_VALIDATION_BY_ID, {
-    onCompleted(data) {
-      console.log("[GET VALIDATION BY ID]", data);
-    },
-    fetchPolicy: "network-only",
-  });
+      variables: { gameId },
+      onSubscriptionData: ({ subscriptionData }) => {
+        if (isWaitingForValidationResult) {
+          console.log("Sub data", subscriptionData);
+
+          if (subscriptionData.data) {
+            setRestoreAvailable(true);
+            const validationData =
+              subscriptionData.data.validationProcessedStudent;
+
+            setValidationOutputs(validationData?.outputs);
+            setSubmissionFeedback(validationData?.feedback || "");
+            setWaitingForValidationResult(false);
+
+            if (validationData.result === Result.ACCEPT) {
+              setSubmissionResult(null);
+            } else {
+              setSubmissionResult(validationData.result);
+            }
+
+            saveSubmissionDataInLocalStorage(
+              validationData?.feedback || "",
+              validationData.result,
+              true,
+              validationData?.outputs
+            );
+          }
+        }
+      },
+    }
+  );
+
+  const [getValidationById] = useLazyQuery<getValidationByIdQuery>(
+    GET_VALIDATION_BY_ID,
+    {
+      onCompleted(data) {
+        console.log("[GET VALIDATION BY ID]", data);
+      },
+      fetchPolicy: "network-only",
+    }
+  );
 
   const [evaluateSubmissionMutation] = useMutation(EVALUATE_SUBMISSION, {
     onError(data) {
@@ -770,7 +732,7 @@ const Exercise = ({
           >
             <CodeEditor
               language={activeLanguage}
-              code={code == "" ? getCodeSkeleton() : code}
+              code={code === "" ? getCodeSkeleton() : code}
               setCode={(code) => {
                 saveCodeToLocalStorage(code);
                 setCode(code);
@@ -804,9 +766,9 @@ const Exercise = ({
 //   height: 100%;
 //   width: 100%;
 //   background-color: ${({ terminalTheme }) =>
-//     terminalTheme == "dark" ? "#323232" : "white"};
+//     terminalTheme === "dark" ? "#323232" : "white"};
 //   color: ${({ terminalTheme }) =>
-//     terminalTheme == "dark" ? "white" : "#121212"};
+//     terminalTheme === "dark" ? "white" : "#121212"};
 //   padding: 12px;
 //   margin: 0px;
 //   font-size: 13px;

@@ -1,11 +1,10 @@
 import { Box, Button, Flex, useColorMode } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React from "react";
-import ReactHtmlParser from "react-html-parser";
+import { useTranslation } from "react-i18next";
+import ReactMarkdown from "react-markdown";
 import { FindChallenge_challenge_refs } from "../../generated/FindChallenge";
 import ScrollbarWrapper from "../ScrollbarWrapper";
-import ReactMarkdown from "react-markdown";
-import { useTranslation } from "react-i18next";
 
 const Statement = ({
   exercise,
@@ -26,9 +25,9 @@ const Statement = ({
         <MarkdownStyled
           h="100%"
           w="100%"
-          bgColor={colorMode == "dark" ? "gray.900" : "gray.100"}
+          bgColor={colorMode === "dark" ? "gray.900" : "gray.100"}
         >
-          <Box bgColor={colorMode == "dark" ? "gray.900" : "gray.100"} p={5}>
+          <Box bgColor={colorMode === "dark" ? "gray.900" : "gray.100"} p={5}>
             {exercise?.pdf ? (
               <Button
                 colorScheme="blue"

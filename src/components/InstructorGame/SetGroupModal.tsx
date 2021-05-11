@@ -1,19 +1,18 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   Button,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Select,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getGameByIdQuery_game_groups } from "../../generated/getGameByIdQuery";
-import { getGroupsQuery } from "../../generated/getGroupsQuery";
 import { setGroupForMultipleMutation } from "../../generated/setGroupForMultipleMutation";
 import { SET_GROUP_FOR_MULTIPLE } from "../../graphql/setGroupForMultiple";
 

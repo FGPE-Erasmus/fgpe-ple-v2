@@ -1,53 +1,33 @@
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
   Flex,
   Heading,
-  Input,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Spinner,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
-import withChangeAnimation from "../utilities/withChangeAnimation";
-import {
-  FetchResult,
-  gql,
-  MutationFunctionOptions,
-  useMutation,
-  useQuery,
-} from "@apollo/client";
-
-import { usersByRoleQuery } from "../generated/usersByRoleQuery";
 import { gameQuery } from "../generated/gameQuery";
-
-import { motion, AnimatePresence } from "framer-motion";
-import { table } from "console";
+import { getGroupsQuery } from "../generated/getGroupsQuery";
+import { usersByRoleQuery } from "../generated/usersByRoleQuery";
+import { ADD_MULTIPLE_TO_GAME } from "../graphql/addMultipleToGame";
+import { GET_GROUPS } from "../graphql/getGroups";
+import { REMOVE_MULTIPLE_FROM_GAME } from "../graphql/removeMultipleFromGame";
+import withChangeAnimation from "../utilities/withChangeAnimation";
+import GenerateInviteLinkModal from "./GenerateInviteLinkModal";
+import { useNotifications } from "./Notifications";
 import TableComponent from "./TableComponent";
 import ColumnFilter, {
   ColumnSelectFilter,
 } from "./TableComponent/ColumnFilter";
-import { useTranslation } from "react-i18next";
-import { Cell } from "react-table";
-import GenerateInviteLinkModal from "./GenerateInviteLinkModal";
-import { getGroupsQuery } from "../generated/getGroupsQuery";
-import { GET_GROUPS } from "../graphql/getGroups";
-import { AddIcon, ChevronDownIcon } from "@chakra-ui/icons";
-import { REMOVE_MULTIPLE_FROM_GAME } from "../graphql/removeMultipleFromGame";
-import { ADD_MULTIPLE_TO_GAME } from "../graphql/addMultipleToGame";
-import { useNotifications } from "./Notifications";
 
 interface ParamTypes {
   gameId: string;
@@ -97,25 +77,13 @@ const AddPlayersToGame = () => {
   const { t } = useTranslation();
 
   const { gameId } = useParams<ParamTypes>();
-  const [tableFilters, setTableFilters] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-  });
 
-  const [
-    addUsersToGame,
-    { data: addPlayerData, loading: addPlayerLoading },
-  ] = useMutation(ADD_MULTIPLE_TO_GAME);
+  const [addUsersToGame] = useMutation(ADD_MULTIPLE_TO_GAME);
 
-  const [
-    removeUsersFromGame,
-    { data: removePlayerData, loading: removePlayerLoading },
-  ] = useMutation(REMOVE_MULTIPLE_FROM_GAME);
+  const [removeUsersFromGame] = useMutation(REMOVE_MULTIPLE_FROM_GAME);
 
   const {
     data: dataGame,
-    error: errorGame,
     loading: loadingGame,
     refetch: refetchGame,
   } = useQuery<gameQuery>(GAME_QUERY, {
@@ -123,23 +91,21 @@ const AddPlayersToGame = () => {
     fetchPolicy: "no-cache",
   });
 
-  const {
-    data: dataGroups,
-    error: errorGroups,
-    loading: loadingGroups,
-  } = useQuery<getGroupsQuery>(GET_GROUPS, {
-    variables: { gameId },
-    fetchPolicy: "no-cache",
-  });
+  const { data: dataGroups, loading: loadingGroups } = useQuery<getGroupsQuery>(
+    GET_GROUPS,
+    {
+      variables: { gameId },
+      fetchPolicy: "no-cache",
+    }
+  );
 
-  const {
-    data: dataUsers,
-    error: errorUsers,
-    loading: loadingUsers,
-  } = useQuery<usersByRoleQuery>(USERS_BY_ROLE_QUERY, {
-    variables: { role: "student" },
-    fetchPolicy: "no-cache",
-  });
+  const { data: dataUsers, loading: loadingUsers } = useQuery<usersByRoleQuery>(
+    USERS_BY_ROLE_QUERY,
+    {
+      variables: { role: "student" },
+      fetchPolicy: "no-cache",
+    }
+  );
 
   const getSelectedUsersIds = () => {
     return selectedUsersRef.current.map((user: any) => user.id);
@@ -274,17 +240,17 @@ const AddPlayersToGame = () => {
                 disableSortBy: true,
                 filter: (rows: any[], id: string, filterValue: any) => {
                   return rows.filter((row) => {
-                    if (filterValue == "all") {
+                    if (filterValue === "all") {
                       return true;
                     }
                     const isEnrolled = !!dataGame.game.players.find(
                       (gamePlayer) => gamePlayer.user.id === row.original.id
                     );
-                    if (isEnrolled && filterValue == "true") {
+                    if (isEnrolled && filterValue === "true") {
                       return true;
                     }
 
-                    if (!isEnrolled && filterValue != "true") {
+                    if (!isEnrolled && filterValue !== "true") {
                       return true;
                     }
 

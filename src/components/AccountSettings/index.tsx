@@ -1,35 +1,14 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useKeycloak } from "@react-keycloak/web";
-import withChangeAnimation from "../../utilities/withChangeAnimation";
 import { Box, VStack } from "@chakra-ui/layout";
-import {
-  Text,
-  Button,
-  ButtonGroup,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  IconButton,
-  Input,
-  useEditableControls,
-  useColorMode,
-  Avatar,
-} from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/react";
+import { useKeycloak } from "@react-keycloak/web";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  CheckIcon,
-  CloseIcon,
-  EditIcon,
-  ViewIcon,
-  ViewOffIcon,
-} from "@chakra-ui/icons";
+import withChangeAnimation from "../../utilities/withChangeAnimation";
 import { useNotifications } from "../Notifications";
-import styled from "@emotion/styled";
-import PasswordChangeForm from "./PasswordChangeForm";
-import Editable from "./Editable";
 import ChangeAvatar from "./ChangeAvatar";
+import Editable from "./Editable";
+import PasswordChangeForm from "./PasswordChangeForm";
 
 const AccountSettings = () => {
   const { add: addNotification } = useNotifications();
@@ -44,11 +23,12 @@ const AccountSettings = () => {
       console.log("KK", keycloakUserProfile);
       setUserProfile(keycloakUserProfile);
     }
+
+    axios.defaults.headers.post["Authorization"] = `Bearer ${keycloak.token}`;
   };
 
   useEffect(() => {
     loadUserProfile();
-    axios.defaults.headers.post["Authorization"] = `Bearer ${keycloak.token}`;
   }, []);
 
   if (!userProfile.email) {

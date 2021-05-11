@@ -1,34 +1,27 @@
-import React, { useEffect, useState } from "react";
+import styled from "@emotion/styled";
+import { useKeycloak } from "@react-keycloak/web";
+import { AnimatePresence } from "framer-motion";
+import React, { useState } from "react";
 // import "./i18n/config";
 import { useTranslation } from "react-i18next";
-
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import styled from "@emotion/styled";
-import { AnimatePresence } from "framer-motion";
-
+import AccountSettings from "./components/AccountSettings";
+import AddPlayersToGame from "./components/AddPlayersToGame";
+import Challenge from "./components/Challenge";
 import Homepage from "./components/HomePage";
+import InstructorGame from "./components/InstructorGame";
+import MainLoading from "./components/MainLoading";
+import ManageGames from "./components/ManageGames";
+import Navbar from "./components/Navbar";
+import NotFound from "./components/NotFound";
+import { NotificationsProvider } from "./components/Notifications";
+import PlayerDetails from "./components/PlayerDetails";
+import Profile from "./components/Profile";
 // import MainLoading from "./components/MainLoading";
 import ProfileInGame from "./components/ProfileInGame";
-import Challenge from "./components/Challenge";
-import PrivateRoute from "./utilities/PrivateRoute";
-
-import ZoomContext from "./context/ZoomContext";
-import StudentProfile from "./components/StudentProfile";
-import TeacherProfile from "./components/TeacherProfile";
-import Profile from "./components/Profile";
-import InstructorGame from "./components/InstructorGame";
-import NotFound from "./components/NotFound";
-import AddPlayersToGame from "./components/AddPlayersToGame";
-import Alerts from "./components/Alerts";
-import { NotificationsProvider } from "./components/Notifications";
-import MainLoading from "./components/MainLoading";
-import { useKeycloak } from "@react-keycloak/web";
-import { gql } from "@apollo/client";
-import ManageGames from "./components/ManageGames";
 import UserDetails from "./components/UserDetails";
-import PlayerDetails from "./components/PlayerDetails";
-import AccountSettings from "./components/AccountSettings";
+import ZoomContext from "./context/ZoomContext";
+import PrivateRoute from "./utilities/PrivateRoute";
 
 const getZoomFactorFromLocalStorage = () => {
   const zoomFactor = localStorage.getItem("zoom");
@@ -47,7 +40,7 @@ function App() {
     getZoomFactorFromLocalStorage() || 1
   );
 
-  const { keycloak, initialized: keycloakInitialized } = useKeycloak();
+  const { initialized: keycloakInitialized } = useKeycloak();
 
   if (!ready || !keycloakInitialized) {
     return <MainLoading />;
@@ -58,21 +51,6 @@ function App() {
       <Route
         render={({ location }) => (
           <>
-            {/* <MainLoading /> */}
-            {/* <NavContext.Provider
-              value={{
-                activeChallenge: activeChallenge,
-                setActiveChallenge: setActiveChallenge,
-                activeGame: activeGame,
-                setActiveGame: setActiveGame,
-              }}
-            > */}
-            {/* <MainContext.Provider
-              value={{
-                playerId: null,
-                setPlayerId: setPlayerId,
-              }}
-            > */}
             <ZoomContext.Provider
               value={{
                 zoomFactor,
@@ -82,7 +60,6 @@ function App() {
               }}
             >
               <ZoomWrapper zoomFactor={zoomFactor}>
-                {/* <Alerts /> */}
                 <NotificationsProvider>
                   <Navbar />
                   <MainWrapper>

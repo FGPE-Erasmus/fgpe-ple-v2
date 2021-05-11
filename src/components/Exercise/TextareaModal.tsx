@@ -1,6 +1,8 @@
-import React from "react";
+import { CloseIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Flex,
+  IconButton,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -9,16 +11,10 @@ import {
   ModalHeader,
   ModalOverlay,
   Textarea,
-  CloseButton,
-  Flex,
-  IconButton,
-  Box,
 } from "@chakra-ui/react";
-import { useTranslation } from "react-i18next";
-
-import { CloseIcon } from "@chakra-ui/icons";
-
 import { AnimatePresence, motion } from "framer-motion";
+import React from "react";
+import { useTranslation } from "react-i18next";
 
 const TextareaWithButton = ({
   value,
@@ -92,8 +88,10 @@ const TextareaModal = ({
             }}
             placeholder={t("placeholders.provideTestValues")}
           />
-          {testValues.map((item, i) => {
-            if (i != 0) {
+          {testValues
+            .filter((item, i) => i !== 0)
+            .map((item, i) => {
+              i = i + 1;
               return (
                 <TextareaWithButton
                   key={i}
@@ -110,18 +108,8 @@ const TextareaModal = ({
                     setTestValues(newTestValues);
                   }}
                 />
-                // <Textarea
-                //   key={i}
-                //   value={testValues[i]}
-                //   onChange={(e) => {
-                //     let newTestValues = [...testValues];
-                //     newTestValues[i] = e.target.value;
-                //     setTestValues(newTestValues);
-                //   }}
-                // />
               );
-            }
-          })}
+            })}
         </ModalBody>
 
         <ModalFooter>

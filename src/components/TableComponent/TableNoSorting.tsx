@@ -1,35 +1,10 @@
-import {
-  Box,
-  Flex,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import React, { Fragment, useMemo } from "react";
-import {
-  useTable,
-  useSortBy,
-  useFilters,
-  useResizeColumns,
-  useBlockLayout,
-  useFlexLayout,
-  usePagination,
-  TableInstance,
-} from "react-table";
-import Pagination from "react-js-pagination";
-
-import {
-  TiArrowSortedDown,
-  TiArrowSortedUp,
-  TiArrowUnsorted,
-} from "react-icons/ti";
-import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "react-i18next";
+import { Box, Flex, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import Pagination from "react-js-pagination";
+import { useFilters, usePagination, useTable } from "react-table";
 import ScrollbarWrapper from "../ScrollbarWrapper";
 
 const TableComponent = ({
@@ -42,14 +17,14 @@ const TableComponent = ({
   dontRecomputeChange?: boolean;
 }) => {
   const { i18n } = useTranslation();
-  const columns = useMemo(() => columnsProp, [
-    dontRecomputeChange ? null : columnsProp,
-    i18n.language,
-  ]);
-  const data = useMemo(() => dataProp, [
-    dontRecomputeChange ? null : dataProp,
-    i18n.language,
-  ]);
+  const columns = useMemo(
+    () => columnsProp,
+    [dontRecomputeChange ? null : columnsProp, i18n.language]
+  );
+  const data = useMemo(
+    () => dataProp,
+    [dontRecomputeChange ? null : dataProp, i18n.language]
+  );
 
   const tableInstance = useTable(
     {
@@ -60,12 +35,8 @@ const TableComponent = ({
     usePagination
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-  } = tableInstance;
+  const { getTableProps, getTableBodyProps, headerGroups, prepareRow } =
+    tableInstance;
 
   const { page, state, gotoPage }: any = tableInstance;
   const { pageSize, pageIndex } = state;

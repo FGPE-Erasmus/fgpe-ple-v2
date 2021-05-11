@@ -1,4 +1,4 @@
-import { ViewOffIcon, ViewIcon } from "@chakra-ui/icons";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -7,9 +7,9 @@ import {
   FormLabel,
   IconButton,
   Input,
+  Text,
   useColorMode,
   VStack,
-  Text,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -66,7 +66,7 @@ const PasswordChangeForm = ({
 
   const submitPasswordChange = async () => {
     setLoading(true);
-    if (newPassword == confirmationPassword) {
+    if (newPassword === confirmationPassword) {
       try {
         onSubmit({
           currentPassword,
@@ -88,7 +88,7 @@ const PasswordChangeForm = ({
       </Text>
       <Box
         border="1px solid"
-        borderColor={colorMode == "dark" ? "gray.700" : "gray.200"}
+        borderColor={colorMode === "dark" ? "gray.700" : "gray.200"}
         width="100%"
         borderRadius={4}
         padding={4}
@@ -111,7 +111,7 @@ const PasswordChangeForm = ({
             <FormLabel>{t("Repeat new password")}</FormLabel>
             <PasswordInput
               isInvalid={
-                newPassword != confirmationPassword &&
+                newPassword !== confirmationPassword &&
                 confirmationPassword.length > 1
               }
               value={confirmationPassword}

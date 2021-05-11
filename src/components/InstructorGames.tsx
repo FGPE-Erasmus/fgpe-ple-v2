@@ -1,4 +1,3 @@
-import { gql, useQuery } from "@apollo/client";
 import {
   Alert,
   AlertIcon,
@@ -6,21 +5,15 @@ import {
   Button,
   Flex,
   Heading,
-  Skeleton,
-  StackDivider,
   useColorModeValue,
-  useDisclosure,
-  VStack,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 import { getInstructorGames } from "../generated/getInstructorGames";
-import AddGameModal from "./AddGameModal";
-import Error from "./Error";
-import ColumnFilter from "./TableComponent/ColumnFilter";
 import TableComponent from "./TableComponent";
+import ColumnFilter from "./TableComponent/ColumnFilter";
 
 const InstructorGames = ({
   data,

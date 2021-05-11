@@ -2,15 +2,11 @@ import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { getInstructorGames } from "../generated/getInstructorGames";
+import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
-import GamesList from "./GamesList";
+import Error from "./Error";
 import InstructorGames from "./InstructorGames";
 import TeacherStudents from "./TeacherStudents";
-import Error from "./Error";
-import {
-  checkIfConnectionAborted,
-  SERVER_ERRORS,
-} from "../utilities/ErrorMessages";
 
 const INSTRUCTOR_GAMES = gql`
   query getInstructorGames {

@@ -1,15 +1,14 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import {
-  Flex,
   Avatar,
-  useColorMode,
   Box,
   Button,
-  Text,
+  Flex,
   IconButton,
+  Text,
+  useColorMode,
 } from "@chakra-ui/react";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const ChangeAvatar = ({
@@ -49,7 +48,7 @@ const ChangeAvatar = ({
         alignItems="center"
         width="100%"
         border="1px solid"
-        borderColor={colorMode == "dark" ? "gray.700" : "gray.200"}
+        borderColor={colorMode === "dark" ? "gray.700" : "gray.200"}
         borderRadius={4}
       >
         <Box width={7 / 8}>
