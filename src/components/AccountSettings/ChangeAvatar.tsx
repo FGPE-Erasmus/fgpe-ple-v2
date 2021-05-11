@@ -67,6 +67,7 @@ const ChangeAvatar = ({
                   await changeAvatar({ avatarDataURL: imageLoaded.toString() });
                   loadUserInfo();
                   setLoading(false);
+                  setImageLoaded("");
                 }}
               >
                 {t("Submit")}

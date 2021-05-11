@@ -53,7 +53,7 @@ const AccountSettings = () => {
     axios.defaults.headers.post["Authorization"] = `Bearer ${keycloak.token}`;
   }, []);
 
-  if (!userInfo.family_name) {
+  if (!userInfo.email) {
     return <span>{t("Loading")}</span>;
   }
 
@@ -111,7 +111,13 @@ const AccountSettings = () => {
     try {
       await axios.post(
         `${process.env.REACT_APP_KEYCLOAK_URL}/realms/${keycloak.realm}/account/`,
-        params
+        {
+          firstName: userInfo.given_name,
+          lastName: userInfo.family_name,
+          attributes: {
+            params,
+          },
+        }
       );
     } catch (err) {
       addNotification({
