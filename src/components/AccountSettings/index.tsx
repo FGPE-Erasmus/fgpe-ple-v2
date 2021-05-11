@@ -36,24 +36,22 @@ const AccountSettings = () => {
 
   const { keycloak } = useKeycloak();
   const { t } = useTranslation();
-  const [userInfo, setUserInfo] = useState<any>({});
+  const [userProfile, setUserProfile] = useState<any>({});
 
-  const loadUserInfo = async () => {
-    await keycloak.loadUserInfo();
-    if (keycloak.userInfo) {
-      console.log(keycloak.userInfo);
-      setUserInfo(
-        keycloak.userInfo as { given_name: string; family_name: string }
-      );
+  const loadUserProfile = async () => {
+    const keycloakUserProfile = await keycloak.loadUserProfile();
+    if (keycloakUserProfile) {
+      console.log("KK", keycloakUserProfile);
+      setUserProfile(keycloakUserProfile);
     }
   };
 
   useEffect(() => {
-    loadUserInfo();
+    loadUserProfile();
     axios.defaults.headers.post["Authorization"] = `Bearer ${keycloak.token}`;
   }, []);
 
-  if (!userInfo.email) {
+  if (!userProfile.email) {
     return <span>{t("Loading")}</span>;
   }
 
@@ -97,8 +95,8 @@ const AccountSettings = () => {
     await axios.post(
       `${process.env.REACT_APP_KEYCLOAK_URL}/realms/${keycloak.realm}/account/`,
       {
-        firstName: firstName ? firstName : userInfo.given_name,
-        lastName: lastName ? lastName : userInfo.family_name,
+        firstName: firstName ? firstName : userProfile.firstName,
+        lastName: lastName ? lastName : userProfile.lastName,
       }
     );
   };
@@ -112,10 +110,10 @@ const AccountSettings = () => {
       await axios.post(
         `${process.env.REACT_APP_KEYCLOAK_URL}/realms/${keycloak.realm}/account/`,
         {
-          firstName: userInfo.given_name,
-          lastName: userInfo.family_name,
+          firstName: userProfile.firstName,
+          lastName: userProfile.lastName,
           attributes: {
-            params,
+            ...params,
           },
         }
       );
@@ -143,26 +141,26 @@ const AccountSettings = () => {
 
       <VStack spacing={3}>
         <Editable
-          defaultValue={userInfo.given_name}
+          defaultValue={userProfile.firstName}
           label={t("First name")}
           onChange={async (value) => {
             await editUserDetails({ firstName: value });
-            setUserInfo({ ...userInfo, given_name: value });
+            setUserProfile({ ...userProfile, lastName: value });
           }}
         />
         <Editable
-          defaultValue={userInfo.family_name}
+          defaultValue={userProfile.lastName}
           label={t("Last name")}
           onChange={async (value) => {
             await editUserDetails({ lastName: value });
-            setUserInfo({ ...userInfo, family_name: value });
+            setUserProfile({ ...userProfile, lastName: value });
           }}
         />
 
         <ChangeAvatar
           changeAvatar={changeAvatar}
-          avatarDataURL={userInfo[process.env.REACT_APP_KEYCLOAK_AVATAR]}
-          loadUserInfo={loadUserInfo}
+          avatarDataURL={userProfile[process.env.REACT_APP_KEYCLOAK_AVATAR]}
+          loadUserProfile={loadUserProfile}
         />
 
         <PasswordChangeForm onSubmit={changePassword} />

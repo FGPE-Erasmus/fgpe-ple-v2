@@ -15,11 +15,11 @@ import { useTranslation } from "react-i18next";
 const ChangeAvatar = ({
   changeAvatar,
   avatarDataURL,
-  loadUserInfo,
+  loadUserProfile,
 }: {
   avatarDataURL?: string;
   changeAvatar: ({ avatarDataURL }: { avatarDataURL: string }) => Promise<void>;
-  loadUserInfo: () => void;
+  loadUserProfile: () => void;
 }) => {
   const { colorMode } = useColorMode();
   const [loading, setLoading] = useState(false);
@@ -65,7 +65,7 @@ const ChangeAvatar = ({
                 onClick={async () => {
                   setLoading(true);
                   await changeAvatar({ avatarDataURL: imageLoaded.toString() });
-                  loadUserInfo();
+                  loadUserProfile();
                   setLoading(false);
                   setImageLoaded("");
                 }}
