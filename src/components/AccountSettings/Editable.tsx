@@ -10,18 +10,24 @@ import React, { useState } from "react";
 
 interface EditableProps {
   defaultValue: string;
-  label: string;
+  label?: string;
   onChange: (value: string) => Promise<void>;
+  cleanOnEdit?: boolean;
 }
 
-const Editable = ({ defaultValue, label, onChange }: EditableProps) => {
+const Editable = ({
+  defaultValue,
+  label,
+  onChange,
+  cleanOnEdit,
+}: EditableProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(defaultValue);
   const [loading, setLoading] = useState(false);
 
   return (
     <FormControl>
-      <FormLabel>{label}</FormLabel>
+      {label && <FormLabel>{label}</FormLabel>}
       <Flex justifyContent="space-between">
         <Input
           value={value}
@@ -31,7 +37,10 @@ const Editable = ({ defaultValue, label, onChange }: EditableProps) => {
         {!isEditing ? (
           <IconButton
             marginLeft={2}
-            onClick={() => setIsEditing(true)}
+            onClick={() => {
+              cleanOnEdit && setValue("");
+              setIsEditing(true);
+            }}
             aria-label="Edit"
             icon={<EditIcon />}
           />

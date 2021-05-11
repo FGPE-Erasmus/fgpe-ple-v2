@@ -31,7 +31,6 @@ const ChangeAvatar = ({
     setFileName(file.name);
     const reader = new FileReader();
     reader.onloadend = function () {
-      //   console.log("RESULT", reader.result);
       setImageLoaded(reader.result || "");
     };
     reader.readAsDataURL(file);

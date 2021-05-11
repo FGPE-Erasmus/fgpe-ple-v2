@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import withChangeAnimation from "../../utilities/withChangeAnimation";
 import { useNotifications } from "../Notifications";
-import ChangeAvatar from "./ChangeAvatar";
+import ChangeAvatarURL from "./ChangeAvatarURL";
 import Editable from "./Editable";
 import PasswordChangeForm from "./PasswordChangeForm";
 
@@ -81,9 +81,34 @@ const AccountSettings = () => {
     );
   };
 
-  const changeAvatar = async ({ avatarDataURL }: { avatarDataURL: string }) => {
+  // const changeAvatar = async ({ avatarDataURL }: { avatarDataURL: string }) => {
+  //   const params = {
+  //     [process.env.REACT_APP_KEYCLOAK_AVATAR || "avatar"]: avatarDataURL,
+  //   };
+
+  //   try {
+  //     await axios.post(
+  //       `${process.env.REACT_APP_KEYCLOAK_URL}/realms/${keycloak.realm}/account/`,
+  //       {
+  //         firstName: userProfile.firstName,
+  //         lastName: userProfile.lastName,
+  //         attributes: {
+  //           ...params,
+  //         },
+  //       }
+  //     );
+  //   } catch (err) {
+  //     addNotification({
+  //       status: "error",
+  //       title: t("error.title"),
+  //       description: t("error.description"),
+  //     });
+  //   }
+  // };
+
+  const changeAvatarURL = async ({ avatarURL }: { avatarURL: string }) => {
     const params = {
-      [process.env.REACT_APP_KEYCLOAK_AVATAR || "avatar"]: avatarDataURL,
+      [process.env.REACT_APP_KEYCLOAK_AVATAR || "avatar"]: avatarURL,
     };
 
     try {
@@ -97,6 +122,8 @@ const AccountSettings = () => {
           },
         }
       );
+
+      loadUserProfile();
     } catch (err) {
       addNotification({
         status: "error",
@@ -137,9 +164,18 @@ const AccountSettings = () => {
           }}
         />
 
-        <ChangeAvatar
+        {/* <ChangeAvatar
           changeAvatar={changeAvatar}
           avatarDataURL={userProfile[process.env.REACT_APP_KEYCLOAK_AVATAR]}
+          loadUserProfile={loadUserProfile}
+        /> */}
+
+        <ChangeAvatarURL
+          changeAvatar={changeAvatarURL}
+          avatarURL={
+            userProfile.attributes[process.env.REACT_APP_KEYCLOAK_AVATAR] &&
+            userProfile.attributes[process.env.REACT_APP_KEYCLOAK_AVATAR][0]
+          }
           loadUserProfile={loadUserProfile}
         />
 
