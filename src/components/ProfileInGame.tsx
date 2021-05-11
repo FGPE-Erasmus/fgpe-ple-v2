@@ -14,12 +14,15 @@ import styled from "@emotion/styled";
 import { State } from "../generated/globalTypes";
 import NavContext from "../context/NavContext";
 
+import { HiLockClosed, HiLockOpen, HiOutlineLockOpen } from "react-icons/hi";
+
 import {
   Progress,
   Text,
   Heading,
   Box,
   useColorModeValue,
+  Icon,
 } from "@chakra-ui/react";
 import { LockIcon, CheckIcon } from "@chakra-ui/icons";
 import { useParams } from "react-router-dom";
@@ -166,11 +169,18 @@ const ProfileInGame = () => {
       </Heading>
       <Box>
         {dataProfile.profileInGame.learningPath.map((learningPath, i) => {
+          if (learningPath.state == State.HIDDEN) {
+            return;
+          }
+
           return (
             !learningPath.challenge.parentChallenge && (
               <ParentChallenge
                 key={i}
-                available={learningPath.state == State.AVAILABLE}
+                available={
+                  learningPath.state == State.AVAILABLE ||
+                  learningPath.state == State.OPENED
+                }
                 withoutChildren={isChallengeWithoutChildren(
                   getChallengeChildren(
                     learningPath.challenge,
@@ -182,8 +192,12 @@ const ProfileInGame = () => {
                   (learningPath.progress == 1 ? (
                     <CheckIcon w={6} h={6} m={4} float="right" />
                   ) : (
-                    <LockIcon w={6} h={6} m={4} float="right" />
+                    <Icon w={6} h={6} m={4} float="right" as={HiLockClosed} />
                   ))}
+
+                {learningPath.state == State.OPENED && (
+                  <Icon w={6} h={6} m={4} float="right" as={HiLockOpen} />
+                )}
 
                 {!isChallengeWithoutChildren(
                   getChallengeChildren(
