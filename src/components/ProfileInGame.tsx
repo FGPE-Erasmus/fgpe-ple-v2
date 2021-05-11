@@ -189,6 +189,7 @@ const ProfileInGame = () => {
                 )}
               >
                 {learningPath.state != State.AVAILABLE &&
+                  learningPath.state != State.OPENED &&
                   (learningPath.progress == 1 ? (
                     <CheckIcon w={6} h={6} m={4} float="right" />
                   ) : (
@@ -265,7 +266,7 @@ const ProfileInGame = () => {
                       description={
                         learningPath.challenge.description
                           ? learningPath.challenge.description
-                          : "No description"
+                          : t("No description")
                       }
                     />
                   </Link>
