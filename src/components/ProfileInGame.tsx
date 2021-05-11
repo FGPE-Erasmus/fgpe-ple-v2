@@ -1,37 +1,29 @@
+import { gql, useQuery } from "@apollo/client";
+import {
+  Box,
+  Heading,
+  Icon,
+  Progress,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import styled from "@emotion/styled";
 import React, { useContext } from "react";
-import withChangeAnimation from "../utilities/withChangeAnimation";
-import { useQuery, gql } from "@apollo/client";
-import Error from "./Error";
-
+import { useTranslation } from "react-i18next";
+import { BiCheck, BiCircle, BiXCircle } from "react-icons/bi";
+import { HiLockClosed, HiLockOpen } from "react-icons/hi";
+import { Link, useParams } from "react-router-dom";
+import NavContext from "../context/NavContext";
+import { State } from "../generated/globalTypes";
 import {
   ProfileInGameQuery,
   ProfileInGameQuery_profileInGame_learningPath,
   ProfileInGameQuery_profileInGame_learningPath_challenge_parentChallenge,
 } from "../generated/ProfileInGameQuery";
-
-import { Link } from "react-router-dom";
-import styled from "@emotion/styled";
-import { State } from "../generated/globalTypes";
-import NavContext from "../context/NavContext";
-
-import { HiLockClosed, HiLockOpen, HiOutlineLockOpen } from "react-icons/hi";
-
-import {
-  Progress,
-  Text,
-  Heading,
-  Box,
-  useColorModeValue,
-  Icon,
-} from "@chakra-ui/react";
-import { LockIcon, CheckIcon } from "@chakra-ui/icons";
-import { useParams } from "react-router-dom";
+import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
+import withChangeAnimation from "../utilities/withChangeAnimation";
+import Error from "./Error";
 import RankingTable from "./RankingTable";
-import { useTranslation } from "react-i18next";
-import {
-  checkIfConnectionAborted,
-  SERVER_ERRORS,
-} from "../utilities/ErrorMessages";
 
 interface ParamTypes {
   gameId: string;
@@ -124,6 +116,34 @@ const isChallengeWithoutChildren = (children: any) => {
   }
 };
 
+const getIconForLearningPathState = (state: State) => {
+  switch (state) {
+    case State.AVAILABLE:
+      return BiCircle;
+
+    case State.COMPLETED:
+      return BiCheck;
+
+    case State.FAILED:
+      return BiXCircle;
+
+    case State.HIDDEN:
+      return HiLockClosed;
+
+    case State.LOCKED:
+      return HiLockClosed;
+
+    case State.OPENED:
+      return HiLockOpen;
+
+    case State.REJECTED:
+      return HiLockClosed;
+
+    default:
+      return BiCircle;
+  }
+};
+
 const ProfileInGame = () => {
   const { setActiveChallenge } = useContext(NavContext);
   const { gameId } = useParams<ParamTypes>();
@@ -169,7 +189,10 @@ const ProfileInGame = () => {
       </Heading>
       <Box>
         {dataProfile.profileInGame.learningPath.map((learningPath, i) => {
-          if (learningPath.state == State.HIDDEN) {
+          if (
+            learningPath.state === State.HIDDEN ||
+            learningPath.state === State.REJECTED
+          ) {
             return;
           }
 
@@ -177,10 +200,7 @@ const ProfileInGame = () => {
             !learningPath.challenge.parentChallenge && (
               <ParentChallenge
                 key={i}
-                available={
-                  learningPath.state == State.AVAILABLE ||
-                  learningPath.state == State.OPENED
-                }
+                available={learningPath.state !== State.LOCKED}
                 withoutChildren={isChallengeWithoutChildren(
                   getChallengeChildren(
                     learningPath.challenge,
@@ -188,17 +208,15 @@ const ProfileInGame = () => {
                   )
                 )}
               >
-                {learningPath.state != State.AVAILABLE &&
-                  learningPath.state != State.OPENED &&
-                  (learningPath.progress == 1 ? (
-                    <CheckIcon w={6} h={6} m={4} float="right" />
-                  ) : (
-                    <Icon w={6} h={6} m={4} float="right" as={HiLockClosed} />
-                  ))}
-
-                {learningPath.state == State.OPENED && (
-                  <Icon w={6} h={6} m={4} float="right" as={HiLockOpen} />
-                )}
+                {
+                  <Icon
+                    w={6}
+                    h={6}
+                    m={4}
+                    float="right"
+                    as={getIconForLearningPathState(learningPath.state)}
+                  />
+                }
 
                 {!isChallengeWithoutChildren(
                   getChallengeChildren(
