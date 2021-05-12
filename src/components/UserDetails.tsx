@@ -117,7 +117,7 @@ const UserDetails = () => {
         <TableComponent
           onRowClick={(row: allGameProfilesQuery_allGameProfiles) => {
             history.push({
-              pathname: `/teacher/player-details/${row.user.id}/${row.id}`,
+              pathname: `/teacher/player-details/${row.user.id}/${row.game.id}`,
             });
           }}
           columns={[

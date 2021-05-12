@@ -1,4 +1,9 @@
 {
+  "Change group": "Zmień grupę",
+  "User profile": "Profil użytkownika",
+  "submissions": "Ewaluacje",
+  "validations": "Walidacje",
+  "All game profiles": "Wszystkie profile gracza",
   "Hints": "Wskazówki",
   "avatarLink": "Link do zdjęcia",
   "Open PDF statement": "Otwórz zawartość PDF",
@@ -163,6 +168,8 @@
     "email": "jan@kowalski.pl"
   },
   "success": {
+    "title": "Sukces!",
+    "description": "Wybrana operacja została zakończona pomyślnie.",
     "addGroup": {
       "title": "Pomyślnie dodano nową grupę!",
       "description": "Świetnie! Możesz teraz dodać do niej graczy za pomocą automatycznego przypisana lub zrobić to manualnie."

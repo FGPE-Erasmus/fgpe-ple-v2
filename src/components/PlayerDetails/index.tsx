@@ -1,0 +1,153 @@
+import { useMutation, useQuery } from "@apollo/client";
+import { Box, Button, Divider, Flex, Heading, HStack } from "@chakra-ui/react";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Link, useHistory, useParams } from "react-router-dom";
+import { getPlayerQuery } from "../../generated/getPlayerQuery";
+import { GET_PLAYER } from "../../graphql/getPlayer";
+import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
+import withChangeAnimation from "../../utilities/withChangeAnimation";
+import DetailsCard from "../DetailsCard";
+import Error from "../Error";
+import TableComponent from "../TableComponent";
+import ColumnFilter from "../TableComponent/ColumnFilter";
+import PlayerAttemptsTable from "./PlayerAttemptsTable";
+import PlayerRewards from "./PlayerRewards";
+import { REMOVE_SINGLE_FROM_GAME } from "../../graphql/removeSingleFromGame";
+import { useNotifications } from "../Notifications";
+
+/** Returns page with game player details such as submissions, validations, submitted code, code results etc.
+ *  Needs userId and gameId url params
+ */
+const PlayerDetails = () => {
+  const { add: addNotification } = useNotifications();
+  const history = useHistory();
+  const { t } = useTranslation();
+  const { userId, gameId } = useParams<{ userId: string; gameId: string }>();
+
+  const [removeFromGame, { loading: removeSingleLoading }] = useMutation(
+    REMOVE_SINGLE_FROM_GAME
+  );
+
+  const {
+    data: playerData,
+    error: playerError,
+    loading: playerLoading,
+  } = useQuery<getPlayerQuery>(GET_PLAYER, {
+    variables: { userId, gameId },
+    skip: !userId || !gameId,
+  });
+
+  if (!userId || !gameId) {
+    return <Error />;
+  }
+
+  if (!playerLoading && playerError) {
+    const isServerConnectionError = checkIfConnectionAborted(playerError);
+
+    if (isServerConnectionError) {
+      return <Error serverConnectionError />;
+    } else {
+      return <Error errorContent={JSON.stringify(playerError)} />;
+    }
+  }
+
+  if (playerLoading || !playerData) {
+    return <Box>{t("Loading")}</Box>;
+  }
+
+  return (
+    <Box>
+      <Flex justifyContent="space-between" alignItems="center" marginBottom={4}>
+        <Heading as="h3" size="md">
+          {t("Game profile")}: {playerData.player.user.firstName}{" "}
+          {playerData.player.user.lastName}
+        </Heading>
+
+        <HStack spacing={2}>
+          <Button
+            isLoading={removeSingleLoading}
+            onClick={async () => {
+              try {
+                await removeFromGame({
+                  variables: {
+                    userId,
+                    gameId,
+                  },
+                });
+
+                history.push({
+                  pathname: `/teacher/game/${gameId}`,
+                });
+
+                addNotification({
+                  status: "success",
+                  title: t("success.title"),
+                  description: t("success.description"),
+                });
+              } catch (err) {
+                addNotification({
+                  status: "error",
+                  title: t("error.title"),
+                  description: t("error.description"),
+                });
+
+                console.log(err);
+              }
+            }}
+          >
+            {t("Remove from the game")}
+          </Button>
+          <Button>{t("Change group")}</Button>
+          <Link to={`/teacher/student-details/${userId}`}>
+            <Button>{t("User profile")}</Button>
+          </Link>
+        </HStack>
+      </Flex>
+
+      <Flex flexDirection={{ base: "column", md: "row" }}>
+        <Box width="100%" marginRight={{ base: 0, md: 2 }}>
+          <Link to={`/teacher/game/${gameId}`}>
+            <DetailsCard
+              title="Game"
+              content={playerData.player.game.name}
+              active
+            />
+          </Link>
+        </Box>
+
+        <DetailsCard
+          title="Group"
+          content={playerData.player.group?.name || "-"}
+        />
+        <DetailsCard
+          title="Number of submissions"
+          content={playerData.player.stats.nrOfSubmissions.toString()}
+        />
+        <DetailsCard
+          title="Number of validations"
+          content={playerData.player.stats.nrOfValidations.toString()}
+        />
+      </Flex>
+
+      <Divider marginBottom={8} />
+
+      <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
+        {t("submissions")}
+      </Heading>
+      <PlayerAttemptsTable playerData={playerData} />
+
+      <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
+        {t("validations")}
+      </Heading>
+      <PlayerAttemptsTable playerData={playerData} isValidationsTable />
+
+      <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
+        {t("Rewards")}
+      </Heading>
+      <PlayerRewards playerData={playerData} />
+    </Box>
+  );
+};
+
+export default withChangeAnimation(PlayerDetails);

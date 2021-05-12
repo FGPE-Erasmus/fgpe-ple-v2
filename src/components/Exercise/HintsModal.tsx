@@ -37,11 +37,13 @@ const HintsModal = ({
         <ModalCloseButton />
         <ModalBody>
           {playerHints.map((hint, i) => {
-            <SingleHint
-              key={i}
-              title={hint.name}
-              description={hint.description}
-            />;
+            return (
+              <SingleHint
+                key={i}
+                title={hint.name}
+                description={hint.description}
+              />
+            );
           })}
         </ModalBody>
 

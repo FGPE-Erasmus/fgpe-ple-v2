@@ -1,4 +1,9 @@
 {
+  "Change group": "Change group",
+  "User profile": "User profile",
+  "submissions": "Submissions",
+  "validations": "Validations",
+  "All game profiles": "All game profiles",
   "Hints": "Hints",
   "avatarLink": "Link to your avatar",
   "Open PDF statement": "Open PDF statement",
@@ -163,6 +168,8 @@
     "email": "john@smith.com"
   },
   "success": {
+    "title": "Success!",
+    "description": "You request completed successfully.",
     "addGroup": {
       "title": "Successfully added your new group!",
       "description": "Great! You can auto-assign players or manually add them to your new group."

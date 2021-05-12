@@ -42,6 +42,9 @@ const Hints = ({
     // })
   }, [hints]);
 
+  // console.log("PLAYER HINTS DATA", playerHintsData);
+  // console.log("PLAYER HINTS ERROR", playerHintsError);
+
   const shouldDisplayHintsButton =
     hints.length > 0 ||
     (playerHintsData ? playerHintsData?.playerHints.length > 0 : false);

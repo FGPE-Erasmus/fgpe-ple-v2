@@ -105,11 +105,7 @@ const REWARD_RECEIVED_STUDENT_SUB = gql`
   }
 `;
 
-const Challenge = ({
-  location,
-}: {
-  location: { state: { gameId: string; challengeId: string } };
-}) => {
+const Challenge = () => {
   const { gameId, challengeId } = useParams<ParamTypes>();
   const { add: addNotification } = useNotifications();
 
@@ -124,10 +120,18 @@ const Challenge = ({
     useSubscription<rewardReceivedStudentSubscription>(
       REWARD_RECEIVED_STUDENT_SUB,
       {
+        skip: !gameId,
         variables: { gameId },
         onSubscriptionData: ({ subscriptionData }) => {
+          console.log("Got subscription data", subscriptionData);
+
           if (subscriptionData.data) {
             addNotification({
+              status:
+                subscriptionData.data.rewardReceivedStudent.reward.kind ===
+                RewardType.HINT
+                  ? "info"
+                  : "success",
               title: subscriptionData.data.rewardReceivedStudent.reward.name,
               description:
                 subscriptionData.data.rewardReceivedStudent.reward.description,

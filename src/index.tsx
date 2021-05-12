@@ -138,25 +138,23 @@ keycloak.onTokenExpired = () => {
 };
 
 ReactDOM.render(
-  <React.StrictMode>
-    <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
-      {/* <GlobalStyle /> */}
+  <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
+    {/* <GlobalStyle /> */}
 
-      <ColorModeScript initialColorMode={theme.config.lightTheme} />
-      <ReactKeycloakProvider
-        authClient={keycloak}
-        initOptions={{
-          onLoad: "check-sso",
-        }}
-        LoadingComponent={<MainLoading />}
-      >
-        <ApolloProvider client={client}>
-          <Suspense fallback="loading">
-            <App />
-          </Suspense>
-        </ApolloProvider>
-      </ReactKeycloakProvider>
-    </ChakraProvider>
-  </React.StrictMode>,
+    <ColorModeScript initialColorMode={theme.config.lightTheme} />
+    <ReactKeycloakProvider
+      authClient={keycloak}
+      initOptions={{
+        onLoad: "check-sso",
+      }}
+      LoadingComponent={<MainLoading />}
+    >
+      <ApolloProvider client={client}>
+        <Suspense fallback="loading">
+          <App />
+        </Suspense>
+      </ApolloProvider>
+    </ReactKeycloakProvider>
+  </ChakraProvider>,
   document.getElementById("root")
 );

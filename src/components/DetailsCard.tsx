@@ -1,3 +1,4 @@
+import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Badge, Flex, Heading, useColorMode } from "@chakra-ui/react";
 import React from "react";
 
@@ -6,11 +7,13 @@ const DetailsCard = ({
   content,
   flexDirection,
   badgeContent,
+  active,
 }: {
   title: string;
   content: string;
   flexDirection?: "column" | "row";
   badgeContent?: boolean;
+  active?: boolean;
 }) => {
   const { colorMode } = useColorMode();
 
@@ -27,11 +30,21 @@ const DetailsCard = ({
       direction={flexDirection ? flexDirection : "column"}
       justifyContent={flexDirection !== "row" ? "center" : "space-between"}
       alignItems={flexDirection !== "row" ? "flex-start" : "center"}
+      position="relative"
+      _hover={
+        active
+          ? { borderColor: colorMode === "dark" ? "gray.500" : "gray.400" }
+          : undefined
+      }
+      transition="border-color 0.5s"
     >
       <Heading as="h4" size="sm" fontSize={16}>
         {title}
       </Heading>
       {badgeContent ? <Badge>{content}</Badge> : content}
+      {active && (
+        <ChevronRightIcon position="absolute" fontSize={24} right={4} />
+      )}
     </Flex>
   );
 };

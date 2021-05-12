@@ -334,7 +334,7 @@ const InstructorGame = () => {
             loading={loading}
             onRowClick={(row: getGameByIdQuery_game_players) => {
               history.push({
-                pathname: `/teacher/player-details/${row.user.id}/${row.id}`,
+                pathname: `/teacher/player-details/${row.user.id}/${gameId}`,
               });
             }}
             selectableRows
