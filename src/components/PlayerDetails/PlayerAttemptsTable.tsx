@@ -27,44 +27,32 @@ const PlayerAttemptsTable = ({
         onRowClick={onRowClick}
         columns={[
           {
-            Header: t("Game"),
+            Header: t("Exercise"),
             accessor: "exerciseId",
             Filter: ({ column }: { column: any }) => (
-              <ColumnFilter
-                column={column}
-                placeholder={t("placeholders.name")}
-              />
+              <ColumnFilter column={column} placeholder={"abc"} />
             ),
           },
           {
-            Header: t("Game"),
+            Header: t("Language"),
             accessor: "language",
             Filter: ({ column }: { column: any }) => (
-              <ColumnFilter
-                column={column}
-                placeholder={t("placeholders.name")}
-              />
+              <ColumnFilter column={column} placeholder={"abc"} />
             ),
           },
           {
-            Header: t("Game"),
+            Header: t("Result"),
             accessor: "result",
             Filter: ({ column }: { column: any }) => (
-              <ColumnFilter
-                column={column}
-                placeholder={t("placeholders.name")}
-              />
+              <ColumnFilter column={column} placeholder={"abc"} />
             ),
           },
           {
-            Header: t("Game"),
+            Header: t("Submitted at"),
             accessor: ({ submittedAt }: { submittedAt: Date }) =>
               dayjs(submittedAt).format("lll"),
             Filter: ({ column }: { column: any }) => (
-              <ColumnFilter
-                column={column}
-                placeholder={t("placeholders.name")}
-              />
+              <ColumnFilter column={column} placeholder={"abc"} />
             ),
           },
         ]}

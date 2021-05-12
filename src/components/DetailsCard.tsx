@@ -9,6 +9,7 @@ const DetailsCard = ({
   badgeContent,
   active,
   noMargins,
+  darkerBorder,
 }: {
   title: string;
   content: string;
@@ -16,6 +17,7 @@ const DetailsCard = ({
   badgeContent?: boolean;
   active?: boolean;
   noMargins?: boolean;
+  darkerBorder?: boolean;
 }) => {
   const { colorMode } = useColorMode();
 
@@ -23,7 +25,13 @@ const DetailsCard = ({
     <Flex
       width="100%"
       border="1px solid"
-      borderColor={colorMode === "dark" ? "gray.800" : "gray.200"}
+      borderColor={
+        colorMode === "dark"
+          ? darkerBorder
+            ? "gray.800"
+            : "gray.700"
+          : "gray.200"
+      }
       padding={2}
       fontSize={14}
       margin={{ base: 0, md: noMargins ? 0 : 2 }}

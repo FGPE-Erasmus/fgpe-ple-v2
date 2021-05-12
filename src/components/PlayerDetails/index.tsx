@@ -145,7 +145,7 @@ const PlayerDetails = () => {
         <Box width="100%" marginRight={{ base: 0, md: 2 }}>
           <Link to={`/teacher/game/${gameId}`}>
             <DetailsCard
-              title="Game"
+              title={t("Game")}
               content={playerData.player.game.name}
               active
             />
@@ -153,15 +153,15 @@ const PlayerDetails = () => {
         </Box>
 
         <DetailsCard
-          title="Group"
+          title={t("Group")}
           content={playerData.player.group?.name || "-"}
         />
         <DetailsCard
-          title="Number of submissions"
+          title={t("Number of submissions")}
           content={playerData.player.stats.nrOfSubmissions.toString()}
         />
         <DetailsCard
-          title="Number of validations"
+          title={t("Number of validations")}
           content={playerData.player.stats.nrOfValidations.toString()}
         />
       </Flex>

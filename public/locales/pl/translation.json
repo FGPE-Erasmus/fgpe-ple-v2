@@ -1,4 +1,11 @@
 {
+  "Number of validations": "Liczba walidacji",
+  "Number of submissions": "Liczba ewaluacji",
+  "Group": "Grupa",
+  "Game profile": "Profil gracza",
+  "Exercise": "Ćwiczenie",
+  "Result": "Wynik",
+  "Submitted at": "Data przesłania",
   "Change group": "Zmień grupę",
   "User profile": "Profil użytkownika",
   "submissions": "Ewaluacje",
@@ -180,6 +187,10 @@
   "error": {
     "title": "Wystąpił nieoczekiwany błąd.",
     "description": "Spróbuj odświeżyć stronę. Skontaktuj się z administracją jeśli błąd będzie nadal występować.",
+    "teacherNotEnrolled": {
+      "title": "Nie jesteś przypisany/a do tej gry!",
+      "description": "Przypisz się do tej gry by uzyskać do niej dostęp."
+    },
     "passwordChange": {
       "title": "Wystąpił błąd podczas zmiany hasła",
       "description": "Sprawdź czy podano poprawne hasło. Skontaktuj się z administracją jeśli problem nadal występuje."

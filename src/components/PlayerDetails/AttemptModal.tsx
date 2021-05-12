@@ -79,21 +79,24 @@ const AttemptModal = ({
           >
             {activeAttempt?.exerciseId && (
               <DetailsCard
-                title="Exercise"
+                darkerBorder
+                title={t("Exercise")}
                 content={activeAttempt?.exerciseId}
                 noMargins
               />
             )}
             {activeAttempt?.language && (
               <DetailsCard
-                title="Language"
+                darkerBorder
+                title={t("Language")}
                 content={activeAttempt?.language}
                 noMargins
               />
             )}
             {activeAttempt?.result && (
               <DetailsCard
-                title="Result"
+                darkerBorder
+                title={t("Result")}
                 content={activeAttempt.result}
                 noMargins
               />
@@ -104,7 +107,8 @@ const AttemptModal = ({
             <Flex justifyContent="center" alignItems="center" marginTop={4}>
               <CalendarIcon marginRight={2} />
               <Text fontSize={14}>
-                Submitted at {dayjs(activeAttempt?.submittedAt).format("lll")}
+                {t("Submitted at")}{" "}
+                {dayjs(activeAttempt?.submittedAt).format("lll")}
               </Text>
             </Flex>
           )}

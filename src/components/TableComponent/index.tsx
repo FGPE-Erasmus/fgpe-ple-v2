@@ -240,7 +240,9 @@ const TableComponent: React.FC<TableComponentProps> = ({
                     <Td
                       {...cell.getCellProps()}
                       onClick={() =>
-                        cell.column.id != "selection" && onRowClick
+                        cell.column.id != "selection" &&
+                        cell.column.id.substring(0, 6) != "button" &&
+                        onRowClick
                           ? onRowClick(row.original)
                           : null
                       }

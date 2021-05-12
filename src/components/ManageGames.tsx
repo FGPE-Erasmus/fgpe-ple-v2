@@ -3,7 +3,7 @@ import { Box, Button, Flex, Heading, useDisclosure } from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { getAllAvailableGames } from "../generated/getAllAvailableGames";
 import { UNASSIGN_INSTRUCTOR } from "../graphql/unassignInstructor";
 import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
@@ -54,6 +54,7 @@ const REMOVE_GAME = gql`
 
 const ManageGames = () => {
   const { add: addNotification } = useNotifications();
+  const history = useHistory();
 
   const {
     data: availableGamesData,
@@ -133,7 +134,20 @@ const ManageGames = () => {
 
       <Box>
         <TableComponent
-          //   onClickFunc={(row) => {}}
+          onRowClick={(row) => {
+            const enrolled = memoizedRowChecking(row);
+            if (enrolled) {
+              history.push({
+                pathname: `/teacher/game/${row.id}`,
+              });
+            } else {
+              addNotification({
+                status: "warning",
+                title: t("error.teacherNotEnrolled.title"),
+                description: t("error.teacherNotEnrolled.description"),
+              });
+            }
+          }}
           columns={[
             {
               Header: t("table.gameName"),
@@ -161,6 +175,7 @@ const ManageGames = () => {
                 const enrolled = memoizedRowChecking(row);
                 return enrolled;
               },
+              id: "button-1",
               Cell: ({
                 value,
                 cell,
@@ -212,6 +227,7 @@ const ManageGames = () => {
             {
               Header: t("table.removeGame"),
               // accessor: "id",
+              id: "button-2",
               Cell: ({ cell, row }: { cell: any; row: any }) => (
                 <Button
                   size="sm"

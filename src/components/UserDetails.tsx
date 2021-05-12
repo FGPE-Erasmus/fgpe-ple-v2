@@ -125,30 +125,21 @@ const UserDetails = () => {
               Header: t("Game"),
               accessor: "game.name",
               Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.name")}
-                />
+                <ColumnFilter column={column} placeholder={"abc"} />
               ),
             },
             {
               Header: t("table.group"),
               accessor: "group.name",
               Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.name")}
-                />
+                <ColumnFilter column={column} placeholder={"abc"} />
               ),
             },
             {
               Header: t("points"),
               accessor: "points",
               Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.name")}
-                />
+                <ColumnFilter column={column} placeholder={"abc"} />
               ),
             },
             {
@@ -161,10 +152,7 @@ const UserDetails = () => {
                 }
               },
               Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.name")}
-                />
+                <ColumnFilter column={column} placeholder={"abc"} />
               ),
             },
             {
@@ -177,10 +165,7 @@ const UserDetails = () => {
                 }
               },
               Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.name")}
-                />
+                <ColumnFilter column={column} placeholder={"abc"} />
               ),
             },
             {
@@ -193,10 +178,7 @@ const UserDetails = () => {
                 }
               },
               Filter: ({ column }: { column: any }) => (
-                <ColumnFilter
-                  column={column}
-                  placeholder={t("placeholders.name")}
-                />
+                <ColumnFilter column={column} placeholder={"abc"} />
               ),
             },
           ]}

@@ -1,4 +1,8 @@
 {
+  "Game profile": "Game profile",
+  "Exercise": "Exercise",
+  "Result": "Result",
+  "Submitted at": "Submitted at",
   "Change group": "Change group",
   "User profile": "User profile",
   "submissions": "Submissions",
@@ -180,6 +184,10 @@
   "error": {
     "title": "An unexpected error has occured.",
     "description": "Try to refresh the page. Please contact administration if this error persists.",
+    "teacherNotEnrolled": {
+      "title": "You are not assigned to this game!",
+      "description": "Assign yourself to this game in order to access it."
+    },
     "passwordChange": {
       "title": "An error occured in the password change process",
       "description": "Check if you've provided correct credentials. Please contact administration if this error persists."
