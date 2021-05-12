@@ -13,15 +13,18 @@ dayjs.extend(LocalizedFormat);
 const PlayerAttemptsTable = ({
   playerData,
   isValidationsTable,
+  onRowClick,
 }: {
   playerData: getPlayerQuery;
   isValidationsTable?: boolean;
+  onRowClick?: (row: any) => void;
 }) => {
   const { t } = useTranslation();
 
   return (
     <Box>
       <TableComponent
+        onRowClick={onRowClick}
         columns={[
           {
             Header: t("Game"),

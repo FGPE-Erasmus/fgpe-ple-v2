@@ -48,7 +48,7 @@ const Terminal = ({
   );
 };
 
-const TerminalStyled = styled.div<{
+export const TerminalStyled = styled.div<{
   terminalTheme: string;
   terminalFontSize: string;
 }>`

@@ -1,9 +1,21 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Box, Button, Divider, Flex, Heading, HStack } from "@chakra-ui/react";
-import React from "react";
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Heading,
+  HStack,
+  useDisclosure,
+} from "@chakra-ui/react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { getPlayerQuery } from "../../generated/getPlayerQuery";
+import {
+  getPlayerQuery,
+  getPlayerQuery_player_submissions,
+  getPlayerQuery_player_validations,
+} from "../../generated/getPlayerQuery";
 import { GET_PLAYER } from "../../graphql/getPlayer";
 import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
 import withChangeAnimation from "../../utilities/withChangeAnimation";
@@ -15,15 +27,20 @@ import PlayerAttemptsTable from "./PlayerAttemptsTable";
 import PlayerRewards from "./PlayerRewards";
 import { REMOVE_SINGLE_FROM_GAME } from "../../graphql/removeSingleFromGame";
 import { useNotifications } from "../Notifications";
+import AttemptModal from "./AttemptModal";
 
 /** Returns page with game player details such as submissions, validations, submitted code, code results etc.
  *  Needs userId and gameId url params
  */
 const PlayerDetails = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { add: addNotification } = useNotifications();
   const history = useHistory();
   const { t } = useTranslation();
   const { userId, gameId } = useParams<{ userId: string; gameId: string }>();
+
+  const [activeAttempt, setActiveAttempt] =
+    useState<Partial<getPlayerQuery_player_validations>>();
 
   const [removeFromGame, { loading: removeSingleLoading }] = useMutation(
     REMOVE_SINGLE_FROM_GAME
@@ -37,6 +54,20 @@ const PlayerDetails = () => {
     variables: { userId, gameId },
     skip: !userId || !gameId,
   });
+
+  const onRowClick = (row: any) => {
+    setActiveAttempt({
+      exerciseId: row.exerciseId,
+      program: row.program,
+      result: row.result,
+      metrics: row.metrics,
+      submittedAt: row.submittedAt,
+      feedback: row.feedback,
+      language: row.language,
+      outputs: row.outputs ? row.outputs : undefined,
+    });
+    onOpen();
+  };
 
   if (!userId || !gameId) {
     return <Error />;
@@ -58,6 +89,11 @@ const PlayerDetails = () => {
 
   return (
     <Box>
+      <AttemptModal
+        onClose={onClose}
+        isOpen={isOpen}
+        activeAttempt={activeAttempt}
+      />
       <Flex justifyContent="space-between" alignItems="center" marginBottom={4}>
         <Heading as="h3" size="md">
           {t("Game profile")}: {playerData.player.user.firstName}{" "}
@@ -135,12 +171,16 @@ const PlayerDetails = () => {
       <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
         {t("submissions")}
       </Heading>
-      <PlayerAttemptsTable playerData={playerData} />
+      <PlayerAttemptsTable onRowClick={onRowClick} playerData={playerData} />
 
       <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
         {t("validations")}
       </Heading>
-      <PlayerAttemptsTable playerData={playerData} isValidationsTable />
+      <PlayerAttemptsTable
+        onRowClick={onRowClick}
+        playerData={playerData}
+        isValidationsTable
+      />
 
       <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
         {t("Rewards")}

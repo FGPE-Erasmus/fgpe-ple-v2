@@ -8,12 +8,14 @@ const DetailsCard = ({
   flexDirection,
   badgeContent,
   active,
+  noMargins,
 }: {
   title: string;
   content: string;
   flexDirection?: "column" | "row";
   badgeContent?: boolean;
   active?: boolean;
+  noMargins?: boolean;
 }) => {
   const { colorMode } = useColorMode();
 
@@ -21,11 +23,11 @@ const DetailsCard = ({
     <Flex
       width="100%"
       border="1px solid"
-      borderColor={colorMode === "dark" ? "gray.700" : "gray.200"}
+      borderColor={colorMode === "dark" ? "gray.800" : "gray.200"}
       padding={2}
       fontSize={14}
-      margin={{ base: 0, md: 2 }}
-      marginBottom={{ base: 2, md: 2 }}
+      margin={{ base: 0, md: noMargins ? 0 : 2 }}
+      marginBottom={{ base: 2, md: noMargins ? 0 : 2 }}
       borderRadius={4}
       direction={flexDirection ? flexDirection : "column"}
       justifyContent={flexDirection !== "row" ? "center" : "space-between"}
