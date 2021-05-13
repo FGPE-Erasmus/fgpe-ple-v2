@@ -28,12 +28,23 @@ import PlayerRewards from "./PlayerRewards";
 import { REMOVE_SINGLE_FROM_GAME } from "../../graphql/removeSingleFromGame";
 import { useNotifications } from "../Notifications";
 import AttemptModal from "./AttemptModal";
+import SetGroupForSingleModal from "./SetGroupForSingleModal";
 
 /** Returns page with game player details such as submissions, validations, submitted code, code results etc.
  *  Needs userId and gameId url params
  */
 const PlayerDetails = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenAttempt,
+    onOpen: onOpenAttempt,
+    onClose: onCloseAttempt,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenGroupSet,
+    onOpen: onOpenGroupSet,
+    onClose: onCloseGroupSet,
+  } = useDisclosure();
+
   const { add: addNotification } = useNotifications();
   const history = useHistory();
   const { t } = useTranslation();
@@ -50,9 +61,11 @@ const PlayerDetails = () => {
     data: playerData,
     error: playerError,
     loading: playerLoading,
+    refetch: playerRefetch,
   } = useQuery<getPlayerQuery>(GET_PLAYER, {
     variables: { userId, gameId },
     skip: !userId || !gameId,
+    fetchPolicy: "network-only",
   });
 
   const onRowClick = (row: any) => {
@@ -66,7 +79,7 @@ const PlayerDetails = () => {
       language: row.language,
       outputs: row.outputs ? row.outputs : undefined,
     });
-    onOpen();
+    onOpenAttempt();
   };
 
   if (!userId || !gameId) {
@@ -90,9 +103,17 @@ const PlayerDetails = () => {
   return (
     <Box>
       <AttemptModal
-        onClose={onClose}
-        isOpen={isOpen}
+        onClose={onCloseAttempt}
+        isOpen={isOpenAttempt}
         activeAttempt={activeAttempt}
+      />
+      <SetGroupForSingleModal
+        onClose={onCloseGroupSet}
+        isOpen={isOpenGroupSet}
+        groupsData={playerData.player.game.groups}
+        playerId={playerData.player.id}
+        gameId={gameId}
+        refetch={playerRefetch}
       />
       <Flex justifyContent="space-between" alignItems="center" marginBottom={4}>
         <Heading as="h3" size="md">
@@ -134,7 +155,7 @@ const PlayerDetails = () => {
           >
             {t("Remove from the game")}
           </Button>
-          <Button>{t("Change group")}</Button>
+          <Button onClick={onOpenGroupSet}>{t("Change group")}</Button>
           <Link to={`/teacher/student-details/${userId}`}>
             <Button>{t("User profile")}</Button>
           </Link>

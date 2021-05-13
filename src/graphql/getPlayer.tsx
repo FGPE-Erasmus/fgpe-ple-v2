@@ -8,6 +8,11 @@ export const GET_PLAYER = gql`
       game {
         id
         name
+        groups {
+          id
+          name
+          displayName
+        }
       }
 
       user {

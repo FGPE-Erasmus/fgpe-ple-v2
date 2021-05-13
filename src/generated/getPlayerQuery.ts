@@ -9,10 +9,18 @@ import { RewardType, Result } from "./globalTypes";
 // GraphQL query operation: getPlayerQuery
 // ====================================================
 
+export interface getPlayerQuery_player_game_groups {
+  __typename: "Group";
+  id: string;
+  name: string;
+  displayName: string | null;
+}
+
 export interface getPlayerQuery_player_game {
   __typename: "Game";
   id: string;
   name: string;
+  groups: getPlayerQuery_player_game_groups[];
 }
 
 export interface getPlayerQuery_player_user {
