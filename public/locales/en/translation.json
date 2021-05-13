@@ -179,11 +179,19 @@
     "addGroup": {
       "title": "Successfully added your new group!",
       "description": "Great! You can auto-assign players or manually add them to your new group."
+    },
+    "joinGameOrGroup": {
+      "title": "You've successfully joined the game - {{game}}",
+      "description": "Click here to redirect to the game."
     }
   },
   "error": {
     "title": "An unexpected error has occured.",
     "description": "Try to refresh the page. Please contact administration if this error persists.",
+    "joinGameOrGroup": {
+      "title": "There has been an error processing your invite link",
+      "description": "Check if the link you used is correct and not expired"
+    },
     "teacherNotEnrolled": {
       "title": "You are not assigned to this game!",
       "description": "Assign yourself to this game in order to access it."

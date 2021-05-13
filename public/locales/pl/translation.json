@@ -182,11 +182,19 @@
     "addGroup": {
       "title": "Pomyślnie dodano nową grupę!",
       "description": "Świetnie! Możesz teraz dodać do niej graczy za pomocą automatycznego przypisana lub zrobić to manualnie."
+    },
+    "joinGameOrGroup": {
+      "title": "Pomyślnie dołączyłeś/aś do gry - {{game}}",
+      "description": "Kliknij tutaj by przejść do gry."
     }
   },
   "error": {
     "title": "Wystąpił nieoczekiwany błąd.",
     "description": "Spróbuj odświeżyć stronę. Skontaktuj się z administracją jeśli błąd będzie nadal występować.",
+    "joinGameOrGroup": {
+      "title": "Wystąpił problem podczas próby dołączenia",
+      "description": "Sprawdź czy link nie został błędnie skopiowany i czy jest nadal ważny"
+    },
     "teacherNotEnrolled": {
       "title": "Nie jesteś przypisany/a do tej gry!",
       "description": "Przypisz się do tej gry by uzyskać do niej dostęp."

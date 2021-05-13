@@ -53,66 +53,57 @@ const GenerateInviteLinkModal = ({
   groupsData: getGroupsQuery;
   gameId: string;
 }) => {
+  const [loading, setLoading] = useState(false);
   const [groupId, setGroupId] = useState("");
   const { t } = useTranslation();
-
-  const [gameToken, setGameToken] = useState("");
-  const [groupToken, setGroupToken] = useState("");
 
   const [link, setLink] = useState("");
 
   useEffect(() => {
-    setGameToken("");
-    setGroupToken("");
     setLink("");
   }, [isOpen]);
 
-  const [
-    generateGameToken,
-    { data: gameTokenData, loading: gameTokenLoading },
-  ] = useMutation<generateGameTokenMutation>(GENERATE_GAME_TOKEN);
+  const [generateGameToken] =
+    useMutation<generateGameTokenMutation>(GENERATE_GAME_TOKEN);
 
-  const [
-    generateGroupToken,
-    { data: groupTokenData, loading: groupTokenLoading },
-  ] = useMutation<generateGroupTokenMutation>(GENERATE_GROUP_TOKEN);
+  const [generateGroupToken] =
+    useMutation<generateGroupTokenMutation>(GENERATE_GROUP_TOKEN);
 
   const generateTokens = async () => {
-    setGroupToken("");
-    setGameToken("");
+    setLoading(true);
+    setLink("");
 
-    await generateGameToken({
+    let gameToken = "";
+    let groupToken = "";
+
+    const generatedGameToken = await generateGameToken({
       variables: {
         gameId,
       },
     });
-    gameTokenData && setGameToken(gameTokenData.generateGameToken.token);
+
+    gameToken = generatedGameToken.data?.generateGameToken.token || "";
 
     if (groupId != "") {
-      await generateGroupToken({
+      const generatedGroupToken = await generateGroupToken({
         variables: {
           gameId,
           groupId,
         },
       });
 
-      groupTokenData && setGameToken(groupTokenData.generateGroupToken.token);
+      groupToken = generatedGroupToken.data?.generateGroupToken.token || "";
     }
 
-    if (gameTokenData) {
+    if (gameToken) {
       const generatedLink =
-        `${window.location.origin}${process.env.PUBLIC_URL}/enroll?game=${gameTokenData.generateGameToken.token}` +
-        (groupTokenData
-          ? `&group=${groupTokenData.generateGroupToken.token}`
-          : "");
+        `${window.location.origin}${process.env.PUBLIC_URL}/game/enroll/${gameToken}` +
+        (groupToken ? `/${groupToken}` : "");
 
-      console.log(
-        groupTokenData
-          ? `&group=${groupTokenData.generateGroupToken.token}`
-          : ""
-      );
       setLink(generatedLink);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -140,30 +131,26 @@ const GenerateInviteLinkModal = ({
           </FormControl>
 
           <AnimatePresence>
-            {!gameTokenLoading &&
-              !groupTokenLoading &&
-              gameTokenData &&
-              gameToken &&
-              link && (
-                <motion.div
-                  initial={{ opacity: 0, maxHeight: 0 }}
-                  animate={{ opacity: 1, maxHeight: 50 }}
-                  exit={{ opacity: 0, maxHeight: 0 }}
-                >
-                  <InputGroup mt={2}>
-                    <Input placeholder="Enter amount" isDisabled value={link} />
-                    <InputRightElement>
-                      <IconButton
-                        onClick={() => {
-                          navigator.clipboard.writeText(link);
-                        }}
-                        aria-label="Search database"
-                        icon={<CopyIcon />}
-                      />
-                    </InputRightElement>
-                  </InputGroup>
-                </motion.div>
-              )}
+            {link && (
+              <motion.div
+                initial={{ opacity: 0, maxHeight: 0 }}
+                animate={{ opacity: 1, maxHeight: 50 }}
+                exit={{ opacity: 0, maxHeight: 0 }}
+              >
+                <InputGroup mt={2}>
+                  <Input placeholder="Enter amount" value={link} readOnly />
+                  <InputRightElement>
+                    <IconButton
+                      onClick={() => {
+                        navigator.clipboard.writeText(link);
+                      }}
+                      aria-label="Search database"
+                      icon={<CopyIcon />}
+                    />
+                  </InputRightElement>
+                </InputGroup>
+              </motion.div>
+            )}
           </AnimatePresence>
         </ModalBody>
 
@@ -175,8 +162,7 @@ const GenerateInviteLinkModal = ({
             colorScheme="blue"
             mr={3}
             onClick={generateTokens}
-            disabled={gameTokenLoading || groupTokenLoading}
-            isLoading={gameTokenLoading || groupTokenLoading}
+            isLoading={loading}
           >
             {t("Generate")}
           </Button>

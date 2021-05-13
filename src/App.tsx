@@ -10,6 +10,7 @@ import AddPlayersToGame from "./components/AddPlayersToGame";
 import Challenge from "./components/Challenge";
 import Homepage from "./components/HomePage";
 import InstructorGame from "./components/InstructorGame";
+import JoinGameByToken from "./components/JoinGameByToken";
 import MainLoading from "./components/MainLoading";
 import ManageGames from "./components/ManageGames";
 import Navbar from "./components/Navbar";
@@ -131,6 +132,13 @@ function App() {
                           path="/profile/settings"
                           roles={["teacher", "student"]}
                           component={AccountSettings}
+                        />
+
+                        <PrivateRoute
+                          exact
+                          path="/game/enroll/:gameToken/:groupToken?"
+                          roles={["student"]}
+                          component={JoinGameByToken}
                         />
 
                         <Route component={NotFound} />
