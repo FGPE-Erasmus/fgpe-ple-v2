@@ -28,7 +28,7 @@ const SetGroupForSingleModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  groupsData: getPlayerQuery_player_game_groups[];
+  groupsData?: getPlayerQuery_player_game_groups[];
   playerId: string;
   gameId: string;
   refetch: () => Promise<any>;
@@ -94,13 +94,14 @@ const SetGroupForSingleModal = ({
             onChange={(e) => setGroupId(e.target.value)}
             placeholder={t("placeholders.chooseGroup")}
           >
-            {groupsData.map((group, i) => {
-              return (
-                <option value={group.id} key={i}>
-                  {group.displayName} ({group.name})
-                </option>
-              );
-            })}
+            {groupsData &&
+              groupsData.map((group, i) => {
+                return (
+                  <option value={group.id} key={i}>
+                    {group.displayName} ({group.name})
+                  </option>
+                );
+              })}
           </Select>
         </ModalBody>
 
@@ -110,7 +111,7 @@ const SetGroupForSingleModal = ({
             variant="outline"
             mr={3}
             onClick={removeFromGroup}
-            disabled={groupsData.length <= 0}
+            disabled={groupsData && groupsData.length <= 0}
           >
             {t("Remove from the group")}
           </Button>

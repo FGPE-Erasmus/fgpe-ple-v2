@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
 import {
   getPlayerQuery,
+  getPlayerQuery_player_game,
   getPlayerQuery_player_submissions,
   getPlayerQuery_player_validations,
 } from "../../generated/getPlayerQuery";

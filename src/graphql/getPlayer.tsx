@@ -13,6 +13,15 @@ export const GET_PLAYER = gql`
           name
           displayName
         }
+
+        challenges {
+          id
+          refs {
+            id
+            name
+            title
+          }
+        }
       }
 
       user {
