@@ -296,13 +296,21 @@ const InstructorGame = () => {
             badgeContent
             flexDirection="row"
             title={t("addGame.startDate")}
-            content={dayjs(gameData.game.startDate).format("DD/MM/YYYY")}
+            content={
+              gameData.game.startDate
+                ? dayjs(gameData.game.startDate).format("DD/MM/YYYY")
+                : "-"
+            }
           />
           <DetailsCard
             badgeContent
             flexDirection="row"
             title={t("addGame.endDate")}
-            content={dayjs(gameData.game.endDate).format("DD/MM/YYYY")}
+            content={
+              gameData.game.endDate
+                ? dayjs(gameData.game.endDate).format("DD/MM/YYYY")
+                : "-"
+            }
           />
           <DetailsCard
             badgeContent
