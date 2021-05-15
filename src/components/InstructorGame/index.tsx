@@ -8,6 +8,7 @@ import {
   Divider,
   Flex,
   Heading,
+  HStack,
   Menu,
   MenuButton,
   MenuItem,
@@ -37,7 +38,9 @@ import TableComponent from "../TableComponent";
 import ColumnFilter from "../TableComponent/ColumnFilter";
 import ActivitiesStats from "./ActivitiesStats";
 import AddGroupModal from "./AddGroupModal";
+import ChangeDetailsModal from "./ChangeDetailsModal";
 import SetGroupModal from "./SetGroupModal";
+import dayjs from "dayjs";
 
 interface ParamTypes {
   gameId: string;
@@ -46,6 +49,12 @@ interface ParamTypes {
 const InstructorGame = () => {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
+
+  const {
+    isOpen: isDetailsModalOpen,
+    onOpen: onDetailsModalOpen,
+    onClose: onDetailsModalClose,
+  } = useDisclosure();
 
   const {
     isOpen: isAddGroupModalOpen,
@@ -183,6 +192,15 @@ const InstructorGame = () => {
 
   return (
     <>
+      <ChangeDetailsModal
+        defaultStartDate={gameData.game.startDate}
+        defaultEndDate={gameData.game.endDate}
+        gameId={gameId}
+        isOpen={isDetailsModalOpen}
+        onClose={onDetailsModalClose}
+        isGamePrivate={gameData.game.private}
+        refetchGame={gameRefetch}
+      />
       <AddGroupModal
         isOpen={isAddGroupModalOpen}
         onClose={onAddGroupModalClose}
@@ -212,25 +230,26 @@ const InstructorGame = () => {
               {t("Game")}: {gameData.game.name}
             </Heading>
           </Box>
-          <Box>
+          <HStack>
             <Link
               to={{
                 pathname: "/profile",
               }}
             >
-              <Button marginRight={2} variant="outline">
-                {t("Back")}
-              </Button>
+              <Button variant="outline">{t("Back")}</Button>
             </Link>
+            <Button onClick={onDetailsModalOpen}>
+              {t("Change availability")}
+            </Button>
+
             <Link
               to={{
                 pathname: `/teacher/game/${gameId}/add-players`,
               }}
-              onClick={() => {}}
             >
               <Button>{t("Add or remove players")}</Button>
             </Link>
-          </Box>
+          </HStack>
         </Flex>
 
         <Flex
@@ -264,6 +283,32 @@ const InstructorGame = () => {
             flexDirection="row"
             title={"Number of players"}
             content={gameData.game.players.length.toString()}
+          />
+        </Flex>
+
+        <Flex
+          margin="auto"
+          width="100%"
+          justifyContent="space-between"
+          flexDirection={{ base: "column", md: "row" }}
+        >
+          <DetailsCard
+            badgeContent
+            flexDirection="row"
+            title={t("addGame.startDate")}
+            content={dayjs(gameData.game.startDate).format("DD/MM/YYYY")}
+          />
+          <DetailsCard
+            badgeContent
+            flexDirection="row"
+            title={t("addGame.endDate")}
+            content={dayjs(gameData.game.endDate).format("DD/MM/YYYY")}
+          />
+          <DetailsCard
+            badgeContent
+            flexDirection="row"
+            title={t("addGame.private")}
+            content={gameData.game.private ? t("Yes") : t("No")}
           />
         </Flex>
         <Divider marginBottom={50} />

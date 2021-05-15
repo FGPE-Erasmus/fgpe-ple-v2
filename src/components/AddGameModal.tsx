@@ -20,13 +20,15 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import dayjs from "dayjs";
+
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from "react-i18next";
 import { importGame } from "../generated/importGame";
 import { useNotifications } from "./Notifications";
+import dayjs from "dayjs";
+import StartAndEndDateInput from "./StartAndEndDateInput";
 dayjs.extend(customParseFormat);
 
 const IMPORT_GAME = gql`
@@ -64,6 +66,10 @@ const IMPORT_GAME = gql`
     }
   }
 `;
+
+export const isDateValid = (date: string) => {
+  return dayjs(date, "YYYY-MM-DD", true).isValid();
+};
 
 const AddGameModal = ({
   isOpen,
@@ -138,10 +144,6 @@ const AddGameModal = ({
   const [courseId, setCourseId] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
 
-  const isDateValid = (date: string) => {
-    return dayjs(date, "YYYY-MM-DD", true).isValid();
-  };
-
   const validateAndSetStartDate = (value: string) => {
     if (isDateValid(value)) {
       if (endDate) {
@@ -200,35 +202,18 @@ const AddGameModal = ({
               />
             </FormControl>
 
-            <Flex>
-              <FormControl paddingRight={1}>
-                <FormLabel id="start">{t("addGame.startDate")}</FormLabel>
-                <Input
-                  isInvalid={!!(startDateError && startDate)}
-                  value={startDate || ""}
-                  type="text"
-                  placeholder="YYYY-MM-DD"
-                  onChange={(e) => validateAndSetStartDate(e.target.value)}
-                />
-              </FormControl>
-
-              <FormControl paddingLeft={1}>
-                <FormLabel id="end">{t("addGame.endDate")}</FormLabel>
-                <Input
-                  isInvalid={!!(endDateError && endDate)}
-                  type="text"
-                  placeholder="YYYY-MM-DD"
-                  value={endDate}
-                  onChange={(e) => validateAndSetEndDate(e.target.value)}
-                />
-              </FormControl>
-            </Flex>
-
-            <Collapse in={!isEndLaterThanStart} animateOpacity>
-              <p style={{ color: "red", textAlign: "center" }}>
-                {t("addGame.error.startLaterThanEnd")}
-              </p>
-            </Collapse>
+            <StartAndEndDateInput
+              startDate={startDate}
+              endDate={endDate}
+              setStartDate={setStartDate}
+              setEndDate={setEndDate}
+              setEndDateError={setEndDateError}
+              setStartDateError={setStartDateError}
+              isEndLaterThanStart={isEndLaterThanStart}
+              setEndLaterThanStart={setEndLaterThanStart}
+              startDateError={startDateError}
+              endDateError={endDateError}
+            />
 
             <FormControl isRequired>
               <FormLabel id="engine">{t("addGame.evaluationEngine")}</FormLabel>

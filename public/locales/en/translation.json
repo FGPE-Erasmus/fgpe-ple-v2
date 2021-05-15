@@ -1,4 +1,5 @@
 {
+  "Change availability": "Change availability",
   "Game profile": "Game profile",
   "Exercise": "Exercise",
   "Result": "Result",
@@ -252,7 +253,8 @@
     "courseIdPlaceholder": "Unique course id",
     "wrongFileType": "Wrong file type",
     "dragFileOrClick": "Drag your file here, or click for file selection dialog",
-    "setPrivate": "Set private"
+    "setPrivate": "Set private",
+    "private": "Private"
   },
   "description": {
     "part1": "To get started, edit <1>src/App.js</1> and save to reload.",

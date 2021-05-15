@@ -1,4 +1,5 @@
 {
+  "Change availability": "Zmień dostępność",
   "Number of validations": "Liczba walidacji",
   "Number of submissions": "Liczba ewaluacji",
   "Group": "Grupa",
@@ -247,7 +248,8 @@
     "courseIdPlaceholder": "Unikalny identyfikator kursu",
     "wrongFileType": "Nieprawidłowe rozszerzenie pliku",
     "dragFileOrClick": "Przeciągnij plik tutaj lub kliknij, aby wyświetlić okno wyboru",
-    "setPrivate": "Gra prywatna"
+    "setPrivate": "Gra prywatna",
+    "private": "Prywatna"
   },
   "description": {
     "part1": "To get started, edit <1>src/App.js</1> and save to reload.",

@@ -76,6 +76,7 @@ export interface getGameByIdQuery_game {
   endDate: any | null;
   state: GameStateEnum;
   evaluationEngine: EvaluationEngine;
+  private: boolean;
   groups: getGameByIdQuery_game_groups[];
   challenges: getGameByIdQuery_game_challenges[];
   players: getGameByIdQuery_game_players[];
