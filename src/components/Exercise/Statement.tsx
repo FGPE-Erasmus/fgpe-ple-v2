@@ -1,7 +1,7 @@
 import { Box, Button, Flex, useColorMode } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { TFunction, useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import { FindChallenge_challenge_refs } from "../../generated/FindChallenge";
 import ScrollbarWrapper from "../ScrollbarWrapper";
@@ -50,7 +50,7 @@ const Statement = ({
               </Button>
             ) : (
               <ReactMarkdown allowDangerousHtml>
-                {getStatement(exercise)}
+                {getStatement(exercise, t)}
               </ReactMarkdown>
             )}
           </Box>
@@ -131,7 +131,7 @@ const MarkdownStyled = styled(Box)`
   code,
   kbd,
   samp {
-    color: lightgray;
+    color: gray;
     font-family: monospace, monospace;
     _font-family: "courier new", monospace;
     font-size: 0.98em;
@@ -196,15 +196,18 @@ const MarkdownStyled = styled(Box)`
   }
 `;
 
-export const getStatement = (exercise: FindChallenge_challenge_refs | null) => {
+export const getStatement = (
+  exercise: FindChallenge_challenge_refs | null,
+  tFunction: TFunction
+) => {
   if (!exercise) {
-    return "No description";
+    return tFunction("No description");
   }
 
   if (exercise.statement) {
     return exercise.statement;
   } else {
-    return "No description";
+    return tFunction("No description");
   }
 };
 
