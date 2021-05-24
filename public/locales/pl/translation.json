@@ -1,6 +1,10 @@
 {
   "Description": "Opis",
   "Kind": "Rodzaj",
+  "timeIsUp": {
+    "title": "Czas minął!",
+    "description": "Było szybko, ale trochę brakowało. Może następnym razem!"
+  },
   "Change availability": "Zmień dostępność",
   "Number of validations": "Liczba walidacji",
   "Number of submissions": "Liczba ewaluacji",

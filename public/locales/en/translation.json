@@ -1,6 +1,10 @@
 {
   "Description": "Description",
   "Kind": "Kind",
+  "timeIsUp": {
+    "title": "Time is up!",
+    "description": "You were coding fast, but not fast enough. Maybe next time!"
+  },
   "Change availability": "Change availability",
   "Game profile": "Game profile",
   "Exercise": "Exercise",

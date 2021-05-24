@@ -50,6 +50,9 @@ export interface FindChallenge_profileInGame_learningPath_refs {
 
 export interface FindChallenge_profileInGame_learningPath {
   __typename: "ChallengeStatus";
+  startedAt: any | null;
+  openedAt: any | null;
+  endedAt: any | null;
   refs: FindChallenge_profileInGame_learningPath_refs[];
 }
 

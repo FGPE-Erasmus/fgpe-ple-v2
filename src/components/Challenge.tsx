@@ -1,14 +1,15 @@
 import { gql, useQuery, useSubscription } from "@apollo/client";
 import { CheckIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React, { useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import {
   FindChallenge,
   FindChallenge_challenge_refs,
+  FindChallenge_profileInGame_learningPath,
 } from "../generated/FindChallenge";
-import { RewardType } from "../generated/globalTypes";
+import { Mode, RewardType, State } from "../generated/globalTypes";
 import {
   rewardReceivedStudentSubscription,
   rewardReceivedStudentSubscription_rewardReceivedStudent_reward,
@@ -19,6 +20,10 @@ import Error from "./Error";
 import Exercise from "./Exercise";
 import { useNotifications } from "./Notifications";
 import Countdown from "react-countdown";
+import { BiTimer } from "react-icons/bi";
+import { challengeStatusUpdatedStudentSub } from "../generated/challengeStatusUpdatedStudentSub";
+import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 
 interface ParamTypes {
   gameId: string;
@@ -50,6 +55,10 @@ const FIND_CHALLENGE = gql`
 
     profileInGame(gameId: $gameId) {
       learningPath {
+        startedAt
+        openedAt
+        endedAt
+
         refs {
           activity {
             id
@@ -67,29 +76,6 @@ const FIND_CHALLENGE = gql`
   }
 `;
 
-const checkIfSolved = (
-  challengeData: FindChallenge,
-  exercise: FindChallenge_challenge_refs | null
-) => {
-  let solved = false;
-
-  if (!exercise) {
-    return false;
-  }
-
-  challengeData.profileInGame.learningPath.map((learningPath) => {
-    return learningPath.refs.forEach((ref) => {
-      if (ref.activity?.id === exercise.id) {
-        if (ref.solved) {
-          solved = true;
-        }
-      }
-    });
-  });
-
-  return solved;
-};
-
 const REWARD_RECEIVED_STUDENT_SUB = gql`
   subscription rewardReceivedStudentSubscription($gameId: String!) {
     rewardReceivedStudent(gameId: $gameId) {
@@ -106,9 +92,28 @@ const REWARD_RECEIVED_STUDENT_SUB = gql`
   }
 `;
 
+const CHALLENGE_STATUS_UPDATED_STUDENT_SUB = gql`
+  subscription challengeStatusUpdatedStudentSub($gameId: String!) {
+    challengeStatusUpdatedStudent(gameId: $gameId) {
+      openedAt
+      endedAt
+      startedAt
+      state
+    }
+  }
+`;
+
 const Challenge = () => {
   const { gameId, challengeId } = useParams<ParamTypes>();
+  const { t } = useTranslation();
+
   const { add: addNotification } = useNotifications();
+  const [challengeStatus, setChallengeStatus] =
+    useState<{
+      startedAt: string;
+      endedAt: string;
+      openedAt: string;
+    }>();
 
   const [activeExercise, setActiveExercise] =
     useState<null | FindChallenge_challenge_refs>(null);
@@ -116,6 +121,39 @@ const Challenge = () => {
   const [hints, setHints] = useState<
     rewardReceivedStudentSubscription_rewardReceivedStudent_reward[]
   >([]);
+
+  const { error: subUpdatedChallengeStatusError } =
+    useSubscription<challengeStatusUpdatedStudentSub>(
+      CHALLENGE_STATUS_UPDATED_STUDENT_SUB,
+      {
+        skip: !gameId,
+        variables: { gameId },
+        onSubscriptionData: ({ subscriptionData }) => {
+          if (subscriptionData.data) {
+            console.log(
+              "Subscription - CHALLENGE STATUS UPDATED",
+              subscriptionData.data
+            );
+            const challengeStatusUpdated =
+              subscriptionData.data.challengeStatusUpdatedStudent;
+
+            if (challengeStatusUpdated.state === State.FAILED) {
+              addNotification({
+                status: "warning",
+                title: t("timeIsUp.title"),
+                description: t("timeIsUp.description"),
+              });
+            }
+
+            setChallengeStatus({
+              endedAt: challengeStatusUpdated.endedAt,
+              startedAt: challengeStatusUpdated.startedAt,
+              openedAt: challengeStatusUpdated.openedAt,
+            });
+          }
+        },
+      }
+    );
 
   const { error: subRewardsError } =
     useSubscription<rewardReceivedStudentSubscription>(
@@ -175,6 +213,36 @@ const Challenge = () => {
     },
   });
 
+  const checkIfSolved = (
+    challengeData: FindChallenge,
+    exercise: FindChallenge_challenge_refs | null
+  ) => {
+    let solved = false;
+
+    if (!exercise) {
+      return false;
+    }
+
+    challengeData.profileInGame.learningPath.map((learningPath) => {
+      return learningPath.refs.forEach((ref) => {
+        if (ref.activity?.id === exercise.id) {
+          !challengeStatus &&
+            setChallengeStatus({
+              startedAt: learningPath.startedAt,
+              endedAt: learningPath.endedAt,
+              openedAt: learningPath.openedAt,
+            });
+
+          if (ref.solved) {
+            solved = true;
+          }
+        }
+      });
+    });
+
+    return solved;
+  };
+
   if (challengeError) {
     console.log("challengeError", challengeError);
   }
@@ -202,7 +270,8 @@ const Challenge = () => {
   //     </Stack>
   //   );
   // }
-
+  console.log("CHALLENGE DATA", challengeData);
+  console.log("CHALLENGE STATUS", challengeStatus);
   /** Redirects to main course page if there are no more unsolved exercises. */
   const setNextUnsolvedExercise = () => {
     if (!challengeData) {
@@ -275,8 +344,29 @@ const Challenge = () => {
           maxWidth={330}
           height="100%"
           borderRight="1px solid rgba(0,0,0,0.1)"
+          position="relative"
         >
-          {/* <Countdown date={Date.now() + 10000} /> */}
+          {challengeStatus &&
+            challengeData?.challenge.mode === Mode.TIME_BOMB &&
+            challengeStatus.openedAt &&
+            challengeStatus.startedAt &&
+            challengeStatus.endedAt && (
+              <Flex
+                position="absolute"
+                bottom={10}
+                width="100%"
+                justifyContent="center"
+                height="50px"
+                alignItems="center"
+              >
+                <Button cursor="auto" _focus={{}} _active={{}}>
+                  <Icon as={BiTimer} marginRight={2} />
+
+                  <Countdown date={dayjs(challengeStatus.endedAt).valueOf()} />
+                </Button>
+              </Flex>
+            )}
+
           <Box p={{ base: 1, md: 5 }} h="100%" w="100%">
             <Flex flexDirection="column" alignItems="center" w="100%">
               {!challengeLoading &&
