@@ -1,6 +1,6 @@
 import { gql, useQuery, useSubscription } from "@apollo/client";
 import { CheckIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React, { useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
@@ -18,6 +18,7 @@ import withChangeAnimation from "../utilities/withChangeAnimation";
 import Error from "./Error";
 import Exercise from "./Exercise";
 import { useNotifications } from "./Notifications";
+import Countdown from "react-countdown";
 
 interface ParamTypes {
   gameId: string;
@@ -275,6 +276,7 @@ const Challenge = () => {
           height="100%"
           borderRight="1px solid rgba(0,0,0,0.1)"
         >
+          {/* <Countdown date={Date.now() + 10000} /> */}
           <Box p={{ base: 1, md: 5 }} h="100%" w="100%">
             <Flex flexDirection="column" alignItems="center" w="100%">
               {!challengeLoading &&
@@ -301,7 +303,13 @@ const Challenge = () => {
                         ) : undefined
                       }
                     >
-                      {i + 1}. {exercise.name}
+                      <Text
+                        whiteSpace="nowrap"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                      >
+                        {i + 1}. {exercise.name}
+                      </Text>
                     </Button>
                   );
                 })}
