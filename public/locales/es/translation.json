@@ -1,4 +1,10 @@
 {
+  "Description": "Descripción",
+  "Kind": "Tipo",
+  "timeIsUp": {
+    "title": "¡El tiempo ha terminado!",
+    "description": "Estabas codificando rápido, pero no lo suficiente. ¡Quizás la próxima vez!"
+  },
   "Change availability": "Cambiar disponibilidad",
   "Game profile": "Perfil de juego",
   "Exercise": "Ejercicio",

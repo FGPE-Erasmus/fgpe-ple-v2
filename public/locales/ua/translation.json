@@ -1,4 +1,10 @@
 {
+  "Description": "Опис",
+  "Kind": "вид",
+  "timeIsUp": {
+    "title": "Час минув!",
+    "description": "Ви швидко кодували, але недостатньо. Можливо, наступного разу!"
+  },
   "Change availability": "Змінити доступність",
   "Game profile": "Ігровий профіль",
   "Exercise": "Вправа",
