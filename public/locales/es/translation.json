@@ -160,6 +160,8 @@
     "metric": "Métrico"
   },
   "placeholders": {
+    "string": "ABC",
+    "number": "123",
     "chooseGroup": "Elige grupo",
     "groupName": "Programadores asombrosos",
     "displayGroupName": "Programadores",

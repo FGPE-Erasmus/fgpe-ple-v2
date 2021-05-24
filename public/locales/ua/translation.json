@@ -160,6 +160,8 @@
     "metric": "Метрична"
   },
   "placeholders": {
+    "string": "ABC",
+    "number": "123",
     "chooseGroup": "Виберіть групу",
     "groupName": "Дивовижні програмісти",
     "displayGroupName": "Програмісти",

@@ -160,6 +160,8 @@
     "metric": "Метрическая"
   },
   "placeholders": {
+    "string": "ABC",
+    "number": "123",
     "chooseGroup": "Выбрать группу",
     "groupName": "Замечательные программисты",
     "displayGroupName": "Программисты",

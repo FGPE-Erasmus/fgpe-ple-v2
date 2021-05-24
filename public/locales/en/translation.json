@@ -166,6 +166,8 @@
     "metric": "Metric"
   },
   "placeholders": {
+    "string": "ABC",
+    "number": "123",
     "chooseGroup": "Choose group",
     "groupName": "Amazing programmers",
     "displayGroupName": "Programmers",

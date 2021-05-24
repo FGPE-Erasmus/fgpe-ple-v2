@@ -169,6 +169,8 @@
     "metric": "Metryka"
   },
   "placeholders": {
+    "string": "ABC",
+    "number": "123",
     "chooseGroup": "Wybierz grupę",
     "groupName": "Świetni programiści",
     "displayGroupName": "Programiści",

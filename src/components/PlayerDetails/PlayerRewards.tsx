@@ -27,7 +27,7 @@ const PlayerAttemptsTable = ({
             Filter: ({ column }: { column: any }) => (
               <ColumnFilter
                 column={column}
-                placeholder={t("placeholders.name")}
+                placeholder={t("placeholders.string")}
               />
             ),
           },
@@ -37,7 +37,7 @@ const PlayerAttemptsTable = ({
             Filter: ({ column }: { column: any }) => (
               <ColumnFilter
                 column={column}
-                placeholder={t("placeholders.name")}
+                placeholder={t("placeholders.string")}
               />
             ),
           },
@@ -47,7 +47,7 @@ const PlayerAttemptsTable = ({
             Filter: ({ column }: { column: any }) => (
               <ColumnFilter
                 column={column}
-                placeholder={t("placeholders.name")}
+                placeholder={t("placeholders.string")}
               />
             ),
           },
