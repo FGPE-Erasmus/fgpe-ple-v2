@@ -1,0 +1,263 @@
+{
+    "Change availability": "Verfügbarkeit ändern",
+    "Game profile": "Spielprofil",
+    "Exercise": "Übung",
+    "Result": "Ergebnis",
+    "Submitted at": "Eingereicht am",
+    "Change group": "Gruppe ändern",
+    "User profile": "Benutzerprofil",
+    "submissions": "Evaluation", 
+    "submission": "Evaluation", 
+    "validations": "Validierungen",
+    "validation": "Validierung",
+    "All game profiles": "Alle Spielprofile",
+    "Hints": "Vorschläge",
+    "avatarLink": "Link zu deinem Avatar",
+    "Open PDF statement": "Öffnen Sie die PDF-Anweisung",
+    "Full name": "Vollständiger Name",
+    "E-Mail verified": "Verifizierte E-Mail",
+    "Username": "Benutzername",
+    "Profile picture": "Profilbild",
+    "File": "Datei",
+    "Account settings": "Account Einstellungen",
+    "First name": "Vorname",
+    "Last name": "Nachname",
+    "Submit": "Einreichen", 
+    "Change password": "Passwort ändern",
+    "Old password": "Altes Passwort",
+    "New password": "Neues Passwort",
+    "Repeat new password": "Neues Passwort wiederholen",
+    "Remove the assignment": "Zuordnung entfernen",
+    "Add to the game": "Zum Spiel hinzufügen",
+    "Yes": "Ja",
+    "No": "Nein",
+    "Remove from the game": "Aus dem Spiel entfernen",
+    "Remove from the group": "Aus der Gruppe entfernen",
+    "Generate": "Generieren",
+    "linkGenerateDescription": "Wähle eine Gruppe aus oder lass die Auswahl leer, um zum bereits erstelten Spiel beizutreten",
+    "Generate invite link": "Einladungslink generieren",
+    "youveChosenAmountStudents": "Sie haben {{amount}} Schüler ausgewählt",
+    "Set group": "Gruppe einrichten",
+    "Set": "Festlegen",
+    "Name": "Benutzername",
+    "Display name": "Angezeigter Name",
+    "Auto-assign groups": "Gruppen automatisch zuweisen",
+    "Add new group": "Neue Gruppe hinzufügen",
+    "Actions": "Verhalten",
+    "Assign me": "mich zuweisen",
+    "You're assigned": "Sie sind zugewiesen",
+    "All available games": "Alle verfügbaren Spiele",
+    "Manage games": "Spiele verwalten",
+    "You have no students yet": "Sie haben noch keine Schüler",
+    "Students": "Schüler",
+    "Activities": "Aktionen", 
+    "All": "Alle",
+    "Enrolled": "Angemeldet",
+    "Not enrolled": "Nicht registriert",
+    "Your games": "Deine Spiele",
+    "NA": "N / A",
+    "points": "Punkte",
+    "No description": "Keine Beschreibung",
+    "Rank": "Rang",
+    "Add new game": "Neues Spiel hinzufügen",
+    "Challenges": "Herausforderungen",
+    "home": {
+      "title": "Startseite",
+      "description": "Jeder kann auf diese Seite zugreifen"
+    },
+    "Add": "Hinzufügen",
+    "Adding": "Hinzufügen",
+    "Select option": "Option auswählen",
+    "Back": "zurück",
+    "Loading": "Laden...",
+    "Close": "Schließen",
+    "Cancel": "Abbrechen",
+    "Language": "Sprache",
+    "Login": "Anmelden",
+    "Logout": "Abmeldenn",
+    "Toggle view": "Ansicht umschalten",
+    "No rewards": "Keine Belohnungen",
+    "No games": "Leider sind Sie derzeit in keinem Spiel registriert.",
+    "Rewards": "Belohnungen",
+    "Games": "Spiele",
+    "Game": "Spiel",
+    "Provide test values": "Testwerte bereitstellen",
+    "No games available": "Es sind keine Spiele verfügbar",
+    "All your students": "Alle Ihre Schüler",
+    "Proceed": "Weiter",
+    "Add or remove players": "Spieler hinzufügen oder entfernen",
+    "Add more": "Mehr hinzufügen",
+    "settings": {
+      "darkMode": "Dunkel Modus",
+      "editorTheme": "Editor-Theme",
+      "terminalTheme": "Terminal-Theme",
+      "platformZoom": "Plattform Zoom",
+      "terminalFontSize": "Terminal-Schriftgröße",
+      "editorMenuTip": "Verwenden Sie das Editor-Menü, um Ihren Zoom und andere Parameter zu ändern.",
+      "keyCombination": "Tastenkombination",
+      "action": "Aktion",
+      "inEditor": "(im Editor)",
+      "editorMenu": "Editor-Menü"
+    },
+    "playground": {
+      "terminal": {
+        "waitingForResult": "Auf das Ergebnis warten ...",
+        "feedback": {
+          "Ready": "Fertig"
+        }
+      },
+      "menu": {
+        "run": "Starten",
+        "submit": "Absenden",
+        "reload": "Neu laden",
+        "restore": "Wiederherstellen",
+        "ready": "Fertig",
+        "next": "Nächste",
+        "addTestValues": "Testwerte hinzufügen",
+        "status": {
+          "status": "Status",
+          "CONNECTION_PROBLEM": "VERBINDUNGSFEHLER",
+          "COMPILATION_ERROR": "KOMPILATIONSFEHLER",
+          "RUNTIME_ERROR": "LAUFZEITFEHLER",
+          "READY": "FERTIG",
+          "ACCEPT": "AKZEPTIEREN",
+          "ASK_FOR_REEVALUATION": "REVALUATION ANFRAGEN",
+          "OUTPUT_LIMIT_OVERFLOW": "GRENZWERTÜBERSCHREITUNG",
+          "PROCESSING": "WIRD BEARBEITET",
+          "RESOURCE_USAGE_EXCEEDED": "RESSOURCENVERBRAUCH ÜBERSCHRITTEN",
+          "TIMEOUT": "DIE ZEIT IST UM",
+          "WRONG_ANSWER": "FALSCHE ANTWORT"
+        },
+        "connection": {
+          "success": "Erfolgreich verbunden",
+          "error": "Es liegt ein Problem mit Ihrer Verbindung vor. Versuchen Sie, diese zu prüfen."
+        }
+      }
+    },
+    "teacher": {
+      "noPlayersAlert": "Dieses Spiel hat keine Spieler. Füge sie hinzu, um loszulegen."
+    },
+    "table": {
+      "removeGame": "Entfernen",
+      "assigned": "Zugewiesen",
+      "Exercise": "Übungs-ID",
+      "totalSubmissions": "Gesamtzahl der Einreichungen",
+      "acceptedResults": "Akzeptierte Ergebnisse",
+      "difficulty": "Schwierigkeitsgrad",
+      "gameName": "Name des Spiels",
+      "gameDescription": "Spielbeschreibung",
+      "numberOfPlayers": "Anzahl der Spieler",
+      "username": "Benutzername",
+      "name": "Vorname",
+      "lastName": "Nachname",
+      "game": "Spiel",
+      "submissions": "Einreichungen",
+      "validations": "Validierungen",
+      "group": "Gruppe",
+      "progress": "Fortschritt",
+      "enrolled": "Angemeldet",
+      "email": "E-Mail",
+      "metric": "Metrik"
+    },
+    "placeholders": {
+      "chooseGroup": "Gruppe auswählen",
+      "groupName": "Tolle Programmierer",
+      "displayGroupName": "Programmierer",
+      "exercise": "A B C",
+      "gameName": "Tolles Spiel",
+      "gameDescription": "Detaillierte Beschreibung",
+      "numberOfPlayers": "123",
+      "name": "Martin",
+      "lastName": "Müller",
+      "game": "Spiel",
+      "group": "Gruppe",
+      "provideTestValues": "Hier werden deine Testwerte angegeben ...",
+      "email": "martin@mueller.com"
+    },
+    "success": {
+      "title": "Wunderbar!",
+      "description": "Die Bewerbung wurde erfolgreich abgeschlossen.", 
+      "addGroup": {
+        "title": "Eine neue Gruppe wurde erfolgreich erstellt!",
+        "description": "Prima! Jetzt kannst du die Spieler automatisch zuweisen oder manuell zu einer neuen Gruppe hinzufügen."
+      },
+      "joinGameOrGroup": {
+        "title": "Du bist zum Spiel: {{game}} erfolgreich beigetreten",
+        "description": "Um mit dem Spiel fortfahren zu können, einfach hier klicken."
+      }
+    },
+    "error": {
+      "title": "Ein unerwarteter Fehler ist aufgetreten.",
+      "description": "Bitte versuchen Sie, die Seite zu aktualisieren oder wenden Sie sich an uns, wenn dieser Fehler weiterhin besteht.",
+      "joinGameOrGroup": {
+        "title": "Bei der Verarbeitung Ihres Einladungslinks ist leider ein Fehler aufgetreten.",
+        "description": "Überprüfen Sie bitte, ob der verwendete Link korrekt ist z.B nicht abgelaufen ist."
+      },
+      "teacherNotEnrolled": {
+        "title": "Sie sind zu diesem Spiel nicht zugeordnet!",
+        "description": "Man muss sich vorab bei diesem Spiel anmelden, um darauf Zugriff zu haben."
+      },
+      "passwordChange": {
+        "title": "Beim Ändern des Kennworts ist ein Fehler aufgetreten",
+        "description": "Überprüfen Sie, ob Sie die richtigen Anmeldeinformationen angegeben haben. Wenden Sie sich an die Verwaltung, wenn dieser Fehler weiterhin besteht."
+      },
+      "notFound": {
+        "title": "Seite nicht gefunden",
+        "description": "Die gesuchte Seite existiert nicht."
+      },
+      "serverConnection": {
+        "title": "Beim Herstellen einer Verbindung zum Server ist ein Problem aufgetreten.",
+        "description": "Diese Seite wird sich in wenigen Sekunden selbst aktualisieren."
+      },
+      "removeGame": {
+        "title": "Das Entfernen des Spiels ist fehlgeschlagen.",
+        "description": "Sie können das Spiel mit registrierten Spielern nicht löschen."
+      },
+      "autoAssign": {
+        "title": "Beim automatischen Zuweisungsprozess ist ein Fehler aufgetreten",
+        "description": "Überprüfen Sie, ob Sie die Gruppen erstellt haben."
+      },
+      "addGroup": {
+        "title": "Beim Hinzufügen einer Gruppe ist ein Fehler aufgetreten",
+        "description": "Leider ist bei deiner Anfrage ein Problem aufgetreten. Bitte versuchen Sie es erneut mit anderen Einstellungen."
+      },
+      "removePlayers": {
+        "title": "Der Benutzerlöschvorgang ist fehlgeschlagen.",
+        "description": "Überprüfen Sie, ob Sie nicht versuchen, einen nicht registrierten Benutzer zu entfernen."
+      }
+    },
+    "addGame": {
+      "error": {
+        "startLaterThanEnd": "Das Enddatum muss nach dem Startdatum liegen",
+        "fileRejected": {
+          "title": "Datei abgelehnt",
+          "description": "Überprüfen Sie, ob es sich um eine gültige ZIP-Datei handelt."
+        },
+        "cannotAddGame": {
+          "title": "Das Spiel kann nicht hinzugefügt werden",
+          "description": "Beim Hinzufügen des Spiels ist ein Fehler aufgetreten."
+        }
+      },
+      "success": {
+        "title": "Hervorragend!",
+        "description": "Das Spiel wurde erfolgreich hinzugefügt"
+      },
+      "name": "Name",
+      "namePlaceholder": "Genialer Spielname",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Beschreibung Ihres Spiels",
+      "startDate": "Startdatum",
+      "endDate": "Enddatum",
+      "evaluationEngine": "Evaluierungsmaschine",
+      "courseId": "Kurs-ID",
+      "courseIdPlaceholder": "Eindeutige Kurs-ID",
+      "wrongFileType": "Falscher Dateityp",
+      "dragFileOrClick": "Ziehen Sie Ihre Datei hierher oder klicken Sie in den Dateiauswahldialog",
+      "setPrivate": "Als privat festlegen",
+      "private": "Privat"
+    },
+    "description": {
+      "part1": "Bearbeiten Sie zunächst <1> src / App.js </1> und speichern Sie es zum erneuten Laden.",
+      "part2": "Ändern Sie die Sprache zwischen Englisch und Deutsch mit den obigen Schaltflächen."
+    }
+  }
