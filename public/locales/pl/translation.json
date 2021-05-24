@@ -1,4 +1,6 @@
 {
+  "Description": "Opis",
+  "Kind": "Rodzaj",
   "Change availability": "Zmień dostępność",
   "Number of validations": "Liczba walidacji",
   "Number of submissions": "Liczba ewaluacji",

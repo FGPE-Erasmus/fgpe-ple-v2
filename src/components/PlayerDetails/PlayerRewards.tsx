@@ -22,7 +22,7 @@ const PlayerAttemptsTable = ({
       <TableComponent
         columns={[
           {
-            Header: t("Game"),
+            Header: t("Name"),
             accessor: "reward.name",
             Filter: ({ column }: { column: any }) => (
               <ColumnFilter
@@ -32,7 +32,7 @@ const PlayerAttemptsTable = ({
             ),
           },
           {
-            Header: t("Game"),
+            Header: t("Description"),
             accessor: "reward.description",
             Filter: ({ column }: { column: any }) => (
               <ColumnFilter
@@ -42,7 +42,7 @@ const PlayerAttemptsTable = ({
             ),
           },
           {
-            Header: t("Game"),
+            Header: t("Kind"),
             accessor: "reward.kind",
             Filter: ({ column }: { column: any }) => (
               <ColumnFilter
