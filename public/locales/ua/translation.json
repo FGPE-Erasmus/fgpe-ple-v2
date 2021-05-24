@@ -1,0 +1,263 @@
+{
+  "Change availability": "Змінити доступність",
+  "Game profile": "Ігровий профіль",
+  "Exercise": "Вправа",
+  "Result": "Результат",
+  "Submitted at": "Подано о",
+  "Change group": "Змінити групу",
+  "User profile": "Профіль користувача",
+  "submissions": "Подання",
+  "submission": "Подання",
+  "validations": "Перевірки",
+  "validation": "Перевірка",
+  "All game profiles": "Усі ігрові профілі",
+  "Hints": "Підказки",
+  "avatarLink": "Посилання на ваш аватар",
+  "Open PDF statement": "Відкрити заяву PDF",
+  "Full name": "Повне ім'я",
+  "E-Mail verified": "Електронну пошту перевірено",
+  "Username": "Ім'я користувача",
+  "Profile picture": "Аватар",
+  "File": "Файл",
+  "Account settings": "Налаштування аккаунта",
+  "First name": "Ім'я",
+  "Last name": "Прізвище",
+  "Submit": "Подати",
+  "Change password": "Змінити пароль",
+  "Old password": "Старий пароль",
+  "New password": "Новий пароль",
+  "Repeat new password": "Повторіть новий пароль",
+  "Remove the assignment": "Видаліть завдання",
+  "Add to the game": "Додайте до гри",
+  "Yes": "Так",
+  "No": "Немає",
+  "Remove from the game": "Видалити з гри",
+  "Remove from the group": "Вилучити з групи",
+  "Generate": "Створити",
+  "linkGenerateDescription": "Виберіть групу або залиште вибір пустим, щоб додати лише до гри",
+  "Generate invite link": "Створити посилання на запрошення",
+  "youveChosenAmountStudents": "Ви вибрали студентів ({{amount}})",
+  "Set group": "Встановити групу",
+  "Set": "Встановити",
+  "Name": "Ім'я",
+  "Display name": "Відображуване ім’я",
+  "Auto-assign groups": "Автоматичне призначення груп",
+  "Add new group": "Додати нову групу",
+  "Actions": "Дії",
+  "Assign me": "Призначити мене",
+  "You're assigned": "Вас призначили",
+  "All available games": "Всі доступні ігри",
+  "Manage games": "Керуйте іграми",
+  "You have no students yet": "У вас ще немає учнів",
+  "Students": "Студенти",
+  "Activities": "Діяльності",
+  "All": "Всі",
+  "Enrolled": "Поступив",
+  "Not enrolled": "Не зараховано",
+  "Your games": "Ваші ігри",
+  "NA": "Не застосовується",
+  "points": "балів",
+  "No description": "без опису",
+  "Rank": "Ранг",
+  "Add new game": "Додати нову гру",
+  "Challenges": "Виклики",
+  "home": {
+    "title": "Домашня сторінка",
+    "description": "Будь-хто може отримати доступ до цієї сторінки"
+  },
+  "Add": "Додати",
+  "Adding": "Додавання",
+  "Select option": "Виберіть варіант",
+  "Back": "Назад",
+  "Loading": "Завантаження ...",
+  "Close": "Закрити",
+  "Cancel": "Скасувати",
+  "Language": "Мову",
+  "Login": "Увійти",
+  "Logout": "Вийти",
+  "Toggle view": "Переключити перегляд",
+  "No rewards": "Ви побачите свої винагороди тут",
+  "No games": "На жаль, на даний момент ви не зареєстровані ні в одній грі.",
+  "Rewards": "Нагороди",
+  "Games": "Ігри",
+  "Game": "Гра",
+  "Provide test values": "Вкажіть значення тесту",
+  "No games available": "Ігор немає",
+  "All your students": "Усі ваші студенти",
+  "Proceed": "Продовжуйте",
+  "Add or remove players": "Додавання або видалення гравців",
+  "Add more": "Додати більше",
+  "settings": {
+    "darkMode": "Темний режим",
+    "editorTheme": "Тема редактора",
+    "terminalTheme": "Тема терміналу",
+    "platformZoom": "Збільшення платформи",
+    "terminalFontSize": "Розмір шрифту терміналу",
+    "editorMenuTip": "Використовуйте меню редактора, щоб змінити масштаб та інші параметри",
+    "keyCombination": "Комбінація клавіш",
+    "action": "Дія",
+    "inEditor": "(у редакторі)",
+    "editorMenu": "Меню редактора"
+  },
+  "playground": {
+    "terminal": {
+      "waitingForResult": "Чекаємо результату ...",
+      "feedback": {
+        "Ready": "Готові"
+      }
+    },
+    "menu": {
+      "run": "Біжи",
+      "submit": "Подати",
+      "reload": "Перезавантажте",
+      "restore": "Відновлювати",
+      "ready": "Готові",
+      "next": "Далі",
+      "addTestValues": "Додайте значення тесту",
+      "status": {
+        "status": "Статус",
+        "CONNECTION_PROBLEM": "ПРОБЛЕМА ПІДКЛЮЧЕННЯ",
+        "COMPILATION_ERROR": "ПОМИЛКА КОМПІЛЯЦІЇ",
+        "RUNTIME_ERROR": "ПОМИЛКА ВИКОНАННЯ",
+        "READY": "ГОТОВИЙ",
+        "ACCEPT": "ПРИЙМІТИ",
+        "ASK_FOR_REEVALUATION": "ЗАПИТАТИ РЕАЛІЗАЦІЮ",
+        "OUTPUT_LIMIT_OVERFLOW": "МЕЖА ВИХОДІВ ПЕРЕТОК",
+        "PROCESSING": "ОБРОБКА",
+        "RESOURCE_USAGE_EXCEEDED": "ВИКОРИСТАННЯ РЕСУРСІВ ПЕРЕВИЩЕНО",
+        "TIMEOUT": "ЧАС ВИЙШОВ",
+        "WRONG_ANSWER": "НЕПРАВИЛЬНУ ВІДПОВІДЬ"
+      },
+      "connection": {
+        "success": "Під’єднано успішно",
+        "error": "Виникла проблема з підключенням, спробуйте оновити"
+      }
+    }
+  },
+  "teacher": {
+    "noPlayersAlert": "У цій грі немає гравців. Додайте будь-який для початку."
+  },
+  "table": {
+    "removeGame": "Видалити",
+    "assigned": "Призначений",
+    "Exercise": "Ідентифікатор вправи",
+    "totalSubmissions": "Загальна кількість поданих заявок",
+    "acceptedResults": "Прийняті подання",
+    "difficulty": "Складність",
+    "gameName": "Назва гри",
+    "gameDescription": "Опис гри",
+    "numberOfPlayers": "Кількість гравців",
+    "username": "Ім'я користувача",
+    "name": "Ім'я",
+    "lastName": "Прізвище",
+    "game": "Гра",
+    "submissions": "Подання",
+    "validations": "Перевірки",
+    "group": "Група",
+    "progress": "Прогрес",
+    "enrolled": "Поступив",
+    "email": "Електронна пошта",
+    "metric": "Метрична"
+  },
+  "placeholders": {
+    "chooseGroup": "Виберіть групу",
+    "groupName": "Дивовижні програмісти",
+    "displayGroupName": "Програмісти",
+    "exercise": "ABC",
+    "gameName": "Дивовижна гра",
+    "gameDescription": "Детальний опис",
+    "numberOfPlayers": "123",
+    "name": "Джон",
+    "lastName": "Сміт",
+    "game": "Гра",
+    "group": "Група",
+    "provideTestValues": "Введіть тут свої тестові значення ...",
+    "email": "john@smith.com"
+  },
+  "success": {
+    "title": "Успіху!",
+    "description": "Ви надіслали запит успішно.",
+    "addGroup": {
+      "title": "Успішно додано вашу нову групу!",
+      "description": "Чудово! Ви можете автоматично призначити гравців або вручну додати їх до нової групи."
+    },
+    "joinGameOrGroup": {
+      "title": "Ви успішно приєдналися до гри - {{game}}",
+      "description": "Клацніть тут, щоб перенаправити на гру."
+    }
+  },
+  "error": {
+    "title": "Сталася несподівана помилка.",
+    "description": "Спробуйте оновити сторінку. Будь ласка, зв’яжіться з адміністрацією, якщо ця помилка не зникає.",
+    "joinGameOrGroup": {
+      "title": "Під час обробки посилання на запрошення сталася помилка",
+      "description": "Переконайтеся, що посилання, яке ви використовували, правильне т�� не втратило чинність"
+    },
+    "teacherNotEnrolled": {
+      "title": "Ви не призначені для цієї гри!",
+      "description": "Призначте себе цій грі, щоб отримати до неї доступ."
+    },
+    "passwordChange": {
+      "title": "У процесі зміни пароля сталася помилка",
+      "description": "Перевірте, чи правильно ви вказали облікові дані. Будь ласка, зв’яжіться з адміністрацією, якщо ця помилка не зникає."
+    },
+    "notFound": {
+      "title": "Сторінку не знайдено",
+      "description": "Сторінка, яку ви шукали, не існує."
+    },
+    "serverConnection": {
+      "title": "Не вдалося підключитися до сервера",
+      "description": "Ця сторінка оновиться за кілька секунд."
+    },
+    "removeGame": {
+      "title": "Під час видалення гри сталася помилка",
+      "description": "Ви не можете видалити гру з зареєстрованими гравцями."
+    },
+    "autoAssign": {
+      "title": "Під час автоматичного присвоєння сталася помилка",
+      "description": "Перевірте, чи не створювали ви групи."
+    },
+    "addGroup": {
+      "title": "Під час додавання групи сталася помилка",
+      "description": "На жаль, із вашим запитом є проблема. Спробуйте ще раз із різними налаштуваннями."
+    },
+    "removePlayers": {
+      "title": "Під час видалення користувачем сталася помилка",
+      "description": "Перевірте, чи не намагаєтеся ви видалити незареєстрованого кори��тувача."
+    }
+  },
+  "addGame": {
+    "error": {
+      "startLaterThanEnd": "Дата завершення повинна бути пізніше дати початку",
+      "fileRejected": {
+        "title": "Файл відхилено",
+        "description": "Будь ласка, перевірте, чи є дійсним ZIP-архів."
+      },
+      "cannotAddGame": {
+        "title": "Не вдається додати гру",
+        "description": "Під час додавання гри сталася помилка."
+      }
+    },
+    "success": {
+      "title": "Успіху!",
+      "description": "Гру успішно додано"
+    },
+    "name": "Ім'я",
+    "namePlaceholder": "Чудова назва гри",
+    "description": "Опис",
+    "descriptionPlaceholder": "Опис вашої гри",
+    "startDate": "Дата початку",
+    "endDate": "Кінцева дата",
+    "evaluationEngine": "Механізм оцінки",
+    "courseId": "Ідентифікатор курсу",
+    "courseIdPlaceholder": "Унікальний ідентифікатор курсу",
+    "wrongFileType": "Неправильний тип файлу",
+    "dragFileOrClick": "Перетягніть файл сюди або натисніть на діалогове вікно вибору файлу",
+    "setPrivate": "Встановити приватний",
+    "private": "Приватна"
+  },
+  "description": {
+    "part1": "Для початку відредагуйте <1> src / App.js </1> і збережіть для ��ерезавантаження.",
+    "part2": "Перемикайте мову між англійською та німецькою за допомогою кнопок вище."
+  }
+}

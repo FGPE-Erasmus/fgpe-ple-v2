@@ -215,6 +215,8 @@ const RewardModal = ({
   onClose: () => void;
   reward: PlayerGameProfiles_myGameProfiles_rewards_reward | null;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       {reward && (
@@ -239,7 +241,7 @@ const RewardModal = ({
                 {reward.parentChallenge && (
                   <ListItem>
                     <ListIcon as={MdCheckCircle} color="green.500" />
-                    Challenge: {reward.parentChallenge.name}
+                    {t("Challenge")}: {reward.parentChallenge.name}
                   </ListItem>
                 )}
                 <ListItem>
@@ -249,7 +251,7 @@ const RewardModal = ({
 
                 <ListItem>
                   <ListIcon as={RiGamepadFill} color="green.500" />
-                  Game: {reward.game.name}
+                  {t("Game")}: {reward.game.name}
                 </ListItem>
 
                 {/* <ListItem>
@@ -260,7 +262,7 @@ const RewardModal = ({
             </ModalBody>
             <ModalFooter>
               <Button colorScheme="blue" mr={3} onClick={onClose}>
-                Close
+                {t("Close")}
               </Button>
             </ModalFooter>
           </ModalContent>

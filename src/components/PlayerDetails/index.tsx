@@ -175,15 +175,15 @@ const PlayerDetails = () => {
         </Box>
 
         <DetailsCard
-          title={t("Group")}
+          title={t("table.group")}
           content={playerData.player.group?.name || "-"}
         />
         <DetailsCard
-          title={t("Number of submissions")}
+          title={t("table.submissions")}
           content={playerData.player.stats.nrOfSubmissions.toString()}
         />
         <DetailsCard
-          title={t("Number of validations")}
+          title={t("table.validations")}
           content={playerData.player.stats.nrOfValidations.toString()}
         />
       </Flex>

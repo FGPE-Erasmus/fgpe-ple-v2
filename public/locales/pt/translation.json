@@ -1,0 +1,263 @@
+{
+  "Change availability": "Alterar disponibilidade",
+  "Game profile": "Perfil de jogo",
+  "Exercise": "Exercício",
+  "Result": "Resultado",
+  "Submitted at": "Enviado em",
+  "Change group": "Mudar de grupo",
+  "User profile": "Perfil de utilizador",
+  "submissions": "Submissões",
+  "submission": "Submissão",
+  "validations": "Validações",
+  "validation": "Validação",
+  "All game profiles": "Todos os perfis de jogo",
+  "Hints": "Dicas",
+  "avatarLink": "Link para o seu avatar",
+  "Open PDF statement": "Abrir enunciado PDF",
+  "Full name": "Nome completo",
+  "E-Mail verified": "Email verificado",
+  "Username": "Nome do utilizador",
+  "Profile picture": "Avatar",
+  "File": "Arquivo",
+  "Account settings": "Configurações da conta",
+  "First name": "Primeiro nome",
+  "Last name": "Último nome",
+  "Submit": "Enviar",
+  "Change password": "Alterar a palavra-passe",
+  "Old password": "Palavra-passe Antiga",
+  "New password": "Nova Palavra-passe",
+  "Repeat new password": "Repita a nova palavra-passe",
+  "Remove the assignment": "Remover a tarefa",
+  "Add to the game": "Adicionar ao jogo",
+  "Yes": "Sim",
+  "No": "Não",
+  "Remove from the game": "Remover do jogo",
+  "Remove from the group": "Remover do grupo",
+  "Generate": "Gerar",
+  "linkGenerateDescription": "Escolha um grupo ou deixe a seleção em branco para adicionar apenas ao jogo",
+  "Generate invite link": "Gerar link de convite",
+  "youveChosenAmountStudents": "Você escolheu {{amount}} alunos",
+  "Set group": "Definir grupo",
+  "Set": "Definir",
+  "Name": "Nome",
+  "Display name": "Nome em Exibição",
+  "Auto-assign groups": "Atribuir grupos automaticamente",
+  "Add new group": "Adicionar novo grupo",
+  "Actions": "Ações",
+  "Assign me": "Atribuir-me",
+  "You're assigned": "Você está designado",
+  "All available games": "Todos os jogos disponíveis",
+  "Manage games": "Gerenciar jogos",
+  "You have no students yet": "Você ainda não tem alunos",
+  "Students": "Alunos",
+  "Activities": "Atividades",
+  "All": "Tudo",
+  "Enrolled": "Inscrito",
+  "Not enrolled": "Não inscrito",
+  "Your games": "Seus jogos",
+  "NA": "N/D",
+  "points": "pontos",
+  "No description": "Sem descrição",
+  "Rank": "Classificação",
+  "Add new game": "Adicionar novo jogo",
+  "Challenges": "Desafios",
+  "home": {
+    "title": "Pagina inicial",
+    "description": "Qualquer pessoa pode acessar esta página"
+  },
+  "Add": "Adicionar",
+  "Adding": "A adicionar",
+  "Select option": "Selecione a opção",
+  "Back": "Voltar",
+  "Loading": "A carregar ...",
+  "Close": "Fechar",
+  "Cancel": "Cancelar",
+  "Language": "Língua",
+  "Login": "Conecte-se",
+  "Logout": "Sair",
+  "Toggle view": "Alternar vista",
+  "No rewards": "Você verá as suas recompensas aqui",
+  "No games": "Infelizmente não está inscrito em nenhum jogo no momento.",
+  "Rewards": "Recompensas",
+  "Games": "Jogos",
+  "Game": "Jogo",
+  "Provide test values": "Fornece valores de teste",
+  "No games available": "Sem jogos disponíveis",
+  "All your students": "Todos os seus alunos",
+  "Proceed": "Continuar",
+  "Add or remove players": "Adicionar ou remover jogadores",
+  "Add more": "Adicione mais",
+  "settings": {
+    "darkMode": "Modo escuro",
+    "editorTheme": "Tema do editor",
+    "terminalTheme": "Tema Terminal",
+    "platformZoom": "Zoom da plataforma",
+    "terminalFontSize": "Tamanho da fonte do terminal",
+    "editorMenuTip": "Use o menu do editor para alterar o zoom e outros parâmetros",
+    "keyCombination": "Combinação de teclas",
+    "action": "Ação",
+    "inEditor": "(no editor)",
+    "editorMenu": "Menu Editor"
+  },
+  "playground": {
+    "terminal": {
+      "waitingForResult": "Esperando pelo resultado ...",
+      "feedback": {
+        "Ready": "Preparar"
+      }
+    },
+    "menu": {
+      "run": "Executar",
+      "submit": "Enviar",
+      "reload": "Recarregar",
+      "restore": "Restaurar",
+      "ready": "Pronto",
+      "next": "Próximo",
+      "addTestValues": "Adicionar valores de teste",
+      "status": {
+        "status": "Status",
+        "CONNECTION_PROBLEM": "PROBLEMA DE CONEXÃO",
+        "COMPILATION_ERROR": "ERRO DE COMPILAÇÃO",
+        "RUNTIME_ERROR": "ERRO DE TEMPO DE EXECUÇÃO",
+        "READY": "PRONTO",
+        "ACCEPT": "ACEITE",
+        "ASK_FOR_REEVALUATION": "SOLICITE REAVALIAÇÃO",
+        "OUTPUT_LIMIT_OVERFLOW": "LIMITE DE OUTPUT EXCEDIDO",
+        "PROCESSING": "EM PROCESSAMENTO",
+        "RESOURCE_USAGE_EXCEEDED": "USO DE RECURSOS EXCEDIDO",
+        "TIMEOUT": "TEMPO ESGOTADO",
+        "WRONG_ANSWER": "RESPOSTA ERRADA"
+      },
+      "connection": {
+        "success": "Conectado com sucesso",
+        "error": "Há um problema com sua conexão, tente atualizar"
+      }
+    }
+  },
+  "teacher": {
+    "noPlayersAlert": "Este jogo não tem jogadores. Adicione qualquer para começar."
+  },
+  "table": {
+    "removeGame": "Remover",
+    "assigned": "Atribuído",
+    "Exercise": "ID do exercício",
+    "totalSubmissions": "Total de envios",
+    "acceptedResults": "Inscrições aceitas",
+    "difficulty": "Dificuldade",
+    "gameName": "Nome do jogo",
+    "gameDescription": "Descrição do jogo",
+    "numberOfPlayers": "Número de jogadores",
+    "username": "Nome do utilizador",
+    "name": "Nome",
+    "lastName": "Último nome",
+    "game": "Jogo",
+    "submissions": "Submissões",
+    "validations": "Validações",
+    "group": "Grupo",
+    "progress": "Progresso",
+    "enrolled": "Inscrito",
+    "email": "Email",
+    "metric": "Métrica"
+  },
+  "placeholders": {
+    "chooseGroup": "Escolha o grupo",
+    "groupName": "Programadores incríveis",
+    "displayGroupName": "Programadores",
+    "exercise": "abc",
+    "gameName": "Jogo incrível",
+    "gameDescription": "Descrição detalhada",
+    "numberOfPlayers": "123",
+    "name": "John",
+    "lastName": "Smith",
+    "game": "Jogo",
+    "group": "Grupo",
+    "provideTestValues": "Forneça os seus casos de teste aqui ...",
+    "email": "john@smith.com"
+  },
+  "success": {
+    "title": "Sucesso!",
+    "description": "O seu pedido foi concluído com sucesso.",
+    "addGroup": {
+      "title": "Adicionou o novo grupo com sucesso!",
+      "description": "Excelente! Você pode atribuir jogadores automaticamente ou adicioná-los manualmente ao seu novo grupo."
+    },
+    "joinGameOrGroup": {
+      "title": "Você entrou com sucesso no jogo - {{game}}",
+      "description": "Clique aqui para redirecionar para o jogo."
+    }
+  },
+  "error": {
+    "title": "Ocorreu um erro inesperado.",
+    "description": "Tente atualizar a página. Entre em contato com a administração se este erro persistir.",
+    "joinGameOrGroup": {
+      "title": "Ocorreu um erro ao processar o seu link de convite",
+      "description": "Verifique se o link que você usou está correto e não expirou"
+    },
+    "teacherNotEnrolled": {
+      "title": "Você não está designado para este jogo!",
+      "description": "Atribua-se a este jogo para aceder-lhe."
+    },
+    "passwordChange": {
+      "title": "Ocorreu um erro no processo de alteração da palavra-passe",
+      "description": "Verifique se você forneceu as credenciais corretas. Entre em contato com a administração se este erro persistir."
+    },
+    "notFound": {
+      "title": "página não encontrada",
+      "description": "A página que você está à procura não existe."
+    },
+    "serverConnection": {
+      "title": "Ocorreu um problema de conexão com o servidor",
+      "description": "Esta página será atualizada em alguns segundos."
+    },
+    "removeGame": {
+      "title": "Ocorreu um erro no processo de remoção do jogo",
+      "description": "Você não pode remover o jogo com jogadores inscritos."
+    },
+    "autoAssign": {
+      "title": "Ocorreu um erro no processo de atribuição automática",
+      "description": "Verifique se você criou algum grupo."
+    },
+    "addGroup": {
+      "title": "Ocorreu um erro no processo de adição do grupo",
+      "description": "Infelizmente, há um problema com o seu pedido. Tente novamente com configurações diferentes."
+    },
+    "removePlayers": {
+      "title": "Ocorreu um erro no processo de remoção do utilizador",
+      "description": "Verifique se você não está tentando remover um utilizador que não está inscrito."
+    }
+  },
+  "addGame": {
+    "error": {
+      "startLaterThanEnd": "A data de término deve ser posterior à data de início",
+      "fileRejected": {
+        "title": "Arquivo rejeitado",
+        "description": "Verifique se é um arquivo ZIP válido."
+      },
+      "cannotAddGame": {
+        "title": "Não é possível adicionar o jogo",
+        "description": "Ocorreu um erro ao adicionar o jogo."
+      }
+    },
+    "success": {
+      "title": "Sucesso!",
+      "description": "O jogo foi adicionado com sucesso"
+    },
+    "name": "Nome",
+    "namePlaceholder": "Nome de jogo incrível",
+    "description": "Descrição",
+    "descriptionPlaceholder": "Descrição do seu jogo",
+    "startDate": "Data de início",
+    "endDate": "Data de fim",
+    "evaluationEngine": "Motor de avaliação",
+    "courseId": "Id do curso no motor de avaliação",
+    "courseIdPlaceholder": "Id de curso",
+    "wrongFileType": "Tipo de ficheiro errado",
+    "dragFileOrClick": "Arraste o seu ficheiro para aqui ou clique para abrir a caixa de diálogo de seleção de ficheiro",
+    "setPrivate": "Definir como privado",
+    "private": "Privado"
+  },
+  "description": {
+    "part1": "Para começar, edite <1>src/App.js</1> e guarde para recarregar.",
+    "part2": "Altera o idioma entre inglês e alemão usando os botões acima."
+  }
+}

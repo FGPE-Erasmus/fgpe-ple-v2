@@ -261,7 +261,7 @@ const InstructorGame = () => {
           <DetailsCard
             badgeContent
             flexDirection="row"
-            title={"Number of submissions"}
+            title={t("table.submissions")}
             content={
               overallStatsData
                 ? overallStatsData.stats.nrOfSubmissions.toString()
@@ -271,7 +271,7 @@ const InstructorGame = () => {
           <DetailsCard
             badgeContent
             flexDirection="row"
-            title={"Number of validations"}
+            title={t("table.validations")}
             content={
               overallStatsData
                 ? overallStatsData.stats.nrOfValidations.toString()
@@ -281,7 +281,7 @@ const InstructorGame = () => {
           <DetailsCard
             badgeContent
             flexDirection="row"
-            title={"Number of players"}
+            title={t("table.numberOfPlayers")}
             content={gameData.game.players.length.toString()}
           />
         </Flex>

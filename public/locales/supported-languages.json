@@ -1,4 +1,22 @@
 [
-  { "code": "en", "language": "English" },
-  { "code": "pl", "language": "Polski" }
+  {
+    "code": "en",
+    "language": "English"
+  },
+  {
+    "code": "pl",
+    "language": "Polski"
+  },
+  {
+    "code": "ua",
+    "language": "Український"
+  },
+  {
+    "code": "pt",
+    "language": "Português"
+  },
+  {
+    "code": "ru",
+    "language": "Русский"
+  }
 ]
