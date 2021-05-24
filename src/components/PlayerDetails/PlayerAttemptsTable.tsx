@@ -41,7 +41,16 @@ const PlayerAttemptsTable = ({
   return (
     <Box>
       <TableComponent
-        onRowClick={onRowClick}
+        onRowClick={(row: any) => {
+          onRowClick &&
+            onRowClick({
+              ...row,
+              exerciseId: getNameForExerciseId(
+                row.exerciseId,
+                playerData.player.game
+              ),
+            });
+        }}
         columns={[
           {
             Header: t("Exercise"),
