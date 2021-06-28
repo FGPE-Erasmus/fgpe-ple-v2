@@ -224,6 +224,9 @@ const Exercise = ({
   challengeId: string;
   hints: rewardReceivedStudentSubscription_rewardReceivedStudent_reward[];
 }) => {
+  const [lastEvaluationOrSubmissionId, setLastEvaluationOrSubmissionId] =
+    useState<null | string>(null);
+
   const [activeLanguage, setActiveLanguage] =
     useState<FindChallenge_programmingLanguages>(programmingLanguages[0]);
   const [code, setCode] = useState("");
@@ -501,14 +504,21 @@ const Exercise = ({
     }
   };
 
-  const [getEvaluationById] = useLazyQuery<getSubmissionByIdQuery>(
+  const [getSubmissionById] = useLazyQuery<getSubmissionByIdQuery>(
     GET_SUBMISSION_BY_ID,
     {
       onError(data) {
-        console.log("[GET EVALUATION BY ID ERROR]", data);
+        console.log("[GET SUBMISSION BY ID ERROR]", data);
       },
       onCompleted(data) {
-        console.log("[GET EVALUATION BY ID]", data);
+        console.log("[GET SUBMISSION BY ID]", data);
+        if (
+          data.submission.id == lastEvaluationOrSubmissionId &&
+          lastEvaluationOrSubmissionId
+        ) {
+          console.log("[SUBMISSION] Already processed");
+          setWaitingForEvaluationResult(false);
+        }
       },
       fetchPolicy: "network-only",
     }
@@ -519,25 +529,40 @@ const Exercise = ({
     {
       variables: { gameId },
       onSubscriptionData: ({ subscriptionData }) => {
-        if (isWaitingForEvaluationResult) {
-          if (subscriptionData.data) {
-            setRestoreAvailable(true);
+        console.log(
+          "[SUB] EVALUATION",
+          subscriptionData.data?.submissionEvaluatedStudent.id
+        );
+        const newSubscriptionId =
+          subscriptionData.data?.submissionEvaluatedStudent.id;
+        setLastEvaluationOrSubmissionId(newSubscriptionId || null);
 
-            const evaluationData =
-              subscriptionData.data.submissionEvaluatedStudent;
-            setSubmissionResult(evaluationData.result);
-            setSubmissionFeedback(evaluationData.feedback || "");
-            setValidationOutputs(null);
-            setWaitingForEvaluationResult(false);
-
-            saveSubmissionDataInLocalStorage(
-              evaluationData.feedback || "",
-              evaluationData.result,
-              false,
-              null
-            );
-          }
+        if (
+          lastEvaluationOrSubmissionId == newSubscriptionId &&
+          newSubscriptionId
+        ) {
+          return;
         }
+
+        // if (isWaitingForEvaluationResult) {
+        if (subscriptionData.data) {
+          setRestoreAvailable(true);
+
+          const evaluationData =
+            subscriptionData.data.submissionEvaluatedStudent;
+          setSubmissionResult(evaluationData.result);
+          setSubmissionFeedback(evaluationData.feedback || "");
+          setValidationOutputs(null);
+          setWaitingForEvaluationResult(false);
+
+          saveSubmissionDataInLocalStorage(
+            evaluationData.feedback || "",
+            evaluationData.result,
+            false,
+            null
+          );
+        }
+        // }
       },
     }
   );
@@ -547,32 +572,43 @@ const Exercise = ({
     {
       variables: { gameId },
       onSubscriptionData: ({ subscriptionData }) => {
-        if (isWaitingForValidationResult) {
-          console.log("Sub data", subscriptionData);
+        const newValidationId =
+          subscriptionData.data?.validationProcessedStudent.id;
+        setLastEvaluationOrSubmissionId(newValidationId || null);
 
-          if (subscriptionData.data) {
-            setRestoreAvailable(true);
-            const validationData =
-              subscriptionData.data.validationProcessedStudent;
-
-            setValidationOutputs(validationData?.outputs);
-            setSubmissionFeedback(validationData?.feedback || "");
-            setWaitingForValidationResult(false);
-
-            if (validationData.result === Result.ACCEPT) {
-              setSubmissionResult(null);
-            } else {
-              setSubmissionResult(validationData.result);
-            }
-
-            saveSubmissionDataInLocalStorage(
-              validationData?.feedback || "",
-              validationData.result,
-              true,
-              validationData?.outputs
-            );
-          }
+        if (
+          lastEvaluationOrSubmissionId == newValidationId &&
+          newValidationId
+        ) {
+          return;
         }
+
+        // if (isWaitingForValidationResult) {
+        console.log("Sub data", subscriptionData);
+
+        if (subscriptionData.data) {
+          setRestoreAvailable(true);
+          const validationData =
+            subscriptionData.data.validationProcessedStudent;
+
+          setValidationOutputs(validationData?.outputs);
+          setSubmissionFeedback(validationData?.feedback || "");
+          setWaitingForValidationResult(false);
+
+          if (validationData.result === Result.ACCEPT) {
+            setSubmissionResult(null);
+          } else {
+            setSubmissionResult(validationData.result);
+          }
+
+          saveSubmissionDataInLocalStorage(
+            validationData?.feedback || "",
+            validationData.result,
+            true,
+            validationData?.outputs
+          );
+        }
+        // }
       },
     }
   );
@@ -602,7 +638,7 @@ const Exercise = ({
 
       // setFetchingCount(0);
       setEvaluationId(submissionId);
-      getEvaluationById({
+      getSubmissionById({
         variables: { gameId, submissionId },
       });
     },
@@ -613,7 +649,13 @@ const Exercise = ({
       const validationId = data.validate.id;
       // console.log("[VALIDATE MUTATION DATA]", data);
       // console.log("[VALIDATION ID]", validationId);
-      setWaitingForValidationResult(true);
+      if (
+        validationId == lastEvaluationOrSubmissionId &&
+        lastEvaluationOrSubmissionId
+      ) {
+        console.log("[VALIDATION] Already processed");
+        setWaitingForEvaluationResult(false);
+      }
 
       // setFetchingCount(0);
       // setValidationId(validationId);
@@ -663,6 +705,9 @@ const Exercise = ({
 
     const file = getFileFromCode();
     // console.log("INPUTS", testValues);
+
+    setWaitingForValidationResult(true);
+
     validateSubmissionMutation({
       variables: {
         file,
