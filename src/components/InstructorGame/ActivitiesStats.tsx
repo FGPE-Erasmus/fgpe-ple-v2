@@ -61,32 +61,34 @@ const getActivitiesStats = (
 const ActivitiesStats = ({
   gameData,
   gameId,
+  statsData,
 }: {
   gameData: getGameByIdQuery;
   gameId: string;
+  statsData: getOverallStats | undefined;
 }) => {
   const { t } = useTranslation();
 
   const activitiesList = getActivitiesList(gameData);
-  const {
-    data: statsData,
-    error: statsError,
-    loading: statsLoading,
-  } = useQuery<getOverallStats>(GET_OVERALL_STATS, {
-    variables: {
-      gameId,
-    },
-    skip: !gameId,
-    fetchPolicy: "no-cache",
-  });
+  // const {
+  //   data: statsData,
+  //   error: statsError,
+  //   loading: statsLoading,
+  // } = useQuery<getOverallStats>(GET_OVERALL_STATS, {
+  //   variables: {
+  //     gameId,
+  //   },
+  //   skip: !gameId,
+  //   fetchPolicy: "network-only",
+  // });
 
-  if (statsLoading) {
-    return <div>{t("Loading")}</div>;
-  }
+  // if (statsLoading) {
+  //   return <div>{t("Loading")}</div>;
+  // }
 
-  if (statsError) {
-    return <Error errorContent={JSON.stringify(statsError)} />;
-  }
+  // if (statsError) {
+  //   return <Error errorContent={JSON.stringify(statsError)} />;
+  // }
 
   if (!statsData) {
     return <Error errorContent={"Couldn't load data"} />;

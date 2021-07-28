@@ -13,7 +13,10 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Select,
   useDisclosure,
+  Text,
+  Tag,
 } from "@chakra-ui/react";
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -96,7 +99,7 @@ const InstructorGame = () => {
       gameId,
     },
     skip: !gameId,
-    fetchPolicy: "no-cache",
+    fetchPolicy: "network-only",
   });
 
   const {
@@ -116,21 +119,23 @@ const InstructorGame = () => {
     return <div>Game ID not provided</div>;
   }
 
-  if (gameLoading) {
+  if (gameLoading || overallStatsLoading) {
     return <div>{t("Loading")}</div>;
   }
 
-  if (!gameLoading && gameError) {
+  if (!gameLoading && !overallStatsLoading && gameError) {
     const isServerConnectionError = checkIfConnectionAborted(gameError);
 
     if (isServerConnectionError) {
       return <Error serverConnectionError />;
     } else {
-      return <Error errorContent={JSON.stringify(gameError)} />;
+      return (
+        <Error errorContent={JSON.stringify(gameError || overallStatsError)} />
+      );
     }
   }
 
-  if (!gameData) {
+  if (!gameData || !overallStatsData) {
     return <Error status="warning" errorContent={"No data"} />;
   }
 
@@ -449,10 +454,26 @@ const InstructorGame = () => {
           />
         </Box>
 
-        <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
-          {t("Activities")}
-        </Heading>
-        <ActivitiesStats gameData={gameData} gameId={gameId} />
+        <Flex justifyContent="space-between" alignItems="center">
+          <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
+            {t("Activities")}
+          </Heading>
+          {/* <Flex>
+            <Select size="sm">
+              {gameData.game.challenges.map((challenge, i) => (
+                <option value={challenge.name} key={i}>
+                  {challenge.name}
+                </option>
+              ))}
+            </Select>
+          </Flex> */}
+        </Flex>
+
+        <ActivitiesStats
+          gameData={gameData}
+          gameId={gameId}
+          statsData={overallStatsData}
+        />
       </div>
     </>
   );
