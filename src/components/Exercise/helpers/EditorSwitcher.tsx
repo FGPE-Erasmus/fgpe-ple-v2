@@ -7,33 +7,35 @@ import SpotTheBugEditor from "../editors/SpotTheBugEditor";
 const EditorSwitcher = ({
   editorKind,
 
-  codeSkeleton,
+  codeSkeletons,
   language,
   setCode,
   code,
   evaluateSubmission,
   validateSubmission,
 }: {
-  codeSkeleton: string;
+  codeSkeletons: string | string[];
   editorKind: string | undefined | null;
 } & CodeEditorProps) => {
-  console.log("CODE SKELETON", codeSkeleton);
+  // console.log("CODE SKELETON", codeSkeletons);
 
   switch (editorKind) {
     case "FILL_IN_GAPS":
       return (
         <FillInGapsEditor
-          skeleton={codeSkeleton}
+          skeleton={
+            typeof codeSkeletons === "object" ? codeSkeletons[0] : codeSkeletons
+          }
           language={language}
           setCode={setCode}
         />
       );
     // case "SPOT_BUG":
     //   return (
-    //     <SpotTheBugEditor codeSkeleton={codeSkeleton} language={language} />
+    //     <SpotTheBugEditor codeSkeletons={codeSkeleton} language={language} />
     //   );
     // case "SORT_BLOCKS":
-    //   return <SortBlocksEditor codeSkeleton={codeSkeleton} />;
+    //   return <SortBlocksEditor codeSkeletons={codeSkeletons} />;
     default:
       return (
         <CodeEditor

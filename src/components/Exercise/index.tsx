@@ -269,18 +269,27 @@ const Exercise = ({
     saveSubmissionDataInLocalStorage("", null, true, null, "");
   };
 
-  const getCodeSkeleton = (dontSetCode?: boolean) => {
+  const getCodeSkeleton = (dontSetCode?: boolean, getArray?: boolean) => {
     if (exercise) {
       if (exercise.codeSkeletons) {
-        console.log("CODE SKELETONS", exercise.codeSkeletons);
+        // console.log("CODE SKELETONS", exercise.codeSkeletons);
         const codeSkeletons = exercise.codeSkeletons;
+        let allCodeSkeletonsForActiveLang: string[] = [];
         for (let i = 0; i < codeSkeletons.length; i++) {
           if (codeSkeletons[i].extension === activeLanguage.extension) {
             if (!dontSetCode) {
               setCode(codeSkeletons[i].code || "");
             }
-            return codeSkeletons[i].code;
+
+            if (!getArray) {
+              return codeSkeletons[i].code;
+            } else {
+              allCodeSkeletonsForActiveLang.push(codeSkeletons[i].code || "");
+            }
           }
+        }
+        if (getArray) {
+          return allCodeSkeletonsForActiveLang;
         }
       }
     }
@@ -641,6 +650,14 @@ const Exercise = ({
       });
       setWaitingForEvaluationResult(true);
 
+      // if (
+      //   submissionId == lastEvaluationOrSubmissionId &&
+      //   lastEvaluationOrSubmissionId
+      // ) {
+      //   console.log("[EVALUATION] Already processed");
+      //   setWaitingForEvaluationResult(false);
+      // }
+
       // setFetchingCount(0);
       setEvaluationId(submissionId);
       getSubmissionById({
@@ -796,7 +813,7 @@ const Exercise = ({
                 editorKind={exercise?.editorKind}
                 language={activeLanguage}
                 code={code === "" ? getCodeSkeleton() : code}
-                codeSkeleton={getCodeSkeleton(true) || ""}
+                codeSkeletons={getCodeSkeleton(true, true) || ""}
                 setCode={(code) => {
                   saveCodeToLocalStorage(code);
                   setCode(code);
