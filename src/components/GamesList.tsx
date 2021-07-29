@@ -18,6 +18,7 @@ import {
   PlayerGameProfiles_myGameProfiles_game,
   PlayerGameProfiles_myGameProfiles_learningPath,
 } from "../generated/PlayerGameProfiles";
+import dayjs from "dayjs";
 
 // name={gameProfile.game.name}
 //                 description={
@@ -53,7 +54,11 @@ const Game = ({
   const { t } = useTranslation();
 
   return (
-    <GameStyled bg={color}>
+    <GameStyled
+      bg={color}
+      opacity={game.state === "LOCKED" ? 0.5 : 1}
+      pointerEvents={game.state === "LOCKED" ? "none" : "all"}
+    >
       <Flex justifyContent="space-between" width="100%" alignItems="center">
         <Box>
           <div>
@@ -75,6 +80,35 @@ const Game = ({
   );
 };
 
+const isGameAvailable = (gameData: PlayerGameProfiles_myGameProfiles_game) => {
+  if (gameData.state === "CLOSED") {
+    return false;
+  }
+
+  let startDateInPast = false;
+  let endDateInFuture = false;
+
+  if (gameData.startDate) {
+    const dayjsStartDate = dayjs(gameData.startDate);
+    if (dayjsStartDate.isAfter(dayjs(new Date()))) {
+      startDateInPast = true;
+    }
+  } else {
+    startDateInPast = true;
+  }
+
+  if (gameData.endDate) {
+    const dayjsEndDate = dayjs(gameData.endDate);
+    if (dayjsEndDate.isBefore(dayjs(new Date()))) {
+      endDateInFuture = true;
+    }
+  } else {
+    endDateInFuture = true;
+  }
+
+  return startDateInPast && endDateInFuture;
+};
+
 const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
   const { keycloak } = useKeycloak();
   const { setActiveGame } = useContext(NavContext);
@@ -90,32 +124,34 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
         marginTop={4}
       >
         {data.myGameProfiles.map((gameProfile, i) => {
-          return (
-            <Link
-              key={i}
-              to={{
-                pathname: `/game/${gameProfile.game.id}`,
-              }}
-              onClick={() =>
-                setActiveGame({
-                  id: gameProfile.game.id,
-                  name: gameProfile.game.name,
-                })
-              }
-            >
-              <Game
-                game={gameProfile.game}
-                progress={getProgress(gameProfile.learningPath)}
-              />
-            </Link>
-          );
+          if (isGameAvailable(gameProfile.game)) {
+            return (
+              <Link
+                key={i}
+                to={{
+                  pathname: `/game/${gameProfile.game.id}`,
+                }}
+                onClick={() =>
+                  setActiveGame({
+                    id: gameProfile.game.id,
+                    name: gameProfile.game.name,
+                  })
+                }
+              >
+                <Game
+                  game={gameProfile.game}
+                  progress={getProgress(gameProfile.learningPath)}
+                />
+              </Link>
+            );
+          }
         })}
       </VStack>
     </Box>
   );
 };
 
-const GameStyled = styled(Box)`
+const GameStyled = styled(Box)<{ locked?: boolean }>`
   height: 100px;
   width: 100%;
   border-radius: 5px;
@@ -124,6 +160,7 @@ const GameStyled = styled(Box)`
   align-items: center;
   padding: 15px;
   transition: transform 0.5s;
+
   &:hover {
     transform: scale(0.97);
   }

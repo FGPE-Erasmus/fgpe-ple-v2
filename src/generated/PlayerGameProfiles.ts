@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { RewardType } from "./globalTypes";
+import { GameStateEnum, RewardType } from "./globalTypes";
 
 // ====================================================
 // GraphQL query operation: PlayerGameProfiles
@@ -14,6 +14,9 @@ export interface PlayerGameProfiles_myGameProfiles_game {
   id: string;
   name: string;
   description: string | null;
+  startDate: any | null;
+  endDate: any | null;
+  state: GameStateEnum;
 }
 
 export interface PlayerGameProfiles_myGameProfiles_user {

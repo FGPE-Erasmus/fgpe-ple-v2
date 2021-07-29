@@ -18,6 +18,9 @@ const PLAYER_GAME_PROFILES = gql`
         id
         name
         description
+        startDate
+        endDate
+        state
       }
       user {
         id
