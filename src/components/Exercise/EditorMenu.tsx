@@ -22,6 +22,7 @@ import { BiLink, BiUnlink } from "react-icons/bi";
 import { IoExitOutline } from "react-icons/io5";
 import { FindChallenge_programmingLanguages } from "../../generated/FindChallenge";
 import { getColorSchemeForSubmissionResult } from "./helpers/EditorMenu";
+import isFullMenuAvailable from "./helpers/isFullMenuAvailable";
 import Settings from "./Settings";
 // import { useHotkeys } from "react-hotkeys-hook";
 import TextareaModal from "./TextareaModal";
@@ -46,7 +47,9 @@ const EditorMenu = ({
   restore,
   isRestoreAvailable,
   reload,
+  editorKind,
 }: {
+  editorKind: string | undefined | null;
   submissionResult: string | null;
   activeLanguage: FindChallenge_programmingLanguages;
   evaluateSubmission: () => void;
@@ -139,49 +142,54 @@ const EditorMenu = ({
                 )}
               </Menu>
             </Center>
-            <Center width={1 / 5}>
-              <ButtonGroup size="sm" isAttached w="95%" colorScheme="blue">
-                <Button
-                  onClick={() => {
-                    if (isWaitingForValidationResult) {
-                      setIsWaitingForValidationResult(false);
-                    } else {
-                      validateSubmission();
-                    }
-                  }}
-                  w="95%"
-                  isLoading={isWaitingForValidationResult}
-                  // loadingText={"Stop"}
-                  disabled={
-                    isWaitingForEvaluationResult || isWaitingForValidationResult
-                  }
-                  fontSize={{ base: 12, md: 14 }}
-                >
-                  {t("playground.menu.run")}
-                </Button>
-                <Tooltip
-                  label={t("playground.menu.addTestValues")}
-                  aria-label="A tooltip"
-                  bg="gray.300"
-                  color="black"
-                  hasArrow
-                  openDelay={500}
-                  visibility={isTextareaModalOpen ? "hidden" : "initial"}
-                >
-                  <IconButton
-                    color={colorMode === "dark" ? "black" : "white"}
-                    bgColor={colorMode === "dark" ? "gray.500" : "gray.800"}
-                    onClick={openTextareaModal}
-                    aria-label="Add to friends"
-                    icon={<IoExitOutline fontSize={18} />}
+
+            {isFullMenuAvailable(editorKind) && (
+              <Center width={1 / 5}>
+                <ButtonGroup size="sm" isAttached w="95%" colorScheme="blue">
+                  <Button
+                    onClick={() => {
+                      if (isWaitingForValidationResult) {
+                        setIsWaitingForValidationResult(false);
+                      } else {
+                        validateSubmission();
+                      }
+                    }}
+                    w="95%"
+                    isLoading={isWaitingForValidationResult}
+                    // loadingText={"Stop"}
                     disabled={
                       isWaitingForEvaluationResult ||
                       isWaitingForValidationResult
                     }
-                  />
-                </Tooltip>
-              </ButtonGroup>
-            </Center>
+                    fontSize={{ base: 12, md: 14 }}
+                  >
+                    {t("playground.menu.run")}
+                  </Button>
+                  <Tooltip
+                    label={t("playground.menu.addTestValues")}
+                    aria-label="A tooltip"
+                    bg="gray.300"
+                    color="black"
+                    hasArrow
+                    openDelay={500}
+                    visibility={isTextareaModalOpen ? "hidden" : "initial"}
+                  >
+                    <IconButton
+                      color={colorMode === "dark" ? "black" : "white"}
+                      bgColor={colorMode === "dark" ? "gray.500" : "gray.800"}
+                      onClick={openTextareaModal}
+                      aria-label="Open"
+                      icon={<IoExitOutline fontSize={18} />}
+                      disabled={
+                        isWaitingForEvaluationResult ||
+                        isWaitingForValidationResult
+                      }
+                    />
+                  </Tooltip>
+                </ButtonGroup>
+              </Center>
+            )}
+
             <Center width={1 / 6.5}>
               <Button
                 colorScheme="blue"
@@ -204,29 +212,34 @@ const EditorMenu = ({
                 {t("playground.menu.submit")}
               </Button>
             </Center>
-            <Center width={1 / 6.5}>
-              <Button
-                colorScheme="teal"
-                size="sm"
-                w="95%"
-                fontSize={{ base: 12, md: 14 }}
-                onClick={reload}
-              >
-                {t("playground.menu.reload")}
-              </Button>
-            </Center>
-            <Center width={1 / 6.5}>
-              <Button
-                colorScheme="teal"
-                size="sm"
-                w="95%"
-                fontSize={{ base: 12, md: 14 }}
-                onClick={restore}
-                disabled={!isRestoreAvailable}
-              >
-                {t("playground.menu.restore")}
-              </Button>
-            </Center>
+            {isFullMenuAvailable(editorKind) && (
+              <>
+                <Center width={1 / 6.5}>
+                  <Button
+                    colorScheme="teal"
+                    size="sm"
+                    w="95%"
+                    fontSize={{ base: 12, md: 14 }}
+                    onClick={reload}
+                  >
+                    {t("playground.menu.reload")}
+                  </Button>
+                </Center>
+                <Center width={1 / 6.5}>
+                  <Button
+                    colorScheme="teal"
+                    size="sm"
+                    w="95%"
+                    fontSize={{ base: 12, md: 14 }}
+                    onClick={restore}
+                    disabled={!isRestoreAvailable}
+                  >
+                    {t("playground.menu.restore")}
+                  </Button>
+                </Center>
+              </>
+            )}
+
             <Center width={1 / 6 / 2}>
               <IconButton
                 onClick={openSettings}

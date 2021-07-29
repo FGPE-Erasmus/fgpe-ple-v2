@@ -21,6 +21,7 @@ export interface FindChallenge_challenge_refs {
   name: string | null;
   statement: string | null;
   pdf: boolean | null;
+  editorKind: string | null;
   codeSkeletons: FindChallenge_challenge_refs_codeSkeletons[] | null;
 }
 

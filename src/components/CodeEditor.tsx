@@ -6,19 +6,21 @@ import { SettingsContext } from "./Exercise/SettingsContext";
 // import { useHotkeys } from "react-hotkeys-hook";
 import useHotKeys from "./Exercise/useHotKeys";
 
+export interface CodeEditorProps {
+  language: FindChallenge_programmingLanguages;
+  code: any;
+  setCode: (value: string) => void;
+  evaluateSubmission: () => void;
+  validateSubmission: () => void;
+}
+
 const CodeEditor = ({
   language,
   setCode,
   code,
   evaluateSubmission,
   validateSubmission,
-}: {
-  language: FindChallenge_programmingLanguages;
-  code: any;
-  setCode: (value: string) => void;
-  evaluateSubmission: () => void;
-  validateSubmission: () => void;
-}) => {
+}: CodeEditorProps) => {
   const hotkeys = useHotKeys({ validateSubmission, evaluateSubmission });
 
   const { editorTheme } = useContext(SettingsContext);

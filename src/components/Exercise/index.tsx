@@ -25,6 +25,8 @@ import { decryptWithAES, encryptWithAES } from "../../utilities/Encryption";
 import CodeEditor from "../CodeEditor";
 // import Loading from "./Loading";
 import EditorMenu from "./EditorMenu";
+import EditorSwitcher from "./helpers/EditorSwitcher";
+import getEditor from "./helpers/EditorSwitcher";
 import Hints from "./Hints";
 import { SettingsContext } from "./SettingsContext";
 import Statement, { getStatementLength } from "./Statement";
@@ -267,13 +269,16 @@ const Exercise = ({
     saveSubmissionDataInLocalStorage("", null, true, null, "");
   };
 
-  const getCodeSkeleton = () => {
+  const getCodeSkeleton = (dontSetCode?: boolean) => {
     if (exercise) {
       if (exercise.codeSkeletons) {
+        console.log("CODE SKELETONS", exercise.codeSkeletons);
         const codeSkeletons = exercise.codeSkeletons;
         for (let i = 0; i < codeSkeletons.length; i++) {
           if (codeSkeletons[i].extension === activeLanguage.extension) {
-            setCode(codeSkeletons[i].code || "");
+            if (!dontSetCode) {
+              setCode(codeSkeletons[i].code || "");
+            }
             return codeSkeletons[i].code;
           }
         }
@@ -745,6 +750,7 @@ const Exercise = ({
         </Box>
 
         <EditorMenu
+          editorKind={exercise?.editorKind}
           reload={reloadCode}
           submissionResult={submissionResult}
           activeLanguage={activeLanguage}
@@ -785,7 +791,21 @@ const Exercise = ({
             p={0}
             m={0}
           >
-            <CodeEditor
+            {
+              <EditorSwitcher
+                editorKind={exercise?.editorKind}
+                language={activeLanguage}
+                code={code === "" ? getCodeSkeleton() : code}
+                codeSkeleton={getCodeSkeleton(true) || ""}
+                setCode={(code) => {
+                  saveCodeToLocalStorage(code);
+                  setCode(code);
+                }}
+                evaluateSubmission={evaluateSubmission}
+                validateSubmission={validateSubmission}
+              />
+            }
+            {/* <CodeEditor
               language={activeLanguage}
               code={code === "" ? getCodeSkeleton() : code}
               setCode={(code) => {
@@ -794,7 +814,7 @@ const Exercise = ({
               }}
               evaluateSubmission={evaluateSubmission}
               validateSubmission={validateSubmission}
-            />
+            /> */}
           </Box>
           <Box
             width={{ base: "99%", md: "42%" }}
