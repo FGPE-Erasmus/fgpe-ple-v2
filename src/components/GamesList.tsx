@@ -80,7 +80,12 @@ const Game = ({
   );
 };
 
-const isGameAvailable = (gameData: PlayerGameProfiles_myGameProfiles_game) => {
+export const isGameAvailable = (gameData: {
+  state: string;
+  endDate: Date;
+  startDate: Date;
+  [key: string]: any;
+}) => {
   if (gameData.state === "CLOSED") {
     return false;
   }

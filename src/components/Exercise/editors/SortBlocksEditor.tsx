@@ -1,113 +1,176 @@
-import { useMotionValue, motion } from "framer-motion";
+import { Box } from "@chakra-ui/layout";
 import React, { useEffect, useRef, useState } from "react";
-import { Position } from "react-markdown";
-import { findIndex } from "./findIndex";
-import move from "array-move";
 
-const SortBlocksEditor = () => {
-  return <div></div>;
+import styled from "@emotion/styled";
+import { AnimateSharedLayout, motion } from "framer-motion";
+import {
+  docco,
+  atomOneDark,
+} from "react-syntax-highlighter/dist/esm/styles/hljs";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { FindChallenge_programmingLanguages } from "../../../generated/FindChallenge";
+import { Flex, IconButton, useColorMode } from "@chakra-ui/react";
+import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+
+const swapArrayElements = function (
+  arr: Array<any>,
+  indexA: number,
+  indexB: number
+) {
+  var temp = arr[indexA];
+  arr[indexA] = arr[indexB];
+  arr[indexB] = temp;
 };
 
-export default SortBlocksEditor;
-
-// const onTop = { zIndex: 1 };
-// const flat = {
-//   zIndex: 0,
-//   transition: { delay: 0.3 },
-// };
-
-// const SortBlocksEditor = ({
-//   codeSkeletons,
+// const Item = ({
+//   top,
+//   language,
+//   content,
+//   index,
+//   total,
+//   setOrder,
 // }: {
-//   codeSkeletons: string | string[];
+//   top: number;
+//   language: FindChallenge_programmingLanguages;
+//   content: string;
+//   index: number;
+//   total: number;
+//   setOrder: () => void;
 // }) => {
-//   const [lines, setLines] = useState<string[]>(
-//     typeof codeSkeletons === "object" ? codeSkeletons : [codeSkeletons]
-//   );
-
-//   // We need to collect an array of height and position data for all of this component's
-//   // `Item` children, so we can later us that in calculations to decide when a dragging
-//   // `Item` should swap places with its siblings.
-//   const positions = useRef<Position[]>([]).current;
-//   const setPosition = (i: number, offset: Position) => (positions[i] = offset);
-
-//   // Find the ideal index for a dragging item based on its position in the array, and its
-//   // current drag offset. If it's different to its current index, we swap this item with that
-//   // sibling.
-//   const moveItem = (i: number, dragOffset: number) => {
-//     const targetIndex = findIndex(i, dragOffset, positions);
-//     if (targetIndex !== i) setLines(move(lines, i, targetIndex));
-//   };
+//   // const [onTop, setOnTop] = useState(false);
 
 //   return (
-//     <ul>
-//       {lines.map((color, i) => (
-//         <Item
-//           key={color}
-//           i={i}
-//           color={color}
-//           setPosition={setPosition}
-//           moveItem={moveItem}
-//         />
-//       ))}
-//     </ul>
+
 //   );
 // };
 
-// const Item = ({ color, setPosition, moveItem, i }: any) => {
-//   const [isDragging, setDragging] = useState(false);
+const SortBlocksEditor = ({
+  codeSkeletons,
+  language,
+  setCode,
+}: {
+  codeSkeletons: string[];
+  language: FindChallenge_programmingLanguages;
+  setCode: (code: string) => void;
+}) => {
+  const [codeSkeletonsOrdered, setCodeSkeletonsOrder] = useState<string[]>([]);
+  const { colorMode } = useColorMode();
 
-//   // We'll use a `ref` to access the DOM element that the `motion.li` produces.
-//   // This will allow us to measure its height and position, which will be useful to
-//   // decide when a dragging element should switch places with its siblings.
-//   const ref = useRef(null);
+  useEffect(() => {
+    if (codeSkeletonsOrdered.length <= 0) {
+      /** Addition of "_____${i}" string is a workaround to make both framer-motion work and have unique keys */
+      setCodeSkeletonsOrder(codeSkeletons.map((item, i) => item + `_____${i}`));
+    }
+  }, [codeSkeletons]);
 
-//   // By manually creating a reference to `dragOriginY` we can manipulate this value
-//   // if the user is dragging this DOM element while the drag gesture is active to
-//   // compensate for any movement as the items are re-positioned.
-//   const dragOriginY = useMotionValue(0);
+  useEffect(() => {
+    setCodeSkeletonsOrder(codeSkeletons.map((item, i) => item + `_____${i}`));
+  }, [language]);
 
-//   // Update the measured position of the item so we can calculate when we should rearrange.
-//   useEffect(() => {
-//     if (ref.current) {
-//       setPosition(i, {
-//         height: ref.current.offsetHeight,
-//         top: ref.current.offsetTop,
-//       });
-//     }
-//   });
+  const moveElement = (index: number, up: boolean) => {
+    let codeSkeletonsNewOrder = [...codeSkeletonsOrdered];
+    swapArrayElements(
+      codeSkeletonsNewOrder,
+      index,
+      up
+        ? index - 1 < 0
+          ? 0
+          : index - 1
+        : index + 1 < codeSkeletonsOrdered.length
+        ? index + 1
+        : codeSkeletonsOrdered.length - 1
+    );
+    console.log(codeSkeletonsNewOrder.join("\n"));
 
-//   return (
-//     <motion.li
-//       ref={ref}
-//       initial={false}
-//       // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
-//       animate={isDragging ? onTop : flat}
-//       style={{ background: color, height: 50 }}
-//       whileHover={{ scale: 1.03 }}
-//       whileTap={{ scale: 1.12 }}
-//       drag="y"
-//       dragOriginY={dragOriginY as any}
-//       dragConstraints={{ top: 0, bottom: 0 }}
-//       dragElastic={1}
-//       onDragStart={() => setDragging(true)}
-//       onDragEnd={() => setDragging(false)}
-//       onDrag={(e, { point }) => moveItem(i, point.y)}
-//       positionTransition={({ delta }: { delta: any }) => {
-//         if (isDragging) {
-//           // If we're dragging, we want to "undo" the items movement within the list
-//           // by manipulating its dragOriginY. This will keep the item under the cursor,
-//           // even though it's jumping around the DOM.
-//           dragOriginY.set(dragOriginY.get() + delta.y);
-//         }
+    setCodeSkeletonsOrder(codeSkeletonsNewOrder);
+    setCode(codeSkeletonsNewOrder.join("\n"));
+  };
 
-//         // If `positionTransition` is a function and returns `false`, it's telling
-//         // Motion not to animate from its old position into its new one. If we're
-//         // dragging, we don't want any animation to occur.
-//         return !isDragging;
-//       }}
-//     />
-//   );
-// };
+  return (
+    <Flex
+      position="relative"
+      width="100%"
+      justifyContent="center"
+      marginTop={5}
+      flexDirection="column"
+    >
+      {codeSkeletonsOrdered.map((line, i) => {
+        return (
+          <Block
+            isDark={colorMode === "dark"}
+            height={50}
+            layout
+            key={line}
+            transition={{
+              type: "spring",
+              damping: 20,
+              stiffness: 300,
+            }}
+          >
+            <SyntaxHighlighter
+              wrapLines
+              wrapLongLines
+              customStyle={{
+                fontSize: "14px",
+                background: "none",
+                padding: 0,
+                height: "auto",
+                // minHeight: "200px",
+              }}
+              language={language.id ? language.id.toLowerCase() : "plain"}
+              style={colorMode === "dark" ? atomOneDark : docco}
+            >
+              {line.split("_____")[0]}
+            </SyntaxHighlighter>
+            <Flex flexDir="column">
+              <IconButton
+                aria-label="Up"
+                icon={<TriangleUpIcon />}
+                width={50}
+                height={25}
+                size="xs"
+                borderRadius="4px 4px 0px 0px"
+                borderBottom="none"
+                colorScheme="gray"
+                variant="outline"
+                color="grey"
+                onClick={() => moveElement(i, true)}
+              />
+              <IconButton
+                color="grey"
+                aria-label="Down"
+                icon={<TriangleDownIcon />}
+                width={50}
+                height={25}
+                size="xs"
+                borderRadius="0px 0px 4px 4px"
+                colorScheme="gray"
+                variant="outline"
+                onClick={() => moveElement(i, false)}
+              />
+            </Flex>
+          </Block>
+        );
+      })}
+    </Flex>
+  );
+};
 
-// export default SortBlocksEditor;
+const Block = styled(motion.div)<{ height: number; isDark: boolean }>`
+  width: 95%;
+  margin: auto;
+  padding-left: 15px;
+  margin-bottom: 5px;
+  height: ${({ height }) => height}px;
+  border: 1px solid black;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-color: ${({ isDark: dark }) =>
+    dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"};
+  background-color: ${({ isDark: dark }) =>
+    dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)"};
+`;
+
+export default SortBlocksEditor;

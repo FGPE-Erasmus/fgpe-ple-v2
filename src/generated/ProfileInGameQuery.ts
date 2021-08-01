@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { State, Result } from "./globalTypes";
+import { GameStateEnum, State, Result } from "./globalTypes";
 
 // ====================================================
 // GraphQL query operation: ProfileInGameQuery
@@ -13,6 +13,9 @@ export interface ProfileInGameQuery_profileInGame_game {
   __typename: "Game";
   id: string;
   name: string;
+  startDate: any | null;
+  endDate: any | null;
+  state: GameStateEnum;
 }
 
 export interface ProfileInGameQuery_profileInGame_user {

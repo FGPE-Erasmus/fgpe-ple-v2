@@ -69,6 +69,7 @@ const FillInGapsEditor = ({
                       setInputsValues(newValues);
                       onChange(e.target.value, gapsLength - 1 - i);
                     }}
+                    fontSize={14}
                     display="inline-block"
                     maxW={50}
                     maxH={30}

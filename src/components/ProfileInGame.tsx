@@ -12,7 +12,7 @@ import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { BiCheck, BiCircle, BiXCircle } from "react-icons/bi";
 import { HiLockClosed, HiLockOpen } from "react-icons/hi";
-import { Link, useParams } from "react-router-dom";
+import { Link, Redirect, useParams } from "react-router-dom";
 import NavContext from "../context/NavContext";
 import { State } from "../generated/globalTypes";
 import {
@@ -23,6 +23,7 @@ import {
 import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import Error from "./Error";
+import { isGameAvailable } from "./GamesList";
 import RankingTable from "./RankingTable";
 
 interface ParamTypes {
@@ -36,6 +37,9 @@ const PROFILE_IN_GAME = gql`
       game {
         id
         name
+        startDate
+        endDate
+        state
       }
       user {
         id
@@ -174,6 +178,10 @@ const ProfileInGame = () => {
   }
 
   if (!dataProfile) return <Text>no data</Text>;
+
+  if (!isGameAvailable(dataProfile.profileInGame.game)) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <Box>

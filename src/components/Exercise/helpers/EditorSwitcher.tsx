@@ -34,8 +34,16 @@ const EditorSwitcher = ({
     //   return (
     //     <SpotTheBugEditor codeSkeletons={codeSkeleton} language={language} />
     //   );
-    // case "SORT_BLOCKS":
-    //   return <SortBlocksEditor codeSkeletons={codeSkeletons} />;
+    case "SORT_BLOCKS":
+      return (
+        <SortBlocksEditor
+          codeSkeletons={
+            typeof codeSkeletons === "object" ? codeSkeletons : [codeSkeletons]
+          }
+          language={language}
+          setCode={setCode}
+        />
+      );
     default:
       return (
         <CodeEditor
