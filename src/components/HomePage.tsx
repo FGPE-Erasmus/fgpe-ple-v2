@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import withChangeAnimation from "../utilities/withChangeAnimation";
+import ErasmusLogo from "../images/erasmus.png";
 
 const HomePage = () => {
   const { t } = useTranslation();
@@ -50,7 +51,7 @@ const ErasmusImage = styled.div`
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
-  background-image: url("erasmus.png");
+  background-image: url(${ErasmusLogo});
   border-radius: 8px;
   margin-bottom: 16px;
   margin-top: 48px;
