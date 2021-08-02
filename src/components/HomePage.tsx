@@ -45,7 +45,9 @@ const HomePage = () => {
           {t("home.clickToLogin")}
         </Link>
 
-        <FGPELogo src={LogoSVG} />
+        <a href="https://fgpe.usz.edu.pl/" target="_blank">
+          <FGPELogo src={LogoSVG} />
+        </a>
 
         <ErasmusImage />
         <Erasmus>
@@ -70,6 +72,11 @@ const FGPELogo = styled.img`
 
   margin-top: 50px;
   max-width: 600px;
+  transition: transform 0.5s;
+
+  &:hover {
+    transform: scale(1.03);
+  }
 `;
 
 const LinkStyled = styled.a`
