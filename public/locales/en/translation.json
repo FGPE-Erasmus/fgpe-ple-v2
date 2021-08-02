@@ -69,7 +69,9 @@
   "Challenges": "Challenges",
   "home": {
     "title": "Home Page",
-    "description": "Anyone can access this page"
+    "description": "Anyone can access this page",
+    "welcome": "Welcome to the FGPE Programming Learning Environment developed within the Framework for Gamified Programming Education project realized under Erasmus+ Programme!",
+    "clickToLogin": "Click Login to sign in or sign up."
   },
   "Add": "Add",
   "Adding": "Adding",
