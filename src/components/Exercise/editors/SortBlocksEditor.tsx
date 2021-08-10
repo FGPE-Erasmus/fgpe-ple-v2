@@ -164,7 +164,7 @@ const Block = styled(motion.div)<{ height: number; isDark: boolean }>`
   margin: auto;
   padding-left: 15px;
   margin-bottom: 5px;
-  height: ${({ height }) => height}px;
+  min-height: ${({ height }) => height}px;
   border: 1px solid black;
   border-radius: 4px;
   display: flex;
