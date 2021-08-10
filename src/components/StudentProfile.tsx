@@ -8,6 +8,7 @@ import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import Error from "./Error";
 import GamesList from "./GamesList";
+import PublicGames from "./PublicGames";
 import Rewards from "./Rewards";
 
 const PLAYER_GAME_PROFILES = gql`
@@ -57,13 +58,19 @@ const PLAYER_GAME_PROFILES = gql`
         }
       }
     }
+
+    games {
+      id
+      name
+      description
+    }
   }
 `;
 
 const StudentProfile: React.ComponentType = () => {
   const { t, i18n } = useTranslation();
   const { keycloak, initialized } = useKeycloak();
-  const { data, error, loading } = useQuery<PlayerGameProfiles>(
+  const { data, error, loading, refetch } = useQuery<PlayerGameProfiles>(
     PLAYER_GAME_PROFILES,
     {
       fetchPolicy: "network-only",
@@ -115,6 +122,16 @@ const StudentProfile: React.ComponentType = () => {
 
       <GamesList data={data} />
       {data.myGameProfiles.length < 1 && t("No games")}
+
+      <Heading as="h3" size="md" marginTop={10}>
+        {t("All available games")}
+      </Heading>
+
+      <PublicGames
+        gamesData={data.games}
+        gameProfiles={data.myGameProfiles}
+        refetch={refetch}
+      />
     </div>
   );
 };

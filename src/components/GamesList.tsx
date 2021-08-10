@@ -46,9 +46,11 @@ const getProgress = (
 const Game = ({
   game,
   progress,
+  small,
 }: {
   game: PlayerGameProfiles_myGameProfiles_game;
   progress: { solved: number; total: number };
+  small?: number;
 }) => {
   const color = useColorModeValue("gray.100", "gray.700");
   const { t } = useTranslation();
@@ -58,11 +60,12 @@ const Game = ({
       bg={color}
       opacity={game.state === "LOCKED" ? 0.5 : 1}
       pointerEvents={game.state === "LOCKED" ? "none" : "all"}
+      small={small}
     >
       <Flex justifyContent="space-between" width="100%" alignItems="center">
         <Box>
           <div>
-            <Heading size="lg">{game.name}</Heading>
+            <Heading size={small ? "md" : "lg"}>{game.name}</Heading>
             <div>
               {game.description ? game.description : t("No description")}
             </div>
@@ -117,6 +120,7 @@ export const isGameAvailable = (gameData: {
 const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
   const { keycloak } = useKeycloak();
   const { setActiveGame } = useContext(NavContext);
+  const small = data.myGameProfiles.length > 5 ? 1 : 0;
 
   return (
     <Box>
@@ -124,7 +128,7 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
 
       <VStack
         divider={<StackDivider />}
-        spacing={4}
+        spacing={small ? 2 : 4}
         align="stretch"
         marginTop={4}
       >
@@ -146,6 +150,7 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
                 <Game
                   game={gameProfile.game}
                   progress={getProgress(gameProfile.learningPath)}
+                  small={small}
                 />
               </Link>
             );
@@ -156,8 +161,8 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
   );
 };
 
-const GameStyled = styled(Box)<{ locked?: boolean }>`
-  height: 100px;
+const GameStyled = styled(Box)<{ locked?: boolean; small?: number }>`
+  min-height: ${({ small }) => (small ? 50 : 80)}px;
   width: 100%;
   border-radius: 5px;
   /* background-color: white; */

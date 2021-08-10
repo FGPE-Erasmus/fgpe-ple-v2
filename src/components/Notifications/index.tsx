@@ -33,7 +33,7 @@ interface NotificationI {
 
 const ToastContainer = (props: any) => (
   <Box
-    position="absolute"
+    position="fixed"
     top="0"
     left="50%"
     transform="translateX(-50%)"

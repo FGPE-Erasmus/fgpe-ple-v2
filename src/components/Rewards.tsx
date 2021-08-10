@@ -234,25 +234,31 @@ const RewardModal = ({
                 <RewardImage imageData={reward.image} />
               </Box>
               <List spacing={3}>
-                <ListItem>
-                  <ListIcon as={MdCheckCircle} color="green.500" />
-                  {reward.description}
-                </ListItem>
+                {reward.description && (
+                  <ListItem>
+                    <ListIcon as={MdCheckCircle} color="green.500" />
+                    {reward.description}
+                  </ListItem>
+                )}
                 {reward.parentChallenge && (
                   <ListItem>
                     <ListIcon as={MdCheckCircle} color="green.500" />
                     {t("Challenge")}: {reward.parentChallenge.name}
                   </ListItem>
                 )}
-                <ListItem>
-                  <ListIcon as={MdDateRange} color="green.500" />
-                  {dayjs(reward.createdAt).format("DD/MM/YYYY")}
-                </ListItem>
+                {reward.createdAt && (
+                  <ListItem>
+                    <ListIcon as={MdDateRange} color="green.500" />
+                    {dayjs(reward.createdAt).format("DD/MM/YYYY")}
+                  </ListItem>
+                )}
 
-                <ListItem>
-                  <ListIcon as={RiGamepadFill} color="green.500" />
-                  {t("Game")}: {reward.game.name}
-                </ListItem>
+                {reward.game && (
+                  <ListItem>
+                    <ListIcon as={RiGamepadFill} color="green.500" />
+                    {t("Game")}: {reward.game.name}
+                  </ListItem>
+                )}
 
                 {/* <ListItem>
                   <ListIcon as={VscDebugBreakpointLog} color="green.500" />

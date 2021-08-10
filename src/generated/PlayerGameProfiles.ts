@@ -83,6 +83,14 @@ export interface PlayerGameProfiles_myGameProfiles {
   rewards: PlayerGameProfiles_myGameProfiles_rewards[];
 }
 
+export interface PlayerGameProfiles_games {
+  __typename: "Game";
+  id: string;
+  name: string;
+  description: string | null;
+}
+
 export interface PlayerGameProfiles {
   myGameProfiles: PlayerGameProfiles_myGameProfiles[];
+  games: PlayerGameProfiles_games[];
 }
