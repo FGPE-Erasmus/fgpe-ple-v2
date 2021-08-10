@@ -80,10 +80,13 @@ const SortBlocksEditor = ({
         ? index + 1
         : codeSkeletonsOrdered.length - 1
     );
-    console.log(codeSkeletonsNewOrder.join("\n"));
 
+    const linesWithRemovedAdditionalSymbols = codeSkeletonsNewOrder.map(
+      (code) => code.split("_____")[0]
+    );
     setCodeSkeletonsOrder(codeSkeletonsNewOrder);
-    setCode(codeSkeletonsNewOrder.join("\n"));
+    setCode(linesWithRemovedAdditionalSymbols.join("\n"));
+    console.log(linesWithRemovedAdditionalSymbols.join("\n"));
   };
 
   return (

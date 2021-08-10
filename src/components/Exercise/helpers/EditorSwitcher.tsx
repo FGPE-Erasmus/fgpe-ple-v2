@@ -6,7 +6,6 @@ import SpotTheBugEditor from "../editors/SpotTheBugEditor";
 
 const EditorSwitcher = ({
   editorKind,
-
   codeSkeletons,
   language,
   setCode,
@@ -30,10 +29,16 @@ const EditorSwitcher = ({
           setCode={setCode}
         />
       );
-    // case "SPOT_BUG":
-    //   return (
-    //     <SpotTheBugEditor codeSkeletons={codeSkeleton} language={language} />
-    //   );
+    case "SPOT_BUG":
+      return (
+        <SpotTheBugEditor
+          codeSkeleton={
+            typeof codeSkeletons === "object" ? codeSkeletons[0] : codeSkeletons
+          }
+          language={language}
+          setCode={setCode}
+        />
+      );
     case "SORT_BLOCKS":
       return (
         <SortBlocksEditor

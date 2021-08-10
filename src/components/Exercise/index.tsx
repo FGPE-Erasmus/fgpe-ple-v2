@@ -32,6 +32,20 @@ import { SettingsContext } from "./SettingsContext";
 import Statement, { getStatementLength } from "./Statement";
 import Terminal from "./Terminal";
 
+const isEditorKindSpotBug = (
+  exercise?: FindChallenge_challenge_refs | null
+) => {
+  if (!exercise) {
+    return false;
+  }
+
+  if (exercise.editorKind === "SPOT_BUG") {
+    return true;
+  }
+
+  return false;
+};
+
 const GET_VALIDATION_BY_ID = gql`
   query getValidationByIdQuery($gameId: String!, $validationId: String!) {
     validation(gameId: $gameId, id: $validationId) {
@@ -687,17 +701,17 @@ const Exercise = ({
     },
   });
 
-  const getFileFromCode = () => {
+  const getFileFromCode = (isSpotBugMode?: boolean) => {
     const blob = new Blob([codeRef.current], { type: "text/plain" });
     const file = new File(
       [blob],
-      `Solution.${activeLanguageRef.current.extension}`
+      `Solution.${isSpotBugMode ? "txt" : activeLanguageRef.current.extension}`
     );
 
     return file;
   };
 
-  const evaluateSubmission = () => {
+  const evaluateSubmission = (isSpotBugMode?: boolean) => {
     clearPlayground();
     // setEvaluationFetching(true);
     // setFetchingCount(0);
@@ -708,7 +722,7 @@ const Exercise = ({
       return;
     } else console.log("[EVALUATE SUBMISSION]");
 
-    const file = getFileFromCode();
+    const file = getFileFromCode(isSpotBugMode);
 
     evaluateSubmissionMutation({
       variables: { file, gameId, exerciseId: exerciseRef.current?.id },
@@ -802,7 +816,10 @@ const Exercise = ({
           flexDirection={{ base: "column", md: "row" }}
         >
           <Box
-            width={{ base: "99%", md: "58%" }}
+            width={{
+              base: "99%",
+              md: isEditorKindSpotBug(exercise) ? "100%" : "58%",
+            }}
             height={{ base: "50vh", md: "100%" }}
             minHeight="50vh"
             p={0}
@@ -833,20 +850,22 @@ const Exercise = ({
               validateSubmission={validateSubmission}
             /> */}
           </Box>
-          <Box
-            width={{ base: "99%", md: "42%" }}
-            height={{ base: "50vh", md: "100%" }}
-            minHeight="50vh"
-          >
-            <Terminal
-              submissionFeedback={submissionFeedback}
-              submissionResult={submissionResult}
-              validationOutputs={validationOutputs}
-              loading={
-                isWaitingForValidationResult || isWaitingForEvaluationResult
-              }
-            />
-          </Box>
+          {!isEditorKindSpotBug(exercise) && (
+            <Box
+              width={{ base: "99%", md: "42%" }}
+              height={{ base: "50vh", md: "100%" }}
+              minHeight="50vh"
+            >
+              <Terminal
+                submissionFeedback={submissionFeedback}
+                submissionResult={submissionResult}
+                validationOutputs={validationOutputs}
+                loading={
+                  isWaitingForValidationResult || isWaitingForEvaluationResult
+                }
+              />
+            </Box>
+          )}
         </Flex>
       </Box>
     </SettingsContext.Provider>

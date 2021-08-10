@@ -52,7 +52,7 @@ const EditorMenu = ({
   editorKind: string | undefined | null;
   submissionResult: string | null;
   activeLanguage: FindChallenge_programmingLanguages;
-  evaluateSubmission: () => void;
+  evaluateSubmission: (isSpotBug?: boolean) => void;
   validateSubmission: () => void;
   isEvaluationFetching: boolean;
   setSubmissionFetching: React.Dispatch<React.SetStateAction<boolean>>;
@@ -197,7 +197,11 @@ const EditorMenu = ({
                   if (isWaitingForEvaluationResult) {
                     setIsWaitingForEvaluationResult(false);
                   } else {
-                    evaluateSubmission();
+                    if (editorKind === "SPOT_BUG") {
+                      evaluateSubmission(true);
+                    } else {
+                      evaluateSubmission();
+                    }
                   }
                 }}
                 w="95%"
