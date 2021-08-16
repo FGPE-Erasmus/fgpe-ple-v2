@@ -1,6 +1,16 @@
 import { gql, useQuery, useSubscription } from "@apollo/client";
-import { CheckIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
+import { CheckIcon, ChevronRightIcon, ChevronLeftIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  BoxProps,
+  Button,
+  Flex,
+  Icon,
+  IconButton,
+  Text,
+  useBreakpointValue,
+  useColorMode,
+} from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React, { useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
@@ -24,6 +34,7 @@ import { BiTimer } from "react-icons/bi";
 import { challengeStatusUpdatedStudentSub } from "../generated/challengeStatusUpdatedStudentSub";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
 interface ParamTypes {
   gameId: string;
@@ -107,6 +118,8 @@ const CHALLENGE_STATUS_UPDATED_STUDENT_SUB = gql`
 const Challenge = () => {
   const { gameId, challengeId } = useParams<ParamTypes>();
   const { t } = useTranslation();
+  const [sideMenuOpen, setSideMenuOpen] = useState(false);
+  const { colorMode } = useColorMode();
 
   const { add: addNotification } = useNotifications();
   const [challengeStatus, setChallengeStatus] =
@@ -340,13 +353,48 @@ const Challenge = () => {
   return (
     <Playground>
       <Flex h="100%" w="100%">
-        <Box
-          width={[2 / 12]}
-          maxWidth={330}
+        <MotionBox
+          position={{ base: "fixed", md: "relative" }}
+          top={{ base: 0, md: "auto" }}
+          background={{
+            base: colorMode !== "dark" ? "gray.200" : "gray.900",
+            md: "none",
+          }}
+          zIndex={999}
+          left={{ md: "0 !important" }}
+          animate={{
+            left: sideMenuOpen ? "0%" : "-50%",
+          }}
+          width={{ base: "50%", md: 2 / 12 }}
+          // backgroundColor="white"
+          maxWidth={{ base: "100%", md: 330 }}
+          // paddingTop={5}
           height="100%"
+          overflowY="scroll"
           borderRight="1px solid rgba(0,0,0,0.1)"
-          position="relative"
+          // position="relative"
         >
+          <Box
+            position="absolute"
+            left={"calc(100% + 20px)"}
+            display={{ base: "block", md: "none" }}
+            opacity={sideMenuOpen ? 1 : 0.5}
+          >
+            <IconButton
+              colorScheme="blue"
+              height="50px"
+              width="30px"
+              position="fixed"
+              size="xl"
+              zIndex={2000}
+              top="50%"
+              transform="translate(-50%, -50%)"
+              aria-label="Open / Close"
+              icon={sideMenuOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+              onClick={() => setSideMenuOpen(!sideMenuOpen)}
+            />
+          </Box>
+
           {challengeStatus &&
             challengeData?.challenge.mode === Mode.TIME_BOMB &&
             challengeStatus.openedAt &&
@@ -368,8 +416,13 @@ const Challenge = () => {
               </Flex>
             )}
 
-          <Box p={{ base: 1, md: 5 }} h="100%" w="100%">
-            <Flex flexDirection="column" alignItems="center" w="100%">
+          <Box p={{ base: 1, md: 5 }} h="100%" w="100%" position="relative">
+            <Flex
+              flexDirection="column"
+              alignItems="center"
+              w="100%"
+              // height="100%"
+            >
               {!challengeLoading &&
                 challengeData &&
                 challengeData.challenge.refs.map((exercise, i) => {
@@ -406,7 +459,7 @@ const Challenge = () => {
                 })}
             </Flex>
           </Box>
-        </Box>
+        </MotionBox>
 
         {!challengeLoading && challengeData && (
           <Exercise
@@ -424,6 +477,8 @@ const Challenge = () => {
     </Playground>
   );
 };
+
+export const MotionBox = motion.custom(Box);
 
 const Playground = styled.div`
   position: absolute;

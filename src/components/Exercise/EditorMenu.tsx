@@ -102,211 +102,188 @@ const EditorMenu = ({
         setTestValues={setTestValues}
       />
       <Flex
-        height={{ base: 100, md: 50 }}
+        height={{ base: 144, md: 50 }}
         minHeight={50}
         backgroundColor={colorMode === "dark" ? "#1c232f" : "gray.50"}
         alignItems="center"
+        justifyContent="center"
         p={2}
         flexDirection={{ base: "column", md: "row" }}
       >
         <Box
           width={{ base: "100%", md: 7 / 12 }}
           height={{ base: "50%", md: "auto" }}
+          marginBottom={{ base: 4, md: 0 }}
         >
-          <Flex width={"100%"} height={"100%"}>
-            <Center width={(1 / 6) * 1.35}>
-              <Menu>
-                {({ isOpen }) => (
-                  <>
-                    <MenuButton
-                      size="sm"
-                      isActive={isOpen}
-                      as={Button}
-                      w="95%"
-                      rightIcon={<ChevronDownIcon />}
-                      fontSize={12}
-                    >
-                      {activeLanguage.name}
-                    </MenuButton>
-                    <MenuList>
-                      {programmingLanguages.map((language, i) => (
-                        <MenuItem
-                          key={i}
-                          onClick={() => setActiveLanguage(language)}
-                        >
-                          {language.name}
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </>
-                )}
-              </Menu>
-            </Center>
+          <Flex
+            width={"100%"}
+            height="100%"
+            flexDir={{ base: "column", md: "row" }}
+          >
+            <Flex
+              width={"100%"}
+              marginRight={0.5}
+              marginBottom={{ base: 2, md: 0 }}
+            >
+              <Center width={(1 / 6) * 1.35 * 2}>
+                <Menu>
+                  {({ isOpen }) => (
+                    <>
+                      <MenuButton
+                        size="sm"
+                        isActive={isOpen}
+                        as={Button}
+                        w="95%"
+                        rightIcon={<ChevronDownIcon />}
+                        fontSize={12}
+                      >
+                        {activeLanguage.name}
+                      </MenuButton>
+                      <MenuList>
+                        {programmingLanguages.map((language, i) => (
+                          <MenuItem
+                            key={i}
+                            onClick={() => setActiveLanguage(language)}
+                          >
+                            {language.name}
+                          </MenuItem>
+                        ))}
+                      </MenuList>
+                    </>
+                  )}
+                </Menu>
+              </Center>
 
-            {isFullMenuAvailable(editorKind) && (
-              <Center width={1 / 5}>
-                <ButtonGroup size="sm" isAttached w="95%" colorScheme="blue">
-                  <Button
-                    onClick={() => {
-                      if (isWaitingForValidationResult) {
-                        setIsWaitingForValidationResult(false);
-                      } else {
-                        validateSubmission();
-                      }
-                    }}
-                    w="95%"
-                    isLoading={isWaitingForValidationResult}
-                    // loadingText={"Stop"}
-                    disabled={
-                      isWaitingForEvaluationResult ||
-                      isWaitingForValidationResult
-                    }
-                    fontSize={{ base: 12, md: 14 }}
-                  >
-                    {t("playground.menu.run")}
-                  </Button>
-                  <Tooltip
-                    label={t("playground.menu.addTestValues")}
-                    aria-label="A tooltip"
-                    bg="gray.300"
-                    color="black"
-                    hasArrow
-                    openDelay={500}
-                    visibility={isTextareaModalOpen ? "hidden" : "initial"}
-                  >
-                    <IconButton
-                      color={colorMode === "dark" ? "black" : "white"}
-                      bgColor={colorMode === "dark" ? "gray.500" : "gray.800"}
-                      onClick={openTextareaModal}
-                      aria-label="Open"
-                      icon={<IoExitOutline fontSize={18} />}
+              {isFullMenuAvailable(editorKind) && (
+                <Center width={(1 / 5) * 2}>
+                  <ButtonGroup size="sm" isAttached w="95%" colorScheme="blue">
+                    <Button
+                      onClick={() => {
+                        if (isWaitingForValidationResult) {
+                          setIsWaitingForValidationResult(false);
+                        } else {
+                          validateSubmission();
+                        }
+                      }}
+                      w="95%"
+                      isLoading={isWaitingForValidationResult}
+                      // loadingText={"Stop"}
                       disabled={
                         isWaitingForEvaluationResult ||
                         isWaitingForValidationResult
                       }
-                    />
-                  </Tooltip>
-                </ButtonGroup>
-              </Center>
-            )}
+                      fontSize={{ base: 12, md: 14 }}
+                    >
+                      {t("playground.menu.run")}
+                    </Button>
+                    <Tooltip
+                      label={t("playground.menu.addTestValues")}
+                      aria-label="A tooltip"
+                      bg="gray.300"
+                      color="black"
+                      hasArrow
+                      openDelay={500}
+                      visibility={isTextareaModalOpen ? "hidden" : "initial"}
+                    >
+                      <IconButton
+                        color={colorMode === "dark" ? "black" : "white"}
+                        bgColor={colorMode === "dark" ? "gray.500" : "gray.800"}
+                        onClick={openTextareaModal}
+                        aria-label="Open"
+                        icon={<IoExitOutline fontSize={18} />}
+                        disabled={
+                          isWaitingForEvaluationResult ||
+                          isWaitingForValidationResult
+                        }
+                      />
+                    </Tooltip>
+                  </ButtonGroup>
+                </Center>
+              )}
 
-            <Center width={1 / 6.5}>
-              <Button
-                colorScheme="blue"
-                onClick={() => {
-                  if (isWaitingForEvaluationResult) {
-                    setIsWaitingForEvaluationResult(false);
-                  } else {
-                    if (editorKind === "SPOT_BUG") {
-                      evaluateSubmission(true);
+              <Center width={(1 / 6.5) * 2}>
+                <Button
+                  colorScheme="blue"
+                  onClick={() => {
+                    if (isWaitingForEvaluationResult) {
+                      setIsWaitingForEvaluationResult(false);
                     } else {
-                      evaluateSubmission();
+                      if (editorKind === "SPOT_BUG") {
+                        evaluateSubmission(true);
+                      } else {
+                        evaluateSubmission();
+                      }
                     }
+                  }}
+                  w="95%"
+                  size="sm"
+                  isLoading={isWaitingForEvaluationResult}
+                  // loadingText={"Stop"}
+                  disabled={
+                    isWaitingForEvaluationResult || isWaitingForValidationResult
                   }
-                }}
-                w="95%"
-                size="sm"
-                isLoading={isWaitingForEvaluationResult}
-                // loadingText={"Stop"}
-                disabled={
-                  isWaitingForEvaluationResult || isWaitingForValidationResult
-                }
-                fontSize={{ base: 12, md: 14 }}
-              >
-                {t("playground.menu.submit")}
-              </Button>
-            </Center>
-            {isFullMenuAvailable(editorKind) && (
-              <>
-                <Center width={1 / 6.5}>
-                  <Button
-                    colorScheme="teal"
-                    size="sm"
-                    w="95%"
-                    fontSize={{ base: 12, md: 14 }}
-                    onClick={reload}
-                  >
-                    {t("playground.menu.reload")}
-                  </Button>
-                </Center>
-                <Center width={1 / 6.5}>
-                  <Button
-                    colorScheme="teal"
-                    size="sm"
-                    w="95%"
-                    fontSize={{ base: 12, md: 14 }}
-                    onClick={restore}
-                    disabled={!isRestoreAvailable}
-                  >
-                    {t("playground.menu.restore")}
-                  </Button>
-                </Center>
-              </>
-            )}
+                  fontSize={{ base: 12, md: 14 }}
+                >
+                  {t("playground.menu.submit")}
+                </Button>
+              </Center>
+            </Flex>
 
-            <Center width={1 / 6 / 2}>
-              <IconButton
-                onClick={openSettings}
-                size="sm"
-                w="95%"
-                aria-label="Settings"
-                icon={<SettingsIcon />}
-                variant="outline"
-              />
-            </Center>
+            <Flex
+              width={"100%"}
+              justifyContent={{ base: "center", md: "initial" }}
+            >
+              {isFullMenuAvailable(editorKind) && (
+                <>
+                  <Center width={(1 / 6.5) * 2}>
+                    <Button
+                      colorScheme="teal"
+                      size="sm"
+                      w="95%"
+                      fontSize={{ base: 12, md: 14 }}
+                      onClick={reload}
+                    >
+                      {t("playground.menu.reload")}
+                    </Button>
+                  </Center>
+                  <Center width={(1 / 6.5) * 2}>
+                    <Button
+                      colorScheme="teal"
+                      size="sm"
+                      w="95%"
+                      fontSize={{ base: 12, md: 14 }}
+                      onClick={restore}
+                      disabled={!isRestoreAvailable}
+                    >
+                      {t("playground.menu.restore")}
+                    </Button>
+                  </Center>
+                </>
+              )}
+
+              <Center width={(1 / 6 / 2) * 2}>
+                <IconButton
+                  onClick={openSettings}
+                  size="sm"
+                  w="95%"
+                  aria-label="Settings"
+                  icon={<SettingsIcon />}
+                  variant="outline"
+                />
+              </Center>
+            </Flex>
           </Flex>
         </Box>
         <Center
           width={{ base: "100%", md: 5 / 12 }}
           height={{ base: "50%", md: "auto" }}
+          borderTop={{ base: "1px solid rgba(0,0,0,0.1)", md: "none" }}
+          marginTop={{ base: 1, md: "0" }}
+          paddingTop={{ base: 2, md: "0" }}
         >
           <Flex w="100%" alignItems="center" justifyContent="center">
             <Box width={3 / 4} textAlign="left">
               {t("playground.menu.status.status")}:
-              {/* <div style={{ display: "inline-block", width: 50 }}>
-                <AnimatePresence>
-                  {(isValidationFetching || isEvaluationFetching) && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      style={{ display: "inline-block", position: "absolute" }}
-                    >
-                      <Spinner size="xs" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-              <AnimatePresence>
-                {submissionResult ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    style={{ display: "inline-block", position: "absolute" }}
-                  >
-                    <Badge
-                      m={1}
-                      colorScheme={getColorSchemeForSubmissionResult(
-                        submissionResult
-                      )}
-                    >
-                      {submissionResult}
-                    </Badge>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    style={{ display: "inline-block", position: "absolute" }}
-                  >
-                    <Badge m={1} colorScheme="green">
-                      READY
-                    </Badge>
-                  </motion.div>
-                )}
-              </AnimatePresence> */}
               {submissionResult ? (
                 <Badge
                   m={1}
