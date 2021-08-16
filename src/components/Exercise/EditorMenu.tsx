@@ -1,4 +1,9 @@
-import { ChevronDownIcon, SettingsIcon } from "@chakra-ui/icons";
+import {
+  ArrowRightIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  SettingsIcon,
+} from "@chakra-ui/icons";
 import {
   Badge,
   Box,
@@ -19,6 +24,7 @@ import {
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { BiLink, BiUnlink } from "react-icons/bi";
+import { BsLayoutSidebarInset } from "react-icons/bs";
 import { IoExitOutline } from "react-icons/io5";
 import { FindChallenge_programmingLanguages } from "../../generated/FindChallenge";
 import { getColorSchemeForSubmissionResult } from "./helpers/EditorMenu";
@@ -33,7 +39,7 @@ const EditorMenu = ({
   evaluateSubmission,
   validateSubmission,
   isEvaluationFetching: isWaitingForEvaluationResult,
-
+  setSideMenuOpen,
   setSubmissionFetching: setIsWaitingForEvaluationResult,
   setActiveLanguage,
   programmingLanguages,
@@ -49,6 +55,7 @@ const EditorMenu = ({
   reload,
   editorKind,
 }: {
+  setSideMenuOpen: () => void;
   editorKind: string | undefined | null;
   submissionResult: string | null;
   activeLanguage: FindChallenge_programmingLanguages;
@@ -233,9 +240,27 @@ const EditorMenu = ({
               width={"100%"}
               justifyContent={{ base: "center", md: "initial" }}
             >
+              <Center width={1 / 8} display={{ md: "none" }}>
+                <IconButton
+                  onClick={setSideMenuOpen}
+                  size="lg"
+                  w="95%"
+                  height="100%"
+                  aria-label="Settings"
+                  icon={
+                    <Flex justifyContent="center" alignItems="center">
+                      <BsLayoutSidebarInset />
+                      <ChevronRightIcon h={6} w={6} />
+                    </Flex>
+                  }
+                  variant="outline"
+                />
+              </Center>
               {isFullMenuAvailable(editorKind) && (
                 <>
-                  <Center width={(1 / 6.5) * 2}>
+                  <Center
+                    width={{ base: 1 / 4 + 1 / 8 / 3, md: (1 / 3) * 1.2 }}
+                  >
                     <Button
                       colorScheme="teal"
                       size="sm"
@@ -246,7 +271,9 @@ const EditorMenu = ({
                       {t("playground.menu.reload")}
                     </Button>
                   </Center>
-                  <Center width={(1 / 6.5) * 2}>
+                  <Center
+                    width={{ base: 1 / 4 + 1 / 8 / 3, md: (1 / 3) * 1.2 }}
+                  >
                     <Button
                       colorScheme="teal"
                       size="sm"
@@ -261,7 +288,7 @@ const EditorMenu = ({
                 </>
               )}
 
-              <Center width={(1 / 6 / 2) * 2}>
+              <Center width={{ base: 1 / 4 + 1 / 8 / 3, md: 1 / 3 / 1.2 }}>
                 <IconButton
                   onClick={openSettings}
                   size="sm"

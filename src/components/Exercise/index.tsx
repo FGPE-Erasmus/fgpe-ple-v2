@@ -228,7 +228,9 @@ const Exercise = ({
   setNextUnsolvedExercise,
   challengeId,
   hints,
+  setSideMenuOpen,
 }: {
+  setSideMenuOpen: () => void;
   gameId: string;
   exercise: FindChallenge_challenge_refs | null;
   programmingLanguages: FindChallenge_programmingLanguages[];
@@ -781,6 +783,7 @@ const Exercise = ({
         </Box>
 
         <EditorMenu
+          setSideMenuOpen={setSideMenuOpen}
           editorKind={exercise?.editorKind}
           reload={reloadCode}
           submissionResult={submissionResult}

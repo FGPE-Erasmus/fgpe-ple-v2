@@ -352,6 +352,22 @@ const Challenge = () => {
 
   return (
     <Playground>
+      <MotionBox
+        animate={{
+          opacity: sideMenuOpen ? 1 : 0,
+        }}
+        pointerEvents={sideMenuOpen ? "all" : "none"}
+        left={0}
+        top={0}
+        position="fixed"
+        zIndex={998}
+        height="100%"
+        width="100%"
+        backgroundColor="rgba(0,0,0,0.5)"
+        onClick={() => {
+          setSideMenuOpen(false);
+        }}
+      />
       <Flex h="100%" w="100%">
         <MotionBox
           position={{ base: "fixed", md: "relative" }}
@@ -463,6 +479,9 @@ const Challenge = () => {
 
         {!challengeLoading && challengeData && (
           <Exercise
+            setSideMenuOpen={() => {
+              setSideMenuOpen(true);
+            }}
             gameId={gameId}
             challengeId={challengeId}
             exercise={activeExercise}
