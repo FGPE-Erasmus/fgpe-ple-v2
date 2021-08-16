@@ -72,7 +72,7 @@ const Navbar = () => {
       <NavbarStyled>
         <Flex px={2} alignItems="center" height="100%">
           <Box width={1 / 2}>
-            <NavLink to="/">
+            <NavLink to={keycloak.authenticated ? "/profile" : "/"}>
               <Logo />
             </NavLink>
           </Box>

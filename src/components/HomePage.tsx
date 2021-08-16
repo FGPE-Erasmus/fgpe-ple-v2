@@ -45,9 +45,15 @@ const HomePage = () => {
           {t("home.clickToLogin")}
         </Link>
 
-        <a href="https://fgpe.usz.edu.pl/" target="_blank">
+        <Link
+          onClick={() => {
+            keycloak.login({
+              redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
+            });
+          }}
+        >
           <FGPELogo src={LogoSVG} />
-        </a>
+        </Link>
 
         <ErasmusImage />
         <Erasmus>
