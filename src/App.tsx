@@ -20,6 +20,7 @@ import PlayerDetails from "./components/PlayerDetails";
 import Profile from "./components/Profile";
 // import MainLoading from "./components/MainLoading";
 import ProfileInGame from "./components/ProfileInGame";
+import ToS from "./components/ToS";
 import UserDetails from "./components/UserDetails";
 import ZoomContext from "./context/ZoomContext";
 import PrivateRoute from "./utilities/PrivateRoute";
@@ -71,6 +72,7 @@ function App() {
                           path="/(|learning-platform)/"
                           component={Homepage}
                         />
+                        <Route exact path="/tos" component={ToS} />
                         <PrivateRoute
                           exact
                           path="/profile"

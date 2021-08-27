@@ -9,7 +9,7 @@ import LogoSVG from "../images/logo.svg";
 import { useKeycloak } from "@react-keycloak/web";
 
 const HomePage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["translation", "tos"]);
   const { keycloak, initialized } = useKeycloak();
 
   return (
@@ -44,7 +44,6 @@ const HomePage = () => {
         >
           {t("home.clickToLogin")}
         </Link>
-
         <Link
           onClick={() => {
             keycloak.login({
