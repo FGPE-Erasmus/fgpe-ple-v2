@@ -7,14 +7,6 @@
 // START Enums and Input Objects
 //==============================================================
 
-export enum Difficulty {
-  AVERAGE = "AVERAGE",
-  BEGINNER = "BEGINNER",
-  EASY = "EASY",
-  HARD = "HARD",
-  MASTER = "MASTER",
-}
-
 export enum EvaluationEngine {
   BASE = "BASE",
   MOOSHAK = "MOOSHAK",

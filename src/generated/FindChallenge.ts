@@ -3,63 +3,47 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Difficulty, Mode } from "./globalTypes";
+import { Mode } from "./globalTypes";
 
 // ====================================================
 // GraphQL query operation: FindChallenge
 // ====================================================
 
-export interface FindChallenge_challenge_refs_codeSkeletons {
-  __typename: "CodeSkeleton";
-  code: string | null;
-  extension: string | null;
-}
-
-export interface FindChallenge_challenge_refs {
-  __typename: "Activity";
-  id: string | null;
-  name: string | null;
-  statement: string | null;
-  pdf: boolean | null;
-  editorKind: string | null;
-  codeSkeletons: FindChallenge_challenge_refs_codeSkeletons[] | null;
-}
-
-export interface FindChallenge_challenge {
+export interface FindChallenge_myChallengeStatus_challenge {
   __typename: "Challenge";
-  id: string;
-  name: string;
-  description: string | null;
-  difficulty: Difficulty;
   mode: Mode;
-  modeParameters: string[];
-  locked: boolean;
-  hidden: boolean;
-  refs: FindChallenge_challenge_refs[];
 }
 
-export interface FindChallenge_profileInGame_learningPath_refs_activity {
+export interface FindChallenge_myChallengeStatus_refs_activity_codeSkeletons {
+  __typename: "CodeSkeleton";
+  extension: string | null;
+  code: string | null;
+}
+
+export interface FindChallenge_myChallengeStatus_refs_activity {
   __typename: "Activity";
   id: string | null;
+  pdf: boolean | null;
+  statement: string | null;
+  editorKind: string | null;
+  name: string | null;
+  title: string | null;
+  codeSkeletons: FindChallenge_myChallengeStatus_refs_activity_codeSkeletons[] | null;
 }
 
-export interface FindChallenge_profileInGame_learningPath_refs {
+export interface FindChallenge_myChallengeStatus_refs {
   __typename: "ActivityStatus";
-  activity: FindChallenge_profileInGame_learningPath_refs_activity | null;
+  activity: FindChallenge_myChallengeStatus_refs_activity | null;
   solved: boolean | null;
 }
 
-export interface FindChallenge_profileInGame_learningPath {
+export interface FindChallenge_myChallengeStatus {
   __typename: "ChallengeStatus";
   startedAt: any | null;
-  openedAt: any | null;
   endedAt: any | null;
-  refs: FindChallenge_profileInGame_learningPath_refs[];
-}
-
-export interface FindChallenge_profileInGame {
-  __typename: "Player";
-  learningPath: FindChallenge_profileInGame_learningPath[];
+  openedAt: any | null;
+  challenge: FindChallenge_myChallengeStatus_challenge;
+  refs: FindChallenge_myChallengeStatus_refs[];
 }
 
 export interface FindChallenge_programmingLanguages {
@@ -70,8 +54,7 @@ export interface FindChallenge_programmingLanguages {
 }
 
 export interface FindChallenge {
-  challenge: FindChallenge_challenge;
-  profileInGame: FindChallenge_profileInGame;
+  myChallengeStatus: FindChallenge_myChallengeStatus;
   programmingLanguages: FindChallenge_programmingLanguages[];
 }
 

@@ -16,8 +16,7 @@ import React, { useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import {
   FindChallenge,
-  FindChallenge_challenge_refs,
-  FindChallenge_profileInGame_learningPath,
+  FindChallenge_myChallengeStatus_refs,
 } from "../generated/FindChallenge";
 import { Mode, RewardType, State } from "../generated/globalTypes";
 import {
@@ -43,42 +42,68 @@ interface ParamTypes {
 
 const FIND_CHALLENGE = gql`
   query FindChallenge($gameId: String!, $challengeId: String!) {
-    challenge(gameId: $gameId, id: $challengeId) {
-      id
-      name
-      description
-      difficulty
-      mode
-      modeParameters
-      locked
-      hidden
+    myChallengeStatus(gameId: $gameId, challengeId: $challengeId) {
+      startedAt
+      endedAt
+      openedAt
+
+      challenge {
+        mode
+      }
+
       refs {
-        id
-        name
-        statement
-        pdf
-        editorKind
-        codeSkeletons {
-          code
-          extension
-        }
-      }
-    }
-
-    profileInGame(gameId: $gameId) {
-      learningPath {
-        startedAt
-        openedAt
-        endedAt
-
-        refs {
-          activity {
-            id
+        activity {
+          id
+          pdf
+          statement
+          editorKind
+          name
+          title
+          codeSkeletons {
+            extension
+            code
           }
-          solved
         }
+        solved
       }
     }
+
+    # challenge(gameId: $gameId, id: $challengeId) {
+    #   id
+    #   name
+    #   description
+    #   difficulty
+    #   mode
+    #   modeParameters
+    #   locked
+    #   hidden
+    #   refs {
+    #     id
+    #     name
+    #     statement
+    #     pdf
+    #     editorKind
+    #     codeSkeletons {
+    #       code
+    #       extension
+    #     }
+    #   }
+    # }
+
+    # profileInGame(gameId: $gameId) {
+    #   learningPath {
+    #     startedAt
+    #     openedAt
+    #     endedAt
+
+    #     refs {
+    #       activity {
+    #         id
+    #       }
+    #       solved
+    #     }
+    #   }
+    # }
 
     programmingLanguages(gameId: $gameId) {
       id
@@ -130,7 +155,7 @@ const Challenge = () => {
     }>();
 
   const [activeExercise, setActiveExercise] =
-    useState<null | FindChallenge_challenge_refs>(null);
+    useState<null | FindChallenge_myChallengeStatus_refs>(null);
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [hints, setHints] = useState<
     rewardReceivedStudentSubscription_rewardReceivedStudent_reward[]
@@ -222,39 +247,57 @@ const Challenge = () => {
     variables: { gameId, challengeId },
     onCompleted: (data) => {
       if (!activeExercise) {
-        setActiveExercise(data.challenge.refs[0]);
+        setActiveExercise(data.myChallengeStatus.refs[0]);
       }
     },
   });
 
   const checkIfSolved = (
     challengeData: FindChallenge,
-    exercise: FindChallenge_challenge_refs | null
-  ) => {
-    let solved = false;
+    activeExercise: FindChallenge_myChallengeStatus_refs | null
+  ): boolean => {
+    if (!challengeStatus) {
+      setChallengeStatus({
+        startedAt: challengeData.myChallengeStatus.startedAt,
+        endedAt: challengeData.myChallengeStatus.endedAt,
+        openedAt: challengeData.myChallengeStatus.openedAt,
+      });
+    }
 
-    if (!exercise) {
+    if (!activeExercise) {
       return false;
     }
 
-    challengeData.profileInGame.learningPath.map((learningPath) => {
-      return learningPath.refs.forEach((ref) => {
-        if (ref.activity?.id === exercise.id) {
-          !challengeStatus &&
-            setChallengeStatus({
-              startedAt: learningPath.startedAt,
-              endedAt: learningPath.endedAt,
-              openedAt: learningPath.openedAt,
-            });
+    if (activeExercise.solved) {
+      return true;
+    }
 
-          if (ref.solved) {
-            solved = true;
-          }
-        }
-      });
-    });
+    return false;
 
-    return solved;
+    // setChallengeStatus(challengeData.myChallengeStatus)
+
+    // setChallengeStatus({
+    //   startedAt: learningPath.startedAt,
+    //   endedAt: learningPath.endedAt,
+    //   openedAt: learningPath.openedAt,
+    // });
+
+    // // challengeData.profileInGame.learningPath.map((learningPath) => {
+    // //    learningPath.refs.forEach((ref) => {
+    // //     if (ref.activity?.id === exercise.id) {
+    // //       !challengeStatus &&
+    // //         setChallengeStatus({
+    // //           startedAt: learningPath.startedAt,
+    // //           endedAt: learningPath.endedAt,
+    // //           openedAt: learningPath.openedAt,
+    // //         });
+
+    // //       if (ref.solved) {
+    // //         solved = true;
+    // //       }
+    // //     }
+    // //   });
+    // // });
   };
 
   if (challengeError) {
@@ -292,34 +335,16 @@ const Challenge = () => {
       return;
     }
 
-    const learningPathMap = challengeData.profileInGame.learningPath;
-    const challenges = challengeData.challenge.refs;
     let foundUnsolvedExercise = false;
-    learningPathMap.forEach((learningPath) => {
-      for (let x = 0; x < learningPath.refs.length; x++) {
-        for (let i = 0; i < challenges.length; i++) {
-          if (!learningPath.refs[x].solved) {
-            if (challenges[i].id === learningPath.refs[x].activity?.id) {
-              if (activeExercise?.id === learningPath.refs[x].activity?.id) {
-                continue;
-              } else {
-                foundUnsolvedExercise = true;
-                setActiveExercise(challenges[i]);
-                break;
-              }
-            }
-          }
-        }
 
-        if (!learningPath.refs[x].solved) {
-          if (activeExercise?.id === learningPath.refs[x].activity?.id) {
-            continue;
-          } else {
-            break;
-          }
-        }
+    const refs = challengeData?.myChallengeStatus.refs;
+    for (let i = 0; i < refs.length; i++) {
+      if (!refs[i].solved) {
+        foundUnsolvedExercise = true;
+        setActiveExercise(refs[i]);
+        break;
       }
-    });
+    }
 
     if (!foundUnsolvedExercise) {
       setShouldRedirect(true);
@@ -413,7 +438,8 @@ const Challenge = () => {
           </Box>
 
           {challengeStatus &&
-            challengeData?.challenge.mode === Mode.TIME_BOMB &&
+            challengeData?.myChallengeStatus.challenge.mode ===
+              Mode.TIME_BOMB &&
             challengeStatus.openedAt &&
             challengeStatus.startedAt &&
             challengeStatus.endedAt && (
@@ -442,7 +468,10 @@ const Challenge = () => {
             >
               {!challengeLoading &&
                 challengeData &&
-                challengeData.challenge.refs.map((exercise, i) => {
+                challengeData.myChallengeStatus.refs.map((exercise, i) => {
+                  if (!exercise.activity) {
+                    return;
+                  }
                   return (
                     <Button
                       marginBottom={2}
@@ -451,25 +480,25 @@ const Challenge = () => {
                       fontSize={12}
                       key={i}
                       colorScheme={
-                        exercise.id === activeExercise?.id ? "blue" : "gray"
+                        exercise.activity.id === activeExercise?.activity?.id
+                          ? "blue"
+                          : "gray"
                       }
                       className={
                         "exercise " +
-                        (exercise.id === activeExercise?.id ? "active" : "")
+                        (exercise.activity.id === activeExercise?.activity?.id
+                          ? "active"
+                          : "")
                       }
                       onClick={() => setActiveExercise(exercise)}
-                      rightIcon={
-                        checkIfSolved(challengeData, exercise) ? (
-                          <CheckIcon />
-                        ) : undefined
-                      }
+                      rightIcon={exercise.solved ? <CheckIcon /> : undefined}
                     >
                       <Text
                         whiteSpace="nowrap"
                         overflow="hidden"
                         textOverflow="ellipsis"
                       >
-                        {i + 1}. {exercise.name}
+                        {i + 1}. {exercise.activity.name}
                       </Text>
                     </Button>
                   );

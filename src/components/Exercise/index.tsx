@@ -12,7 +12,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { evaluationSubscription } from "../../generated/evaluationSubscription";
 import {
   FindChallenge,
-  FindChallenge_challenge_refs,
+  FindChallenge_myChallengeStatus_refs,
   FindChallenge_programmingLanguages,
 } from "../../generated/FindChallenge";
 import { getSubmissionByIdQuery } from "../../generated/getSubmissionByIdQuery";
@@ -33,13 +33,13 @@ import Statement, { getStatementLength } from "./Statement";
 import Terminal from "./Terminal";
 
 const isEditorKindSpotBug = (
-  exercise?: FindChallenge_challenge_refs | null
+  exercise?: FindChallenge_myChallengeStatus_refs | null
 ) => {
   if (!exercise) {
     return false;
   }
 
-  if (exercise.editorKind === "SPOT_BUG") {
+  if (exercise?.activity?.editorKind === "SPOT_BUG") {
     return true;
   }
 
@@ -232,7 +232,7 @@ const Exercise = ({
 }: {
   setSideMenuOpen: () => void;
   gameId: string;
-  exercise: FindChallenge_challenge_refs | null;
+  exercise: FindChallenge_myChallengeStatus_refs | null;
   programmingLanguages: FindChallenge_programmingLanguages[];
   challengeRefetch: (
     variables?: Partial<Record<string, any>> | undefined
@@ -271,7 +271,7 @@ const Exercise = ({
 
   const [testValues, setTestValues] = useState<string[]>([""]);
 
-  const exerciseRef = useRef<FindChallenge_challenge_refs | null>(null);
+  const exerciseRef = useRef<FindChallenge_myChallengeStatus_refs | null>(null);
   const activeLanguageRef =
     useRef<FindChallenge_programmingLanguages>(activeLanguage);
   const isEvaluationFetchingRef = useRef<boolean>(isWaitingForEvaluationResult);
@@ -287,9 +287,9 @@ const Exercise = ({
 
   const getCodeSkeleton = (dontSetCode?: boolean, getArray?: boolean) => {
     if (exercise) {
-      if (exercise.codeSkeletons) {
-        // console.log("CODE SKELETONS", exercise.codeSkeletons);
-        const codeSkeletons = exercise.codeSkeletons;
+      if (exercise?.activity?.codeSkeletons) {
+        // console.log("CODE SKELETONS", exercise?.activity?.codeSkeletons);
+        const codeSkeletons = exercise?.activity?.codeSkeletons;
         let allCodeSkeletonsForActiveLang: string[] = [];
         for (let i = 0; i < codeSkeletons.length; i++) {
           if (codeSkeletons[i].extension === activeLanguage.extension) {
@@ -316,7 +316,7 @@ const Exercise = ({
   const saveCodeToLocalStorage = (codeToSave: string) => {
     if (exercise && keycloak.profile?.email) {
       const userDataLocalStorage = localStorage.getItem(
-        `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`
+        `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise?.activity?.id}`
       );
       if (userDataLocalStorage) {
         const userData = JSON.parse(userDataLocalStorage);
@@ -330,7 +330,7 @@ const Exercise = ({
           language: activeLanguage.name,
         };
         localStorage.setItem(
-          `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`,
+          `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise?.activity?.id}`,
           JSON.stringify(userDataWithNewCode)
         );
       } else {
@@ -415,7 +415,7 @@ const Exercise = ({
     loading: lastValidationLoading,
     refetch: refetchLastValidation,
   } = useQuery<latestValidationQuery>(LATEST_VALIDATION, {
-    variables: { gameId, exerciseId: exercise?.id },
+    variables: { gameId, exerciseId: exercise?.activity?.id },
     skip: exercise ? false : true,
     fetchPolicy: "no-cache",
   });
@@ -489,9 +489,9 @@ const Exercise = ({
     setWaitingForEvaluationResult(false);
     setWaitingForValidationResult(false);
 
-    if (exercise?.id) {
+    if (exercise?.activity?.id) {
       const lastSubmissionFeedbackUnparsed = localStorage.getItem(
-        `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`
+        `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise?.activity?.id}`
       );
       getLastStateFromLocalStorage(lastSubmissionFeedbackUnparsed);
     } else {
@@ -513,10 +513,10 @@ const Exercise = ({
     validationOutputs?: any,
     codeToSave?: string
   ) => {
-    if (exercise?.id) {
+    if (exercise?.activity?.id) {
       if (keycloak.profile?.email) {
         localStorage.setItem(
-          `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise.id}`,
+          `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise?.activity?.id}`,
           JSON.stringify({
             code: encryptWithAES(
               typeof codeToSave !== "undefined" ? codeToSave : code,
@@ -727,7 +727,11 @@ const Exercise = ({
     const file = getFileFromCode(isSpotBugMode);
 
     evaluateSubmissionMutation({
-      variables: { file, gameId, exerciseId: exerciseRef.current?.id },
+      variables: {
+        file,
+        gameId,
+        exerciseId: exerciseRef.current?.activity?.id,
+      },
     });
   };
 
@@ -750,7 +754,7 @@ const Exercise = ({
       variables: {
         file,
         gameId,
-        exerciseId: exerciseRef.current?.id,
+        exerciseId: exerciseRef.current?.activity?.id,
         inputs: testValues,
       },
     });
@@ -784,7 +788,7 @@ const Exercise = ({
 
         <EditorMenu
           setSideMenuOpen={setSideMenuOpen}
-          editorKind={exercise?.editorKind}
+          editorKind={exercise?.activity?.editorKind}
           reload={reloadCode}
           submissionResult={submissionResult}
           activeLanguage={activeLanguage}
@@ -813,9 +817,12 @@ const Exercise = ({
 
         <Flex
           height={`calc(100% - ${
-            200 + (exercise?.pdf ? 0 : getStatementLength(exercise)) / 5 > 250
+            200 +
+              (exercise?.activity?.pdf ? 0 : getStatementLength(exercise)) / 5 >
+            250
               ? 300
-              : 200 + (exercise?.pdf ? 0 : getStatementLength(exercise)) / 5
+              : 200 +
+                (exercise?.activity?.pdf ? 0 : getStatementLength(exercise)) / 5
           }px)`}
           minHeight={500}
           flexDirection={{ base: "column", md: "row" }}
@@ -832,7 +839,7 @@ const Exercise = ({
           >
             {
               <EditorSwitcher
-                editorKind={exercise?.editorKind}
+                editorKind={exercise?.activity?.editorKind}
                 language={activeLanguage}
                 code={code === "" ? getCodeSkeleton() : code}
                 codeSkeletons={getCodeSkeleton(true, true) || ""}

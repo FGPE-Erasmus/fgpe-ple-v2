@@ -57,17 +57,6 @@ export interface ProfileInGameQuery_profileInGame_learningPath_challenge {
   parentChallenge: ProfileInGameQuery_profileInGame_learningPath_challenge_parentChallenge | null;
 }
 
-export interface ProfileInGameQuery_profileInGame_learningPath_refs_activity {
-  __typename: "Activity";
-  id: string | null;
-}
-
-export interface ProfileInGameQuery_profileInGame_learningPath_refs {
-  __typename: "ActivityStatus";
-  activity: ProfileInGameQuery_profileInGame_learningPath_refs_activity | null;
-  solved: boolean | null;
-}
-
 export interface ProfileInGameQuery_profileInGame_learningPath {
   __typename: "ChallengeStatus";
   id: string;
@@ -77,7 +66,6 @@ export interface ProfileInGameQuery_profileInGame_learningPath {
   startedAt: any | null;
   openedAt: any | null;
   endedAt: any | null;
-  refs: ProfileInGameQuery_profileInGame_learningPath_refs[];
 }
 
 export interface ProfileInGameQuery_profileInGame_submissions {

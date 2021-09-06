@@ -3,14 +3,14 @@ import styled from "@emotion/styled";
 import React from "react";
 import { TFunction, useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
-import { FindChallenge_challenge_refs } from "../../generated/FindChallenge";
+import { FindChallenge_myChallengeStatus_refs } from "../../generated/FindChallenge";
 import ScrollbarWrapper from "../ScrollbarWrapper";
 
 const Statement = ({
   exercise,
   gameId,
 }: {
-  exercise: FindChallenge_challenge_refs | null;
+  exercise: FindChallenge_myChallengeStatus_refs | null;
   gameId: string;
 }) => {
   const { t } = useTranslation();
@@ -19,7 +19,9 @@ const Statement = ({
   return (
     <ScrollbarWrapper>
       <Flex
-        height={exercise?.pdf ? 150 : 150 + getStatementLength(exercise) / 5}
+        height={
+          exercise?.activity?.pdf ? 150 : 150 + getStatementLength(exercise) / 5
+        }
         maxHeight={250}
         overflowY={"auto"}
         borderBottom="1px solid rgba(0,0,0,0.1)"
@@ -31,7 +33,7 @@ const Statement = ({
           bgColor={colorMode === "dark" ? "gray.900" : "gray.100"}
         >
           <Box bgColor={colorMode === "dark" ? "gray.900" : "gray.100"} p={5}>
-            {exercise?.pdf ? (
+            {exercise?.activity?.pdf ? (
               <Button
                 colorScheme="blue"
                 variant="ghost"
@@ -40,7 +42,7 @@ const Statement = ({
                   if (pdfWindow) {
                     pdfWindow.document.write(
                       "<iframe width='100%' height='100%' src='data:application/pdf;base64, " +
-                        encodeURI(exercise.statement || "") +
+                        encodeURI(exercise.activity?.statement || "") +
                         "'></iframe>"
                     );
                   }
@@ -197,29 +199,29 @@ const MarkdownStyled = styled(Box)`
 `;
 
 export const getStatement = (
-  exercise: FindChallenge_challenge_refs | null,
+  exercise: FindChallenge_myChallengeStatus_refs | null,
   tFunction: TFunction
 ) => {
   if (!exercise) {
     return tFunction("No description");
   }
 
-  if (exercise.statement) {
-    return exercise.statement;
+  if (exercise.activity?.statement) {
+    return exercise.activity?.statement;
   } else {
     return tFunction("No description");
   }
 };
 
 export const getStatementLength = (
-  exercise: FindChallenge_challenge_refs | null
+  exercise: FindChallenge_myChallengeStatus_refs | null
 ) => {
   if (!exercise) {
     return 0;
   }
 
-  if (exercise.statement) {
-    return exercise.statement.length;
+  if (exercise.activity?.statement) {
+    return exercise.activity?.statement.length;
   } else {
     return 0;
   }
