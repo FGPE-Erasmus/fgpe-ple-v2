@@ -126,13 +126,15 @@ const EditorMenu = ({
             width={"100%"}
             height="100%"
             flexDir={{ base: "column", md: "row" }}
+            justifyContent="center"
+            alignItems="center"
           >
             <Flex
-              width={"100%"}
+              width={{ base: "100%", md: "70%", lg: "70%" }}
               marginRight={0.5}
               marginBottom={{ base: 2, md: 0 }}
             >
-              <Center width={(1 / 6) * 1.35 * 2}>
+              <Center width={1 / 3}>
                 <Menu>
                   {({ isOpen }) => (
                     <>
@@ -162,7 +164,7 @@ const EditorMenu = ({
               </Center>
 
               {isFullMenuAvailable(editorKind) && (
-                <Center width={(1 / 5) * 2}>
+                <Center width={1 / 3}>
                   <ButtonGroup size="sm" isAttached w="95%" colorScheme="blue">
                     <Button
                       onClick={() => {
@@ -179,7 +181,8 @@ const EditorMenu = ({
                         isWaitingForEvaluationResult ||
                         isWaitingForValidationResult
                       }
-                      fontSize={{ base: 12, md: 14 }}
+                      fontSize={{ base: 12, lg: 14 }}
+                      whiteSpace="normal"
                     >
                       {t("playground.menu.run")}
                     </Button>
@@ -208,7 +211,7 @@ const EditorMenu = ({
                 </Center>
               )}
 
-              <Center width={(1 / 6.5) * 2}>
+              <Center width={1 / 3}>
                 <Button
                   colorScheme="blue"
                   onClick={() => {
@@ -229,7 +232,8 @@ const EditorMenu = ({
                   disabled={
                     isWaitingForEvaluationResult || isWaitingForValidationResult
                   }
-                  fontSize={{ base: 12, md: 14 }}
+                  fontSize={{ base: 12, lg: 14 }}
+                  whiteSpace="normal"
                 >
                   {t("playground.menu.submit")}
                 </Button>
@@ -237,10 +241,11 @@ const EditorMenu = ({
             </Flex>
 
             <Flex
-              width={"100%"}
+              width={{ base: "100%", md: "30%", lg: "20%" }}
               justifyContent={{ base: "center", md: "initial" }}
+              marginRight={4}
             >
-              <Center width={1 / 8} display={{ md: "none" }}>
+              <Center width={1 / 3} display={{ md: "none" }} marginLeft={3}>
                 <IconButton
                   onClick={setSideMenuOpen}
                   size="lg"
@@ -257,6 +262,45 @@ const EditorMenu = ({
                 />
               </Center>
               {isFullMenuAvailable(editorKind) && (
+                <Center w="100%">
+                  <Menu>
+                    {({ isOpen }) => (
+                      <>
+                        <MenuButton
+                          colorScheme="teal"
+                          size="sm"
+                          isActive={isOpen}
+                          as={Button}
+                          w="95%"
+                          rightIcon={<ChevronDownIcon />}
+                          fontSize={12}
+                        >
+                          {t("Actions")}
+                        </MenuButton>
+                        <MenuList>
+                          <MenuItem onClick={reload}>
+                            {t("playground.menu.reload")}
+                          </MenuItem>
+                          <MenuItem
+                            onClick={() => {
+                              if (isRestoreAvailable) {
+                                restore();
+                              }
+                            }}
+                            isDisabled={!isRestoreAvailable}
+                            cursor={
+                              isRestoreAvailable ? "pointer" : "not-allowed"
+                            }
+                          >
+                            {t("playground.menu.restore")}
+                          </MenuItem>
+                        </MenuList>
+                      </>
+                    )}
+                  </Menu>
+                </Center>
+              )}
+              {/* {isFullMenuAvailable(editorKind) && (
                 <>
                   <Center
                     width={{ base: 1 / 4 + 1 / 8 / 3, md: (1 / 3) * 1.2 }}
@@ -265,7 +309,7 @@ const EditorMenu = ({
                       colorScheme="teal"
                       size="sm"
                       w="95%"
-                      fontSize={{ base: 12, md: 14 }}
+                      fontSize={{ base: 12, lg: 14 }}
                       onClick={reload}
                     >
                       {t("playground.menu.reload")}
@@ -278,7 +322,7 @@ const EditorMenu = ({
                       colorScheme="teal"
                       size="sm"
                       w="95%"
-                      fontSize={{ base: 12, md: 14 }}
+                      fontSize={{ base: 12, lg: 14 }}
                       onClick={restore}
                       disabled={!isRestoreAvailable}
                     >
@@ -286,9 +330,12 @@ const EditorMenu = ({
                     </Button>
                   </Center>
                 </>
-              )}
+              )} */}
 
-              <Center width={{ base: 1 / 4 + 1 / 8 / 3, md: 1 / 3 / 1.2 }}>
+              <Center
+                width={{ base: 1 / 4 + 1 / 8 / 3, md: 1 / 3 }}
+                marginLeft={1}
+              >
                 <IconButton
                   onClick={openSettings}
                   size="sm"
@@ -360,7 +407,7 @@ const EditorMenu = ({
                 colorScheme={solved ? "green" : "gray"}
                 size="sm"
                 w="95%"
-                fontSize={{ base: 12, md: 14 }}
+                fontSize={{ base: 12, lg: 14 }}
                 onClick={setNextUnsolvedExercise}
               >
                 {t("playground.menu.next")}

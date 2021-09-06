@@ -74,12 +74,6 @@ const PROFILE_IN_GAME = gql`
         startedAt
         openedAt
         endedAt
-        refs {
-          activity {
-            id
-          }
-          solved
-        }
       }
       submissions {
         id

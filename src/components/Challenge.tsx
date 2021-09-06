@@ -394,7 +394,8 @@ const Challenge = () => {
             position="absolute"
             left={"calc(100% + 20px)"}
             display={{ base: "block", md: "none" }}
-            opacity={sideMenuOpen ? 1 : 0.5}
+            opacity={sideMenuOpen ? 1 : 0}
+            pointerEvents={sideMenuOpen ? "all" : "none"}
           >
             <IconButton
               colorScheme="blue"
