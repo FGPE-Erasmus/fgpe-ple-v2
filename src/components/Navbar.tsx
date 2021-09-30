@@ -228,6 +228,22 @@ const Navbar = () => {
                   />
                   {t("Language")}
                 </MenuItem>
+                {keycloak.authenticated ? (
+                  <MenuItem onClick={() => keycloak.logout()} paddingLeft={6}>
+                    {t("Logout")}
+                  </MenuItem>
+                ) : (
+                  <MenuItem
+                    paddingLeft={6}
+                    onClick={() => {
+                      keycloak.login({
+                        redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
+                      });
+                    }}
+                  >
+                    {t("Login")}
+                  </MenuItem>
+                )}
               </MenuList>
             </Menu>
           </Box>
