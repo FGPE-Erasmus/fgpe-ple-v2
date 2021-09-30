@@ -14,6 +14,9 @@ const INSTRUCTOR_GAMES = gql`
       id
       name
       description
+      private
+      startDate
+      endDate
       players {
         submissions {
           id

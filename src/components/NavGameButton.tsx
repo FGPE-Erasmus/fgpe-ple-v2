@@ -12,8 +12,8 @@ const NavGameButton = ({
   console.log(gameName, gameId);
   return (
     <StyledButton>
-      <Link href={`/game/${gameId.toString()}`}>
-        <Button pointerEvents="all">
+      <Button pointerEvents="all">
+        <Link href={`/game/${gameId.toString()}`}>
           <Text
             pointerEvents="all"
             overflow="hidden"
@@ -22,8 +22,8 @@ const NavGameButton = ({
           >
             {gameName}
           </Text>
-        </Button>
-      </Link>
+        </Link>
+      </Button>
     </StyledButton>
   );
 };

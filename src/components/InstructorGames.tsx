@@ -8,7 +8,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 import { getInstructorGames } from "../generated/getInstructorGames";
@@ -86,6 +86,28 @@ const InstructorGames = ({
                     column={column}
                     placeholder={t("placeholders.numberOfPlayers")}
                   />
+                ),
+              },
+              {
+                Header: t("addGame.private"),
+                accessor: "private",
+                Cell: ({ value }: { value: any }) => {
+                  return <span>{value ? "Yes" : "No"}</span>;
+                },
+                disableFilters: true,
+                sortType: useMemo(
+                  () => (rowA: any, rowB: any) => {
+                    const a = rowA.original.private;
+
+                    const b = rowB.original.private;
+
+                    if (a > b) return 1;
+
+                    if (b > a) return -1;
+
+                    return 0;
+                  },
+                  []
                 ),
               },
             ]}

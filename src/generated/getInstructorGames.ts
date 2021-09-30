@@ -55,6 +55,9 @@ export interface getInstructorGames_myGames {
   id: string;
   name: string;
   description: string | null;
+  private: boolean;
+  startDate: any | null;
+  endDate: any | null;
   players: getInstructorGames_myGames_players[];
 }
 
