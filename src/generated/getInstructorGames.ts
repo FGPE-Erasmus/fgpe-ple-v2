@@ -3,6 +3,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { GameStateEnum } from "./globalTypes";
+
 // ====================================================
 // GraphQL query operation: getInstructorGames
 // ====================================================
@@ -58,6 +60,7 @@ export interface getInstructorGames_myGames {
   private: boolean;
   startDate: any | null;
   endDate: any | null;
+  state: GameStateEnum;
   players: getInstructorGames_myGames_players[];
 }
 

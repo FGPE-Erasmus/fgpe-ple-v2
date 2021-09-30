@@ -19,6 +19,7 @@ import {
   PlayerGameProfiles_myGameProfiles_learningPath,
 } from "../generated/PlayerGameProfiles";
 import dayjs from "dayjs";
+import { checkIsActive } from "./InstructorGames";
 
 // name={gameProfile.game.name}
 //                 description={
@@ -89,32 +90,41 @@ export const isGameAvailable = (gameData: {
   startDate: Date;
   [key: string]: any;
 }) => {
-  if (gameData.state === "CLOSED") {
-    return false;
-  }
+  return checkIsActive({
+    state: gameData.state,
+    endDate: gameData.endDate,
+    startDate: gameData.startDate,
+  });
+  // if (gameData.state === "CLOSED") {
+  //   return false;
+  // }
 
-  let startDateInPast = false;
-  let endDateInFuture = false;
+  // // console.log("CHECKING GAME", gameData);
 
-  if (gameData.startDate) {
-    const dayjsStartDate = dayjs(gameData.startDate);
-    if (dayjsStartDate.isAfter(dayjs(new Date()))) {
-      startDateInPast = true;
-    }
-  } else {
-    startDateInPast = true;
-  }
+  // let startDateInPast = true;
+  // let endDateInFuture = true;
 
-  if (gameData.endDate) {
-    const dayjsEndDate = dayjs(gameData.endDate);
-    if (dayjsEndDate.isBefore(dayjs(new Date()))) {
-      endDateInFuture = true;
-    }
-  } else {
-    endDateInFuture = true;
-  }
+  // if (gameData.startDate) {
+  //   const dayjsStartDate = dayjs(gameData.startDate);
+  //   if (dayjsStartDate.isAfter(dayjs(new Date()))) {
+  //     startDateInPast = true;
+  //   }
+  // } else {
+  //   startDateInPast = true;
+  // }
 
-  return startDateInPast && endDateInFuture;
+  // if (gameData.endDate) {
+  //   const dayjsEndDate = dayjs(gameData.endDate);
+  //   if (dayjsEndDate.isBefore(dayjs(new Date()))) {
+  //     endDateInFuture = true;
+  //   }
+  // } else {
+  //   endDateInFuture = true;
+  // }
+
+  // console.log(gameData.name, startDateInPast && endDateInFuture);
+
+  // return startDateInPast && endDateInFuture;
 };
 
 const GamesList = ({ data }: { data: PlayerGameProfiles }) => {

@@ -14,6 +14,36 @@ import { Link, useHistory } from "react-router-dom";
 import { getInstructorGames } from "../generated/getInstructorGames";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
+import dayjs from "dayjs";
+
+export const checkIsActive = (row: any) => {
+  if (row.state != "OPEN") {
+    return false;
+  }
+
+  if (!row.startDate && !row.endDate) {
+    return true;
+  }
+
+  if (row.startDate && !row.endDate) {
+    return dayjs(row.startDate).isBefore(dayjs());
+  }
+
+  if (!row.startDate && row.endDate) {
+    return dayjs(row.endDate).isAfter(dayjs());
+  }
+
+  const startDate = dayjs(row.startDate);
+  const endDate = dayjs(row.endDate);
+
+  if (startDate.isBefore(dayjs(new Date()))) {
+    if (endDate.isAfter(dayjs())) {
+      return true;
+    }
+  }
+
+  return false;
+};
 
 const InstructorGames = ({
   data,
@@ -57,12 +87,33 @@ const InstructorGames = ({
             columns={[
               {
                 Header: t("table.gameName"),
-                accessor: "name",
+                accessor: (row: any) => {
+                  const isActive = checkIsActive(row);
+                  return isActive ? (
+                    row.name
+                  ) : (
+                    <span style={{ opacity: 0.4 }}>{row.name}</span>
+                  );
+                },
                 Filter: ({ column }: { column: any }) => (
                   <ColumnFilter
                     column={column}
                     placeholder={t("placeholders.gameName")}
                   />
+                ),
+                sortType: useMemo(
+                  () => (rowA: any, rowB: any) => {
+                    const a = rowA.original.name;
+
+                    const b = rowB.original.name;
+
+                    if (a > b) return 1;
+
+                    if (b > a) return -1;
+
+                    return 0;
+                  },
+                  []
                 ),
               },
               {
@@ -92,7 +143,7 @@ const InstructorGames = ({
                 Header: t("addGame.private"),
                 accessor: "private",
                 Cell: ({ value }: { value: any }) => {
-                  return <span>{value ? "Yes" : "No"}</span>;
+                  return <span>{value ? t("Yes") : t("No")}</span>;
                 },
                 disableFilters: true,
                 sortType: useMemo(
@@ -110,6 +161,42 @@ const InstructorGames = ({
                   []
                 ),
               },
+              // {
+              //   Header: t("Active"),
+              //   accessor: (row: any) => {
+              //     if (row.state != "OPEN") {
+              //       return false;
+              //     }
+
+              //     if (!row.startDate && !row.endDate) {
+              //       return true;
+              //     }
+
+              //     if (row.startDate && !row.endDate) {
+              //       return dayjs(row.startDate).isBefore(dayjs());
+              //     }
+
+              //     if (!row.startDate && row.endDate) {
+              //       return dayjs(row.endDate).isAfter(dayjs());
+              //     }
+
+              //     const startDate = dayjs(row.startDate);
+              //     const endDate = dayjs(row.endDate);
+
+              //     if (startDate.isBefore(dayjs(new Date()))) {
+              //       console.log("it happened");
+              //       if (endDate.isAfter(dayjs())) {
+              //         return true;
+              //       }
+              //     }
+
+              //     return false;
+              //   },
+              //   Cell: ({ value }: { value: any }) => {
+              //     return <span>{value ? "Yes" : "No"}</span>;
+              //   },
+              //   disableFilters: true,
+              // },
             ]}
             data={data?.myGames}
           />

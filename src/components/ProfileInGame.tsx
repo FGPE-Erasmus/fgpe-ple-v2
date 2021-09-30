@@ -174,7 +174,7 @@ const ProfileInGame = () => {
   if (!dataProfile) return <Text>no data</Text>;
 
   if (!isGameAvailable(dataProfile.profileInGame.game)) {
-    return <Redirect to="/" />;
+    return <Redirect to="/profile" />;
   }
 
   return (

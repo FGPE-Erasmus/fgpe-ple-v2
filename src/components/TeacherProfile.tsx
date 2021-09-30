@@ -17,6 +17,7 @@ const INSTRUCTOR_GAMES = gql`
       private
       startDate
       endDate
+      state
       players {
         submissions {
           id
