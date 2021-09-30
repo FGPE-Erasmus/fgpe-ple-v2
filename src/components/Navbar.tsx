@@ -1,8 +1,14 @@
-import { SettingsIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
 import {
   Box,
+  Button,
   Flex,
   IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  useBreakpointValue,
   useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -18,6 +24,7 @@ import useBreadcrumbs from "use-react-router-breadcrumbs";
 import NavContext from "../context/NavContext";
 import LogoSVG from "../images/logo.svg";
 import ChangeLanguageModal from "./ChangeLanguageModal";
+import { Text } from "@chakra-ui/react";
 
 const Logo = styled.div`
   background: url(${LogoSVG});
@@ -40,7 +47,7 @@ const Navbar = () => {
 
   const { t, i18n } = useTranslation();
 
-  const activeGameAndChallenge = useContext(NavContext);
+  const { activeGame } = useContext(NavContext);
   const { keycloak, initialized } = useKeycloak();
 
   // const resetActiveGameAndChallenge = () => {
@@ -75,9 +82,15 @@ const Navbar = () => {
             <NavLink to={keycloak.authenticated ? "/profile" : "/"}>
               <Logo />
             </NavLink>
+            {/* {activeGame && activeGame.name} */}
           </Box>
 
-          <Flex width={1 / 2} justifyContent="flex-end" alignItems="flex-end">
+          <Flex
+            width={1 / 2}
+            justifyContent="flex-end"
+            alignItems="flex-end"
+            display={{ base: "none", md: "flex" }}
+          >
             {keycloak.authenticated && (
               <Box>
                 <NavLink to="/profile">
@@ -86,7 +99,7 @@ const Navbar = () => {
                     _focus={{}}
                     variant="link"
                     colorScheme="gray"
-                    aria-label="Search database"
+                    aria-label="Profile"
                     icon={<BiUserCircle fontSize={24} />}
                   />
                 </NavLink>
@@ -101,7 +114,7 @@ const Navbar = () => {
                     _focus={{}}
                     variant="link"
                     colorScheme="gray"
-                    aria-label="Search database"
+                    aria-label="Settings"
                     icon={<SettingsIcon fontSize={20} />}
                   />
                 </NavLink>
@@ -115,7 +128,7 @@ const Navbar = () => {
                 onClick={toggleColorMode}
                 variant="link"
                 colorScheme="gray"
-                aria-label="Search database"
+                aria-label="Toggle color mode"
                 icon={<VscColorMode fontSize={24} />}
               />
             </Box>
@@ -126,7 +139,7 @@ const Navbar = () => {
                 onClick={onOpenLanguageModal}
                 variant="link"
                 colorScheme="gray"
-                aria-label="Search database"
+                aria-label="Change language"
                 icon={<IoLanguage fontSize={24} />}
               />
             </Box>
@@ -153,6 +166,72 @@ const Navbar = () => {
               icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}
             /> */}
           </Flex>
+          <Box
+            position="absolute"
+            right="10px"
+            display={{ base: "box", md: "none" }}
+          >
+            <Menu>
+              <MenuButton as={Button}>
+                <HamburgerIcon />
+              </MenuButton>
+              <MenuList>
+                <MenuItem>
+                  <NavLink to="/profile">
+                    <Flex color={colorMode === "dark" ? "white" : "black"}>
+                      <IconButton
+                        height={6}
+                        _focus={{}}
+                        variant="link"
+                        colorScheme="gray"
+                        aria-label="Profile"
+                        icon={<BiUserCircle fontSize={24} />}
+                      />
+                      {t("Your games")}
+                    </Flex>
+                  </NavLink>
+                </MenuItem>
+                <MenuItem>
+                  <NavLink to="/profile/settings">
+                    <Flex color={colorMode === "dark" ? "white" : "black"}>
+                      <IconButton
+                        height={6}
+                        _focus={{}}
+                        variant="link"
+                        colorScheme="gray"
+                        aria-label="Settings"
+                        icon={<SettingsIcon fontSize={20} />}
+                      />
+                      {t("Account settings")}
+                    </Flex>
+                  </NavLink>
+                </MenuItem>
+                <MenuItem onClick={toggleColorMode}>
+                  <IconButton
+                    height={6}
+                    _focus={{}}
+                    variant="link"
+                    colorScheme="gray"
+                    aria-label="Toggle color mode"
+                    icon={<VscColorMode fontSize={24} />}
+                  />
+                  {t("settings.darkMode")}
+                </MenuItem>
+                <MenuItem onClick={onOpenLanguageModal}>
+                  <IconButton
+                    height={6}
+                    _focus={{}}
+                    variant="link"
+                    colorScheme="gray"
+                    aria-label="Change language"
+                    icon={<IoLanguage fontSize={24} />}
+                  />
+                  {t("Language")}
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Box>
+
           {/* </UserMenu> */}
         </Flex>
       </NavbarStyled>
@@ -192,7 +271,8 @@ const NavbarStyled = styled(Box)`
   z-index: 999;
   box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.05);
   & > div {
-    max-width: 1140px;
+    /* max-width: 1140px; */
+    padding: 0px 20px;
     margin: auto;
   }
 `;

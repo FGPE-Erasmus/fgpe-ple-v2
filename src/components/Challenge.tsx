@@ -35,6 +35,7 @@ import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import ScrollbarWrapper from "./ScrollbarWrapper";
+import NavGameButton from "./NavGameButton";
 
 interface ParamTypes {
   gameId: string;
@@ -43,6 +44,11 @@ interface ParamTypes {
 
 const FIND_CHALLENGE = gql`
   query FindChallenge($gameId: String!, $challengeId: String!) {
+    game(id: $gameId) {
+      id
+      name
+    }
+
     myChallengeStatus(gameId: $gameId, challengeId: $challengeId) {
       startedAt
       endedAt
@@ -378,6 +384,9 @@ const Challenge = () => {
 
   return (
     <Playground>
+      {challengeData?.game.name && (
+        <NavGameButton gameName={challengeData.game.name} gameId={gameId} />
+      )}
       <MotionBox
         animate={{
           opacity: sideMenuOpen ? 1 : 0,

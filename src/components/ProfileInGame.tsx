@@ -143,7 +143,7 @@ const getIconForLearningPathState = (state: State) => {
 };
 
 const ProfileInGame = () => {
-  const { setActiveChallenge } = useContext(NavContext);
+  // const { setActiveChallenge } = useContext(NavContext);
   const { gameId } = useParams<ParamTypes>();
   const { t } = useTranslation();
 
@@ -248,12 +248,12 @@ const ProfileInGame = () => {
                               challengeId: childChallenge.id,
                             },
                           }}
-                          onClick={() =>
-                            setActiveChallenge({
-                              id: childChallenge.id,
-                              name: childChallenge.name,
-                            })
-                          }
+                          // onClick={() =>
+                          //   setActiveChallenge({
+                          //     id: childChallenge.id,
+                          //     name: childChallenge.name,
+                          //   })
+                          // }
                         >
                           <h4>{childChallenge.name}</h4>
                           <Text>{childChallenge.description}</Text>
@@ -273,12 +273,12 @@ const ProfileInGame = () => {
                     to={{
                       pathname: `/game/${dataProfile.profileInGame.game.id}/challenge/${learningPath.challenge.id}`,
                     }}
-                    onClick={() =>
-                      setActiveChallenge({
-                        id: learningPath.challenge.id,
-                        name: learningPath.challenge.name,
-                      })
-                    }
+                    // onClick={() =>
+                    //   setActiveChallenge({
+                    //     id: learningPath.challenge.id,
+                    //     name: learningPath.challenge.name,
+                    //   })
+                    // }
                   >
                     <ChallengeBox
                       progress={learningPath.progress}

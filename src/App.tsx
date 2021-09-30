@@ -22,6 +22,7 @@ import Profile from "./components/Profile";
 import ProfileInGame from "./components/ProfileInGame";
 import ToS from "./components/ToS";
 import UserDetails from "./components/UserDetails";
+import NavContext from "./context/NavContext";
 import ZoomContext from "./context/ZoomContext";
 import PrivateRoute from "./utilities/PrivateRoute";
 
@@ -41,6 +42,8 @@ function App() {
   const [zoomFactor, setZoomFactor] = useState(
     getZoomFactorFromLocalStorage() || 1
   );
+  const [activeGame, setActiveGame] =
+    useState<{ id: string; name: string } | null>(null);
 
   const { initialized: keycloakInitialized } = useKeycloak();
 
@@ -61,94 +64,96 @@ function App() {
                 },
               }}
             >
-              <ZoomWrapper zoomFactor={zoomFactor}>
-                <NotificationsProvider>
-                  <Navbar />
-                  <MainWrapper>
-                    <AnimatePresence exitBeforeEnter initial={false}>
-                      <Switch location={location} key={location.pathname}>
-                        <Route
-                          exact
-                          path="/(|learning-platform)/"
-                          component={Homepage}
-                        />
-                        <Route exact path="/tos" component={ToS} />
-                        <PrivateRoute
-                          exact
-                          path="/profile"
-                          roles={["student", "teacher"]}
-                          component={Profile}
-                        />
+              <NavContext.Provider value={{ setActiveGame, activeGame }}>
+                <ZoomWrapper zoomFactor={zoomFactor}>
+                  <NotificationsProvider>
+                    <Navbar />
+                    <MainWrapper>
+                      <AnimatePresence exitBeforeEnter initial={false}>
+                        <Switch location={location} key={location.pathname}>
+                          <Route
+                            exact
+                            path="/(|learning-platform)/"
+                            component={Homepage}
+                          />
+                          <Route exact path="/tos" component={ToS} />
+                          <PrivateRoute
+                            exact
+                            path="/profile"
+                            roles={["student", "teacher"]}
+                            component={Profile}
+                          />
 
-                        <PrivateRoute
-                          exact
-                          path="/game/:gameId"
-                          roles={["student"]}
-                          component={ProfileInGame}
-                        />
+                          <PrivateRoute
+                            exact
+                            path="/game/:gameId"
+                            roles={["student"]}
+                            component={ProfileInGame}
+                          />
 
-                        <PrivateRoute
-                          exact
-                          path="/teacher/game/:gameId"
-                          roles={["teacher"]}
-                          component={InstructorGame}
-                        />
+                          <PrivateRoute
+                            exact
+                            path="/teacher/game/:gameId"
+                            roles={["teacher"]}
+                            component={InstructorGame}
+                          />
 
-                        <PrivateRoute
-                          exact
-                          path="/game/:gameId/challenge/:challengeId"
-                          roles={["student"]}
-                          component={Challenge}
-                        />
+                          <PrivateRoute
+                            exact
+                            path="/game/:gameId/challenge/:challengeId"
+                            roles={["student"]}
+                            component={Challenge}
+                          />
 
-                        <PrivateRoute
-                          exact
-                          path="/teacher/game/:gameId/add-players"
-                          roles={["teacher"]}
-                          component={AddPlayersToGame}
-                        />
+                          <PrivateRoute
+                            exact
+                            path="/teacher/game/:gameId/add-players"
+                            roles={["teacher"]}
+                            component={AddPlayersToGame}
+                          />
 
-                        <PrivateRoute
-                          exact
-                          path="/teacher/manage-games"
-                          roles={["teacher"]}
-                          component={ManageGames}
-                        />
+                          <PrivateRoute
+                            exact
+                            path="/teacher/manage-games"
+                            roles={["teacher"]}
+                            component={ManageGames}
+                          />
 
-                        <PrivateRoute
-                          exact
-                          path="/teacher/student-details/:userId"
-                          roles={["teacher"]}
-                          component={UserDetails}
-                        />
+                          <PrivateRoute
+                            exact
+                            path="/teacher/student-details/:userId"
+                            roles={["teacher"]}
+                            component={UserDetails}
+                          />
 
-                        <PrivateRoute
-                          exact
-                          path="/teacher/player-details/:userId/:gameId"
-                          roles={["teacher"]}
-                          component={PlayerDetails}
-                        />
+                          <PrivateRoute
+                            exact
+                            path="/teacher/player-details/:userId/:gameId"
+                            roles={["teacher"]}
+                            component={PlayerDetails}
+                          />
 
-                        <PrivateRoute
-                          exact
-                          path="/profile/settings"
-                          roles={["teacher", "student"]}
-                          component={AccountSettings}
-                        />
+                          <PrivateRoute
+                            exact
+                            path="/profile/settings"
+                            roles={["teacher", "student"]}
+                            component={AccountSettings}
+                          />
 
-                        <PrivateRoute
-                          exact
-                          path="/game/enroll/:gameToken/:groupToken?"
-                          roles={["student"]}
-                          component={JoinGameByToken}
-                        />
+                          <PrivateRoute
+                            exact
+                            path="/game/enroll/:gameToken/:groupToken?"
+                            roles={["student"]}
+                            component={JoinGameByToken}
+                          />
 
-                        <Route component={NotFound} />
-                      </Switch>
-                    </AnimatePresence>
-                  </MainWrapper>
-                </NotificationsProvider>
-              </ZoomWrapper>
+                          <Route component={NotFound} />
+                        </Switch>
+                      </AnimatePresence>
+                    </MainWrapper>
+                  </NotificationsProvider>
+                </ZoomWrapper>
+              </NavContext.Provider>
             </ZoomContext.Provider>
             {/* </MainContext.Provider> */}
             {/* </NavContext.Provider> */}

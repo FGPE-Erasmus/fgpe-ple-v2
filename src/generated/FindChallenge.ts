@@ -9,6 +9,12 @@ import { Mode } from "./globalTypes";
 // GraphQL query operation: FindChallenge
 // ====================================================
 
+export interface FindChallenge_game {
+  __typename: "Game";
+  id: string;
+  name: string;
+}
+
 export interface FindChallenge_myChallengeStatus_challenge {
   __typename: "Challenge";
   mode: Mode;
@@ -54,6 +60,7 @@ export interface FindChallenge_programmingLanguages {
 }
 
 export interface FindChallenge {
+  game: FindChallenge_game;
   myChallengeStatus: FindChallenge_myChallengeStatus;
   programmingLanguages: FindChallenge_programmingLanguages[];
 }
