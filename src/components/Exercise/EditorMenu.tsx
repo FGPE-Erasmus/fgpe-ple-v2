@@ -364,6 +364,10 @@ const EditorMenu = ({
                   colorScheme={getColorSchemeForSubmissionResult(
                     submissionResult
                   )}
+                  textOverflow="ellipsis"
+                  overflow="hidden"
+                  whiteSpace="nowrap"
+                  maxW="calc(100% - 100px)"
                 >
                   {connectionError
                     ? t("playground.menu.status.CONNECTION_PROBLEM")
