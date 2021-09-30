@@ -1,4 +1,5 @@
-import { Button, Link, Text } from "@chakra-ui/react";
+import { Button, Text } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import React from "react";
 
@@ -12,8 +13,8 @@ const NavGameButton = ({
   console.log(gameName, gameId);
   return (
     <StyledButton>
-      <Button pointerEvents="all">
-        <Link href={`/game/${gameId.toString()}`}>
+      <Link to={`/game/${gameId.toString()}`}>
+        <Button pointerEvents="all">
           <Text
             pointerEvents="all"
             overflow="hidden"
@@ -22,8 +23,8 @@ const NavGameButton = ({
           >
             {gameName}
           </Text>
-        </Link>
-      </Button>
+        </Button>
+      </Link>
     </StyledButton>
   );
 };
