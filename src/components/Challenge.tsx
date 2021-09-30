@@ -34,6 +34,7 @@ import { challengeStatusUpdatedStudentSub } from "../generated/challengeStatusUp
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import ScrollbarWrapper from "./ScrollbarWrapper";
 
 interface ParamTypes {
   gameId: string;
@@ -393,136 +394,141 @@ const Challenge = () => {
           setSideMenuOpen(false);
         }}
       />
-      <Flex h="100%" w="100%">
-        <MotionBox
-          position={{ base: "fixed", md: "relative" }}
-          top={{ base: 0, md: "auto" }}
-          background={{
-            base: colorMode !== "dark" ? "gray.200" : "gray.900",
-            md: "none",
-          }}
-          zIndex={999}
-          left={{ md: "0 !important" }}
-          animate={{
-            left: sideMenuOpen ? "0%" : "-50%",
-          }}
-          width={{ base: "50%", md: 2 / 12 }}
-          // backgroundColor="white"
-          maxWidth={{ base: "100%", md: 330 }}
-          // paddingTop={5}
-          height="100%"
-          overflowY="scroll"
-          borderRight="1px solid rgba(0,0,0,0.1)"
-          // position="relative"
-        >
-          <Box
-            position="absolute"
-            left={"calc(100% + 20px)"}
-            display={{ base: "block", md: "none" }}
-            opacity={sideMenuOpen ? 1 : 0}
-            pointerEvents={sideMenuOpen ? "all" : "none"}
-          >
-            <IconButton
-              colorScheme="blue"
-              height="50px"
-              width="30px"
-              position="fixed"
-              size="xl"
-              zIndex={2000}
-              top="50%"
-              transform="translate(-50%, -50%)"
-              aria-label="Open / Close"
-              icon={sideMenuOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-              onClick={() => setSideMenuOpen(!sideMenuOpen)}
-            />
-          </Box>
-
-          {challengeStatus &&
-            challengeData?.myChallengeStatus.challenge.mode ===
-              Mode.TIME_BOMB &&
-            challengeStatus.openedAt &&
-            challengeStatus.startedAt &&
-            challengeStatus.endedAt && (
-              <Flex
-                position="absolute"
-                bottom={10}
-                width="100%"
-                justifyContent="center"
-                height="50px"
-                alignItems="center"
-              >
-                <Button cursor="auto" _focus={{}} _active={{}}>
-                  <Icon as={BiTimer} marginRight={2} />
-
-                  <Countdown date={dayjs(challengeStatus.endedAt).valueOf()} />
-                </Button>
-              </Flex>
-            )}
-
-          <Box p={{ base: 1, md: 5 }} h="100%" w="100%" position="relative">
-            <Flex
-              flexDirection="column"
-              alignItems="center"
-              w="100%"
-              // height="100%"
-            >
-              {!challengeLoading &&
-                challengeData &&
-                challengeData.myChallengeStatus.refs.map((exercise, i) => {
-                  if (!exercise.activity) {
-                    return;
-                  }
-                  return (
-                    <Button
-                      marginBottom={2}
-                      w="100%"
-                      size="sm"
-                      fontSize={12}
-                      key={i}
-                      colorScheme={
-                        exercise.activity.id === activeExercise?.activity?.id
-                          ? "blue"
-                          : "gray"
-                      }
-                      className={
-                        "exercise " +
-                        (exercise.activity.id === activeExercise?.activity?.id
-                          ? "active"
-                          : "")
-                      }
-                      onClick={() => setActiveExercise(exercise)}
-                      rightIcon={exercise.solved ? <CheckIcon /> : undefined}
-                    >
-                      <Text
-                        whiteSpace="nowrap"
-                        overflow="hidden"
-                        textOverflow="ellipsis"
-                      >
-                        {i + 1}. {exercise.activity.name}
-                      </Text>
-                    </Button>
-                  );
-                })}
-            </Flex>
-          </Box>
-        </MotionBox>
-
-        {!challengeLoading && challengeData && (
-          <Exercise
-            setSideMenuOpen={() => {
-              setSideMenuOpen(true);
+      <ScrollbarWrapper>
+        <Flex h="100%" w="100%">
+          <MotionBox
+            position={{ base: "fixed", md: "relative" }}
+            top={{ base: 0, md: "auto" }}
+            background={{
+              base: colorMode !== "dark" ? "gray.200" : "gray.900",
+              md: "none",
             }}
-            gameId={gameId}
-            challengeId={challengeId}
-            exercise={activeExercise}
-            programmingLanguages={challengeData.programmingLanguages}
-            challengeRefetch={challengeRefetch}
-            solved={checkIfSolved(challengeData, activeExercise)}
-            setNextUnsolvedExercise={setNextUnsolvedExercise}
-            hints={hints}
-          />
-        )}
-      </Flex>
+            zIndex={999}
+            left={{ md: "0 !important" }}
+            animate={{
+              left: sideMenuOpen ? "0%" : "-50%",
+            }}
+            width={{ base: "50%", md: 2 / 12 }}
+            // backgroundColor="white"
+            maxWidth={{ base: "100%", md: 330 }}
+            // paddingTop={5}
+            height="100%"
+            overflowY="scroll"
+            borderRight="1px solid rgba(0,0,0,0.1)"
+            // position="relative"
+            className="better-scrollbar"
+          >
+            <Box
+              position="absolute"
+              left={"calc(100% + 20px)"}
+              display={{ base: "block", md: "none" }}
+              opacity={sideMenuOpen ? 1 : 0}
+              pointerEvents={sideMenuOpen ? "all" : "none"}
+            >
+              <IconButton
+                colorScheme="blue"
+                height="50px"
+                width="30px"
+                position="fixed"
+                size="xl"
+                zIndex={2000}
+                top="50%"
+                transform="translate(-50%, -50%)"
+                aria-label="Open / Close"
+                icon={sideMenuOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                onClick={() => setSideMenuOpen(!sideMenuOpen)}
+              />
+            </Box>
+
+            {challengeStatus &&
+              challengeData?.myChallengeStatus.challenge.mode ===
+                Mode.TIME_BOMB &&
+              challengeStatus.openedAt &&
+              challengeStatus.startedAt &&
+              challengeStatus.endedAt && (
+                <Flex
+                  position="absolute"
+                  bottom={10}
+                  width="100%"
+                  justifyContent="center"
+                  height="50px"
+                  alignItems="center"
+                >
+                  <Button cursor="auto" _focus={{}} _active={{}}>
+                    <Icon as={BiTimer} marginRight={2} />
+
+                    <Countdown
+                      date={dayjs(challengeStatus.endedAt).valueOf()}
+                    />
+                  </Button>
+                </Flex>
+              )}
+            <Box p={{ base: 1, md: 5 }} h="100%" w="100%" position="relative">
+              <Flex
+                flexDirection="column"
+                alignItems="center"
+                w="100%"
+                // height="100%"
+                overflowY="hidden"
+              >
+                {!challengeLoading &&
+                  challengeData &&
+                  challengeData.myChallengeStatus.refs.map((exercise, i) => {
+                    if (!exercise.activity) {
+                      return;
+                    }
+                    return (
+                      <Button
+                        marginBottom={2}
+                        w="100%"
+                        size="sm"
+                        fontSize={12}
+                        key={i}
+                        colorScheme={
+                          exercise.activity.id === activeExercise?.activity?.id
+                            ? "blue"
+                            : "gray"
+                        }
+                        className={
+                          "exercise " +
+                          (exercise.activity.id === activeExercise?.activity?.id
+                            ? "active"
+                            : "")
+                        }
+                        onClick={() => setActiveExercise(exercise)}
+                        rightIcon={exercise.solved ? <CheckIcon /> : undefined}
+                      >
+                        <Text
+                          whiteSpace="nowrap"
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                        >
+                          {i + 1}. {exercise.activity.name}
+                        </Text>
+                      </Button>
+                    );
+                  })}
+              </Flex>
+            </Box>
+          </MotionBox>
+
+          {!challengeLoading && challengeData && (
+            <Exercise
+              setSideMenuOpen={() => {
+                setSideMenuOpen(true);
+              }}
+              gameId={gameId}
+              challengeId={challengeId}
+              exercise={activeExercise}
+              programmingLanguages={challengeData.programmingLanguages}
+              challengeRefetch={challengeRefetch}
+              solved={checkIfSolved(challengeData, activeExercise)}
+              setNextUnsolvedExercise={setNextUnsolvedExercise}
+              hints={hints}
+            />
+          )}
+        </Flex>
+      </ScrollbarWrapper>
     </Playground>
   );
 };

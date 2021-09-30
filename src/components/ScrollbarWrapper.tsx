@@ -19,27 +19,28 @@ const ScrollbarWrapper = ({
 };
 
 const ScrollbarStyled = styled.span<{ colorMode: string; thin?: boolean }>`
-  & > * {
+  & > *,
+  .better-scrollbar {
     ::-webkit-scrollbar {
-      width: ${({ thin }) => (thin ? 6 : 13)}px;
-      height: ${({ thin }) => (thin ? 6 : 13)}px;
+      width: ${({ thin }) => (thin ? 6 : 13)}px !important;
+      height: ${({ thin }) => (thin ? 6 : 13)}px !important;
     }
     ::-webkit-scrollbar-thumb {
       background: ${({ colorMode }) =>
         colorMode != "dark"
           ? "rgba(0, 0, 0, 0.1)"
-          : "rgba(255, 255, 255, 0.1)"};
-      border-radius: 1px;
+          : "rgba(255, 255, 255, 0.1)"} !important;
+      border-radius: 1px !important;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #323232;
+      background: #323232 !important;
     }
     ::-webkit-scrollbar-track {
       background: ${({ colorMode }) =>
         colorMode != "dark"
           ? "rgba(0, 0, 0, 0.1)"
-          : "rgba(255, 255, 255, 0.1)"};
-      border-radius: 1px;
+          : "rgba(255, 255, 255, 0.1)"} !important;
+      border-radius: 1px !important;
     }
   }
 `;
