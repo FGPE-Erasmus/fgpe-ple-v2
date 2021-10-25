@@ -1,10 +1,28 @@
-import { Box, Button, Flex, useColorMode } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  useColorMode,
+} from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React from "react";
 import { TFunction, useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import { FindChallenge_myChallengeStatus_refs } from "../../generated/FindChallenge";
 import ScrollbarWrapper from "../ScrollbarWrapper";
+
+const GET_LANGUAGES_FROM_A_TAG_MENU_REGEX = new RegExp(
+  /(<a href="#)[\w.-]+(">)[\w.-]+(<\/a>)/g
+);
+
+const STATEMENT_LANGUAGES_SPLIT_REGEX = new RegExp(
+  /(<a name=")[\w.-]+(" data-type="lang"><\/a><br \/>)/g
+);
 
 const Statement = ({
   exercise,
@@ -13,9 +31,10 @@ const Statement = ({
   exercise: FindChallenge_myChallengeStatus_refs | null;
   gameId: string;
 }) => {
-  const { t } = useTranslation();
-
+  const { t, i18n } = useTranslation();
   const { colorMode } = useColorMode();
+  const statementOrNoDescriptionMessage = getStatement(exercise, t);
+
   return (
     <ScrollbarWrapper>
       <Flex
@@ -50,9 +69,58 @@ const Statement = ({
               >
                 {t("Open PDF statement")}
               </Button>
+            ) : statementOrNoDescriptionMessage.split('data-type="lang"')
+                .length > 1 ? (
+              <Tabs
+                variant="soft-rounded"
+                defaultIndex={(() => {
+                  // Initial active tab to active language
+
+                  let defaultIndex = 0;
+
+                  statementOrNoDescriptionMessage
+                    .match(GET_LANGUAGES_FROM_A_TAG_MENU_REGEX)
+                    ?.forEach((lang, i) => {
+                      if (
+                        i18n.language ===
+                        lang.split('">')[1].split("</")[0].toLowerCase()
+                      ) {
+                        defaultIndex = i;
+                      }
+                    });
+
+                  return defaultIndex;
+                })()}
+              >
+                <TabList>
+                  {statementOrNoDescriptionMessage
+                    .match(GET_LANGUAGES_FROM_A_TAG_MENU_REGEX)
+                    ?.map((lang, i) => {
+                      return (
+                        <Tab key={i}>{lang.split('">')[1].split("</")[0]}</Tab>
+                      );
+                    })}
+                </TabList>
+
+                <TabPanels>
+                  {statementOrNoDescriptionMessage
+                    .replaceAll(STATEMENT_LANGUAGES_SPLIT_REGEX, "{{DIVIDER}}")
+                    .split("{{DIVIDER}}")
+                    .slice(1)
+                    .map((statementLanguageVersion, i) => {
+                      return (
+                        <TabPanel key={i}>
+                          <ReactMarkdown allowDangerousHtml>
+                            {statementLanguageVersion}
+                          </ReactMarkdown>
+                        </TabPanel>
+                      );
+                    })}
+                </TabPanels>
+              </Tabs>
             ) : (
               <ReactMarkdown allowDangerousHtml>
-                {getStatement(exercise, t)}
+                {statementOrNoDescriptionMessage}
               </ReactMarkdown>
             )}
           </Box>
