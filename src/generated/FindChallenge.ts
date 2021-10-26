@@ -17,6 +17,8 @@ export interface FindChallenge_game {
 
 export interface FindChallenge_myChallengeStatus_challenge {
   __typename: "Challenge";
+  id: string;
+  name: string;
   mode: Mode;
 }
 

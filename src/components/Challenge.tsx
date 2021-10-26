@@ -36,6 +36,7 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import ScrollbarWrapper from "./ScrollbarWrapper";
 import NavGameButton from "./NavGameButton";
+import BreadcrumbComponent from "./BreadcrumbComponent";
 
 interface ParamTypes {
   gameId: string;
@@ -55,6 +56,8 @@ const FIND_CHALLENGE = gql`
       openedAt
 
       challenge {
+        id
+        name
         mode
       }
 
@@ -154,12 +157,11 @@ const Challenge = () => {
   const { colorMode } = useColorMode();
 
   const { add: addNotification } = useNotifications();
-  const [challengeStatus, setChallengeStatus] =
-    useState<{
-      startedAt: string;
-      endedAt: string;
-      openedAt: string;
-    }>();
+  const [challengeStatus, setChallengeStatus] = useState<{
+    startedAt: string;
+    endedAt: string;
+    openedAt: string;
+  }>();
 
   const [activeExercise, setActiveExercise] =
     useState<null | FindChallenge_myChallengeStatus_refs>(null);
@@ -385,7 +387,13 @@ const Challenge = () => {
   return (
     <Playground>
       {challengeData?.game.name && (
-        <NavGameButton gameName={challengeData.game.name} gameId={gameId} />
+        <BreadcrumbComponent
+          gameName={challengeData.game.name}
+          gameId={gameId}
+          challengeName={challengeData.myChallengeStatus.challenge.name}
+          challengeId={challengeData.myChallengeStatus.challenge.id}
+          isChallengeActive={true}
+        />
       )}
       <MotionBox
         animate={{

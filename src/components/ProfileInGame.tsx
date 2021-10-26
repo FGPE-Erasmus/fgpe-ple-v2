@@ -22,6 +22,7 @@ import {
 } from "../generated/ProfileInGameQuery";
 import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
+import BreadcrumbComponent from "./BreadcrumbComponent";
 import Error from "./Error";
 import { isGameAvailable } from "./GamesList";
 import RankingTable from "./RankingTable";
@@ -179,6 +180,12 @@ const ProfileInGame = () => {
 
   return (
     <Box>
+      {/* Breadcrumb has been removed, because there's a game name in the header */}
+      {/* <BreadcrumbComponent
+        gameName={dataProfile.profileInGame.game.name}
+        gameId={gameId}
+      /> */}
+
       <Heading as="h3" size="lg">
         {t("Game")}: {dataProfile.profileInGame.game.name}
       </Heading>
