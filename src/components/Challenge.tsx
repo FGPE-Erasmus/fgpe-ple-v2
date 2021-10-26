@@ -151,6 +151,7 @@ const CHALLENGE_STATUS_UPDATED_STUDENT_SUB = gql`
 `;
 
 const Challenge = () => {
+  const [showExerciseNumbers, setShowExerciseNumbers] = useState(false);
   const { gameId, challengeId } = useParams<ParamTypes>();
   const { t } = useTranslation();
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
@@ -494,6 +495,13 @@ const Challenge = () => {
                     if (!exercise.activity) {
                       return;
                     }
+
+                    if (exercise.activity.name && !showExerciseNumbers) {
+                      if (isNaN(+exercise.activity.name.split(".")[0])) {
+                        setShowExerciseNumbers(true);
+                      }
+                    }
+
                     return (
                       <Button
                         marginBottom={2}
@@ -520,7 +528,9 @@ const Challenge = () => {
                           overflow="hidden"
                           textOverflow="ellipsis"
                         >
-                          {i + 1}. {exercise.activity.name}
+                          {showExerciseNumbers
+                            ? `${i + 1}. ${exercise.activity.name}`
+                            : exercise.activity.name}
                         </Text>
                       </Button>
                     );
