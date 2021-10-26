@@ -204,6 +204,8 @@ const RewardsAlert = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 14px;
+  text-align: center;
 `;
 
 const RewardModal = ({
