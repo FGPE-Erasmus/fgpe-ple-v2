@@ -62,9 +62,7 @@ export const GET_PLAYER = gql`
         id
         submittedAt
         exerciseId
-        feedback
         language
-        metrics
         program
         result
       }
@@ -73,12 +71,8 @@ export const GET_PLAYER = gql`
         id
         submittedAt
         exerciseId
-        feedback
         language
-        metrics
-        program
         result
-        outputs
       }
     }
   }

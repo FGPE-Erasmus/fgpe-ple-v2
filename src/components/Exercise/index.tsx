@@ -17,6 +17,9 @@ import {
 } from "../../generated/FindChallenge";
 import { getSubmissionByIdQuery } from "../../generated/getSubmissionByIdQuery";
 import { getValidationByIdQuery } from "../../generated/getValidationByIdQuery";
+import { GET_SUBMISSION_BY_ID } from "../../graphql/getSubmissionById";
+import { GET_VALIDATION_BY_ID } from "../../graphql/getValidationById";
+
 import { Result } from "../../generated/globalTypes";
 import { latestValidationQuery } from "../../generated/latestValidationQuery";
 import { rewardReceivedStudentSubscription_rewardReceivedStudent_reward } from "../../generated/rewardReceivedStudentSubscription";
@@ -46,56 +49,56 @@ const isEditorKindSpotBug = (
   return false;
 };
 
-const GET_VALIDATION_BY_ID = gql`
-  query getValidationByIdQuery($gameId: String!, $validationId: String!) {
-    validation(gameId: $gameId, id: $validationId) {
-      id
-      game {
-        id
-      }
-      player {
-        id
-      }
-      exerciseId
-      evaluationEngine
-      evaluationEngineId
-      language
-      metrics
-      outputs
-      userExecutionTimes
+// const GET_VALIDATION_BY_ID = gql`
+//   query getValidationByIdQuery($gameId: String!, $validationId: String!) {
+//     validation(gameId: $gameId, id: $validationId) {
+//       id
+//       game {
+//         id
+//       }
+//       player {
+//         id
+//       }
+//       exerciseId
+//       evaluationEngine
+//       evaluationEngineId
+//       language
+//       metrics
+//       outputs
+//       userExecutionTimes
 
-      feedback
-      submittedAt
-      evaluatedAt
-      program
-      result
-    }
-  }
-`;
+//       feedback
+//       submittedAt
+//       evaluatedAt
+//       program
+//       result
+//     }
+//   }
+// `;
 
-const GET_SUBMISSION_BY_ID = gql`
-  query getSubmissionByIdQuery($gameId: String!, $submissionId: String!) {
-    submission(gameId: $gameId, id: $submissionId) {
-      id
-      game {
-        id
-      }
-      player {
-        id
-      }
-      exerciseId
-      evaluationEngine
-      evaluationEngineId
-      language
-      metrics
-      result
-      feedback
-      submittedAt
-      evaluatedAt
-      program
-    }
-  }
-`;
+// const GET_SUBMISSION_BY_ID = gql`
+//   query getSubmissionByIdQuery($gameId: String!, $submissionId: String!) {
+//     submission(gameId: $gameId, id: $submissionId) {
+//       id
+//       game {
+//         id
+//       }
+//       player {
+//         id
+//       }
+//       exerciseId
+//       evaluationEngine
+//       evaluationEngineId
+//       language
+//       metrics
+//       result
+//       feedback
+//       submittedAt
+//       evaluatedAt
+//       program
+//     }
+//   }
+// `;
 
 const EVALUATE_SUBMISSION = gql`
   mutation evaluateSubmissionQuery(

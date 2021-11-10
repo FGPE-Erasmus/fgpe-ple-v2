@@ -81,9 +81,7 @@ export interface getPlayerQuery_player_submissions {
   id: string;
   submittedAt: any;
   exerciseId: string;
-  feedback: string | null;
   language: string | null;
-  metrics: any | null;
   program: string | null;
   result: Result | null;
 }
@@ -93,12 +91,8 @@ export interface getPlayerQuery_player_validations {
   id: string;
   submittedAt: any;
   exerciseId: string;
-  feedback: string | null;
   language: string | null;
-  metrics: any | null;
-  program: string | null;
   result: Result | null;
-  outputs: any | null;
 }
 
 export interface getPlayerQuery_player {

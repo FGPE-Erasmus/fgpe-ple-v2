@@ -51,8 +51,9 @@ const PlayerDetails = () => {
   const { t } = useTranslation();
   const { userId, gameId } = useParams<{ userId: string; gameId: string }>();
 
-  const [activeAttempt, setActiveAttempt] =
-    useState<Partial<getPlayerQuery_player_validations>>();
+  const [activeAttempt, setActiveAttempt] = useState<
+    Partial<getPlayerQuery_player_validations> & { isSubmission: boolean }
+  >();
 
   const [removeFromGame, { loading: removeSingleLoading }] = useMutation(
     REMOVE_SINGLE_FROM_GAME
@@ -69,16 +70,22 @@ const PlayerDetails = () => {
     fetchPolicy: "network-only",
   });
 
-  const onRowClick = (row: any) => {
+  const onSubmissionRowClick = (row: any) => {
+    onRowClick(row, true);
+  };
+
+  const onRowClick = (row: any, isSubmission?: boolean) => {
     setActiveAttempt({
+      id: row.id,
       exerciseId: row.exerciseId,
-      program: row.program,
+      // program: row.program,
       result: row.result,
-      metrics: row.metrics,
+      // metrics: row.metrics,
       submittedAt: row.submittedAt,
-      feedback: row.feedback,
+      // feedback: row.feedback,
       language: row.language,
-      outputs: row.outputs ? row.outputs : undefined,
+      // outputs: row.outputs ? row.outputs : undefined,
+      isSubmission: isSubmission ? isSubmission : false,
     });
     onOpenAttempt();
   };
@@ -107,6 +114,7 @@ const PlayerDetails = () => {
         onClose={onCloseAttempt}
         isOpen={isOpenAttempt}
         activeAttempt={activeAttempt}
+        gameId={gameId}
       />
       <SetGroupForSingleModal
         onClose={onCloseGroupSet}
@@ -193,7 +201,10 @@ const PlayerDetails = () => {
       <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
         {t("submissions")}
       </Heading>
-      <PlayerAttemptsTable onRowClick={onRowClick} playerData={playerData} />
+      <PlayerAttemptsTable
+        onRowClick={onSubmissionRowClick}
+        playerData={playerData}
+      />
 
       <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
         {t("validations")}
