@@ -63,7 +63,6 @@ export const GET_PLAYER = gql`
         submittedAt
         exerciseId
         language
-        program
         result
       }
 

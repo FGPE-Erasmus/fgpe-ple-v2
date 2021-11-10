@@ -82,7 +82,6 @@ export interface getPlayerQuery_player_submissions {
   submittedAt: any;
   exerciseId: string;
   language: string | null;
-  program: string | null;
   result: Result | null;
 }
 
