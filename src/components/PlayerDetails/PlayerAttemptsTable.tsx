@@ -15,12 +15,16 @@ dayjs.extend(LocalizedFormat);
 
 const getNameForExerciseId = (
   exerciseId: string,
-  playerGame: getPlayerQuery_player_game
+  playerGame: getPlayerQuery_player_game,
+  getChallengeName?: boolean
 ) => {
   const challenges = playerGame.challenges;
   for (let i = 0; i < challenges.length; i++) {
     for (let ii = 0; ii < challenges[i].refs.length; ii++) {
       if (challenges[i].refs[ii].id === exerciseId) {
+        if (getChallengeName) {
+          return challenges[i].name;
+        }
         return challenges[i].refs[ii].name;
       }
     }
@@ -56,6 +60,14 @@ const PlayerAttemptsTable = ({
             Header: t("Exercise"),
             accessor: ({ exerciseId }: { exerciseId: string }) =>
               getNameForExerciseId(exerciseId, playerData.player.game),
+            Filter: ({ column }: { column: any }) => (
+              <ColumnFilter column={column} placeholder={"abc"} />
+            ),
+          },
+          {
+            Header: t("Challenges"),
+            accessor: ({ exerciseId }: { exerciseId: string }) =>
+              getNameForExerciseId(exerciseId, playerData.player.game, true),
             Filter: ({ column }: { column: any }) => (
               <ColumnFilter column={column} placeholder={"abc"} />
             ),

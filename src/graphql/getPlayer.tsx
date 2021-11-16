@@ -16,6 +16,7 @@ export const GET_PLAYER = gql`
 
         challenges {
           id
+          name
           refs {
             id
             name

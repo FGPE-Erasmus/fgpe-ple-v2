@@ -26,6 +26,7 @@ export interface getPlayerQuery_player_game_challenges_refs {
 export interface getPlayerQuery_player_game_challenges {
   __typename: "Challenge";
   id: string;
+  name: string;
   refs: getPlayerQuery_player_game_challenges_refs[];
 }
 
