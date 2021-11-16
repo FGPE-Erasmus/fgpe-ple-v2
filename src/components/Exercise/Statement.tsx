@@ -16,6 +16,8 @@ import ReactMarkdown from "react-markdown";
 import { FindChallenge_myChallengeStatus_refs } from "../../generated/FindChallenge";
 import ScrollbarWrapper from "../ScrollbarWrapper";
 
+// TODO: Refactor alphabetical sorting, now it's copied multiple times
+
 const GET_LANGUAGES_FROM_A_TAG_MENU_REGEX = new RegExp(
   /(<a href="#)[\w.-]+(">)[\w.-]+(<\/a>)/g
 );
@@ -80,7 +82,13 @@ const Statement = ({
 
                   statementOrNoDescriptionMessage
                     .match(GET_LANGUAGES_FROM_A_TAG_MENU_REGEX)
-                    ?.forEach((lang, i) => {
+                    ?.sort((a: any, b: any) =>
+                      a
+                        .split('">')[1]
+                        .split("</")[0]
+                        .localeCompare(b.split('">')[1].split("</")[0])
+                    )
+                    .forEach((lang, i) => {
                       if (
                         i18n.language ===
                         lang.split('">')[1].split("</")[0].toLowerCase()
@@ -95,7 +103,13 @@ const Statement = ({
                 <TabList>
                   {statementOrNoDescriptionMessage
                     .match(GET_LANGUAGES_FROM_A_TAG_MENU_REGEX)
-                    ?.map((lang, i) => {
+                    ?.sort((a: any, b: any) =>
+                      a
+                        .split('">')[1]
+                        .split("</")[0]
+                        .localeCompare(b.split('">')[1].split("</")[0])
+                    )
+                    .map((lang, i) => {
                       return (
                         <Tab key={i}>{lang.split('">')[1].split("</")[0]}</Tab>
                       );
@@ -107,11 +121,25 @@ const Statement = ({
                     .replaceAll(STATEMENT_LANGUAGES_SPLIT_REGEX, "{{DIVIDER}}")
                     .split("{{DIVIDER}}")
                     .slice(1)
+                    .flatMap((statementLanguageVersion, i) => {
+                      const unsortedListOfLanguages =
+                        statementOrNoDescriptionMessage.match(
+                          GET_LANGUAGES_FROM_A_TAG_MENU_REGEX
+                        );
+
+                      return {
+                        lang: unsortedListOfLanguages
+                          ? unsortedListOfLanguages[i]
+                          : "undefined",
+                        statement: statementLanguageVersion,
+                      };
+                    })
+                    .sort((a, b) => a.lang.localeCompare(b.lang))
                     .map((statementLanguageVersion, i) => {
                       return (
                         <TabPanel key={i}>
                           <ReactMarkdown allowDangerousHtml>
-                            {statementLanguageVersion}
+                            {statementLanguageVersion.statement}
                           </ReactMarkdown>
                         </TabPanel>
                       );
