@@ -1,5 +1,5 @@
 import { Alert, AlertIcon, Box, Heading } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { getInstructorGames } from "../generated/getInstructorGames";
@@ -125,6 +125,28 @@ const TeacherStudents = ({
                   return `${value.progress}/${value.total}`;
                 },
                 disableFilters: true,
+                sortType: useMemo(
+                  () => (rowA: any, rowB: any) => {
+                    const a =
+                      rowA.original.progress.total !== 0
+                        ? rowA.original.progress.progress /
+                          rowA.original.progress.total
+                        : 0;
+
+                    const b =
+                      rowB.original.progress.total !== 0
+                        ? rowB.original.progress.progress /
+                          rowB.original.progress.total
+                        : 0;
+
+                    if (a > b) return 1;
+
+                    if (b > a) return -1;
+
+                    return 0;
+                  },
+                  []
+                ),
               },
             ]}
             data={players}
