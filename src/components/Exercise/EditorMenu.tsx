@@ -27,6 +27,7 @@ import { BiLink, BiUnlink } from "react-icons/bi";
 import { BsLayoutSidebarInset } from "react-icons/bs";
 import { IoExitOutline } from "react-icons/io5";
 import { FindChallenge_programmingLanguages } from "../../generated/FindChallenge";
+import { setDefaultProgrammingLanguage } from "./helpers/defaultProgrammingLanguage";
 import { getColorSchemeForSubmissionResult } from "./helpers/EditorMenu";
 import isFullMenuAvailable from "./helpers/isFullMenuAvailable";
 import Settings from "./Settings";
@@ -152,7 +153,10 @@ const EditorMenu = ({
                         {programmingLanguages.map((language, i) => (
                           <MenuItem
                             key={i}
-                            onClick={() => setActiveLanguage(language)}
+                            onClick={() => {
+                              setDefaultProgrammingLanguage(language);
+                              setActiveLanguage(language);
+                            }}
                           >
                             {language.name}
                           </MenuItem>

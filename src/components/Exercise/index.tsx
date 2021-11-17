@@ -34,6 +34,7 @@ import Hints from "./Hints";
 import { SettingsContext } from "./SettingsContext";
 import Statement, { getStatementLength } from "./Statement";
 import Terminal from "./Terminal";
+import { getDefaultProgrammingLangOrFirstFromArray } from "./helpers/defaultProgrammingLanguage";
 
 const isEditorKindSpotBug = (
   exercise?: FindChallenge_myChallengeStatus_refs | null
@@ -249,7 +250,9 @@ const Exercise = ({
     useState<null | string>(null);
 
   const [activeLanguage, setActiveLanguage] =
-    useState<FindChallenge_programmingLanguages>(programmingLanguages[0]);
+    useState<FindChallenge_programmingLanguages>(
+      getDefaultProgrammingLangOrFirstFromArray(programmingLanguages)
+    );
   const [code, setCode] = useState("");
 
   const { keycloak } = useKeycloak();
