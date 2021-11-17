@@ -79,6 +79,7 @@ const Statement = ({
                   // Initial active tab to active language
 
                   let defaultIndex = 0;
+                  let languageChanged = false;
 
                   const userDefaultStatementsLanguage =
                     localStorage.getItem("statementLanguage");
@@ -92,18 +93,31 @@ const Statement = ({
                         .localeCompare(b.split('">')[1].split("</")[0])
                     )
                     .forEach((lang, i) => {
-                      // If user has no default statement language chosen
-                      if (!userDefaultStatementsLanguage) {
+                      console.log(
+                        i18n.language.toLowerCase(),
+                        lang.split('">')[1].split("</")[0].toLowerCase()
+                      );
+                      if (userDefaultStatementsLanguage) {
+                        // If user has a default statement language (the user clicked at least once on a language tab)
+                        if (
+                          userDefaultStatementsLanguage.toLowerCase() ===
+                          lang.split('">')[1].split("</")[0].toLowerCase()
+                        ) {
+                          defaultIndex = i;
+                          languageChanged = true;
+                        }
+                      } else {
                         if (
                           i18n.language.toLowerCase() ===
                           lang.split('">')[1].split("</")[0].toLowerCase()
                         ) {
                           defaultIndex = i;
                         }
-                      } else {
-                        // If user has a default statement language (the user clicked at least once on a language tab)
+                      }
+
+                      if (userDefaultStatementsLanguage && !languageChanged) {
                         if (
-                          userDefaultStatementsLanguage.toLowerCase() ===
+                          i18n.language.toLowerCase() ===
                           lang.split('">')[1].split("</")[0].toLowerCase()
                         ) {
                           defaultIndex = i;
