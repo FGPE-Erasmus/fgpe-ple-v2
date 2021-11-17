@@ -55,6 +55,7 @@ const EditorMenu = ({
   isRestoreAvailable,
   reload,
   editorKind,
+  gameId,
 }: {
   setSideMenuOpen: () => void;
   editorKind: string | undefined | null;
@@ -78,6 +79,7 @@ const EditorMenu = ({
   restore: () => void;
   reload: () => void;
   isRestoreAvailable: boolean;
+  gameId: string;
 }) => {
   const { t } = useTranslation();
 
@@ -154,7 +156,7 @@ const EditorMenu = ({
                           <MenuItem
                             key={i}
                             onClick={() => {
-                              setDefaultProgrammingLanguage(language);
+                              setDefaultProgrammingLanguage(language, gameId);
                               setActiveLanguage(language);
                             }}
                           >

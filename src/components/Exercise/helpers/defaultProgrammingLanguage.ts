@@ -1,12 +1,14 @@
 import { FindChallenge_programmingLanguages } from "../../../generated/FindChallenge";
+import Cookies from "js-cookie";
 
-const DEFAULT_PROGRAMMING_LANGUAGE_LOCALSTORAGE = "programmingLanguage";
+const DEFAULT_PROGRAMMING_LANGUAGE_COOKIE = "programmingLanguage";
 
 export const getDefaultProgrammingLangOrFirstFromArray = (
-  availableProgrammingLanguages: FindChallenge_programmingLanguages[]
+  availableProgrammingLanguages: FindChallenge_programmingLanguages[],
+  gameId: string
 ) => {
-  const userDefaultLanguageLocalStorage = localStorage.getItem(
-    DEFAULT_PROGRAMMING_LANGUAGE_LOCALSTORAGE
+  const userDefaultLanguageLocalStorage = Cookies.get(
+    DEFAULT_PROGRAMMING_LANGUAGE_COOKIE + gameId
   );
 
   if (userDefaultLanguageLocalStorage) {
@@ -27,10 +29,14 @@ export const getDefaultProgrammingLangOrFirstFromArray = (
 };
 
 export const setDefaultProgrammingLanguage = (
-  language: FindChallenge_programmingLanguages
+  language: FindChallenge_programmingLanguages,
+  gameId: string
 ) => {
-  localStorage.setItem(
-    DEFAULT_PROGRAMMING_LANGUAGE_LOCALSTORAGE,
-    JSON.stringify(language)
+  Cookies.set(
+    DEFAULT_PROGRAMMING_LANGUAGE_COOKIE + gameId,
+    JSON.stringify(language),
+    {
+      expires: 30,
+    }
   );
 };

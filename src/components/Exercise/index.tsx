@@ -251,7 +251,7 @@ const Exercise = ({
 
   const [activeLanguage, setActiveLanguage] =
     useState<FindChallenge_programmingLanguages>(
-      getDefaultProgrammingLangOrFirstFromArray(programmingLanguages)
+      getDefaultProgrammingLangOrFirstFromArray(programmingLanguages, gameId)
     );
   const [code, setCode] = useState("");
 
@@ -793,6 +793,7 @@ const Exercise = ({
         </Box>
 
         <EditorMenu
+          gameId={gameId}
           setSideMenuOpen={setSideMenuOpen}
           editorKind={exercise?.activity?.editorKind}
           reload={reloadCode}
