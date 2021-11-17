@@ -80,6 +80,9 @@ const Statement = ({
 
                   let defaultIndex = 0;
 
+                  const userDefaultStatementsLanguage =
+                    localStorage.getItem("statementLanguage");
+
                   statementOrNoDescriptionMessage
                     .match(GET_LANGUAGES_FROM_A_TAG_MENU_REGEX)
                     ?.sort((a: any, b: any) =>
@@ -89,11 +92,22 @@ const Statement = ({
                         .localeCompare(b.split('">')[1].split("</")[0])
                     )
                     .forEach((lang, i) => {
-                      if (
-                        i18n.language ===
-                        lang.split('">')[1].split("</")[0].toLowerCase()
-                      ) {
-                        defaultIndex = i;
+                      // If user has no default statement language chosen
+                      if (!userDefaultStatementsLanguage) {
+                        if (
+                          i18n.language.toLowerCase() ===
+                          lang.split('">')[1].split("</")[0].toLowerCase()
+                        ) {
+                          defaultIndex = i;
+                        }
+                      } else {
+                        // If user has a default statement language (the user clicked at least once on a language tab)
+                        if (
+                          userDefaultStatementsLanguage.toLowerCase() ===
+                          lang.split('">')[1].split("</")[0].toLowerCase()
+                        ) {
+                          defaultIndex = i;
+                        }
                       }
                     });
 
@@ -110,8 +124,20 @@ const Statement = ({
                         .localeCompare(b.split('">')[1].split("</")[0])
                     )
                     .map((lang, i) => {
+                      const languageCode = lang.split('">')[1].split("</")[0];
+
                       return (
-                        <Tab key={i}>{lang.split('">')[1].split("</")[0]}</Tab>
+                        <Tab
+                          key={i}
+                          onClick={() => {
+                            localStorage.setItem(
+                              "statementLanguage",
+                              languageCode
+                            );
+                          }}
+                        >
+                          {languageCode}
+                        </Tab>
                       );
                     })}
                 </TabList>
