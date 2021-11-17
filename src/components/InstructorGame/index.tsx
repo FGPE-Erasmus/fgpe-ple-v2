@@ -13,22 +13,18 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Select,
   useDisclosure,
-  Text,
-  Tag,
 } from "@chakra-ui/react";
+import dayjs from "dayjs";
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
-import {
-  getGameByIdQuery,
-  getGameByIdQuery_game_players,
-} from "../../generated/getGameByIdQuery";
+import { gameDetailsGetGameByIdQuery } from "../../generated/gameDetailsGetGameByIdQuery";
+import { getGameByIdQuery_game_players } from "../../generated/getGameByIdQuery";
 import { getOverallStats } from "../../generated/getOverallStats";
 import { removeMultipleFromGameMutation } from "../../generated/removeMultipleFromGameMutation";
 import { AUTO_ASSIGN_GROUPS } from "../../graphql/autoAssignGroups";
-import { GET_GAME_BY_ID } from "../../graphql/getGameById";
+import { GAME_DETAILS_GET_GAME_BY_ID } from "../../graphql/gameDetailsGetGameById";
 import { GET_OVERALL_STATS } from "../../graphql/getOverallStats";
 import { REMOVE_MULTIPLE_FROM_GAME } from "../../graphql/removeMultipleFromGame";
 import { REMOVE_MULTIPLE_FROM_GROUP } from "../../graphql/removeMultipleFromGroup";
@@ -43,7 +39,6 @@ import ActivitiesStats from "./ActivitiesStats";
 import AddGroupModal from "./AddGroupModal";
 import ChangeDetailsModal from "./ChangeDetailsModal";
 import SetGroupModal from "./SetGroupModal";
-import dayjs from "dayjs";
 
 interface ParamTypes {
   gameId: string;
@@ -107,7 +102,7 @@ const InstructorGame = () => {
     error: gameError,
     loading: gameLoading,
     refetch: gameRefetch,
-  } = useQuery<getGameByIdQuery>(GET_GAME_BY_ID, {
+  } = useQuery<gameDetailsGetGameByIdQuery>(GAME_DETAILS_GET_GAME_BY_ID, {
     variables: {
       gameId,
     },

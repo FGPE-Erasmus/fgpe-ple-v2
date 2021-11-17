@@ -20,13 +20,6 @@ const GET_ALL_AVAILABLE_GAMES = gql`
       id
       name
       description
-      gedilLayerId
-      gedilLayerDescription
-      startDate
-      endDate
-      createdAt
-      updatedAt
-      evaluationEngine
       private
       instructors {
         email

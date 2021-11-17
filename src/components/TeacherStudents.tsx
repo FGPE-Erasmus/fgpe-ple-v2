@@ -93,14 +93,14 @@ const TeacherStudents = ({
               },
               {
                 Header: t("table.submissions"),
-                accessor: "submissions.length",
+                accessor: "stats.nrOfSubmissions",
                 Filter: ({ column }: { column: any }) => (
                   <ColumnFilter column={column} placeholder="123" />
                 ),
               },
               {
                 Header: t("table.validations"),
-                accessor: "validations.length",
+                accessor: "stats.nrOfValidations",
                 Filter: ({ column }: { column: any }) => (
                   <ColumnFilter column={column} placeholder="123" />
                 ),

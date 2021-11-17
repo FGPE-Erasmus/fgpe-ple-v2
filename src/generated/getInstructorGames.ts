@@ -9,14 +9,10 @@ import { GameStateEnum } from "./globalTypes";
 // GraphQL query operation: getInstructorGames
 // ====================================================
 
-export interface getInstructorGames_myGames_players_submissions {
-  __typename: "Submission";
-  id: string;
-}
-
-export interface getInstructorGames_myGames_players_validations {
-  __typename: "Validation";
-  id: string;
+export interface getInstructorGames_myGames_players_stats {
+  __typename: "PlayerStats";
+  nrOfSubmissions: number;
+  nrOfValidations: number;
 }
 
 export interface getInstructorGames_myGames_players_group {
@@ -44,9 +40,7 @@ export interface getInstructorGames_myGames_players_learningPath {
 
 export interface getInstructorGames_myGames_players {
   __typename: "Player";
-  submissions: getInstructorGames_myGames_players_submissions[];
-  validations: getInstructorGames_myGames_players_validations[];
-  points: number;
+  stats: getInstructorGames_myGames_players_stats;
   group: getInstructorGames_myGames_players_group | null;
   user: getInstructorGames_myGames_players_user;
   learningPath: getInstructorGames_myGames_players_learningPath[];

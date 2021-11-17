@@ -20,39 +20,12 @@ export const GET_ALL_GAME_PROFILES = gql`
         id
         reward {
           name
-          description
-          createdAt
         }
       }
 
       stats {
         nrOfSubmissions
         nrOfValidations
-        nrOfSubmissionsByActivity
-        nrOfValidationsByActivity
-        nrOfSubmissionsByActivityAndResult
-        nrOfValidationsByActivityAndResult
-      }
-
-      submissions {
-        id
-      }
-
-      validations {
-        id
-      }
-
-      user {
-        id
-        email
-        emailVerified
-        firstName
-        lastName
-        username
-      }
-
-      learningPath {
-        progress
       }
     }
   }

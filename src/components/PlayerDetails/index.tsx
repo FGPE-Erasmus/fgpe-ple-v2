@@ -13,22 +13,18 @@ import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
 import {
   getPlayerQuery,
-  getPlayerQuery_player_game,
-  getPlayerQuery_player_submissions,
   getPlayerQuery_player_validations,
 } from "../../generated/getPlayerQuery";
 import { GET_PLAYER } from "../../graphql/getPlayer";
+import { REMOVE_SINGLE_FROM_GAME } from "../../graphql/removeSingleFromGame";
 import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
 import withChangeAnimation from "../../utilities/withChangeAnimation";
 import DetailsCard from "../DetailsCard";
 import Error from "../Error";
-import TableComponent from "../TableComponent";
-import ColumnFilter from "../TableComponent/ColumnFilter";
-import PlayerAttemptsTable from "./PlayerAttemptsTable";
-import PlayerRewards from "./PlayerRewards";
-import { REMOVE_SINGLE_FROM_GAME } from "../../graphql/removeSingleFromGame";
 import { useNotifications } from "../Notifications";
 import AttemptModal from "./AttemptModal";
+import PlayerAttemptsTable from "./PlayerAttemptsTable";
+import PlayerRewards from "./PlayerRewards";
 import SetGroupForSingleModal from "./SetGroupForSingleModal";
 
 /** Returns page with game player details such as submissions, validations, submitted code, code results etc.

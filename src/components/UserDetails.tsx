@@ -117,7 +117,7 @@ const UserDetails = () => {
         <TableComponent
           onRowClick={(row: allGameProfilesQuery_allGameProfiles) => {
             history.push({
-              pathname: `/teacher/player-details/${row.user.id}/${row.game.id}`,
+              pathname: `/teacher/player-details/${userData?.user.id}/${row.game.id}`,
             });
           }}
           columns={[
@@ -148,7 +148,7 @@ const UserDetails = () => {
                 row: allGameProfilesQuery_allGameProfiles | undefined
               ) => {
                 if (row) {
-                  return row.submissions.length;
+                  return row.stats.nrOfSubmissions;
                 }
               },
               Filter: ({ column }: { column: any }) => (
@@ -161,7 +161,7 @@ const UserDetails = () => {
                 row: allGameProfilesQuery_allGameProfiles | undefined
               ) => {
                 if (row) {
-                  return row.validations.length;
+                  return row.stats.nrOfValidations;
                 }
               },
               Filter: ({ column }: { column: any }) => (

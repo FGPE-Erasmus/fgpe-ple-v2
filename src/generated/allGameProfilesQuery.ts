@@ -22,8 +22,6 @@ export interface allGameProfilesQuery_allGameProfiles_group {
 export interface allGameProfilesQuery_allGameProfiles_rewards_reward {
   __typename: "Reward";
   name: string;
-  description: string | null;
-  createdAt: any;
 }
 
 export interface allGameProfilesQuery_allGameProfiles_rewards {
@@ -36,35 +34,6 @@ export interface allGameProfilesQuery_allGameProfiles_stats {
   __typename: "PlayerStats";
   nrOfSubmissions: number;
   nrOfValidations: number;
-  nrOfSubmissionsByActivity: any | null;
-  nrOfValidationsByActivity: any | null;
-  nrOfSubmissionsByActivityAndResult: any | null;
-  nrOfValidationsByActivityAndResult: any | null;
-}
-
-export interface allGameProfilesQuery_allGameProfiles_submissions {
-  __typename: "Submission";
-  id: string;
-}
-
-export interface allGameProfilesQuery_allGameProfiles_validations {
-  __typename: "Validation";
-  id: string;
-}
-
-export interface allGameProfilesQuery_allGameProfiles_user {
-  __typename: "User";
-  id: string | null;
-  email: string | null;
-  emailVerified: boolean | null;
-  firstName: string | null;
-  lastName: string | null;
-  username: string | null;
-}
-
-export interface allGameProfilesQuery_allGameProfiles_learningPath {
-  __typename: "ChallengeStatus";
-  progress: number;
 }
 
 export interface allGameProfilesQuery_allGameProfiles {
@@ -75,10 +44,6 @@ export interface allGameProfilesQuery_allGameProfiles {
   points: number;
   rewards: allGameProfilesQuery_allGameProfiles_rewards[];
   stats: allGameProfilesQuery_allGameProfiles_stats;
-  submissions: allGameProfilesQuery_allGameProfiles_submissions[];
-  validations: allGameProfilesQuery_allGameProfiles_validations[];
-  user: allGameProfilesQuery_allGameProfiles_user;
-  learningPath: allGameProfilesQuery_allGameProfiles_learningPath[];
 }
 
 export interface allGameProfilesQuery {

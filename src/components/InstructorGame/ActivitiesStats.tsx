@@ -1,18 +1,14 @@
-import { useQuery } from "@apollo/client";
 import { Box } from "@chakra-ui/react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  getGameByIdQuery,
-  getGameByIdQuery_game_challenges_refs,
-} from "../../generated/getGameByIdQuery";
+import { gameDetailsGetGameByIdQuery } from "../../generated/gameDetailsGetGameByIdQuery";
+import { getGameByIdQuery_game_challenges_refs } from "../../generated/getGameByIdQuery";
 import { getOverallStats } from "../../generated/getOverallStats";
-import { GET_OVERALL_STATS } from "../../graphql/getOverallStats";
 import Error from "../Error";
 import TableComponent from "../TableComponent";
 import ColumnFilter from "../TableComponent/ColumnFilter";
 
-const getActivitiesList = (gameData: getGameByIdQuery) => {
+const getActivitiesList = (gameData: gameDetailsGetGameByIdQuery) => {
   let activities: getGameByIdQuery_game_challenges_refs[] = [];
   gameData.game.challenges.forEach((challenge) => {
     challenge.refs.forEach((ref) => {
@@ -63,7 +59,7 @@ const ActivitiesStats = ({
   gameId,
   statsData,
 }: {
-  gameData: getGameByIdQuery;
+  gameData: gameDetailsGetGameByIdQuery;
   gameId: string;
   statsData: getOverallStats | undefined;
 }) => {

@@ -19,13 +19,13 @@ const INSTRUCTOR_GAMES = gql`
       endDate
       state
       players {
-        submissions {
-          id
+        stats {
+          nrOfSubmissions
+          nrOfValidations
         }
-        validations {
-          id
-        }
-        points
+
+        # points
+
         group {
           name
         }
