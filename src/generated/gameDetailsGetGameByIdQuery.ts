@@ -48,12 +48,18 @@ export interface gameDetailsGetGameByIdQuery_game_players_user {
   lastName: string | null;
 }
 
+export interface gameDetailsGetGameByIdQuery_game_players_learningPath {
+  __typename: "ChallengeStatus";
+  progress: number;
+}
+
 export interface gameDetailsGetGameByIdQuery_game_players {
   __typename: "Player";
   group: gameDetailsGetGameByIdQuery_game_players_group | null;
   id: string;
   stats: gameDetailsGetGameByIdQuery_game_players_stats;
   user: gameDetailsGetGameByIdQuery_game_players_user;
+  learningPath: gameDetailsGetGameByIdQuery_game_players_learningPath[];
 }
 
 export interface gameDetailsGetGameByIdQuery_game {

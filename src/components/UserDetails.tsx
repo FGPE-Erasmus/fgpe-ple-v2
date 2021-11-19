@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { Box, Flex, Heading } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import {
@@ -20,6 +20,19 @@ import ColumnFilter from "./TableComponent/ColumnFilter";
 const UserDetails = () => {
   const { userId } = useParams<{ userId: string }>();
   const history = useHistory();
+  const memoizedSorting = useMemo(
+    () => (rowA: any, rowB: any) => {
+      const a = rowA.original.progress;
+      const b = rowB.original.progress;
+
+      if (a > b) return 1;
+
+      if (b > a) return -1;
+
+      return 0;
+    },
+    []
+  );
 
   const {
     data: userData,
@@ -75,7 +88,7 @@ const UserDetails = () => {
     return <div>{t("Loading")}</div>;
   }
 
-  console.log("data", gameProfilesData);
+  console.log("data", gameProfilesData?.allGameProfiles);
 
   return (
     <div>
@@ -180,6 +193,23 @@ const UserDetails = () => {
               Filter: ({ column }: { column: any }) => (
                 <ColumnFilter column={column} placeholder={"abc"} />
               ),
+            },
+            {
+              Header: t("table.progress"),
+              accessor: "learningPath",
+              Cell: ({ value }: { value: any }) => {
+                const totalChallengesCount = value.length || 1;
+
+                const progressCombined =
+                  value
+                    .flatMap((learningPath: any) => learningPath.progress)
+                    .reduce((a: any, b: any) => a + b, 0) /
+                  totalChallengesCount;
+
+                return (progressCombined * 100).toFixed(1) + "%";
+              },
+              disableFilters: true,
+              sortType: memoizedSorting,
             },
           ]}
           data={gameProfilesData?.allGameProfiles}

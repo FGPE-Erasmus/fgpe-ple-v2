@@ -16,7 +16,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { gameDetailsGetGameByIdQuery } from "../../generated/gameDetailsGetGameByIdQuery";
@@ -47,6 +47,19 @@ interface ParamTypes {
 const InstructorGame = () => {
   const [loading, setLoading] = useState(false);
   const history = useHistory();
+  const memoizedSorting = useMemo(
+    () => (rowA: any, rowB: any) => {
+      const a = rowA.original.progress;
+      const b = rowB.original.progress;
+
+      if (a > b) return 1;
+
+      if (b > a) return -1;
+
+      return 0;
+    },
+    []
+  );
 
   const {
     isOpen: isDetailsModalOpen,
@@ -443,6 +456,23 @@ const InstructorGame = () => {
                     placeholder={t("table.group")}
                   />
                 ),
+              },
+              {
+                Header: t("table.progress"),
+                accessor: "learningPath",
+                Cell: ({ value }: { value: any }) => {
+                  const totalChallengesCount = value.length || 1;
+
+                  const progressCombined =
+                    value
+                      .flatMap((learningPath: any) => learningPath.progress)
+                      .reduce((a: any, b: any) => a + b, 0) /
+                    totalChallengesCount;
+
+                  return (progressCombined * 100).toFixed(1) + "%";
+                },
+                disableFilters: true,
+                sortType: memoizedSorting,
               },
             ]}
             data={gameData.game.players}

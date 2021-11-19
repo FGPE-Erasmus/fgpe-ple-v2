@@ -36,6 +36,11 @@ export interface allGameProfilesQuery_allGameProfiles_stats {
   nrOfValidations: number;
 }
 
+export interface allGameProfilesQuery_allGameProfiles_learningPath {
+  __typename: "ChallengeStatus";
+  progress: number;
+}
+
 export interface allGameProfilesQuery_allGameProfiles {
   __typename: "Player";
   id: string;
@@ -44,6 +49,7 @@ export interface allGameProfilesQuery_allGameProfiles {
   points: number;
   rewards: allGameProfilesQuery_allGameProfiles_rewards[];
   stats: allGameProfilesQuery_allGameProfiles_stats;
+  learningPath: allGameProfilesQuery_allGameProfiles_learningPath[];
 }
 
 export interface allGameProfilesQuery {

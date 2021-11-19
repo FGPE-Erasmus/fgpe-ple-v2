@@ -37,9 +37,7 @@ const INSTRUCTOR_GAMES = gql`
         }
 
         learningPath {
-          refs {
-            solved
-          }
+          progress
         }
       }
     }

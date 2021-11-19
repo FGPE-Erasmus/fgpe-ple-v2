@@ -27,6 +27,10 @@ export const GET_ALL_GAME_PROFILES = gql`
         nrOfSubmissions
         nrOfValidations
       }
+
+      learningPath {
+        progress
+      }
     }
   }
 `;

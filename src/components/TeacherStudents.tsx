@@ -13,16 +13,23 @@ const getPlayers = (data: getInstructorGames | undefined) => {
 
   const players = data.myGames.flatMap((game) => {
     return game.players.flatMap((player) => {
-      const totalExercises = player.learningPath.flatMap((learningPath) =>
-        learningPath.refs.flatMap((ref) => ref)
-      );
+      // const totalExercises = player.learningPath.flatMap((learningPath) =>
+      //   learningPath.refs.flatMap((ref) => ref)
+      // );
 
-      const progress = {
-        total: totalExercises.length,
-        progress: totalExercises.filter((item) => item.solved).length,
-      };
+      // const progress = {
+      //   total: totalExercises.length,
+      //   progress: totalExercises.filter((item) => item.solved).length,
+      // };
 
-      return { ...player, progress, game };
+      const totalChallengesCount = player.learningPath.length || 1;
+
+      const progressCombined =
+        player.learningPath
+          .flatMap((learningPath) => learningPath.progress)
+          .reduce((a, b) => a + b, 0) / totalChallengesCount;
+
+      return { ...player, progress: progressCombined, game };
     });
   });
 
@@ -122,22 +129,13 @@ const TeacherStudents = ({
                 Header: t("table.progress"),
                 accessor: "progress",
                 Cell: ({ value }: { value: any }) => {
-                  return `${value.progress}/${value.total}`;
+                  return (value * 100).toFixed(1) + "%";
                 },
                 disableFilters: true,
                 sortType: useMemo(
                   () => (rowA: any, rowB: any) => {
-                    const a =
-                      rowA.original.progress.total !== 0
-                        ? rowA.original.progress.progress /
-                          rowA.original.progress.total
-                        : 0;
-
-                    const b =
-                      rowB.original.progress.total !== 0
-                        ? rowB.original.progress.progress /
-                          rowB.original.progress.total
-                        : 0;
+                    const a = rowA.original.progress;
+                    const b = rowB.original.progress;
 
                     if (a > b) return 1;
 

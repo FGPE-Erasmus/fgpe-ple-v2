@@ -28,14 +28,9 @@ export interface getInstructorGames_myGames_players_user {
   id: string | null;
 }
 
-export interface getInstructorGames_myGames_players_learningPath_refs {
-  __typename: "ActivityStatus";
-  solved: boolean | null;
-}
-
 export interface getInstructorGames_myGames_players_learningPath {
   __typename: "ChallengeStatus";
-  refs: getInstructorGames_myGames_players_learningPath_refs[];
+  progress: number;
 }
 
 export interface getInstructorGames_myGames_players {
