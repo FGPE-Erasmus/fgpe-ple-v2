@@ -13,16 +13,6 @@ export const GET_PLAYER = gql`
           name
           displayName
         }
-
-        challenges {
-          id
-          name
-          refs {
-            id
-            name
-            title
-          }
-        }
       }
 
       user {
@@ -38,18 +28,6 @@ export const GET_PLAYER = gql`
         name
       }
 
-      points
-
-      rewards {
-        id
-        reward {
-          id
-          kind
-          name
-          description
-        }
-      }
-
       stats {
         nrOfSubmissions
         nrOfValidations
@@ -57,22 +35,6 @@ export const GET_PLAYER = gql`
         nrOfValidationsByActivity
         nrOfSubmissionsByActivityAndResult
         nrOfValidationsByActivityAndResult
-      }
-
-      submissions {
-        id
-        submittedAt
-        exerciseId
-        language
-        result
-      }
-
-      validations {
-        id
-        submittedAt
-        exerciseId
-        language
-        result
       }
     }
   }

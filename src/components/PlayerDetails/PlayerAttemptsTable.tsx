@@ -8,6 +8,11 @@ import {
   getPlayerQuery,
   getPlayerQuery_player_game,
 } from "../../generated/getPlayerQuery";
+import {
+  getPlayerSubmissionsQuery,
+  getPlayerSubmissionsQuery_player_game,
+} from "../../generated/getPlayerSubmissionsQuery";
+import { getPlayerValidationsQuery } from "../../generated/getPlayerValidationsQuery";
 import TableComponent from "../TableComponent";
 import ColumnFilter from "../TableComponent/ColumnFilter";
 
@@ -15,7 +20,7 @@ dayjs.extend(LocalizedFormat);
 
 const getNameForExerciseId = (
   exerciseId: string,
-  playerGame: getPlayerQuery_player_game,
+  playerGame: getPlayerSubmissionsQuery_player_game,
   getChallengeName?: boolean
 ) => {
   const challenges = playerGame.challenges;
@@ -31,17 +36,43 @@ const getNameForExerciseId = (
   }
 };
 
+type PlayerSubmissionsTable = {
+  isValidationsTable: false;
+  playerData: getPlayerSubmissionsQuery;
+  onRowClick?: (row: any) => void;
+};
+
+type PlayerValidationsTable = {
+  isValidationsTable: true;
+  playerData: getPlayerValidationsQuery;
+  onRowClick?: (row: any) => void;
+};
+
+type PlayerAttempsTableType = PlayerSubmissionsTable | PlayerValidationsTable;
+
+// type PlayerAttemptsTableType =
+//   | {
+//       onRowClick?: (row: any) => void;
+//     }
+//   | {
+//       isValidationsTable: true;
+//       playerData: getPlayerValidationsQuery;
+//     }
+//   | {
+//       isValidationsTable: false;
+//       playerData: getPlayerSubmissionsQuery;
+//     };
+/** a player attempt is a working name of a submission or validation */
 const PlayerAttemptsTable = ({
   playerData,
   isValidationsTable,
   onRowClick,
 }: {
-  playerData: getPlayerQuery;
   isValidationsTable?: boolean;
+  playerData: any;
   onRowClick?: (row: any) => void;
 }) => {
   const { t } = useTranslation();
-
   return (
     <Box>
       <TableComponent

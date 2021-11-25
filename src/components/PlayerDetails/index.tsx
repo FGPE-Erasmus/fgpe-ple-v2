@@ -1,5 +1,10 @@
 import { useMutation, useQuery } from "@apollo/client";
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Box,
   Button,
   Divider,
@@ -8,13 +13,12 @@ import {
   HStack,
   useDisclosure,
 } from "@chakra-ui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
-import {
-  getPlayerQuery,
-  getPlayerQuery_player_validations,
-} from "../../generated/getPlayerQuery";
+import { getPlayerQuery } from "../../generated/getPlayerQuery";
+import { getPlayerValidationsQuery_player_validations } from "../../generated/getPlayerValidationsQuery";
 import { GET_PLAYER } from "../../graphql/getPlayer";
 import { REMOVE_SINGLE_FROM_GAME } from "../../graphql/removeSingleFromGame";
 import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
@@ -26,6 +30,8 @@ import AttemptModal from "./AttemptModal";
 import PlayerAttemptsTable from "./PlayerAttemptsTable";
 import PlayerRewards from "./PlayerRewards";
 import SetGroupForSingleModal from "./SetGroupForSingleModal";
+import SubmissionsTable from "./SubmissionsTable";
+import ValidationsTable from "./ValidationsTable";
 
 /** Returns page with game player details such as submissions, validations, submitted code, code results etc.
  *  Needs userId and gameId url params
@@ -48,7 +54,9 @@ const PlayerDetails = () => {
   const { userId, gameId } = useParams<{ userId: string; gameId: string }>();
 
   const [activeAttempt, setActiveAttempt] = useState<
-    Partial<getPlayerQuery_player_validations> & { isSubmission: boolean }
+    Partial<getPlayerValidationsQuery_player_validations> & {
+      isSubmission: boolean;
+    }
   >();
 
   const [removeFromGame, { loading: removeSingleLoading }] = useMutation(
@@ -194,27 +202,113 @@ const PlayerDetails = () => {
 
       <Divider marginBottom={8} />
 
-      <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
+      {/* <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
         {t("submissions")}
-      </Heading>
-      <PlayerAttemptsTable
-        onRowClick={onSubmissionRowClick}
-        playerData={playerData}
-      />
+      </Heading> */}
+      <Accordion allowToggle allowMultiple>
+        <AccordionItem>
+          {({ isExpanded }: { isExpanded: boolean }) => (
+            <>
+              <AccordionButton>
+                <Box flex="1" textAlign="left">
+                  <Heading as="h3" size="sm" marginTop={2} marginBottom={2}>
+                    {t("submissions")}
+                  </Heading>
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
 
-      <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
-        {t("validations")}
-      </Heading>
-      <PlayerAttemptsTable
-        onRowClick={onRowClick}
-        playerData={playerData}
-        isValidationsTable
-      />
+              <AccordionPanel pb={4} marginTop={2} marginBottom={10}>
+                {/* <PlayerAttemptsTable
+                  onRowClick={onSubmissionRowClick}
+                  playerData={playerData}
+                /> */}
+                <SubmissionsTable
+                  userId={userId}
+                  gameId={gameId}
+                  onSubmissionRowClick={onSubmissionRowClick}
+                />
+              </AccordionPanel>
+            </>
+          )}
+        </AccordionItem>
 
-      <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
-        {t("Rewards")}
-      </Heading>
-      <PlayerRewards playerData={playerData} />
+        <AccordionItem>
+          {({ isExpanded }: { isExpanded: boolean }) => (
+            <>
+              <AccordionButton>
+                <Box flex="1" textAlign="left">
+                  <Heading as="h3" size="sm" marginTop={2} marginBottom={2}>
+                    {t("validations")}
+                  </Heading>
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+
+              <AccordionPanel pb={4} marginTop={2} marginBottom={10}>
+                {/* <PlayerAttemptsTable
+                  onRowClick={onRowClick}
+                  playerData={playerData}
+                  isValidationsTable
+                /> */}
+                <ValidationsTable
+                  userId={userId}
+                  gameId={gameId}
+                  onValidationRowClick={onRowClick}
+                />
+              </AccordionPanel>
+            </>
+          )}
+        </AccordionItem>
+
+        <AccordionItem>
+          {({ isExpanded }: { isExpanded: boolean }) => (
+            <>
+              <AccordionButton>
+                <Box flex="1" textAlign="left">
+                  <Heading as="h3" size="sm" marginTop={2} marginBottom={2}>
+                    {t("Rewards")}
+                  </Heading>
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+
+              <AccordionPanel pb={4} marginTop={2} marginBottom={10}>
+                <AnimatePresence>
+                  {isExpanded && (
+                    <PlayerRewards gameId={gameId} userId={userId} />
+                  )}
+                </AnimatePresence>
+              </AccordionPanel>
+            </>
+          )}
+        </AccordionItem>
+      </Accordion>
+
+      {/* <Accordion allowToggle>
+        <AccordionItem>
+          {({ isExpanded }: { isExpanded: boolean }) => (
+            <>
+              <AccordionButton>
+                <Box flex="1" textAlign="left">
+                  <Heading as="h3" size="sm">
+                    {t("validations")}
+                  </Heading>
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+
+              <AccordionPanel pb={4}>
+                <PlayerAttemptsTable
+                  onRowClick={onRowClick}
+                  playerData={playerData}
+                  isValidationsTable
+                />
+              </AccordionPanel>
+            </>
+          )}
+        </AccordionItem>
+      </Accordion> */}
     </Box>
   );
 };

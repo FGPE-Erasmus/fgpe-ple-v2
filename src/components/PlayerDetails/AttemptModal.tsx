@@ -22,10 +22,10 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  getPlayerQuery_player_submissions,
-  getPlayerQuery_player_validations,
-} from "../../generated/getPlayerQuery";
+// import {
+//   getPlayerQuery_player_submissions,
+//   getPlayerQuery_player_validations,
+// } from "../../generated/getPlayerQuery";
 import DetailsCard from "../DetailsCard";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
@@ -49,6 +49,7 @@ import {
   getValidationByIdQuery_validation,
 } from "../../generated/getValidationByIdQuery";
 import { useNotifications } from "../Notifications";
+import { getPlayerValidationsQuery_player_validations } from "../../generated/getPlayerValidationsQuery";
 
 dayjs.extend(LocalizedFormat);
 
@@ -80,7 +81,7 @@ const AttemptModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  activeAttempt?: Partial<getPlayerQuery_player_validations> & {
+  activeAttempt?: Partial<getPlayerValidationsQuery_player_validations> & {
     isSubmission: boolean;
   };
   gameId: string;

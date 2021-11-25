@@ -93,10 +93,8 @@ const InstructorGame = () => {
 
   const [removeMultipleFromGroup] = useMutation(REMOVE_MULTIPLE_FROM_GROUP);
 
-  const [
-    autoAssignGroups,
-    { data: autoAssignGroupsData, loading: autoAssignGroupsLoading },
-  ] = useMutation(AUTO_ASSIGN_GROUPS);
+  const [autoAssignGroups, { loading: autoAssignGroupsLoading }] =
+    useMutation(AUTO_ASSIGN_GROUPS);
 
   const {
     data: overallStatsData,
