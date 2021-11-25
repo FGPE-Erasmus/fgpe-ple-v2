@@ -5,6 +5,13 @@ export const GET_PLAYER = gql`
     player(gameId: $gameId, userId: $userId) {
       id
 
+      learningPath {
+        challenge {
+          name
+        }
+        progress
+      }
+
       game {
         id
         name

@@ -10,6 +10,7 @@ const DetailsCard = ({
   active,
   noMargins,
   darkerBorder,
+  onClick,
 }: {
   title: string;
   content: string;
@@ -18,11 +19,14 @@ const DetailsCard = ({
   active?: boolean;
   noMargins?: boolean;
   darkerBorder?: boolean;
+  onClick?: () => void;
 }) => {
   const { colorMode } = useColorMode();
 
   return (
     <Flex
+      cursor={active ? "pointer" : "unset"}
+      onClick={onClick}
       width="100%"
       border="1px solid"
       borderColor={

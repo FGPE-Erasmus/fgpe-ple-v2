@@ -7,6 +7,17 @@
 // GraphQL query operation: getPlayerQuery
 // ====================================================
 
+export interface getPlayerQuery_player_learningPath_challenge {
+  __typename: "Challenge";
+  name: string;
+}
+
+export interface getPlayerQuery_player_learningPath {
+  __typename: "ChallengeStatus";
+  challenge: getPlayerQuery_player_learningPath_challenge;
+  progress: number;
+}
+
 export interface getPlayerQuery_player_game_groups {
   __typename: "Group";
   id: string;
@@ -49,6 +60,7 @@ export interface getPlayerQuery_player_stats {
 export interface getPlayerQuery_player {
   __typename: "Player";
   id: string;
+  learningPath: getPlayerQuery_player_learningPath[];
   game: getPlayerQuery_player_game;
   user: getPlayerQuery_player_user;
   group: getPlayerQuery_player_group | null;

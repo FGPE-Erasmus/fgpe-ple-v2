@@ -13,7 +13,7 @@ import {
   HStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -27,8 +27,8 @@ import DetailsCard from "../DetailsCard";
 import Error from "../Error";
 import { useNotifications } from "../Notifications";
 import AttemptModal from "./AttemptModal";
-import PlayerAttemptsTable from "./PlayerAttemptsTable";
 import PlayerRewards from "./PlayerRewards";
+import ProgressModal from "./ProgressModal";
 import SetGroupForSingleModal from "./SetGroupForSingleModal";
 import SubmissionsTable from "./SubmissionsTable";
 import ValidationsTable from "./ValidationsTable";
@@ -37,6 +37,11 @@ import ValidationsTable from "./ValidationsTable";
  *  Needs userId and gameId url params
  */
 const PlayerDetails = () => {
+  const {
+    isOpen: isOpenProgress,
+    onOpen: onOpenProgress,
+    onClose: onCloseProgress,
+  } = useDisclosure();
   const {
     isOpen: isOpenAttempt,
     onOpen: onOpenAttempt,
@@ -114,6 +119,11 @@ const PlayerDetails = () => {
 
   return (
     <Box>
+      <ProgressModal
+        onClose={onCloseProgress}
+        isOpen={isOpenProgress}
+        learningPaths={playerData.player.learningPath}
+      />
       <AttemptModal
         onClose={onCloseAttempt}
         isOpen={isOpenAttempt}
@@ -198,13 +208,24 @@ const PlayerDetails = () => {
           title={t("table.validations")}
           content={playerData.player.stats.nrOfValidations.toString()}
         />
+        <DetailsCard
+          active
+          onClick={onOpenProgress}
+          title={t("table.progress")}
+          content={
+            (
+              (playerData.player.learningPath
+                .flatMap((learningPath: any) => learningPath.progress)
+                .reduce((a: any, b: any) => a + b, 0) /
+                playerData.player.learningPath.length) *
+              100
+            ).toFixed(1) + "%"
+          }
+        />
       </Flex>
 
       <Divider marginBottom={8} />
 
-      {/* <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
-        {t("submissions")}
-      </Heading> */}
       <Accordion allowToggle allowMultiple>
         <AccordionItem>
           {({ isExpanded }: { isExpanded: boolean }) => (
@@ -223,11 +244,13 @@ const PlayerDetails = () => {
                   onRowClick={onSubmissionRowClick}
                   playerData={playerData}
                 /> */}
-                <SubmissionsTable
-                  userId={userId}
-                  gameId={gameId}
-                  onSubmissionRowClick={onSubmissionRowClick}
-                />
+                {isExpanded && (
+                  <SubmissionsTable
+                    userId={userId}
+                    gameId={gameId}
+                    onSubmissionRowClick={onSubmissionRowClick}
+                  />
+                )}
               </AccordionPanel>
             </>
           )}
@@ -251,11 +274,13 @@ const PlayerDetails = () => {
                   playerData={playerData}
                   isValidationsTable
                 /> */}
-                <ValidationsTable
-                  userId={userId}
-                  gameId={gameId}
-                  onValidationRowClick={onRowClick}
-                />
+                {isExpanded && (
+                  <ValidationsTable
+                    userId={userId}
+                    gameId={gameId}
+                    onValidationRowClick={onRowClick}
+                  />
+                )}
               </AccordionPanel>
             </>
           )}
@@ -284,31 +309,6 @@ const PlayerDetails = () => {
           )}
         </AccordionItem>
       </Accordion>
-
-      {/* <Accordion allowToggle>
-        <AccordionItem>
-          {({ isExpanded }: { isExpanded: boolean }) => (
-            <>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  <Heading as="h3" size="sm">
-                    {t("validations")}
-                  </Heading>
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-
-              <AccordionPanel pb={4}>
-                <PlayerAttemptsTable
-                  onRowClick={onRowClick}
-                  playerData={playerData}
-                  isValidationsTable
-                />
-              </AccordionPanel>
-            </>
-          )}
-        </AccordionItem>
-      </Accordion> */}
     </Box>
   );
 };
