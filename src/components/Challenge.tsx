@@ -41,6 +41,7 @@ import BreadcrumbComponent from "./BreadcrumbComponent";
 interface ParamTypes {
   gameId: string;
   challengeId: string;
+  exerciseId?: string;
 }
 
 const FIND_CHALLENGE = gql`
@@ -152,7 +153,7 @@ const CHALLENGE_STATUS_UPDATED_STUDENT_SUB = gql`
 
 const Challenge = () => {
   const [showExerciseNumbers, setShowExerciseNumbers] = useState(false);
-  const { gameId, challengeId } = useParams<ParamTypes>();
+  const { gameId, challengeId, exerciseId } = useParams<ParamTypes>();
   const { t } = useTranslation();
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const { colorMode } = useColorMode();
@@ -256,8 +257,19 @@ const Challenge = () => {
   } = useQuery<FindChallenge>(FIND_CHALLENGE, {
     variables: { gameId, challengeId },
     onCompleted: (data) => {
-      if (!activeExercise) {
-        setActiveExercise(data.myChallengeStatus.refs[0]);
+      if (exerciseId) {
+        const exerciseFromURL = data.myChallengeStatus.refs.find(
+          (exercise) => exercise.activity?.id === exerciseId
+        );
+        if (exerciseFromURL) {
+          setActiveExercise(exerciseFromURL);
+        } else {
+          setActiveExercise(data.myChallengeStatus.refs[0]);
+        }
+      } else {
+        if (!activeExercise) {
+          setActiveExercise(data.myChallengeStatus.refs[0]);
+        }
       }
     },
   });

@@ -42,8 +42,10 @@ function App() {
   const [zoomFactor, setZoomFactor] = useState(
     getZoomFactorFromLocalStorage() || 1
   );
-  const [activeGame, setActiveGame] =
-    useState<{ id: string; name: string } | null>(null);
+  const [activeGame, setActiveGame] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const { initialized: keycloakInitialized } = useKeycloak();
 
@@ -100,7 +102,7 @@ function App() {
 
                           <PrivateRoute
                             exact
-                            path="/game/:gameId/challenge/:challengeId"
+                            path="/game/:gameId/challenge/:challengeId/:exerciseId?"
                             roles={["student"]}
                             component={Challenge}
                           />
