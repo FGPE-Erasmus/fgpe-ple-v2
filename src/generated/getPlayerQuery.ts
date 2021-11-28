@@ -25,11 +25,25 @@ export interface getPlayerQuery_player_game_groups {
   displayName: string | null;
 }
 
+export interface getPlayerQuery_player_game_challenges_refs {
+  __typename: "Activity";
+  id: string | null;
+  name: string | null;
+}
+
+export interface getPlayerQuery_player_game_challenges {
+  __typename: "Challenge";
+  id: string;
+  name: string;
+  refs: getPlayerQuery_player_game_challenges_refs[];
+}
+
 export interface getPlayerQuery_player_game {
   __typename: "Game";
   id: string;
   name: string;
   groups: getPlayerQuery_player_game_groups[];
+  challenges: getPlayerQuery_player_game_challenges[];
 }
 
 export interface getPlayerQuery_player_user {

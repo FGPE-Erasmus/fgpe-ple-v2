@@ -5,25 +5,6 @@ export const GET_PLAYER_VALIDATIONS = gql`
     player(gameId: $gameId, userId: $userId) {
       id
 
-      game {
-        id
-        name
-        groups {
-          id
-          name
-          displayName
-        }
-
-        challenges {
-          id
-          name
-          refs {
-            id
-            name
-          }
-        }
-      }
-
       validations {
         id
         submittedAt

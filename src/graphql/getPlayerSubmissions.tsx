@@ -5,20 +5,6 @@ export const GET_PLAYER_SUBMISSIONS = gql`
     player(gameId: $gameId, userId: $userId) {
       id
 
-      game {
-        id
-        name
-
-        challenges {
-          id
-          name
-          refs {
-            id
-            name
-          }
-        }
-      }
-
       submissions {
         id
         submittedAt

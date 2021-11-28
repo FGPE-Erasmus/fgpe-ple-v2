@@ -208,6 +208,7 @@ const PlayerDetails = () => {
           title={t("table.validations")}
           content={playerData.player.stats.nrOfValidations.toString()}
         />
+        {/* {playerData.player.game} */}
         <DetailsCard
           active
           onClick={onOpenProgress}
@@ -249,6 +250,7 @@ const PlayerDetails = () => {
                     userId={userId}
                     gameId={gameId}
                     onSubmissionRowClick={onSubmissionRowClick}
+                    gameData={playerData.player.game}
                   />
                 )}
               </AccordionPanel>
@@ -279,6 +281,7 @@ const PlayerDetails = () => {
                     userId={userId}
                     gameId={gameId}
                     onValidationRowClick={onRowClick}
+                    gameData={playerData.player.game}
                   />
                 )}
               </AccordionPanel>

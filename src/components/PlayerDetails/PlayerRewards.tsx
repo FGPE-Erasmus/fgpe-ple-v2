@@ -1,11 +1,9 @@
 import { useQuery } from "@apollo/client";
-import { Heading, Box, Skeleton } from "@chakra-ui/react";
+import { Box, Skeleton } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
-
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { getPlayerQuery } from "../../generated/getPlayerQuery";
 import { getPlayerRewardsQuery } from "../../generated/getPlayerRewardsQuery";
 import { GET_PLAYER_REWARDS } from "../../graphql/getPlayerRewards";
 import TableComponent from "../TableComponent";

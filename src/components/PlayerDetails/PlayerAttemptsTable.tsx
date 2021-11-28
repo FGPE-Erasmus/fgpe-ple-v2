@@ -8,10 +8,7 @@ import {
   getPlayerQuery,
   getPlayerQuery_player_game,
 } from "../../generated/getPlayerQuery";
-import {
-  getPlayerSubmissionsQuery,
-  getPlayerSubmissionsQuery_player_game,
-} from "../../generated/getPlayerSubmissionsQuery";
+import { getPlayerSubmissionsQuery } from "../../generated/getPlayerSubmissionsQuery";
 import { getPlayerValidationsQuery } from "../../generated/getPlayerValidationsQuery";
 import TableComponent from "../TableComponent";
 import ColumnFilter from "../TableComponent/ColumnFilter";
@@ -20,7 +17,7 @@ dayjs.extend(LocalizedFormat);
 
 const getNameForExerciseId = (
   exerciseId: string,
-  playerGame: getPlayerSubmissionsQuery_player_game,
+  playerGame: getPlayerQuery_player_game,
   getChallengeName?: boolean
 ) => {
   const challenges = playerGame.challenges;
@@ -35,20 +32,6 @@ const getNameForExerciseId = (
     }
   }
 };
-
-type PlayerSubmissionsTable = {
-  isValidationsTable: false;
-  playerData: getPlayerSubmissionsQuery;
-  onRowClick?: (row: any) => void;
-};
-
-type PlayerValidationsTable = {
-  isValidationsTable: true;
-  playerData: getPlayerValidationsQuery;
-  onRowClick?: (row: any) => void;
-};
-
-type PlayerAttempsTableType = PlayerSubmissionsTable | PlayerValidationsTable;
 
 // type PlayerAttemptsTableType =
 //   | {
@@ -67,9 +50,11 @@ const PlayerAttemptsTable = ({
   playerData,
   isValidationsTable,
   onRowClick,
+  gameData,
 }: {
   isValidationsTable?: boolean;
   playerData: any;
+  gameData: getPlayerQuery_player_game;
   onRowClick?: (row: any) => void;
 }) => {
   const { t } = useTranslation();
@@ -80,17 +65,14 @@ const PlayerAttemptsTable = ({
           onRowClick &&
             onRowClick({
               ...row,
-              exerciseId: getNameForExerciseId(
-                row.exerciseId,
-                playerData.player.game
-              ),
+              exerciseId: getNameForExerciseId(row.exerciseId, gameData),
             });
         }}
         columns={[
           {
             Header: t("Exercise"),
             accessor: ({ exerciseId }: { exerciseId: string }) =>
-              getNameForExerciseId(exerciseId, playerData.player.game),
+              getNameForExerciseId(exerciseId, gameData),
             Filter: ({ column }: { column: any }) => (
               <ColumnFilter column={column} placeholder={"abc"} />
             ),
@@ -98,7 +80,7 @@ const PlayerAttemptsTable = ({
           {
             Header: t("Challenges"),
             accessor: ({ exerciseId }: { exerciseId: string }) =>
-              getNameForExerciseId(exerciseId, playerData.player.game, true),
+              getNameForExerciseId(exerciseId, gameData, true),
             Filter: ({ column }: { column: any }) => (
               <ColumnFilter column={column} placeholder={"abc"} />
             ),
