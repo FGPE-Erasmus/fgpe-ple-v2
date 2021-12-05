@@ -8,12 +8,11 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import React, { useContext } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { BiCheck, BiCircle, BiXCircle } from "react-icons/bi";
 import { HiLockClosed, HiLockOpen } from "react-icons/hi";
 import { Link, Redirect, useParams } from "react-router-dom";
-import NavContext from "../context/NavContext";
 import { State } from "../generated/globalTypes";
 import {
   ProfileInGameQuery,
@@ -22,7 +21,6 @@ import {
 } from "../generated/ProfileInGameQuery";
 import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
-import BreadcrumbComponent from "./BreadcrumbComponent";
 import Error from "./Error";
 import { isGameAvailable } from "./GamesList";
 import RankingTable from "./RankingTable";
@@ -42,22 +40,7 @@ const PROFILE_IN_GAME = gql`
         endDate
         state
       }
-      user {
-        id
-        username
-      }
-      group {
-        id
-      }
-      points
-      rewards {
-        id
-        reward {
-          id
-          name
-        }
-        count
-      }
+
       learningPath {
         id
         challenge {
@@ -76,14 +59,6 @@ const PROFILE_IN_GAME = gql`
         openedAt
         endedAt
       }
-      submissions {
-        id
-        exerciseId
-        result
-        grade
-      }
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -101,7 +76,7 @@ const getChallengeChildren = (
   // });
 
   return learningPath.map(({ challenge }, i) => {
-    if (challenge.parentChallenge?.id == parentChallenge.id) {
+    if (challenge.parentChallenge?.id === parentChallenge.id) {
       return challenge;
     }
   });

@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { GameStateEnum, State, Result } from "./globalTypes";
+import { GameStateEnum, State } from "./globalTypes";
 
 // ====================================================
 // GraphQL query operation: ProfileInGameQuery
@@ -16,30 +16,6 @@ export interface ProfileInGameQuery_profileInGame_game {
   startDate: any | null;
   endDate: any | null;
   state: GameStateEnum;
-}
-
-export interface ProfileInGameQuery_profileInGame_user {
-  __typename: "User";
-  id: string | null;
-  username: string | null;
-}
-
-export interface ProfileInGameQuery_profileInGame_group {
-  __typename: "Group";
-  id: string;
-}
-
-export interface ProfileInGameQuery_profileInGame_rewards_reward {
-  __typename: "Reward";
-  id: string;
-  name: string;
-}
-
-export interface ProfileInGameQuery_profileInGame_rewards {
-  __typename: "PlayerReward";
-  id: string;
-  reward: ProfileInGameQuery_profileInGame_rewards_reward;
-  count: number;
 }
 
 export interface ProfileInGameQuery_profileInGame_learningPath_challenge_parentChallenge {
@@ -68,26 +44,11 @@ export interface ProfileInGameQuery_profileInGame_learningPath {
   endedAt: any | null;
 }
 
-export interface ProfileInGameQuery_profileInGame_submissions {
-  __typename: "Submission";
-  id: string;
-  exerciseId: string;
-  result: Result | null;
-  grade: number | null;
-}
-
 export interface ProfileInGameQuery_profileInGame {
   __typename: "Player";
   id: string;
   game: ProfileInGameQuery_profileInGame_game;
-  user: ProfileInGameQuery_profileInGame_user;
-  group: ProfileInGameQuery_profileInGame_group | null;
-  points: number;
-  rewards: ProfileInGameQuery_profileInGame_rewards[];
   learningPath: ProfileInGameQuery_profileInGame_learningPath[];
-  submissions: ProfileInGameQuery_profileInGame_submissions[];
-  createdAt: any;
-  updatedAt: any | null;
 }
 
 export interface ProfileInGameQuery {
