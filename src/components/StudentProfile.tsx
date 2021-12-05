@@ -25,19 +25,11 @@ const PLAYER_GAME_PROFILES = gql`
       }
       user {
         id
-        username
-        email
       }
-      group {
-        id
-        name
-      }
+
       learningPath {
         id
         progress
-        refs {
-          solved
-        }
       }
       rewards {
         id

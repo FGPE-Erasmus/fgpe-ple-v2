@@ -17,24 +17,21 @@ import {
 } from "../../generated/FindChallenge";
 import { getSubmissionByIdQuery } from "../../generated/getSubmissionByIdQuery";
 import { getValidationByIdQuery } from "../../generated/getValidationByIdQuery";
-import { GET_SUBMISSION_BY_ID } from "../../graphql/getSubmissionById";
-import { GET_VALIDATION_BY_ID } from "../../graphql/getValidationById";
-
 import { Result } from "../../generated/globalTypes";
 import { latestValidationQuery } from "../../generated/latestValidationQuery";
 import { rewardReceivedStudentSubscription_rewardReceivedStudent_reward } from "../../generated/rewardReceivedStudentSubscription";
 import { validationSubscription } from "../../generated/validationSubscription";
+import { GET_SUBMISSION_BY_ID } from "../../graphql/getSubmissionById";
+import { GET_VALIDATION_BY_ID } from "../../graphql/getValidationById";
 import { decryptWithAES, encryptWithAES } from "../../utilities/Encryption";
-import CodeEditor from "../CodeEditor";
 // import Loading from "./Loading";
 import EditorMenu from "./EditorMenu";
+import { getDefaultProgrammingLangOrFirstFromArray } from "./helpers/defaultProgrammingLanguage";
 import EditorSwitcher from "./helpers/EditorSwitcher";
-import getEditor from "./helpers/EditorSwitcher";
 import Hints from "./Hints";
 import { SettingsContext } from "./SettingsContext";
 import Statement, { getStatementLength } from "./Statement";
 import Terminal from "./Terminal";
-import { getDefaultProgrammingLangOrFirstFromArray } from "./helpers/defaultProgrammingLanguage";
 
 const isEditorKindSpotBug = (
   exercise?: FindChallenge_myChallengeStatus_refs | null

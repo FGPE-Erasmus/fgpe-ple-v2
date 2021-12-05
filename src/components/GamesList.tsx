@@ -16,9 +16,7 @@ import NavContext from "../context/NavContext";
 import {
   PlayerGameProfiles,
   PlayerGameProfiles_myGameProfiles_game,
-  PlayerGameProfiles_myGameProfiles_learningPath,
 } from "../generated/PlayerGameProfiles";
-import dayjs from "dayjs";
 import { checkIsActive } from "./InstructorGames";
 
 // name={gameProfile.game.name}
@@ -28,29 +26,13 @@ import { checkIsActive } from "./InstructorGames";
 //                     : "No description"
 //                 }
 
-const getProgress = (
-  learningPaths: PlayerGameProfiles_myGameProfiles_learningPath[]
-) => {
-  let exercisesCount = 0;
-  let solvedExercisesCount = 0;
-
-  for (let i = 0; i < learningPaths.length; i++) {
-    exercisesCount += learningPaths[i].refs.length;
-    solvedExercisesCount += learningPaths[i].refs.filter(
-      (ref) => ref.solved
-    ).length;
-  }
-
-  return { solved: solvedExercisesCount, total: exercisesCount };
-};
-
 const Game = ({
   game,
-  progress,
   small,
+  progress,
 }: {
   game: PlayerGameProfiles_myGameProfiles_game;
-  progress: { solved: number; total: number };
+  progress: number;
   small?: number;
 }) => {
   const color = useColorModeValue("gray.100", "gray.700");
@@ -75,7 +57,7 @@ const Game = ({
         <Box paddingRight={4} display={{ base: "none", sm: "block" }}>
           <Flex flexDirection="column" fontSize={14}>
             <Box>
-              {t("Challenges")}: {progress.solved + "/" + progress.total}
+              {t("Progress")}: {(progress * 100).toFixed(1)}%
             </Box>
           </Flex>
         </Box>
@@ -95,36 +77,6 @@ export const isGameAvailable = (gameData: {
     endDate: gameData.endDate,
     startDate: gameData.startDate,
   });
-  // if (gameData.state === "CLOSED") {
-  //   return false;
-  // }
-
-  // // console.log("CHECKING GAME", gameData);
-
-  // let startDateInPast = true;
-  // let endDateInFuture = true;
-
-  // if (gameData.startDate) {
-  //   const dayjsStartDate = dayjs(gameData.startDate);
-  //   if (dayjsStartDate.isAfter(dayjs(new Date()))) {
-  //     startDateInPast = true;
-  //   }
-  // } else {
-  //   startDateInPast = true;
-  // }
-
-  // if (gameData.endDate) {
-  //   const dayjsEndDate = dayjs(gameData.endDate);
-  //   if (dayjsEndDate.isBefore(dayjs(new Date()))) {
-  //     endDateInFuture = true;
-  //   }
-  // } else {
-  //   endDateInFuture = true;
-  // }
-
-  // console.log(gameData.name, startDateInPast && endDateInFuture);
-
-  // return startDateInPast && endDateInFuture;
 };
 
 const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
@@ -159,8 +111,13 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
               >
                 <Game
                   game={gameProfile.game}
-                  progress={getProgress(gameProfile.learningPath)}
                   small={small}
+                  progress={
+                    gameProfile.learningPath
+                      .flatMap((learningPath) => learningPath.progress)
+                      .reduce((a, b) => a + b, 0) /
+                    (gameProfile.learningPath.length || 1)
+                  }
                 />
               </Link>
             );

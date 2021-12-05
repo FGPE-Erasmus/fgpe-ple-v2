@@ -22,26 +22,12 @@ export interface PlayerGameProfiles_myGameProfiles_game {
 export interface PlayerGameProfiles_myGameProfiles_user {
   __typename: "User";
   id: string | null;
-  username: string | null;
-  email: string | null;
-}
-
-export interface PlayerGameProfiles_myGameProfiles_group {
-  __typename: "Group";
-  id: string;
-  name: string;
-}
-
-export interface PlayerGameProfiles_myGameProfiles_learningPath_refs {
-  __typename: "ActivityStatus";
-  solved: boolean | null;
 }
 
 export interface PlayerGameProfiles_myGameProfiles_learningPath {
   __typename: "ChallengeStatus";
   id: string;
   progress: number;
-  refs: PlayerGameProfiles_myGameProfiles_learningPath_refs[];
 }
 
 export interface PlayerGameProfiles_myGameProfiles_rewards_reward_game {
@@ -78,7 +64,6 @@ export interface PlayerGameProfiles_myGameProfiles {
   id: string;
   game: PlayerGameProfiles_myGameProfiles_game;
   user: PlayerGameProfiles_myGameProfiles_user;
-  group: PlayerGameProfiles_myGameProfiles_group | null;
   learningPath: PlayerGameProfiles_myGameProfiles_learningPath[];
   rewards: PlayerGameProfiles_myGameProfiles_rewards[];
 }
