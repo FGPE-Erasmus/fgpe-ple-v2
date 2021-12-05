@@ -45,6 +45,19 @@ const ValidationsTable = ({
   return (
     <div>
       <AnimatePresence>
+        {playerError && !isRefreshing && (
+          <motion.div
+            initial={{ maxHeight: 0, opacity: 0 }}
+            animate={{ maxHeight: 50, opacity: 1 }}
+            exit={{ maxHeight: 0, opacity: 0 }}
+            style={{ width: "100%", textAlign: "center" }}
+          >
+            {t("error.title")}
+            <br /> {t("error.description")}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
         {isRefreshing && (
           <motion.div
             initial={{ maxHeight: 0, opacity: 0 }}

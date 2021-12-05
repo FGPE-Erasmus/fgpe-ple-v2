@@ -1,10 +1,9 @@
 import { useQuery } from "@apollo/client";
-import { Alert, AlertIcon, Box, Heading, Skeleton } from "@chakra-ui/react";
+import { Alert, AlertIcon, Box, Skeleton } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { getInstructorGames } from "../generated/getInstructorGames";
 import { getTeacherStudentsDetails } from "../generated/getTeacherStudentsDetails";
 import { GET_TEACHER_STUDENTS_DETAILS } from "../graphql/getTeacherStudentsDetails";
 import { checkIfConnectionAborted } from "../utilities/ErrorMessages";

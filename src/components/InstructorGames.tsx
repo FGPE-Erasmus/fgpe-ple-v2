@@ -1,27 +1,23 @@
+import { useQuery } from "@apollo/client";
 import {
   Alert,
   AlertIcon,
   Box,
-  Button,
-  Flex,
   Heading,
   Skeleton,
   useColorModeValue,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import dayjs from "dayjs";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
-import { getInstructorGames } from "../generated/getInstructorGames";
+import { getTeacherGamesQuery } from "../generated/getTeacherGamesQuery";
+import { GET_TEACHER_GAMES } from "../graphql/getTeacherGamesQuery";
+import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
-import dayjs from "dayjs";
-import { GET_TEACHER_GAMES } from "../graphql/getTeacherGamesQuery";
-import { AnimatePresence, motion } from "framer-motion";
-import { getPlayerValidationsQuery } from "../generated/getPlayerValidationsQuery";
-import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
-import { getTeacherGamesQuery } from "../generated/getTeacherGamesQuery";
-import { useQuery } from "@apollo/client";
 
 export const checkIsActive = (row: any) => {
   if (row.state != "OPEN") {
