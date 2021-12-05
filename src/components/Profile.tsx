@@ -9,7 +9,7 @@ enum Roles {
 }
 
 const Profile = () => {
-  const { keycloak, initialized } = useKeycloak();
+  const { keycloak } = useKeycloak();
 
   if (keycloak.hasRealmRole(Roles.teacher)) {
     return <TeacherProfile />;

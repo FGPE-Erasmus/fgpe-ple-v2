@@ -5,16 +5,23 @@ import {
   Button,
   Flex,
   Heading,
+  Skeleton,
   useColorModeValue,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 import { getInstructorGames } from "../generated/getInstructorGames";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
 import dayjs from "dayjs";
+import { GET_TEACHER_GAMES } from "../graphql/getTeacherGamesQuery";
+import { AnimatePresence, motion } from "framer-motion";
+import { getPlayerValidationsQuery } from "../generated/getPlayerValidationsQuery";
+import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
+import { getTeacherGamesQuery } from "../generated/getTeacherGamesQuery";
+import { useQuery } from "@apollo/client";
 
 export const checkIsActive = (row: any) => {
   if (row.state != "OPEN") {
@@ -45,164 +52,186 @@ export const checkIsActive = (row: any) => {
   return false;
 };
 
-const InstructorGames = ({
-  data,
-  refetch,
-}: {
-  data: getInstructorGames | undefined;
-  refetch: () => void;
-}) => {
+const InstructorGames = () => {
+  const memoizedSortFunc = useMemo(
+    () => (rowA: any, rowB: any) => {
+      const a = rowA.original.name;
+
+      const b = rowB.original.name;
+
+      if (a > b) return 1;
+
+      if (b > a) return -1;
+
+      return 0;
+    },
+    []
+  );
   const history = useHistory();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const { t } = useTranslation();
 
-  console.log("DATA", data);
+  const {
+    data: teacherGamesData,
+    error: teacherGamesError,
+    loading: teacherGamesLoading,
+    refetch: refetchTeacherGames,
+  } = useQuery<getTeacherGamesQuery>(GET_TEACHER_GAMES, {
+    fetchPolicy: "no-cache",
+    onError: async (err) => {
+      const isServerConnectionError = checkIfConnectionAborted(err);
+      if (isServerConnectionError) {
+        setIsRefreshing(true);
+        await refetchTeacherGames();
+        setIsRefreshing(false);
+      }
+    },
+  });
+
   return (
-    <>
-      <Box>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-            {t("Your games")}
-          </Heading>
-
-          <Link to="/teacher/manage-games">
-            <Button marginRight={5}>{t("Manage games")}</Button>
-          </Link>
-        </Flex>
-
-        {data?.myGames.length == 0 && (
-          <Alert status="info">
-            <AlertIcon />
-            {t("No games available")}
-          </Alert>
+    <div>
+      <AnimatePresence>
+        {teacherGamesError && !isRefreshing && (
+          <motion.div
+            initial={{ maxHeight: 0, opacity: 0 }}
+            animate={{ maxHeight: 50, opacity: 1 }}
+            exit={{ maxHeight: 0, opacity: 0 }}
+            style={{ width: "100%", textAlign: "center" }}
+          >
+            {t("error.title")}
+            <br /> {t("error.description")}
+          </motion.div>
         )}
+      </AnimatePresence>
 
-        <Box>
-          <TableComponent
-            onRowClick={(row) => {
-              history.push({
-                pathname: `/teacher/game/${row.id}`,
-              });
-            }}
-            columns={[
-              {
-                Header: t("table.gameName"),
-                accessor: (row: any) => {
-                  const isActive = checkIsActive(row);
-                  return isActive ? (
-                    row.name
-                  ) : (
-                    <span style={{ opacity: 0.4 }}>{row.name}</span>
-                  );
-                },
-                Filter: ({ column }: { column: any }) => (
-                  <ColumnFilter
-                    column={column}
-                    placeholder={t("placeholders.gameName")}
-                  />
-                ),
-                sortType: useMemo(
-                  () => (rowA: any, rowB: any) => {
-                    const a = rowA.original.name;
+      <AnimatePresence>
+        {isRefreshing && (
+          <motion.div
+            initial={{ maxHeight: 0, opacity: 0 }}
+            animate={{ maxHeight: 50, opacity: 1 }}
+            exit={{ maxHeight: 0, opacity: 0 }}
+            style={{ width: "100%", textAlign: "center" }}
+          >
+            {t("error.serverConnection.title")}{" "}
+            {t("error.serverConnection.description")}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <Box>
+        <Skeleton isLoaded={!teacherGamesLoading && !teacherGamesError}>
+          <Box minH={200}>
+            {teacherGamesData?.myGames.length === 0 && (
+              <Alert status="info">
+                <AlertIcon />
+                {t("No games available")}
+              </Alert>
+            )}
 
-                    const b = rowB.original.name;
+            {teacherGamesData && (
+              <Box>
+                <TableComponent
+                  onRowClick={(row) => {
+                    history.push({
+                      pathname: `/teacher/game/${row.id}`,
+                    });
+                  }}
+                  columns={[
+                    {
+                      Header: t("table.gameName"),
+                      accessor: (row: any) => {
+                        const isActive = checkIsActive(row);
+                        return isActive ? (
+                          row.name
+                        ) : (
+                          <span style={{ opacity: 0.4 }}>{row.name}</span>
+                        );
+                      },
+                      Filter: ({ column }: { column: any }) => (
+                        <ColumnFilter
+                          column={column}
+                          placeholder={t("placeholders.gameName")}
+                        />
+                      ),
+                      sortType: memoizedSortFunc,
+                    },
+                    {
+                      Header: t("table.gameDescription"),
+                      accessor: "description",
+                      Cell: ({ value }: { value: any }) => {
+                        return <span>{value ? value : "-"}</span>;
+                      },
+                      Filter: ({ column }: { column: any }) => (
+                        <ColumnFilter
+                          column={column}
+                          placeholder={t("placeholders.gameDescription")}
+                        />
+                      ),
+                    },
+                    {
+                      Header: t("table.numberOfPlayers"),
+                      accessor: "players.length",
+                      Filter: ({ column }: { column: any }) => (
+                        <ColumnFilter
+                          column={column}
+                          placeholder={t("placeholders.numberOfPlayers")}
+                        />
+                      ),
+                    },
+                    {
+                      Header: t("addGame.private"),
+                      accessor: "private",
+                      Cell: ({ value }: { value: any }) => {
+                        return <span>{value ? t("Yes") : t("No")}</span>;
+                      },
+                      disableFilters: true,
+                      sortType: memoizedSortFunc,
+                    },
+                    // {
+                    //   Header: t("Active"),
+                    //   accessor: (row: any) => {
+                    //     if (row.state != "OPEN") {
+                    //       return false;
+                    //     }
 
-                    if (a > b) return 1;
+                    //     if (!row.startDate && !row.endDate) {
+                    //       return true;
+                    //     }
 
-                    if (b > a) return -1;
+                    //     if (row.startDate && !row.endDate) {
+                    //       return dayjs(row.startDate).isBefore(dayjs());
+                    //     }
 
-                    return 0;
-                  },
-                  []
-                ),
-              },
-              {
-                Header: t("table.gameDescription"),
-                accessor: "description",
-                Cell: ({ value }: { value: any }) => {
-                  return <span>{value ? value : "-"}</span>;
-                },
-                Filter: ({ column }: { column: any }) => (
-                  <ColumnFilter
-                    column={column}
-                    placeholder={t("placeholders.gameDescription")}
-                  />
-                ),
-              },
-              {
-                Header: t("table.numberOfPlayers"),
-                accessor: "players.length",
-                Filter: ({ column }: { column: any }) => (
-                  <ColumnFilter
-                    column={column}
-                    placeholder={t("placeholders.numberOfPlayers")}
-                  />
-                ),
-              },
-              {
-                Header: t("addGame.private"),
-                accessor: "private",
-                Cell: ({ value }: { value: any }) => {
-                  return <span>{value ? t("Yes") : t("No")}</span>;
-                },
-                disableFilters: true,
-                sortType: useMemo(
-                  () => (rowA: any, rowB: any) => {
-                    const a = rowA.original.private;
+                    //     if (!row.startDate && row.endDate) {
+                    //       return dayjs(row.endDate).isAfter(dayjs());
+                    //     }
 
-                    const b = rowB.original.private;
+                    //     const startDate = dayjs(row.startDate);
+                    //     const endDate = dayjs(row.endDate);
 
-                    if (a > b) return 1;
+                    //     if (startDate.isBefore(dayjs(new Date()))) {
+                    //       console.log("it happened");
+                    //       if (endDate.isAfter(dayjs())) {
+                    //         return true;
+                    //       }
+                    //     }
 
-                    if (b > a) return -1;
-
-                    return 0;
-                  },
-                  []
-                ),
-              },
-              // {
-              //   Header: t("Active"),
-              //   accessor: (row: any) => {
-              //     if (row.state != "OPEN") {
-              //       return false;
-              //     }
-
-              //     if (!row.startDate && !row.endDate) {
-              //       return true;
-              //     }
-
-              //     if (row.startDate && !row.endDate) {
-              //       return dayjs(row.startDate).isBefore(dayjs());
-              //     }
-
-              //     if (!row.startDate && row.endDate) {
-              //       return dayjs(row.endDate).isAfter(dayjs());
-              //     }
-
-              //     const startDate = dayjs(row.startDate);
-              //     const endDate = dayjs(row.endDate);
-
-              //     if (startDate.isBefore(dayjs(new Date()))) {
-              //       console.log("it happened");
-              //       if (endDate.isAfter(dayjs())) {
-              //         return true;
-              //       }
-              //     }
-
-              //     return false;
-              //   },
-              //   Cell: ({ value }: { value: any }) => {
-              //     return <span>{value ? "Yes" : "No"}</span>;
-              //   },
-              //   disableFilters: true,
-              // },
-            ]}
-            data={data?.myGames}
-          />
-        </Box>
+                    //     return false;
+                    //   },
+                    //   Cell: ({ value }: { value: any }) => {
+                    //     return <span>{value ? "Yes" : "No"}</span>;
+                    //   },
+                    //   disableFilters: true,
+                    // },
+                  ]}
+                  data={teacherGamesData?.myGames}
+                />
+              </Box>
+            )}
+          </Box>
+        </Skeleton>
       </Box>
-    </>
+    </div>
   );
 };
 
