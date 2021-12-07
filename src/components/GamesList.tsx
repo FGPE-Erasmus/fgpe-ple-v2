@@ -57,7 +57,7 @@ const Game = ({
         <Box paddingRight={4} display={{ base: "none", sm: "block" }}>
           <Flex flexDirection="column" fontSize={14}>
             <Box>
-              {t("Progress")}: {(progress * 100).toFixed(1)}%
+              {t("table.progress")}: {(progress * 100).toFixed(1)}%
             </Box>
           </Flex>
         </Box>
