@@ -30,20 +30,18 @@ const getActivitiesStats = (
   activitiesList: getGameByIdQuery_game_challenges_refs[]
 ) => {
   const stats = statsData.stats;
-
-  // console.log("stats", stats);
   let activitiesStatsArray: StatsInterface[] = [];
 
-  activitiesList.forEach(({ name }) => {
-    if (name) {
+  activitiesList.forEach(({ name, id }) => {
+    if (name && id) {
       const activityWithStats: StatsInterface = {
         id: name,
-        nrOfSubmissionsByActivity: stats.nrOfSubmissionsByActivity[name]
-          ? stats.nrOfSubmissionsByActivity[name]
+        nrOfSubmissionsByActivity: stats.nrOfSubmissionsByActivity[id]
+          ? stats.nrOfSubmissionsByActivity[id]
           : 0,
         nrOfSubmissionsByActivityAndResult: stats
-          .nrOfSubmissionsByActivityAndResult[name]
-          ? stats.nrOfSubmissionsByActivityAndResult[name]
+          .nrOfSubmissionsByActivityAndResult[id]
+          ? stats.nrOfSubmissionsByActivityAndResult[id]
           : 0,
       };
 
