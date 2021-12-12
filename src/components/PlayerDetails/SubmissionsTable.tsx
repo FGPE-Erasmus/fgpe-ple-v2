@@ -3,7 +3,10 @@ import { Box, Skeleton } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getPlayerQuery_player_game } from "../../generated/getPlayerQuery";
+import {
+  getPlayerQuery_player_game,
+  getPlayerQuery_player_learningPath,
+} from "../../generated/getPlayerQuery";
 import { getPlayerSubmissionsQuery } from "../../generated/getPlayerSubmissionsQuery";
 import { GET_PLAYER_SUBMISSIONS } from "../../graphql/getPlayerSubmissions";
 import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
@@ -13,12 +16,12 @@ const SubmissionsTable = ({
   userId,
   gameId,
   onSubmissionRowClick,
-  gameData,
+  learningPaths: gameData,
 }: {
   userId: string;
   gameId: string;
   onSubmissionRowClick: (row: any) => void;
-  gameData: getPlayerQuery_player_game;
+  learningPaths: getPlayerQuery_player_learningPath[];
 }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { t } = useTranslation();

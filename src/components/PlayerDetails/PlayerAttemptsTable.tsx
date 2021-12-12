@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import {
   getPlayerQuery,
   getPlayerQuery_player_game,
+  getPlayerQuery_player_learningPath,
 } from "../../generated/getPlayerQuery";
 import { getPlayerSubmissionsQuery } from "../../generated/getPlayerSubmissionsQuery";
 import { getPlayerValidationsQuery } from "../../generated/getPlayerValidationsQuery";
@@ -17,17 +18,18 @@ dayjs.extend(LocalizedFormat);
 
 const getNameForExerciseId = (
   exerciseId: string,
-  playerGame: getPlayerQuery_player_game,
+  learningPaths: getPlayerQuery_player_learningPath[],
   getChallengeName?: boolean
 ) => {
-  const challenges = playerGame.challenges;
+  const challenges = learningPaths;
+  // const challenges = playerGame.challenges;
   for (let i = 0; i < challenges.length; i++) {
-    for (let ii = 0; ii < challenges[i].refs.length; ii++) {
-      if (challenges[i].refs[ii].id === exerciseId) {
+    for (let ii = 0; ii < challenges[i].challenge.refs.length; ii++) {
+      if (challenges[i].challenge.refs[ii].id === exerciseId) {
         if (getChallengeName) {
-          return challenges[i].name;
+          return challenges[i].challenge.name;
         }
-        return challenges[i].refs[ii].name;
+        return challenges[i].challenge.refs[ii].name;
       }
     }
   }
@@ -54,7 +56,7 @@ const PlayerAttemptsTable = ({
 }: {
   isValidationsTable?: boolean;
   playerData: any;
-  gameData: getPlayerQuery_player_game;
+  gameData: getPlayerQuery_player_learningPath[];
   onRowClick?: (row: any) => void;
 }) => {
   const { t } = useTranslation();

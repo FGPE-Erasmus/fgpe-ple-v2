@@ -250,7 +250,7 @@ const PlayerDetails = () => {
                     userId={userId}
                     gameId={gameId}
                     onSubmissionRowClick={onSubmissionRowClick}
-                    gameData={playerData.player.game}
+                    learningPaths={playerData.player.learningPath}
                   />
                 )}
               </AccordionPanel>
@@ -281,7 +281,7 @@ const PlayerDetails = () => {
                     userId={userId}
                     gameId={gameId}
                     onValidationRowClick={onRowClick}
-                    gameData={playerData.player.game}
+                    learningPaths={playerData.player.learningPath}
                   />
                 )}
               </AccordionPanel>

@@ -1,7 +1,10 @@
 import { useQuery } from "@apollo/client";
 import { Box, Skeleton } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { getPlayerQuery_player_game } from "../../generated/getPlayerQuery";
+import {
+  getPlayerQuery_player_game,
+  getPlayerQuery_player_learningPath,
+} from "../../generated/getPlayerQuery";
 import { getPlayerValidationsQuery } from "../../generated/getPlayerValidationsQuery";
 import { GET_PLAYER_VALIDATIONS } from "../../graphql/getPlayerValidations";
 import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
@@ -13,12 +16,12 @@ const ValidationsTable = ({
   userId,
   gameId,
   onValidationRowClick,
-  gameData,
+  learningPaths: gameData,
 }: {
   userId: string;
   gameId: string;
   onValidationRowClick: (row: any) => void;
-  gameData: getPlayerQuery_player_game;
+  learningPaths: getPlayerQuery_player_learningPath[];
 }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { t } = useTranslation();

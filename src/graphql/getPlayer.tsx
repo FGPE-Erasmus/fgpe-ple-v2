@@ -7,7 +7,12 @@ export const GET_PLAYER = gql`
 
       learningPath {
         challenge {
+          id
           name
+          refs {
+            id
+            name
+          }
         }
         progress
       }
@@ -19,15 +24,6 @@ export const GET_PLAYER = gql`
           id
           name
           displayName
-        }
-
-        challenges {
-          id
-          name
-          refs {
-            id
-            name
-          }
         }
       }
 
