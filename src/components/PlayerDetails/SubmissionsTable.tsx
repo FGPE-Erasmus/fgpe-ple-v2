@@ -32,7 +32,7 @@ const SubmissionsTable = ({
   } = useQuery<getPlayerSubmissionsQuery>(GET_PLAYER_SUBMISSIONS, {
     variables: { userId, gameId },
     skip: !userId || !gameId,
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-first",
     onError: async (err) => {
       const isServerConnectionError = checkIfConnectionAborted(err);
       if (isServerConnectionError) {

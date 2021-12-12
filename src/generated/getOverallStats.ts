@@ -11,10 +11,6 @@ export interface getOverallStats_stats {
   __typename: "Stats";
   nrOfSubmissions: number;
   nrOfValidations: number;
-  nrOfSubmissionsByActivity: any | null;
-  nrOfValidationsByActivity: any | null;
-  nrOfSubmissionsByActivityAndResult: any | null;
-  nrOfValidationsByActivityAndResult: any | null;
 }
 
 export interface getOverallStats {

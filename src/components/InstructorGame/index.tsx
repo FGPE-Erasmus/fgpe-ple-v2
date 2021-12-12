@@ -1,18 +1,17 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Alert,
   AlertIcon,
   Box,
   Button,
-  Divider,
   Flex,
   Heading,
   HStack,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   useDisclosure,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
@@ -34,12 +33,9 @@ import DetailsCard from "../DetailsCard";
 import Error from "../Error";
 import { useNotifications } from "../Notifications";
 import RefreshCacheMenu from "../RefreshCacheMenu";
-import TableComponent from "../TableComponent";
-import ColumnFilter from "../TableComponent/ColumnFilter";
 import ActivitiesStats from "./ActivitiesStats";
-import AddGroupModal from "./AddGroupModal";
 import ChangeDetailsModal from "./ChangeDetailsModal";
-import SetGroupModal from "./SetGroupModal";
+import Students from "./Students";
 
 interface ParamTypes {
   gameId: string;
@@ -214,19 +210,6 @@ const InstructorGame = () => {
         isGamePrivate={gameData.game.private}
         refetchGame={refetchGame}
       />
-      <AddGroupModal
-        isOpen={isAddGroupModalOpen}
-        onClose={onAddGroupModalClose}
-        gameId={gameId}
-      />
-      <SetGroupModal
-        gameId={gameId}
-        groupsData={gameData.game.groups}
-        onClose={onSetGroupModalClose}
-        isOpen={isSetGroupModalOpen}
-        selectedStudentsRef={selectedStudentsRef}
-        refetch={refetchGame}
-      />
 
       <div>
         {gameData.game.players.length < 1 && (
@@ -340,8 +323,62 @@ const InstructorGame = () => {
             content={gameData.game.private ? t("Yes") : t("No")}
           />
         </Flex>
-        <Divider marginBottom={50} />
+        {/* <Divider marginBottom={10} /> */}
 
+        <Accordion allowToggle allowMultiple marginTop={3}>
+          <AccordionItem>
+            {({ isExpanded }: { isExpanded: boolean }) => (
+              <>
+                <AccordionButton>
+                  <Box flex="1" textAlign="left">
+                    <Heading as="h3" size="sm" marginTop={2} marginBottom={2}>
+                      {t("Students")}
+                    </Heading>
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+
+                <AccordionPanel pb={4} marginTop={2} marginBottom={10}>
+                  {isExpanded && (
+                    <Students
+                      gameId={gameId}
+                      loading={loading}
+                      autoAssignGroupsLoading={autoAssignGroupsLoading}
+                      setLoading={setLoading}
+                      autoAssignGroups={autoAssignGroups}
+                      refetchGame={refetchGame}
+                      getSelectedStudentsAndRemoveFromGroups={
+                        getSelectedStudentsAndRemoveFromGroups
+                      }
+                      getSelectedStudentAndRemoveFromGame={
+                        getSelectedStudentAndRemoveFromGame
+                      }
+                    />
+                  )}
+                </AccordionPanel>
+              </>
+            )}
+          </AccordionItem>
+          <AccordionItem>
+            {({ isExpanded }: { isExpanded: boolean }) => (
+              <>
+                <AccordionButton>
+                  <Box flex="1" textAlign="left">
+                    <Heading as="h3" size="sm" marginTop={2} marginBottom={2}>
+                      {t("Activities")}
+                    </Heading>
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+
+                <AccordionPanel pb={4} marginTop={2} marginBottom={10}>
+                  {isExpanded && <ActivitiesStats gameId={gameId} />}
+                </AccordionPanel>
+              </>
+            )}
+          </AccordionItem>
+        </Accordion>
+        {/* 
         <Flex justifyContent="space-between" alignItems="center">
           <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
             {t("Students")}
@@ -485,28 +522,19 @@ const InstructorGame = () => {
             ]}
             data={gameData.game.players}
           />
-        </Box>
+        </Box> */}
 
-        <Flex justifyContent="space-between" alignItems="center">
+        {/* <Flex justifyContent="space-between" alignItems="center">
           <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
             {t("Activities")}
           </Heading>
-          {/* <Flex>
-            <Select size="sm">
-              {gameData.game.challenges.map((challenge, i) => (
-                <option value={challenge.name} key={i}>
-                  {challenge.name}
-                </option>
-              ))}
-            </Select>
-          </Flex> */}
         </Flex>
 
         <ActivitiesStats
           gameData={gameData}
           gameId={gameId}
           statsData={overallStatsData}
-        />
+        /> */}
       </div>
     </>
   );

@@ -5,10 +5,6 @@ export const GET_OVERALL_STATS = gql`
     stats(gameId: $gameId, groupId: $groupId) {
       nrOfSubmissions
       nrOfValidations
-      nrOfSubmissionsByActivity
-      nrOfValidationsByActivity
-      nrOfSubmissionsByActivityAndResult
-      nrOfValidationsByActivityAndResult
     }
   }
 `;

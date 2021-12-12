@@ -8,22 +8,8 @@ export const GAME_DETAILS_GET_GAME_BY_ID = gql`
       startDate
       endDate
       private
-      groups {
-        id
-        name
-        displayName
-      }
-      challenges {
-        name
-        refs {
-          name
-          id
-        }
-      }
+
       players {
-        group {
-          name
-        }
         id
         stats {
           nrOfSubmissions
@@ -32,14 +18,6 @@ export const GAME_DETAILS_GET_GAME_BY_ID = gql`
           nrOfValidationsByActivity
           nrOfSubmissionsByActivityAndResult
           nrOfValidationsByActivityAndResult
-        }
-        user {
-          id
-          firstName
-          lastName
-        }
-        learningPath {
-          progress
         }
       }
       createdAt
