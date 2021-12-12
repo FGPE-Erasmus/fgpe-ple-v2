@@ -73,10 +73,19 @@ const Students = ({
   } = useDisclosure();
 
   const history = useHistory();
-  const memoizedSorting = useMemo(
+  const memoizedSortFunc = useMemo(
     () => (rowA: any, rowB: any) => {
-      const a = rowA.original.progress;
-      const b = rowB.original.progress;
+      const a =
+        rowA.original.learningPath
+          .flatMap((learningPath: any) => learningPath.progress)
+          .reduce((a: any, b: any) => a + b, 0) /
+        rowA.original.learningPath.length;
+
+      const b =
+        rowB.original.learningPath
+          .flatMap((learningPath: any) => learningPath.progress)
+          .reduce((a: any, b: any) => a + b, 0) /
+        rowB.original.learningPath.length;
 
       if (a > b) return 1;
 
@@ -248,7 +257,7 @@ const Students = ({
                         return (progressCombined * 100).toFixed(1) + "%";
                       },
                       disableFilters: true,
-                      sortType: memoizedSorting,
+                      sortType: memoizedSortFunc,
                     },
                   ]}
                   data={studentsDetailsData.game.players}

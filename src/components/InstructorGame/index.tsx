@@ -43,37 +43,11 @@ interface ParamTypes {
 
 const InstructorGame = () => {
   const [loading, setLoading] = useState(false);
-  const history = useHistory();
-  const memoizedSorting = useMemo(
-    () => (rowA: any, rowB: any) => {
-      const a = rowA.original.progress;
-      const b = rowB.original.progress;
-
-      if (a > b) return 1;
-
-      if (b > a) return -1;
-
-      return 0;
-    },
-    []
-  );
 
   const {
     isOpen: isDetailsModalOpen,
     onOpen: onDetailsModalOpen,
     onClose: onDetailsModalClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isAddGroupModalOpen,
-    onOpen: onAddGroupModalOpen,
-    onClose: onAddGroupModalClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isSetGroupModalOpen,
-    onOpen: onSetGroupModalOpen,
-    onClose: onSetGroupModalClose,
   } = useDisclosure();
 
   const { add: addNotification } = useNotifications();
@@ -82,7 +56,6 @@ const InstructorGame = () => {
   const { t } = useTranslation();
 
   const selectedStudentsRef = useRef([]);
-  const [isStudentSelected, setIsStudentSelected] = useState<boolean>(false);
 
   const [removeMultipleFromGame] = useMutation<removeMultipleFromGameMutation>(
     REMOVE_MULTIPLE_FROM_GAME

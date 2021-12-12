@@ -23,8 +23,17 @@ const UserDetails = () => {
   const history = useHistory();
   const memoizedSorting = useMemo(
     () => (rowA: any, rowB: any) => {
-      const a = rowA.original.progress;
-      const b = rowB.original.progress;
+      const a =
+        rowA.original.learningPath
+          .flatMap((learningPath: any) => learningPath.progress)
+          .reduce((a: any, b: any) => a + b, 0) /
+        rowA.original.learningPath.length;
+
+      const b =
+        rowB.original.learningPath
+          .flatMap((learningPath: any) => learningPath.progress)
+          .reduce((a: any, b: any) => a + b, 0) /
+        rowB.original.learningPath.length;
 
       if (a > b) return 1;
 
