@@ -14,6 +14,7 @@ import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import DetailsCard from "./DetailsCard";
 import Error from "./Error";
+import RefreshCacheMenu from "./RefreshCacheMenu";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
 
@@ -50,11 +51,12 @@ const UserDetails = () => {
     data: gameProfilesData,
     error: gameProfilesError,
     loading: gameProfilesLoading,
+    refetch: refetchGameProfiles,
   } = useQuery<allGameProfilesQuery>(GET_ALL_GAME_PROFILES, {
     variables: {
       userId: userId,
     },
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-first",
     skip: !userId,
   });
 
@@ -122,10 +124,16 @@ const UserDetails = () => {
         />
       </Flex>
 
-      <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-        {t("All game profiles")}
-      </Heading>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
+          {t("All game profiles")}
+        </Heading>
 
+        <RefreshCacheMenu
+          loading={gameProfilesLoading}
+          refetch={refetchGameProfiles}
+        />
+      </Flex>
       <Box>
         <TableComponent
           onRowClick={(row: allGameProfilesQuery_allGameProfiles) => {

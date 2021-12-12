@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { getPlayerRewardsQuery } from "../../generated/getPlayerRewardsQuery";
 import { GET_PLAYER_REWARDS } from "../../graphql/getPlayerRewards";
 import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
+import RefreshCacheMenu from "../RefreshCacheMenu";
 import TableComponent from "../TableComponent";
 import ColumnFilter from "../TableComponent/ColumnFilter";
 
@@ -44,6 +45,7 @@ const PlayerAttemptsTable = ({
 
   return (
     <Box>
+      <RefreshCacheMenu loading={playerLoading} refetch={refetchPlayerData} />
       <AnimatePresence>
         {playerError && !isRefreshing && (
           <motion.div

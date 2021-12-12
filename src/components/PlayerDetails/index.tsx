@@ -26,6 +26,7 @@ import withChangeAnimation from "../../utilities/withChangeAnimation";
 import DetailsCard from "../DetailsCard";
 import Error from "../Error";
 import { useNotifications } from "../Notifications";
+import RefreshCacheMenu from "../RefreshCacheMenu";
 import AttemptModal from "./AttemptModal";
 import PlayerRewards from "./PlayerRewards";
 import ProgressModal from "./ProgressModal";
@@ -76,7 +77,7 @@ const PlayerDetails = () => {
   } = useQuery<getPlayerQuery>(GET_PLAYER, {
     variables: { userId, gameId },
     skip: !userId || !gameId,
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-first",
   });
 
   const onSubmissionRowClick = (row: any) => {
@@ -145,6 +146,11 @@ const PlayerDetails = () => {
         </Heading>
 
         <HStack spacing={2}>
+          <RefreshCacheMenu
+            loading={playerLoading}
+            refetch={playerRefetch}
+            size="md"
+          />
           <Button
             isLoading={removeSingleLoading}
             onClick={async () => {

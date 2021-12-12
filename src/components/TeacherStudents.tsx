@@ -1,12 +1,21 @@
 import { useQuery } from "@apollo/client";
-import { Alert, AlertIcon, Box, Skeleton } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Button,
+  Flex,
+  Skeleton,
+} from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { BiRefresh } from "react-icons/bi";
 import { useHistory } from "react-router-dom";
 import { getTeacherStudentsDetails } from "../generated/getTeacherStudentsDetails";
 import { GET_TEACHER_STUDENTS_DETAILS } from "../graphql/getTeacherStudentsDetails";
 import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
+import RefreshCacheMenu from "./RefreshCacheMenu";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
 
@@ -65,7 +74,7 @@ const TeacherStudents = () => {
     loading: teacherStudentsLoading,
     refetch: refetchTeacherStudents,
   } = useQuery<getTeacherStudentsDetails>(GET_TEACHER_STUDENTS_DETAILS, {
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-first",
     onError: async (err) => {
       const isServerConnectionError = checkIfConnectionAborted(err);
       if (isServerConnectionError) {
@@ -80,6 +89,10 @@ const TeacherStudents = () => {
 
   return (
     <div>
+      <RefreshCacheMenu
+        loading={teacherStudentsLoading}
+        refetch={refetchTeacherStudents}
+      />
       <Box>
         <AnimatePresence>
           {teacherStudentsError && !isRefreshing && (

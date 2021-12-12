@@ -11,6 +11,7 @@ import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
 import PlayerAttemptsTable from "./PlayerAttemptsTable";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "framer-motion";
+import RefreshCacheMenu from "../RefreshCacheMenu";
 
 const ValidationsTable = ({
   userId,
@@ -34,7 +35,7 @@ const ValidationsTable = ({
   } = useQuery<getPlayerValidationsQuery>(GET_PLAYER_VALIDATIONS, {
     variables: { userId, gameId },
     skip: !userId || !gameId,
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-first",
     onError: async (err) => {
       const isServerConnectionError = checkIfConnectionAborted(err);
       if (isServerConnectionError) {
@@ -47,6 +48,7 @@ const ValidationsTable = ({
 
   return (
     <div>
+      <RefreshCacheMenu loading={playerLoading} refetch={refetchPlayerData} />
       <AnimatePresence>
         {playerError && !isRefreshing && (
           <motion.div

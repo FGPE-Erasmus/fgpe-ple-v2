@@ -16,11 +16,12 @@ import { Link, useHistory } from "react-router-dom";
 import { getTeacherGamesQuery } from "../generated/getTeacherGamesQuery";
 import { GET_TEACHER_GAMES } from "../graphql/getTeacherGamesQuery";
 import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
+import RefreshCacheMenu from "./RefreshCacheMenu";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
 
 export const checkIsActive = (row: any) => {
-  if (row.state != "OPEN") {
+  if (row.state !== "OPEN") {
     return false;
   }
 
@@ -74,7 +75,7 @@ const InstructorGames = () => {
     loading: teacherGamesLoading,
     refetch: refetchTeacherGames,
   } = useQuery<getTeacherGamesQuery>(GET_TEACHER_GAMES, {
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-first",
     onError: async (err) => {
       const isServerConnectionError = checkIfConnectionAborted(err);
       if (isServerConnectionError) {
@@ -87,6 +88,10 @@ const InstructorGames = () => {
 
   return (
     <div>
+      <RefreshCacheMenu
+        loading={teacherGamesLoading}
+        refetch={refetchTeacherGames}
+      />
       <AnimatePresence>
         {teacherGamesError && !isRefreshing && (
           <motion.div

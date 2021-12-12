@@ -33,6 +33,7 @@ import withChangeAnimation from "../../utilities/withChangeAnimation";
 import DetailsCard from "../DetailsCard";
 import Error from "../Error";
 import { useNotifications } from "../Notifications";
+import RefreshCacheMenu from "../RefreshCacheMenu";
 import TableComponent from "../TableComponent";
 import ColumnFilter from "../TableComponent/ColumnFilter";
 import ActivitiesStats from "./ActivitiesStats";
@@ -100,25 +101,26 @@ const InstructorGame = () => {
     data: overallStatsData,
     error: overallStatsError,
     loading: overallStatsLoading,
+    refetch: refetchOverallStats,
   } = useQuery<getOverallStats>(GET_OVERALL_STATS, {
     variables: {
       gameId,
     },
     skip: !gameId,
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-first",
   });
 
   const {
     data: gameData,
     error: gameError,
     loading: gameLoading,
-    refetch: gameRefetch,
+    refetch: refetchGame,
   } = useQuery<gameDetailsGetGameByIdQuery>(GAME_DETAILS_GET_GAME_BY_ID, {
     variables: {
       gameId,
     },
     skip: !gameId,
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-first",
   });
 
   if (!gameId) {
@@ -168,7 +170,7 @@ const InstructorGame = () => {
         },
       });
 
-      await gameRefetch();
+      await refetchGame();
     } catch (err) {
       addNotification({
         status: "error",
@@ -190,7 +192,7 @@ const InstructorGame = () => {
         },
       });
 
-      await gameRefetch();
+      await refetchGame();
     } catch (err) {
       addNotification({
         status: "error",
@@ -210,7 +212,7 @@ const InstructorGame = () => {
         isOpen={isDetailsModalOpen}
         onClose={onDetailsModalClose}
         isGamePrivate={gameData.game.private}
-        refetchGame={gameRefetch}
+        refetchGame={refetchGame}
       />
       <AddGroupModal
         isOpen={isAddGroupModalOpen}
@@ -223,7 +225,7 @@ const InstructorGame = () => {
         onClose={onSetGroupModalClose}
         isOpen={isSetGroupModalOpen}
         selectedStudentsRef={selectedStudentsRef}
-        refetch={gameRefetch}
+        refetch={refetchGame}
       />
 
       <div>
@@ -249,6 +251,14 @@ const InstructorGame = () => {
             >
               <Button variant="outline">{t("Back")}</Button>
             </Link>
+            <RefreshCacheMenu
+              loading={gameLoading}
+              refetch={async () => {
+                await refetchOverallStats();
+                await refetchGame();
+              }}
+              size="md"
+            />
             <Button onClick={onDetailsModalOpen}>
               {t("Change availability")}
             </Button>
@@ -351,7 +361,7 @@ const InstructorGame = () => {
                       gameId,
                     },
                   });
-                  await gameRefetch();
+                  await refetchGame();
                 } catch (err) {
                   addNotification({
                     status: "error",

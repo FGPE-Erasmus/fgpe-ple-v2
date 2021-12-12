@@ -10,6 +10,7 @@ import {
 import { getPlayerSubmissionsQuery } from "../../generated/getPlayerSubmissionsQuery";
 import { GET_PLAYER_SUBMISSIONS } from "../../graphql/getPlayerSubmissions";
 import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
+import RefreshCacheMenu from "../RefreshCacheMenu";
 import PlayerAttemptsTable from "./PlayerAttemptsTable";
 
 const SubmissionsTable = ({
@@ -47,6 +48,7 @@ const SubmissionsTable = ({
 
   return (
     <div>
+      <RefreshCacheMenu loading={playerLoading} refetch={refetchPlayerData} />
       <AnimatePresence>
         {playerError && !isRefreshing && (
           <motion.div
