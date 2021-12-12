@@ -12,6 +12,7 @@ import {
   Heading,
   HStack,
   useDisclosure,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import { AnimatePresence } from "framer-motion";
 import React, { useState } from "react";
@@ -141,8 +142,13 @@ const PlayerDetails = () => {
       />
       <Flex justifyContent="space-between" alignItems="center" marginBottom={4}>
         <Heading as="h3" size="md">
-          {t("Game profile")}: {playerData.player.user.firstName}{" "}
-          {playerData.player.user.lastName}
+          {t("Game profile")}:{" "}
+          <Link to={`/teacher/student-details/${userId}`}>
+            <ChakraLink color="blue.500">
+              {playerData.player.user.firstName}{" "}
+              {playerData.player.user.lastName}
+            </ChakraLink>
+          </Link>
         </Heading>
 
         <HStack spacing={2}>
