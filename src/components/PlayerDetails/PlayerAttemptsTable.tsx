@@ -1,18 +1,12 @@
-import { Heading, Box } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
-
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  getPlayerQuery,
-  getPlayerQuery_player_game,
-  getPlayerQuery_player_learningPath,
-} from "../../generated/getPlayerQuery";
-import { getPlayerSubmissionsQuery } from "../../generated/getPlayerSubmissionsQuery";
-import { getPlayerValidationsQuery } from "../../generated/getPlayerValidationsQuery";
+import { getPlayerQuery_player_learningPath } from "../../generated/getPlayerQuery";
 import TableComponent from "../TableComponent";
 import ColumnFilter from "../TableComponent/ColumnFilter";
+import { sortByDate } from "./Utils/sortByDate";
 
 dayjs.extend(LocalizedFormat);
 
@@ -59,6 +53,8 @@ const PlayerAttemptsTable = ({
   gameData: getPlayerQuery_player_learningPath[];
   onRowClick?: (row: any) => void;
 }) => {
+  const memoizedSortDateFunc = useMemo(sortByDate, []);
+
   const { t } = useTranslation();
   return (
     <Box>
@@ -108,6 +104,7 @@ const PlayerAttemptsTable = ({
             Filter: ({ column }: { column: any }) => (
               <ColumnFilter column={column} placeholder={"abc"} />
             ),
+            sortType: memoizedSortDateFunc,
           },
         ]}
         data={
