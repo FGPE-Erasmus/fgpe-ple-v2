@@ -22,6 +22,7 @@ import "./i18n/config";
 import keycloak from "./keycloak";
 import theme from "./styles/theme/themes";
 import ClearLocalStorage from "./utilities/ClearLocalStorage";
+import { persistCache, LocalStorageWrapper } from "apollo3-cache-persist";
 
 ClearLocalStorage();
 
@@ -116,45 +117,51 @@ const splitLink = split(
   authLink.concat(httpLink)
 );
 
-const client = new ApolloClient({
-  link: splitLink,
-  cache: new InMemoryCache(),
+const cache = new InMemoryCache();
+persistCache({
+  cache,
+  storage: new LocalStorageWrapper(window.localStorage),
+}).then(() => {
+  const client = new ApolloClient({
+    link: splitLink,
+    cache: cache,
+  });
+
+  keycloak.onTokenExpired = () => {
+    console.log("expired " + new Date());
+    keycloak
+      .updateToken(50)
+      .success((refreshed: boolean) => {
+        if (refreshed) {
+          console.log("refreshed " + new Date());
+        } else {
+          console.log("not refreshed " + new Date());
+        }
+      })
+      .error(() => {
+        console.error("Failed to refresh token " + new Date());
+      });
+  };
+
+  ReactDOM.render(
+    <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
+      {/* <GlobalStyle /> */}
+
+      <ColorModeScript initialColorMode={theme.config.lightTheme} />
+      <ReactKeycloakProvider
+        authClient={keycloak}
+        initOptions={{
+          onLoad: "check-sso",
+        }}
+        LoadingComponent={<MainLoading />}
+      >
+        <ApolloProvider client={client}>
+          <Suspense fallback="loading">
+            <App />
+          </Suspense>
+        </ApolloProvider>
+      </ReactKeycloakProvider>
+    </ChakraProvider>,
+    document.getElementById("root")
+  );
 });
-
-keycloak.onTokenExpired = () => {
-  console.log("expired " + new Date());
-  keycloak
-    .updateToken(50)
-    .success((refreshed: boolean) => {
-      if (refreshed) {
-        console.log("refreshed " + new Date());
-      } else {
-        console.log("not refreshed " + new Date());
-      }
-    })
-    .error(() => {
-      console.error("Failed to refresh token " + new Date());
-    });
-};
-
-ReactDOM.render(
-  <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
-    {/* <GlobalStyle /> */}
-
-    <ColorModeScript initialColorMode={theme.config.lightTheme} />
-    <ReactKeycloakProvider
-      authClient={keycloak}
-      initOptions={{
-        onLoad: "check-sso",
-      }}
-      LoadingComponent={<MainLoading />}
-    >
-      <ApolloProvider client={client}>
-        <Suspense fallback="loading">
-          <App />
-        </Suspense>
-      </ApolloProvider>
-    </ReactKeycloakProvider>
-  </ChakraProvider>,
-  document.getElementById("root")
-);
