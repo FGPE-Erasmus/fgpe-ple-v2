@@ -9,13 +9,7 @@ export const GET_STUDENTS_DETAILS_BY_GAME_ID = gql`
         name
         displayName
       }
-      challenges {
-        name
-        refs {
-          name
-          id
-        }
-      }
+
       players {
         group {
           name
@@ -24,10 +18,6 @@ export const GET_STUDENTS_DETAILS_BY_GAME_ID = gql`
         stats {
           nrOfSubmissions
           nrOfValidations
-          nrOfSubmissionsByActivity
-          nrOfValidationsByActivity
-          nrOfSubmissionsByActivityAndResult
-          nrOfValidationsByActivityAndResult
         }
         user {
           id
@@ -38,7 +28,6 @@ export const GET_STUDENTS_DETAILS_BY_GAME_ID = gql`
           progress
         }
       }
-      createdAt
     }
   }
 `;
