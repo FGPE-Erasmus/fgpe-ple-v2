@@ -6,12 +6,42 @@ import { SettingsContext } from "./Exercise/SettingsContext";
 // import { useHotkeys } from "react-hotkeys-hook";
 import useHotKeys from "./Exercise/useHotKeys";
 
+import constrainedEditor from "constrained-editor-plugin/dist/esm/constrainedEditor";
+import { AnimatePresence, motion } from "framer-motion";
+// import constrainedEditor1 from "constrained-editor-plugin";
+
+const findPos = (input: string, stringWeLookingFor: string) => {
+  const indexToFind = input.indexOf(stringWeLookingFor);
+  if (indexToFind < 0) {
+    return false;
+  }
+
+  const tempString = input.substring(0, indexToFind);
+  const lines = tempString.split("\n");
+  const lineNumber = lines.length;
+
+  const col = (lines[lineNumber - 1] + stringWeLookingFor).indexOf(
+    stringWeLookingFor
+  );
+
+  if (col < 0) {
+    return false;
+  }
+
+  return { col, row: lineNumber };
+};
+
 export interface CodeEditorProps {
   language: FindChallenge_programmingLanguages;
   code: any;
   setCode: (value: string) => void;
   evaluateSubmission: () => void;
   validateSubmission: () => void;
+
+  //** If true, the editor will check first if the code is available */
+  lockLines?: boolean;
+
+  exerciseId?: string | null;
 }
 
 const CodeEditor = ({
@@ -20,6 +50,8 @@ const CodeEditor = ({
   code,
   evaluateSubmission,
   validateSubmission,
+  lockLines,
+  exerciseId,
 }: CodeEditorProps) => {
   const hotkeys = useHotKeys({ validateSubmission, evaluateSubmission });
 
@@ -28,6 +60,7 @@ const CodeEditor = ({
   const editorRef = useRef({
     _actions: { submitYourCode: {}, runYourCode: {} },
     addAction: (x: any) => {},
+    getModel: () => {},
   });
   const monaco = useMonaco();
 
@@ -36,6 +69,33 @@ const CodeEditor = ({
     // you can store it in `useRef` for further usage
     // console.log("editor", editor);
     editorRef.current = editor;
+
+    const startOfEditableCode = findPos(code, "{{");
+    console.log("START", startOfEditableCode);
+    const endOfEditableCode = findPos(code, "}}");
+    console.log("END", endOfEditableCode);
+
+    if (startOfEditableCode && endOfEditableCode) {
+      const constrainedInstance = constrainedEditor(monaco);
+      const model = editorRef.current.getModel() as any;
+      constrainedInstance.initializeIn(editorRef.current);
+      model.setValue(code);
+
+      const blocked = [
+        {
+          range: [
+            startOfEditableCode.row,
+            startOfEditableCode.col,
+            endOfEditableCode.row,
+            endOfEditableCode.col,
+          ],
+          allowMultiline: true,
+        },
+      ];
+
+      constrainedInstance.addRestrictionsTo(model, blocked);
+      console.log("ELDO", constrainedInstance);
+    }
 
     editor.addAction({
       // An unique identifier of the contributed action.
@@ -130,22 +190,39 @@ const CodeEditor = ({
 
   return (
     <EditorStyled>
-      <Editor
-        onMount={handleEditorDidMount}
-        language={language.id?.toLowerCase()}
-        value={code}
-        onChange={handleEditorChange}
-        theme={editorTheme}
-        wrapperClassName="editor-wrapper"
-        className="editor"
-        options={{
-          fixedOverflowWidgets: true,
-          wordWrap: "on",
-          minimap: {
-            enabled: false,
-          },
-        }}
-      />
+      {/* <div style={{ position: "absolute", color: "white" }}>
+        {exerciseId && exerciseId}
+      </div> */}
+
+      <AnimatePresence exitBeforeEnter>
+        <motion.div
+          key={exerciseId}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="editor"
+          style={{ height: "100%" }}
+        >
+          {code && (
+            <Editor
+              onMount={handleEditorDidMount}
+              language={language.id?.toLowerCase()}
+              value={code}
+              onChange={handleEditorChange}
+              theme={editorTheme}
+              wrapperClassName="editor-wrapper"
+              className="editor"
+              options={{
+                fixedOverflowWidgets: true,
+                wordWrap: "on",
+                minimap: {
+                  enabled: false,
+                },
+              }}
+            />
+          )}
+        </motion.div>
+      </AnimatePresence>
     </EditorStyled>
   );
 };

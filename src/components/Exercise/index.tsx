@@ -853,6 +853,7 @@ const Exercise = ({
                 }}
                 evaluateSubmission={evaluateSubmission}
                 validateSubmission={validateSubmission}
+                exerciseId={exercise?.activity?.id}
               />
             }
             {/* <CodeEditor

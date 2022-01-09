@@ -12,6 +12,7 @@ const EditorSwitcher = ({
   code,
   evaluateSubmission,
   validateSubmission,
+  exerciseId,
 }: {
   codeSkeletons: string | string[];
   editorKind: string | undefined | null;
@@ -57,6 +58,7 @@ const EditorSwitcher = ({
           setCode={setCode}
           evaluateSubmission={evaluateSubmission}
           validateSubmission={validateSubmission}
+          exerciseId={exerciseId}
         />
       );
   }
