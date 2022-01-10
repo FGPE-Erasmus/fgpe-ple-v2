@@ -255,6 +255,7 @@ const Challenge = () => {
     loading: challengeLoading,
     refetch: challengeRefetch,
   } = useQuery<FindChallenge>(FIND_CHALLENGE, {
+    fetchPolicy: "no-cache",
     variables: { gameId, challengeId },
     onCompleted: (data) => {
       if (exerciseId) {
