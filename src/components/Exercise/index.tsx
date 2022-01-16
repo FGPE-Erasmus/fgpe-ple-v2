@@ -867,8 +867,6 @@ const Exercise = ({
                 code={code === "" ? getCodeSkeleton() : code}
                 codeSkeletons={getCodeSkeleton(true, true) || ""}
                 setCode={(code, editableCodeRange) => {
-                  console.log("saving code...", editableCodeRange);
-
                   saveCodeToLocalStorage(code, editableCodeRange);
                   setCode(code);
                 }}
