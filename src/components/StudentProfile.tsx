@@ -65,7 +65,7 @@ const StudentProfile: React.ComponentType = () => {
   const { data, error, loading, refetch } = useQuery<PlayerGameProfiles>(
     PLAYER_GAME_PROFILES,
     {
-      fetchPolicy: "network-only",
+      fetchPolicy: "no-cache",
     }
   );
 

@@ -128,6 +128,7 @@ const ProfileInGame = () => {
     error: errorProfile,
     data: dataProfile,
   } = useQuery<ProfileInGameQuery>(PROFILE_IN_GAME, {
+    fetchPolicy: "no-cache",
     variables: { gameId },
   });
 
