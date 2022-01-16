@@ -158,9 +158,9 @@ const CodeEditor = ({
 
       constrainedInstance.initializeIn(editorRef.current);
 
-      const codeWithoutSpecialCharacters = code
-        .replaceAll("}}", "")
-        .replaceAll("{{", "");
+      const codeWithoutSpecialCharacters = !editableCodeRange
+        ? code.replaceAll("}}", "").replaceAll("{{", "")
+        : code;
       model.setValue(codeWithoutSpecialCharacters);
 
       const unlocked = [
