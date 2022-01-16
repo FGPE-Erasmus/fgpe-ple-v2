@@ -243,6 +243,11 @@ const Exercise = ({
   challengeId: string;
   hints: rewardReceivedStudentSubscription_rewardReceivedStudent_reward[];
 }) => {
+  const [reloaded, setReloaded] = useState(false);
+  const [editableCodeRange, setEditableCodeRange] = useState<
+    undefined | number[]
+  >();
+
   const [lastEvaluationOrSubmissionId, setLastEvaluationOrSubmissionId] =
     useState<null | string>(null);
 
@@ -283,6 +288,7 @@ const Exercise = ({
   const [isRestoreAvailable, setRestoreAvailable] = useState(false);
 
   const reloadCode = () => {
+    setReloaded(!reloaded);
     setCode("");
     clearPlayground();
     saveSubmissionDataInLocalStorage("", null, true, null, "");
@@ -316,7 +322,10 @@ const Exercise = ({
     return "";
   };
 
-  const saveCodeToLocalStorage = (codeToSave: string) => {
+  const saveCodeToLocalStorage = (
+    codeToSave: string,
+    editableCodeRange?: number[]
+  ) => {
     if (exercise && keycloak.profile?.email) {
       const userDataLocalStorage = localStorage.getItem(
         `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise?.activity?.id}`
@@ -331,6 +340,7 @@ const Exercise = ({
           ...userData,
           code: encryptedCode,
           language: activeLanguage.name,
+          editableCodeRange: editableCodeRange,
         };
         localStorage.setItem(
           `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise?.activity?.id}`,
@@ -428,7 +438,14 @@ const Exercise = ({
   ) => {
     try {
       if (lastSubmissionFeedbackUnparsed) {
+        // setEditableCodeRange
+
         const parsedLastSubmission = JSON.parse(lastSubmissionFeedbackUnparsed);
+
+        if (parsedLastSubmission.editableCodeRange) {
+          setEditableCodeRange(parsedLastSubmission.editableCodeRange);
+        }
+
         if (parsedLastSubmission.code) {
           if (keycloak.profile?.email) {
             const encryptedCode = decryptWithAES(
@@ -491,6 +508,7 @@ const Exercise = ({
     // setSubmissionResult(null);
     setWaitingForEvaluationResult(false);
     setWaitingForValidationResult(false);
+    setEditableCodeRange(undefined);
 
     if (exercise?.activity?.id) {
       const lastSubmissionFeedbackUnparsed = localStorage.getItem(
@@ -764,6 +782,7 @@ const Exercise = ({
   };
 
   const clearPlayground = () => {
+    setEditableCodeRange(undefined);
     setSubmissionResult(null);
     setSubmissionFeedback("Ready");
     setValidationOutputs(null);
@@ -847,13 +866,17 @@ const Exercise = ({
                 language={activeLanguage}
                 code={code === "" ? getCodeSkeleton() : code}
                 codeSkeletons={getCodeSkeleton(true, true) || ""}
-                setCode={(code) => {
-                  saveCodeToLocalStorage(code);
+                setCode={(code, editableCodeRange) => {
+                  console.log("saving code...", editableCodeRange);
+
+                  saveCodeToLocalStorage(code, editableCodeRange);
                   setCode(code);
                 }}
+                editableCodeRange={editableCodeRange}
                 evaluateSubmission={evaluateSubmission}
                 validateSubmission={validateSubmission}
                 exerciseId={exercise?.activity?.id}
+                reloaded={reloaded}
               />
             }
             {/* <CodeEditor

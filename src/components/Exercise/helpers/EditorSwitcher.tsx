@@ -13,6 +13,8 @@ const EditorSwitcher = ({
   evaluateSubmission,
   validateSubmission,
   exerciseId,
+  editableCodeRange,
+  reloaded,
 }: {
   codeSkeletons: string | string[];
   editorKind: string | undefined | null;
@@ -59,6 +61,8 @@ const EditorSwitcher = ({
           evaluateSubmission={evaluateSubmission}
           validateSubmission={validateSubmission}
           exerciseId={exerciseId}
+          editableCodeRange={editableCodeRange}
+          reloaded={reloaded}
         />
       );
   }
