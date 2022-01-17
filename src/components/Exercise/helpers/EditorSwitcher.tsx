@@ -16,7 +16,6 @@ const EditorSwitcher = ({
   editableCodeRange,
   reloaded,
 }: {
-  codeSkeletons: string | string[];
   editorKind: string | undefined | null;
 } & CodeEditorProps) => {
   // console.log("CODE SKELETON", codeSkeletons);
@@ -63,6 +62,9 @@ const EditorSwitcher = ({
           exerciseId={exerciseId}
           editableCodeRange={editableCodeRange}
           reloaded={reloaded}
+          codeSkeletons={
+            typeof codeSkeletons === "object" ? codeSkeletons[0] : codeSkeletons
+          }
         />
       );
   }

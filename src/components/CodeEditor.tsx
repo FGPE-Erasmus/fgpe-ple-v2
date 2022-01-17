@@ -68,18 +68,25 @@ const findPos = (
   const lines = tempString.split("\n");
   const lineNumber = lines.length;
 
-  const col =
-    (lines[lineNumber - 1] + stringWeLookingFor).indexOf(stringWeLookingFor) +
-    (isStartString ? stringWeLookingFor.length : 0);
+  let col = (lines[lineNumber - 1] + stringWeLookingFor).indexOf(
+    stringWeLookingFor
+  );
 
   if (col < 0) {
     return false;
+  }
+
+  col = col + (isStartString ? stringWeLookingFor.length - 1 : -2);
+
+  if (col < 0) {
+    col = 1;
   }
 
   return { col, row: lineNumber };
 };
 
 export interface CodeEditorProps {
+  codeSkeletons: string | string[];
   language: FindChallenge_programmingLanguages;
   code: any;
   setCode: (value: string, editableCodeRange?: number[]) => void;
@@ -107,7 +114,7 @@ const CodeEditor = ({
   lockLines,
   exerciseId,
   reloaded,
-
+  codeSkeletons,
   //** Function that can be used to store the blocked code range in local storage */
   editableCodeRange,
 }: CodeEditorProps) => {
@@ -129,10 +136,18 @@ const CodeEditor = ({
       return editableCodeRange;
     }
 
-    const startOfEditableCode = findPos(code, "{{", true);
+    const codeSkeleton = (
+      codeSkeletons === "object" ? codeSkeletons[0] : codeSkeletons
+    ) as string;
+
+    if (!codeSkeleton) {
+      return false;
+    }
+
+    const startOfEditableCode = findPos(codeSkeleton, "{{", true);
     // const test = findPositions(code, "{{");
     // console.log("START", startOfEditableCode);
-    const endOfEditableCode = findPos(code, "}}");
+    const endOfEditableCode = findPos(codeSkeleton, "}}");
     // console.log("END", endOfEditableCode);
 
     if (!startOfEditableCode || !endOfEditableCode) {
@@ -158,10 +173,15 @@ const CodeEditor = ({
 
       constrainedInstance.initializeIn(editorRef.current);
 
+      console.log("EDITABLE?", editableCodeRange);
+
       const codeWithoutSpecialCharacters = !editableCodeRange
         ? code.replaceAll("}}", "").replaceAll("{{", "")
         : code;
+
       model.setValue(codeWithoutSpecialCharacters);
+
+      console.log("RANGE", range);
 
       const unlocked = [
         {
@@ -364,24 +384,24 @@ const CodeEditor = ({
           className="editor"
           style={{ height: "100%" }}
         >
-          {code && (
-            <Editor
-              onMount={handleEditorDidMount}
-              language={language.id?.toLowerCase()}
-              value={code}
-              onChange={handleEditorChange}
-              theme={editorTheme}
-              wrapperClassName="editor-wrapper"
-              className="editor"
-              options={{
-                fixedOverflowWidgets: true,
-                wordWrap: "on",
-                minimap: {
-                  enabled: false,
-                },
-              }}
-            />
-          )}
+          {/* {code && ( */}
+          <Editor
+            onMount={handleEditorDidMount}
+            language={language.id?.toLowerCase()}
+            value={code}
+            onChange={handleEditorChange}
+            theme={editorTheme}
+            wrapperClassName="editor-wrapper"
+            className="editor"
+            options={{
+              fixedOverflowWidgets: true,
+              wordWrap: "on",
+              minimap: {
+                enabled: false,
+              },
+            }}
+          />
+          {/* )} */}
         </motion.div>
       </AnimatePresence>
     </EditorStyled>
