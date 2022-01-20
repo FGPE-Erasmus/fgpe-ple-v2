@@ -45,7 +45,6 @@ const SubmissionsTable = ({
 
   return (
     <div>
-      <RefreshCacheMenu loading={playerLoading} refetch={refetchPlayerData} />
       <AnimatePresence>
         {playerError && !isRefreshing && (
           <motion.div
@@ -76,6 +75,12 @@ const SubmissionsTable = ({
         <Box minHeight={200}>
           {playerData && (
             <PlayerAttemptsTable
+              contextMenu={
+                <RefreshCacheMenu
+                  loading={playerLoading}
+                  refetch={refetchPlayerData}
+                />
+              }
               onRowClick={onSubmissionRowClick}
               playerData={playerData}
               gameData={gameData}

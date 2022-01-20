@@ -48,7 +48,6 @@ const ValidationsTable = ({
 
   return (
     <div>
-      <RefreshCacheMenu loading={playerLoading} refetch={refetchPlayerData} />
       <AnimatePresence>
         {playerError && !isRefreshing && (
           <motion.div
@@ -80,6 +79,12 @@ const ValidationsTable = ({
         <Box minHeight={200}>
           {playerData && (
             <PlayerAttemptsTable
+              contextMenu={
+                <RefreshCacheMenu
+                  loading={playerLoading}
+                  refetch={refetchPlayerData}
+                />
+              }
               onRowClick={onValidationRowClick}
               isValidationsTable
               playerData={playerData}

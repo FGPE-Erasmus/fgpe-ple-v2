@@ -156,30 +156,35 @@ const Students = ({
             </motion.div>
           )}
         </AnimatePresence>
-        <ContextMenu
-          studentsDetailsLoading={studentsDetailsLoading}
-          refetchStudentsDetails={refetchStudentsDetails}
-          autoAssignGroupsLoading={autoAssignGroupsLoading}
-          setLoading={setLoading}
-          autoAssignGroups={autoAssignGroups}
-          refetchGame={refetchGame}
-          isStudentSelected={isStudentSelected}
-          onSetGroupModalOpen={onSetGroupModalOpen}
-          getSelectedStudentsAndRemoveFromGroups={
-            getSelectedStudentsAndRemoveFromGroups
-          }
-          getSelectedStudentAndRemoveFromGame={
-            getSelectedStudentAndRemoveFromGame
-          }
-          gameId={gameId}
-          onAddGroupModalOpen={onAddGroupModalOpen}
-        />
+
         <Skeleton isLoaded={!studentsDetailsLoading && !studentsDetailsError}>
           <Box minH={200}>
             {studentsDetailsData &&
               !studentsDetailsLoading &&
               !studentsDetailsError && (
                 <TableComponent
+                  contextMenu={
+                    <>
+                      <ContextMenu
+                        studentsDetailsLoading={studentsDetailsLoading}
+                        refetchStudentsDetails={refetchStudentsDetails}
+                        autoAssignGroupsLoading={autoAssignGroupsLoading}
+                        setLoading={setLoading}
+                        autoAssignGroups={autoAssignGroups}
+                        refetchGame={refetchGame}
+                        isStudentSelected={isStudentSelected}
+                        onSetGroupModalOpen={onSetGroupModalOpen}
+                        getSelectedStudentsAndRemoveFromGroups={
+                          getSelectedStudentsAndRemoveFromGroups
+                        }
+                        getSelectedStudentAndRemoveFromGame={
+                          getSelectedStudentAndRemoveFromGame
+                        }
+                        gameId={gameId}
+                        onAddGroupModalOpen={onAddGroupModalOpen}
+                      />
+                    </>
+                  }
                   loading={loading}
                   onRowClick={(row: getGameByIdQuery_game_players) => {
                     history.push({

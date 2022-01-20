@@ -133,18 +133,20 @@ const UserDetails = () => {
         />
       </Flex>
 
-      <Flex justifyContent="space-between" alignItems="center">
-        <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-          {t("All game profiles")}
-        </Heading>
-
-        <RefreshCacheMenu
-          loading={gameProfilesLoading}
-          refetch={refetchGameProfiles}
-        />
-      </Flex>
+      <Flex justifyContent="space-between" alignItems="center"></Flex>
       <Box>
         <TableComponent
+          tableHeader={
+            <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
+              {t("All game profiles")}
+            </Heading>
+          }
+          contextMenu={
+            <RefreshCacheMenu
+              loading={gameProfilesLoading}
+              refetch={refetchGameProfiles}
+            />
+          }
           onRowClick={(row: allGameProfilesQuery_allGameProfiles) => {
             history.push({
               pathname: `/teacher/player-details/${userData?.user.id}/${row.game.id}`,

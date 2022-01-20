@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   CircularProgress,
   Flex,
   Table,
@@ -12,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   TiArrowSortedDown,
@@ -30,6 +31,34 @@ import {
 } from "react-table";
 import ScrollbarWrapper from "../ScrollbarWrapper";
 import CheckboxForTable from "./CheckboxForTable";
+import { CSVLink } from "react-csv";
+
+function export2csv() {
+  let data = "";
+  const tableData = [];
+  const rows = document.querySelectorAll("table tr");
+  for (const row of rows as any) {
+    const rowData = [];
+    for (const [index, column] of row.querySelectorAll("th, td").entries()) {
+      // To retain the commas in the "Description" column, we can enclose those fields in quotation marks.
+      if ((index + 1) % 3 === 0) {
+        rowData.push('"' + column.innerText + '"');
+      } else {
+        rowData.push(column.innerText);
+      }
+    }
+    tableData.push(rowData.join(","));
+  }
+  data += tableData.join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(
+    new Blob(["\ufeff", data], { type: "text/csv" })
+  );
+  a.setAttribute("download", "data.csv");
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
 
 type TableComponentProps = {
   columns: any;
@@ -41,6 +70,8 @@ type TableComponentProps = {
 
   /** Function invoked after clicking on a row (has an access to row.original)  */
   onRowClick?: (row: any) => void;
+  contextMenu?: React.ReactNode;
+  tableHeader?: React.ReactNode;
 } & (
   | {
       selectableRows?: false | undefined;
@@ -68,7 +99,10 @@ const TableComponent: React.FC<TableComponentProps> = ({
   setIsAnythingSelected,
   setSelectedStudents,
   loading,
+  contextMenu,
+  tableHeader,
 }) => {
+  const [csvData, setCsvData] = useState<any>();
   const { colorMode } = useColorMode();
   const { i18n } = useTranslation();
   const columns = useMemo(
@@ -121,9 +155,55 @@ const TableComponent: React.FC<TableComponentProps> = ({
     page,
     state,
     gotoPage,
+    flatRows,
   } = tableInstance;
 
   const { pageSize, pageIndex } = state;
+
+  const prepareForCsv = () => {
+    const keys = tableInstance.allColumns.map((column) => column.Header);
+
+    const prepared = tableInstance.rows.map((row) => {
+      let row1 = { ...row };
+
+      prepareRow(row1);
+      return row1.cells.map((cell) => {
+        if (cell.column.Cell) {
+          try {
+            const renderedCell = (cell.column.Cell as Function)(cell);
+
+            if (renderedCell === null) {
+              return "";
+            }
+
+            if (typeof renderedCell === "object") {
+              return "N/A";
+            }
+
+            return renderedCell;
+          } catch (err) {
+            return "N/A";
+          }
+        }
+      });
+    });
+
+    prepared.unshift(
+      keys.map((key) => {
+        if (key?.toString().indexOf("getToggleAll") !== -1) {
+          return "Checkbox";
+        }
+
+        if (typeof key === "object" || typeof key === "function") {
+          return "N/A";
+        }
+
+        return key;
+      })
+    );
+
+    return prepared;
+  };
 
   useEffect(() => {
     setSelectedStudents &&
@@ -141,6 +221,26 @@ const TableComponent: React.FC<TableComponentProps> = ({
   return (
     <ScrollbarWrapper>
       <Box overflowX="auto" position="relative">
+        {contextMenu && (
+          <Flex
+            float={tableHeader ? "left" : "right"}
+            width={tableHeader ? "100%" : "auto"}
+            justifyContent={"space-between"}
+            alignItems="center"
+          >
+            {tableHeader && <Box>{tableHeader}</Box>}
+
+            <Flex flexDirection={"row"}>
+              {contextMenu}
+              <CSVLink data={prepareForCsv()}>
+                <Button size="sm" float="right" marginLeft={2}>
+                  CSV
+                </Button>
+              </CSVLink>
+            </Flex>
+          </Flex>
+        )}
+
         <AnimatePresence>
           {loading && (
             <motion.div
@@ -162,7 +262,6 @@ const TableComponent: React.FC<TableComponentProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
-
         <Table
           {...getTableProps()}
           maxWidth="100%"

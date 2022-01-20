@@ -89,10 +89,6 @@ const TeacherStudents = () => {
 
   return (
     <div>
-      <RefreshCacheMenu
-        loading={teacherStudentsLoading}
-        refetch={refetchTeacherStudents}
-      />
       <Box>
         <AnimatePresence>
           {teacherStudentsError && !isRefreshing && (
@@ -135,6 +131,12 @@ const TeacherStudents = () => {
             {teacherStudentsData && (
               <Box>
                 <TableComponent
+                  contextMenu={
+                    <RefreshCacheMenu
+                      loading={teacherStudentsLoading}
+                      refetch={refetchTeacherStudents}
+                    />
+                  }
                   onRowClick={(row: typeof players[number]) => {
                     history.push({
                       pathname: `/teacher/student-details/${row.user.id}`,

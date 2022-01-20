@@ -88,10 +88,6 @@ const InstructorGames = () => {
 
   return (
     <div>
-      <RefreshCacheMenu
-        loading={teacherGamesLoading}
-        refetch={refetchTeacherGames}
-      />
       <AnimatePresence>
         {teacherGamesError && !isRefreshing && (
           <motion.div
@@ -132,6 +128,12 @@ const InstructorGames = () => {
             {teacherGamesData && (
               <Box>
                 <TableComponent
+                  contextMenu={
+                    <RefreshCacheMenu
+                      loading={teacherGamesLoading}
+                      refetch={refetchTeacherGames}
+                    />
+                  }
                   onRowClick={(row) => {
                     history.push({
                       pathname: `/teacher/game/${row.id}`,
@@ -148,6 +150,9 @@ const InstructorGames = () => {
                           <span style={{ opacity: 0.4 }}>{row.name}</span>
                         );
                       },
+                      Cell: ({ value }: { value: any }) => {
+                        return value ? value : "-";
+                      },
                       Filter: ({ column }: { column: any }) => (
                         <ColumnFilter
                           column={column}
@@ -160,7 +165,7 @@ const InstructorGames = () => {
                       Header: t("table.gameDescription"),
                       accessor: "description",
                       Cell: ({ value }: { value: any }) => {
-                        return <span>{value ? value : "-"}</span>;
+                        return value ? value : "-";
                       },
                       Filter: ({ column }: { column: any }) => (
                         <ColumnFilter
@@ -183,7 +188,7 @@ const InstructorGames = () => {
                       Header: t("addGame.private"),
                       accessor: "private",
                       Cell: ({ value }: { value: any }) => {
-                        return <span>{value ? t("Yes") : t("No")}</span>;
+                        return value ? t("Yes") : t("No");
                       },
                       disableFilters: true,
                       sortType: memoizedSortFunc,

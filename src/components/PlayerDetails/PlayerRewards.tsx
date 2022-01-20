@@ -45,7 +45,6 @@ const PlayerAttemptsTable = ({
 
   return (
     <Box>
-      <RefreshCacheMenu loading={playerLoading} refetch={refetchPlayerData} />
       <AnimatePresence>
         {playerError && !isRefreshing && (
           <motion.div
@@ -76,6 +75,12 @@ const PlayerAttemptsTable = ({
         <Box minH={200}>
           {playerData && (
             <TableComponent
+              contextMenu={
+                <RefreshCacheMenu
+                  loading={playerLoading}
+                  refetch={refetchPlayerData}
+                />
+              }
               columns={[
                 {
                   Header: t("Name"),

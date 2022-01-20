@@ -103,11 +103,16 @@ const ActivitiesStats = ({ gameId }: { gameId: string }) => {
           </motion.div>
         )}
       </AnimatePresence>
-      <RefreshCacheMenu loading={statsLoading} refetch={refetchStats} />
       <Skeleton isLoaded={!statsLoading && !statsError}>
         <Box minH={200}>
           {statsData && !statsLoading && !statsError && (
             <TableComponent
+              contextMenu={
+                <RefreshCacheMenu
+                  loading={statsLoading}
+                  refetch={refetchStats}
+                />
+              }
               columns={[
                 {
                   Header: t("table.Exercise"),
