@@ -118,6 +118,7 @@ const splitLink = split(
 );
 
 const cache = new InMemoryCache();
+
 persistCache({
   cache,
   storage: new LocalStorageWrapper(window.localStorage),

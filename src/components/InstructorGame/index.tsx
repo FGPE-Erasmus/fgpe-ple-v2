@@ -31,6 +31,7 @@ import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
 import withChangeAnimation from "../../utilities/withChangeAnimation";
 import DetailsCard from "../DetailsCard";
 import Error from "../Error";
+import ExportGameCsvModal from "../ExportGameCsvModal";
 import { useNotifications } from "../Notifications";
 import RefreshCacheMenu from "../RefreshCacheMenu";
 import ActivitiesStats from "./ActivitiesStats";
@@ -43,6 +44,12 @@ interface ParamTypes {
 
 const InstructorGame = () => {
   const [loading, setLoading] = useState(false);
+
+  const {
+    isOpen: isExportCsvModalOpen,
+    onOpen: onExportCsvModalOpen,
+    onClose: onExportCsvModalClose,
+  } = useDisclosure();
 
   const {
     isOpen: isDetailsModalOpen,
@@ -174,6 +181,13 @@ const InstructorGame = () => {
 
   return (
     <>
+      <ExportGameCsvModal
+        isOpen={isExportCsvModalOpen}
+        onOpen={onExportCsvModalOpen}
+        onClose={onExportCsvModalClose}
+        gameId={gameId}
+      />
+
       <ChangeDetailsModal
         defaultStartDate={gameData.game.startDate}
         defaultEndDate={gameData.game.endDate}
@@ -226,6 +240,8 @@ const InstructorGame = () => {
             >
               <Button>{t("Add or remove players")}</Button>
             </Link>
+
+            <Button onClick={onExportCsvModalOpen}>CSV</Button>
           </HStack>
         </Flex>
 
