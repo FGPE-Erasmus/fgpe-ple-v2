@@ -18,7 +18,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { CSVDownload } from "react-csv";
+import { CSVDownload, CSVLink } from "react-csv";
 import { useTranslation } from "react-i18next";
 import {
   getGamePlayersQuery,
@@ -468,6 +468,8 @@ const ExportGameCsvModal = ({
         validations: false,
       });
 
+      console.log("settings download reeady");
+
       setReadyToDownload({ ...readyToDownload, validations: true });
     } else {
       setLoading({
@@ -506,8 +508,8 @@ const ExportGameCsvModal = ({
                 )}
                 */}
 
-              {readyToDownload.players && (
-                <CSVDownload
+              {readyToDownload.players ? (
+                <CSVLink
                   data={
                     readyToDownload.players
                       ? preparePlayersForCSV(
@@ -515,100 +517,108 @@ const ExportGameCsvModal = ({
                         )
                       : []
                   }
-                />
+                >
+                  <Button size="sm">{t("Export")}</Button>
+                </CSVLink>
+              ) : (
+                <Button
+                  size="sm"
+                  isLoading={loading.players}
+                  onClick={getPlayers}
+                >
+                  {t("Download")}
+                </Button>
               )}
-
-              <Button
-                size="sm"
-                isLoading={loading.players}
-                onClick={getPlayers}
-              >
-                {t("Download")}
-              </Button>
             </Flex>
             <Flex h="40px" justifyContent="space-between" alignItems="center">
               <Text>{t("submissions")}</Text>
 
-              {readyToDownload.submissions && (
-                <CSVDownload
+              {readyToDownload.submissions ? (
+                <CSVLink
                   data={readyToDownload.submissions ? playersSubmissions : []}
-                />
+                >
+                  <Button size="sm">{t("Export")}</Button>
+                </CSVLink>
+              ) : (
+                <Button
+                  size="sm"
+                  isLoading={loading.submissions}
+                  onClick={async () => {
+                    try {
+                      await getAttempts(false);
+                    } catch (err) {
+                      addNotification({
+                        title: t("error.unknownProblem.title"),
+                        description: t("error.unknownProblem.description"),
+                        status: "error",
+                      });
+
+                      setLoading({ ...loading, submissions: false });
+                    }
+                  }}
+                >
+                  {t("Download")}
+                </Button>
               )}
-
-              <Button
-                size="sm"
-                isLoading={loading.submissions}
-                onClick={async () => {
-                  try {
-                    await getAttempts(false);
-                  } catch (err) {
-                    addNotification({
-                      title: t("error.unknownProblem.title"),
-                      description: t("error.unknownProblem.description"),
-                      status: "error",
-                    });
-
-                    setLoading({ ...loading, submissions: false });
-                  }
-                }}
-              >
-                {t("Download")}
-              </Button>
             </Flex>
             <Flex h="40px" justifyContent="space-between" alignItems="center">
               <Text>{t("validations")}</Text>
-              <Button
-                isLoading={loading.validations}
-                size="sm"
-                onClick={async () => {
-                  try {
-                    await getAttempts(true);
-                  } catch (err) {
-                    addNotification({
-                      title: t("error.unknownProblem.title"),
-                      description: t("error.unknownProblem.description"),
-                      status: "error",
-                    });
-
-                    setLoading({ ...loading, validations: false });
-                  }
-                }}
-              >
-                {t("Download")}
-              </Button>
-              {readyToDownload.validations && (
-                <CSVDownload
+              {readyToDownload.validations ? (
+                <CSVLink
                   data={readyToDownload.validations ? playersValidations : []}
-                />
+                >
+                  <Button size="sm">{t("Export")}</Button>
+                </CSVLink>
+              ) : (
+                <Button
+                  isLoading={loading.validations}
+                  size="sm"
+                  onClick={async () => {
+                    try {
+                      await getAttempts(true);
+                    } catch (err) {
+                      addNotification({
+                        title: t("error.unknownProblem.title"),
+                        description: t("error.unknownProblem.description"),
+                        status: "error",
+                      });
+
+                      setLoading({ ...loading, validations: false });
+                    }
+                  }}
+                >
+                  {t("Download")}
+                </Button>
               )}
             </Flex>
             <Flex h="40px" justifyContent="space-between" alignItems="center">
               <Text>{t("Rewards")}</Text>
-              <Button
-                isLoading={loading.rewards}
-                size="sm"
-                onClick={async () => {
-                  try {
-                    await getAllRewards();
-                  } catch (err) {
-                    addNotification({
-                      title: t("error.unknownProblem.title"),
-                      description: t("error.unknownProblem.description"),
-                      status: "error",
-                    });
+              {readyToDownload.rewards ? (
+                <CSVLink data={readyToDownload.rewards ? playersRewards : []}>
+                  <Button size="sm">{t("Export")}</Button>
+                </CSVLink>
+              ) : (
+                <Button
+                  isLoading={loading.rewards}
+                  size="sm"
+                  onClick={async () => {
+                    try {
+                      await getAllRewards();
+                    } catch (err) {
+                      addNotification({
+                        title: t("error.unknownProblem.title"),
+                        description: t("error.unknownProblem.description"),
+                        status: "error",
+                      });
 
-                    setLoading({ ...loading, rewards: false });
-                  }
-                }}
-              >
-                {t("Download")}
-              </Button>
+                      setLoading({ ...loading, rewards: false });
+                    }
+                  }}
+                >
+                  {t("Download")}
+                </Button>
+              )}
             </Flex>
-            {readyToDownload.rewards && (
-              <CSVDownload
-                data={readyToDownload.rewards ? playersRewards : []}
-              />
-            )}
           </VStack>
         </ModalBody>
 
