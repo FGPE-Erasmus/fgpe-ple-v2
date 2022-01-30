@@ -40,10 +40,10 @@ const Statement = ({
   return (
     <ScrollbarWrapper>
       <Flex
+        maxHeight="calc(50vh - 67px)"
         height={
           exercise?.activity?.pdf ? 150 : 150 + getStatementLength(exercise) / 5
         }
-        maxHeight={250}
         overflowY={"auto"}
         borderBottom="1px solid rgba(0,0,0,0.1)"
         position="relative"
