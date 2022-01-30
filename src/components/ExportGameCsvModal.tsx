@@ -170,30 +170,43 @@ const ExportGameCsvModal = ({
 
     let playersRewards1: any = [];
     let rewardsCount = 0;
+    let causedError = false;
 
     for (let i = 0; i < playersData.length; i++) {
-      const userId = playersData[i].user.id as string;
+      try {
+        const userId = playersData[i].user.id as string;
 
-      const rewards = await getUserGameRewards({
-        gameId,
-        userId,
-      });
-
-      if (rewards.data.player.rewards.length > 0) {
-        rewardsCount++;
-      }
-
-      const rewardsConverted = rewards.data.player.rewards.map((reward) => {
-        return {
+        const rewards = await getUserGameRewards({
+          gameId,
           userId,
-          rewardId: reward.reward.id,
-          rewardDescription: reward.reward.description,
-          rewardKind: reward.reward.kind,
-          rewardName: reward.reward.name,
-        };
-      });
+        });
 
-      playersRewards1 = [...playersRewards1, ...rewardsConverted];
+        if (rewards.data.player.rewards.length > 0) {
+          rewardsCount++;
+        }
+
+        const rewardsConverted = rewards.data.player.rewards.map((reward) => {
+          return {
+            userId,
+            rewardId: reward.reward.id,
+            rewardDescription: reward.reward.description,
+            rewardKind: reward.reward.kind,
+            rewardName: reward.reward.name,
+          };
+        });
+
+        playersRewards1 = [...playersRewards1, ...rewardsConverted];
+      } catch (err) {
+        causedError = true;
+      }
+    }
+
+    if (causedError) {
+      addNotification({
+        title: t("error.csvProblemWithOneOrMore.title"),
+        description: t("error.csvProblemWithOneOrMore.description"),
+        status: "error",
+      });
     }
 
     if (rewardsCount < 1) {
@@ -339,69 +352,82 @@ const ExportGameCsvModal = ({
 
     let attemptsCount = 0;
     let playersAttempts: any = [];
+    let causedErrors = false;
 
     for (let i = 0; i < playersData.length; i++) {
-      let userId = playersData[i].user.id as string;
+      try {
+        let userId = playersData[i].user.id as string;
 
-      const res1 = downloadValidations
-        ? await getPlayerFullValidations({
-            userId: userId,
-            gameId,
-          })
-        : await getPlayerFullSubmissions({
-            userId: userId,
-            gameId,
+        const res1 = downloadValidations
+          ? await getPlayerFullValidations({
+              userId: userId,
+              gameId,
+            })
+          : await getPlayerFullSubmissions({
+              userId: userId,
+              gameId,
+            });
+
+        if (downloadValidations) {
+          if (
+            (res1.data as getPlayerFullValidationsQuery).validations.length > 0
+          ) {
+            attemptsCount++;
+          }
+
+          console.log("attempts", attemptsCount);
+
+          const convertedValidations = (
+            res1.data as getPlayerFullValidationsQuery
+          ).validations.map((validation) => {
+            let converted: any = { ...validation };
+            delete converted["player"];
+            converted.metrics = JSON.stringify(converted.metrics);
+            converted.player = validation.player.id;
+            converted.outputs = JSON.stringify(converted.outputs);
+            converted.userExecutionTimes = JSON.stringify(
+              converted.userExecutionTimes
+            );
+            return { ...converted, user: userId };
           });
 
-      if (downloadValidations) {
-        if (
-          (res1.data as getPlayerFullValidationsQuery).validations.length > 0
-        ) {
-          attemptsCount++;
+          console.log("SETTINGS VALIDATIONS", [
+            ...playersValidations,
+            ...convertedValidations,
+          ]);
+
+          playersAttempts = [...playersAttempts, ...convertedValidations];
+        } else {
+          if (
+            (res1.data as getPlayerFullSubmissionsQuery).submissions.length > 0
+          ) {
+            attemptsCount++;
+          }
+
+          const convertedSubmissions = (
+            res1.data as getPlayerFullSubmissionsQuery
+          ).submissions.map((submission) => {
+            let converted: any = { ...submission };
+            delete converted["player"];
+            converted.metrics = JSON.stringify(converted.metrics);
+            converted.player = submission.player.id;
+
+            return { ...converted, user: userId };
+          });
+
+          playersAttempts = [...playersAttempts, ...convertedSubmissions];
         }
-
-        console.log("attempts", attemptsCount);
-
-        const convertedValidations = (
-          res1.data as getPlayerFullValidationsQuery
-        ).validations.map((validation) => {
-          let converted: any = { ...validation };
-          delete converted["player"];
-          converted.metrics = JSON.stringify(converted.metrics);
-          converted.player = validation.player.id;
-          converted.outputs = JSON.stringify(converted.outputs);
-          converted.userExecutionTimes = JSON.stringify(
-            converted.userExecutionTimes
-          );
-          return { ...converted, user: userId };
-        });
-
-        console.log("SETTINGS VALIDATIONS", [
-          ...playersValidations,
-          ...convertedValidations,
-        ]);
-
-        playersAttempts = [...playersAttempts, ...convertedValidations];
-      } else {
-        if (
-          (res1.data as getPlayerFullSubmissionsQuery).submissions.length > 0
-        ) {
-          attemptsCount++;
-        }
-
-        const convertedSubmissions = (
-          res1.data as getPlayerFullSubmissionsQuery
-        ).submissions.map((submission) => {
-          let converted: any = { ...submission };
-          delete converted["player"];
-          converted.metrics = JSON.stringify(converted.metrics);
-          converted.player = submission.player.id;
-
-          return { ...converted, user: userId };
-        });
-
-        playersAttempts = [...playersAttempts, ...convertedSubmissions];
+      } catch (err) {
+        causedErrors = true;
       }
+    }
+
+    if (causedErrors) {
+      addNotification({
+        title: t("error.csvProblemWithOneOrMore.title"),
+        description: t("error.csvProblemWithOneOrMore.description"),
+        status: "error",
+      });
     }
 
     if (attemptsCount < 1) {
@@ -513,7 +539,17 @@ const ExportGameCsvModal = ({
                 size="sm"
                 isLoading={loading.submissions}
                 onClick={async () => {
-                  await getAttempts(false);
+                  try {
+                    await getAttempts(false);
+                  } catch (err) {
+                    addNotification({
+                      title: t("error.unknownProblem.title"),
+                      description: t("error.unknownProblem.description"),
+                      status: "error",
+                    });
+
+                    setLoading({ ...loading, submissions: false });
+                  }
                 }}
               >
                 {t("Download")}
@@ -525,7 +561,17 @@ const ExportGameCsvModal = ({
                 isLoading={loading.validations}
                 size="sm"
                 onClick={async () => {
-                  await getAttempts(true);
+                  try {
+                    await getAttempts(true);
+                  } catch (err) {
+                    addNotification({
+                      title: t("error.unknownProblem.title"),
+                      description: t("error.unknownProblem.description"),
+                      status: "error",
+                    });
+
+                    setLoading({ ...loading, validations: false });
+                  }
                 }}
               >
                 {t("Download")}
@@ -542,7 +588,17 @@ const ExportGameCsvModal = ({
                 isLoading={loading.rewards}
                 size="sm"
                 onClick={async () => {
-                  await getAllRewards();
+                  try {
+                    await getAllRewards();
+                  } catch (err) {
+                    addNotification({
+                      title: t("error.unknownProblem.title"),
+                      description: t("error.unknownProblem.description"),
+                      status: "error",
+                    });
+
+                    setLoading({ ...loading, rewards: false });
+                  }
                 }}
               >
                 {t("Download")}

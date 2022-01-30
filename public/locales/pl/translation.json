@@ -207,6 +207,14 @@
   "error": {
     "title": "Wystąpił nieoczekiwany błąd.",
     "description": "Spróbuj odświeżyć stronę. Skontaktuj się z administracją jeśli błąd będzie nadal występować.",
+    "csvProblemWithOneOrMore": {
+      "title": "Wystąpił problem z jednym lub więcej rekordów.",
+      "description": "Nadal możesz dokonać eksportu pliku CSV. Rekordy wywołujące błędy zostaną zignorowane."
+    },
+    "unknownProblem": {
+      "title": "Wystąpił nieoczekiwany błąd.",
+      "description": "Niestety wystąpił problem z Twoim żądaniem."
+    },
     "noData": {
       "title": "Brak danych",
       "description": "Serwer nie zwrócił żadnych danych."

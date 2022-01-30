@@ -202,6 +202,14 @@
   "error": {
     "title": "An unexpected error has occured.",
     "description": "Try to refresh the page. Please contact administration if this error persists.",
+    "csvProblemWithOneOrMore": {
+      "title": "There's a problem with one or more records.",
+      "description": "You can still export the CSV file. Records that cause errors will be ignored."
+    },
+    "unknownProblem": {
+      "title": "An unexpected error has occured.",
+      "description": "Unfortunately there's a problem with your request."
+    },
     "noData": {
       "title": "No data available",
       "description": "The server responded with no data."
