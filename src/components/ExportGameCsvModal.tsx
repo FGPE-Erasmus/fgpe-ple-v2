@@ -168,6 +168,7 @@ const ExportGameCsvModal = ({
       return;
     }
 
+    let playersRewards1: any = [];
     let rewardsCount = 0;
 
     for (let i = 0; i < playersData.length; i++) {
@@ -192,7 +193,7 @@ const ExportGameCsvModal = ({
         };
       });
 
-      setPlayersRewards([...playersRewards, ...rewardsConverted]);
+      playersRewards1 = [...playersRewards1, ...rewardsConverted];
     }
 
     if (rewardsCount < 1) {
@@ -213,6 +214,8 @@ const ExportGameCsvModal = ({
 
       return;
     }
+
+    setPlayersRewards(playersRewards1);
 
     setLoading({
       ...loading,
@@ -335,6 +338,7 @@ const ExportGameCsvModal = ({
     }
 
     let attemptsCount = 0;
+    let playersAttempts: any = [];
 
     for (let i = 0; i < playersData.length; i++) {
       let userId = playersData[i].user.id as string;
@@ -377,7 +381,7 @@ const ExportGameCsvModal = ({
           ...convertedValidations,
         ]);
 
-        setPlayersValidations([...playersValidations, ...convertedValidations]);
+        playersAttempts = [...playersAttempts, ...convertedValidations];
       } else {
         if (
           (res1.data as getPlayerFullSubmissionsQuery).submissions.length > 0
@@ -396,7 +400,7 @@ const ExportGameCsvModal = ({
           return { ...converted, user: userId };
         });
 
-        setPlayersSubmissions([...playersSubmissions, ...convertedSubmissions]);
+        playersAttempts = [...playersAttempts, ...convertedSubmissions];
       }
     }
 
@@ -424,6 +428,12 @@ const ExportGameCsvModal = ({
       }
 
       return;
+    }
+
+    if (downloadValidations) {
+      setPlayersValidations([...playersAttempts]);
+    } else {
+      setPlayersSubmissions([...playersAttempts]);
     }
 
     if (downloadValidations) {
