@@ -1,4 +1,7 @@
 {
+  "Game profiles": "Game profiles",
+  "Export": "Export",
+  "Download": "Download",
   "Description": "Description",
   "Kind": "Kind",
   "timeIsUp": {
@@ -199,6 +202,10 @@
   "error": {
     "title": "An unexpected error has occured.",
     "description": "Try to refresh the page. Please contact administration if this error persists.",
+    "noData": {
+      "title": "No data available",
+      "description": "The server responded with no data."
+    },
     "joinGameOrGroup": {
       "title": "There has been an error processing your invite link",
       "description": "Check if the link you used is correct and not expired"

@@ -1,4 +1,7 @@
 {
+  "Game profiles": "Profile graczy",
+  "Export": "Eksport",
+  "Download": "Pobierz",
   "Refresh": "Odśwież",
   "Refreshed": "Odświeżono",
   "Description": "Opis",
@@ -204,6 +207,10 @@
   "error": {
     "title": "Wystąpił nieoczekiwany błąd.",
     "description": "Spróbuj odświeżyć stronę. Skontaktuj się z administracją jeśli błąd będzie nadal występować.",
+    "noData": {
+      "title": "Brak danych",
+      "description": "Serwer nie zwrócił żadnych danych."
+    },
     "joinGameOrGroup": {
       "title": "Wystąpił problem podczas próby dołączenia",
       "description": "Sprawdź czy link nie został błędnie skopiowany i czy jest nadal ważny"
