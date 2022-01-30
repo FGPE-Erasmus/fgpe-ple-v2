@@ -356,6 +356,8 @@ const ExportGameCsvModal = ({
           attemptsCount++;
         }
 
+        console.log("attempts", attemptsCount);
+
         const convertedValidations = (
           res1.data as getPlayerFullValidationsQuery
         ).validations.map((validation) => {
@@ -369,6 +371,11 @@ const ExportGameCsvModal = ({
           );
           return { ...converted, user: userId };
         });
+
+        console.log("SETTINGS VALIDATIONS", [
+          ...playersValidations,
+          ...convertedValidations,
+        ]);
 
         setPlayersValidations([...playersValidations, ...convertedValidations]);
       } else {
