@@ -93,10 +93,10 @@ const Statement = ({
                         .localeCompare(b.split('">')[1].split("</")[0])
                     )
                     .forEach((lang, i) => {
-                      console.log(
-                        i18n.language.toLowerCase(),
-                        lang.split('">')[1].split("</")[0].toLowerCase()
-                      );
+                      // console.log(
+                      //   i18n.language.toLowerCase(),
+                      //   lang.split('">')[1].split("</")[0].toLowerCase()
+                      // );
                       if (userDefaultStatementsLanguage) {
                         // If user has a default statement language (the user clicked at least once on a language tab)
                         if (

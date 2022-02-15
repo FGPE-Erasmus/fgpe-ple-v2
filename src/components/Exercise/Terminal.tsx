@@ -32,6 +32,7 @@ const Terminal = ({
               </span>
             );
           })}
+
         {submissionResult === Result.COMPILATION_ERROR
           ? submissionFeedback
           : ReactHtmlParser(

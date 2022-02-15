@@ -27,6 +27,7 @@ import { BiLink, BiUnlink } from "react-icons/bi";
 import { BsLayoutSidebarInset } from "react-icons/bs";
 import { IoExitOutline } from "react-icons/io5";
 import { FindChallenge_programmingLanguages } from "../../generated/FindChallenge";
+import { Result } from "../../generated/globalTypes";
 import { setDefaultProgrammingLanguage } from "./helpers/defaultProgrammingLanguage";
 import { getColorSchemeForSubmissionResult } from "./helpers/EditorMenu";
 import isFullMenuAvailable from "./helpers/isFullMenuAvailable";
@@ -56,6 +57,7 @@ const EditorMenu = ({
   reload,
   editorKind,
   gameId,
+  setStopExecution,
 }: {
   setSideMenuOpen: () => void;
   editorKind: string | undefined | null;
@@ -80,6 +82,7 @@ const EditorMenu = ({
   reload: () => void;
   isRestoreAvailable: boolean;
   gameId: string;
+  setStopExecution: (v: boolean) => void;
 }) => {
   const { t } = useTranslation();
 
@@ -175,17 +178,23 @@ const EditorMenu = ({
                     <Button
                       onClick={() => {
                         if (isWaitingForValidationResult) {
+                          console.log("stopping...");
+                          setStopExecution(true);
                           setIsWaitingForValidationResult(false);
                         } else {
+                          setStopExecution(false);
                           validateSubmission();
                         }
                       }}
                       w="95%"
                       isLoading={isWaitingForValidationResult}
-                      // loadingText={"Stop"}
+                      loadingText={
+                        activeLanguage.name === "Python 3" ? "Stop" : undefined
+                      }
                       disabled={
-                        isWaitingForEvaluationResult ||
-                        isWaitingForValidationResult
+                        (isWaitingForEvaluationResult ||
+                          isWaitingForValidationResult) &&
+                        activeLanguage.name !== "Python 3"
                       }
                       fontSize={{ base: 12, lg: 14 }}
                       whiteSpace="normal"

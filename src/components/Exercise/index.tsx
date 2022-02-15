@@ -28,6 +28,7 @@ import { decryptWithAES, encryptWithAES } from "../../utilities/Encryption";
 import EditorMenu from "./EditorMenu";
 import { getDefaultProgrammingLangOrFirstFromArray } from "./helpers/defaultProgrammingLanguage";
 import EditorSwitcher from "./helpers/EditorSwitcher";
+import runPython from "./helpers/python";
 import Hints from "./Hints";
 import { SettingsContext } from "./SettingsContext";
 import Statement, { getStatementLength } from "./Statement";
@@ -281,6 +282,10 @@ const Exercise = ({
   const isValidationFetchingRef = useRef<boolean>(isWaitingForValidationResult);
   const codeRef = useRef<string>(code);
   const [isRestoreAvailable, setRestoreAvailable] = useState(false);
+
+  //** Added to use with local code interpreters like Skulpt (Python) */
+  const stopExecution = useRef(false);
+  const additionalOutputs = useRef<string[]>([]);
 
   const reloadCode = () => {
     setCode("");
@@ -763,10 +768,14 @@ const Exercise = ({
     });
   };
 
-  const clearPlayground = () => {
+  const clearPlayground = (isLocal?: boolean) => {
     setSubmissionResult(null);
     setSubmissionFeedback("Ready");
     setValidationOutputs(null);
+    if (isLocal) {
+      additionalOutputs.current = [];
+      stopExecution.current = false;
+    }
   };
 
   return (
@@ -790,6 +799,10 @@ const Exercise = ({
         </Box>
 
         <EditorMenu
+          setStopExecution={(v: boolean) => {
+            stopExecution.current = v;
+            console.log("stopped?", stopExecution.current);
+          }}
           gameId={gameId}
           setSideMenuOpen={setSideMenuOpen}
           editorKind={exercise?.activity?.editorKind}
@@ -798,7 +811,110 @@ const Exercise = ({
           activeLanguage={activeLanguage}
           setActiveLanguage={setActiveLanguage}
           evaluateSubmission={evaluateSubmission}
-          validateSubmission={validateSubmission}
+          validateSubmission={
+            activeLanguage.name?.substring(0, 6).toLowerCase() === "python"
+              ? () => {
+                  clearPlayground(true);
+
+                  // setSubmissionFeedback(validationData?.feedback || "");
+                  // setWaitingForValidationResult(false);
+
+                  // if (validationData.result === Result.ACCEPT) {
+                  //   setSubmissionResult(null);
+                  // } else {
+                  //   setSubmissionResult(validationData.result);
+                  // }
+
+                  // saveSubmissionDataInLocalStorage(
+                  //   validationData?.feedback || "",
+                  //   validationData.result,
+                  //   true,
+                  //   validationData?.outputs
+                  // );
+                  let errors: { content: string; index: number }[] = [];
+                  testValues.forEach((testValue, i) => {
+                    runPython({
+                      getInput: () => {
+                        return testValue;
+                      },
+                      code,
+                      setLoading: setWaitingForValidationResult,
+                      setOutput: (v: string) => {
+                        additionalOutputs.current = [
+                          ...additionalOutputs.current,
+                          v,
+                        ];
+                      },
+                      setResult: (v: Result) => {
+                        setSubmissionResult(v);
+                      },
+                      stopExecution,
+                      onFinish: () => {
+                        if (i === testValues.length - 1) {
+                          if (errors.length > 0) {
+                            const errorsConnected = errors
+                              .map((err) => {
+                                return `<br />Test ${err.index + 1} failed: ${
+                                  err.content
+                                }`;
+                              })
+                              .join("<br />");
+                            setSubmissionFeedback(errorsConnected);
+
+                            saveSubmissionDataInLocalStorage(
+                              errorsConnected,
+                              Result.RUNTIME_ERROR,
+                              true,
+                              null
+                            );
+                          }
+                        }
+                      },
+                      onSuccess: () => {
+                        setValidationOutputs(additionalOutputs.current);
+                        setSubmissionFeedback("");
+
+                        saveSubmissionDataInLocalStorage(
+                          "",
+                          submissionResult,
+                          true,
+                          additionalOutputs.current
+                        );
+                      },
+                      onError: (err: string) => {
+                        errors.push({
+                          content: err,
+                          index: i,
+                        });
+
+                        setSubmissionFeedback(err);
+
+                        saveSubmissionDataInLocalStorage(
+                          err,
+                          Result.RUNTIME_ERROR,
+                          true,
+                          null
+                        );
+
+                        // if (testValue !== "") {
+                        //   if (i !== testValues.length - 1) {
+                        //     additionalOutputs.current = [
+                        //       ...additionalOutputs.current,
+                        //       `\n Test ${i + 1} failed: \n ${err}\n`,
+                        //     ];
+                        //   } else {
+                        //     additionalOutputs.current = [
+                        //       ...additionalOutputs.current,
+                        //       `\n Test ${i + 1} failed: \n`,
+                        //     ];
+                        //   }
+                        // }
+                      },
+                    });
+                  });
+                }
+              : validateSubmission
+          }
           isValidationFetching={isWaitingForValidationResult}
           isEvaluationFetching={isWaitingForEvaluationResult}
           // setFetchingCount={setFetchingCount}
