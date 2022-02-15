@@ -813,7 +813,7 @@ const Exercise = ({
           evaluateSubmission={evaluateSubmission}
           validateSubmission={
             activeLanguage.name?.substring(0, 6).toLowerCase() === "python"
-              ? () => {
+              ? async () => {
                   clearPlayground(true);
 
                   // setSubmissionFeedback(validationData?.feedback || "");
@@ -832,86 +832,152 @@ const Exercise = ({
                   //   validationData?.outputs
                   // );
                   let errors: { content: string; index: number }[] = [];
-                  testValues.forEach((testValue, i) => {
-                    runPython({
-                      getInput: () => {
-                        return testValue;
-                      },
-                      code,
-                      setLoading: setWaitingForValidationResult,
-                      setOutput: (v: string) => {
-                        additionalOutputs.current = [
-                          ...additionalOutputs.current,
-                          v,
-                        ];
-                      },
-                      setResult: (v: Result) => {
-                        setSubmissionResult(v);
-                      },
-                      stopExecution,
-                      onFinish: () => {
-                        if (i === testValues.length - 1) {
-                          if (errors.length > 0) {
-                            const errorsConnected = errors
-                              .map((err) => {
-                                return `<br />Test ${err.index + 1} failed: ${
-                                  err.content
-                                }`;
-                              })
-                              .join("<br />");
-                            setSubmissionFeedback(errorsConnected);
 
-                            saveSubmissionDataInLocalStorage(
-                              errorsConnected,
-                              Result.RUNTIME_ERROR,
-                              true,
-                              null
-                            );
-                          }
-                        }
-                      },
-                      onSuccess: () => {
-                        setValidationOutputs(additionalOutputs.current);
-                        setSubmissionFeedback("");
+                  for (let i = 0; i < testValues.length; i++) {
+                    await new Promise((resolve, reject) => {
+                      const testValue = testValues[i];
 
-                        saveSubmissionDataInLocalStorage(
-                          "",
-                          submissionResult,
-                          true,
-                          additionalOutputs.current
-                        );
-                      },
-                      onError: (err: string) => {
-                        errors.push({
-                          content: err,
-                          index: i,
-                        });
+                      runPython({
+                        moreThanOneExecution: testValues.length > 1,
+                        getInput: () => {
+                          return testValue;
+                        },
+                        code,
+                        setLoading: setWaitingForValidationResult,
+                        setOutput: (v: string) => {
+                          console.log("output", v);
+                          additionalOutputs.current = [
+                            ...additionalOutputs.current,
+                            v,
+                          ];
+                        },
+                        setResult: (v: Result) => {
+                          setSubmissionResult(v);
+                        },
+                        stopExecution,
+                        onFinish: (error) => {},
+                        onSuccess: () => {
+                          setValidationOutputs(additionalOutputs.current);
+                          setSubmissionFeedback("");
 
-                        setSubmissionFeedback(err);
+                          saveSubmissionDataInLocalStorage(
+                            "",
+                            submissionResult,
+                            true,
+                            additionalOutputs.current
+                          );
 
-                        saveSubmissionDataInLocalStorage(
-                          err,
-                          Result.RUNTIME_ERROR,
-                          true,
-                          null
-                        );
+                          resolve(true);
+                        },
+                        onError: (err: string) => {
+                          errors.push({
+                            content: err,
+                            index: i,
+                          });
 
-                        // if (testValue !== "") {
-                        //   if (i !== testValues.length - 1) {
-                        //     additionalOutputs.current = [
-                        //       ...additionalOutputs.current,
-                        //       `\n Test ${i + 1} failed: \n ${err}\n`,
-                        //     ];
-                        //   } else {
-                        //     additionalOutputs.current = [
-                        //       ...additionalOutputs.current,
-                        //       `\n Test ${i + 1} failed: \n`,
-                        //     ];
-                        //   }
-                        // }
-                      },
+                          setSubmissionFeedback(err);
+
+                          saveSubmissionDataInLocalStorage(
+                            err,
+                            Result.RUNTIME_ERROR,
+                            true,
+                            null
+                          );
+
+                          resolve(true);
+                        },
+                      });
                     });
-                  });
+                  }
+
+                  // testValues.forEach((testValue, i) => {
+                  //   runPython({
+                  //     moreThanOneExecution: testValues.length > 1,
+                  //     getInput: () => {
+                  //       return testValue;
+                  //     },
+                  //     code,
+                  //     setLoading: setWaitingForValidationResult,
+                  //     setOutput: (v: string) => {
+                  //       console.log("output", v);
+                  //       additionalOutputs.current = [
+                  //         ...additionalOutputs.current,
+                  //         v,
+                  //       ];
+                  //     },
+                  //     setResult: (v: Result) => {
+                  //       setSubmissionResult(v);
+                  //     },
+                  //     stopExecution,
+                  //     onFinish: (error) => {
+                  //       // if (i === testValues.length - 1) {
+                  //       //   if (error) {
+                  //       //     errors.push({
+                  //       //       content: error,
+                  //       //       index: i,
+                  //       //     });
+                  //       //   }
+                  //       //   if (errors.length > 0) {
+                  //       //     const errorsConnected = errors
+                  //       //       .map((err) => {
+                  //       //         return `<br />Test ${err.index + 1} failed: ${
+                  //       //           err.content
+                  //       //         }`;
+                  //       //       })
+                  //       //       .join("<br />");
+                  //       //     setSubmissionFeedback(errorsConnected);
+                  //       //     setSubmissionResult(Result.RUNTIME_ERROR);
+                  //       //     saveSubmissionDataInLocalStorage(
+                  //       //       errorsConnected,
+                  //       //       Result.RUNTIME_ERROR,
+                  //       //       true,
+                  //       //       null
+                  //       //     );
+                  //       //   }
+                  //       // }
+                  //     },
+                  //     onSuccess: () => {
+                  //       setValidationOutputs(additionalOutputs.current);
+                  //       setSubmissionFeedback("");
+
+                  //       saveSubmissionDataInLocalStorage(
+                  //         "",
+                  //         submissionResult,
+                  //         true,
+                  //         additionalOutputs.current
+                  //       );
+                  //     },
+                  //     onError: (err: string) => {
+                  //       errors.push({
+                  //         content: err,
+                  //         index: i,
+                  //       });
+
+                  //       setSubmissionFeedback(err);
+
+                  //       saveSubmissionDataInLocalStorage(
+                  //         err,
+                  //         Result.RUNTIME_ERROR,
+                  //         true,
+                  //         null
+                  //       );
+
+                  //       // if (testValue !== "") {
+                  //       //   if (i !== testValues.length - 1) {
+                  //       //     additionalOutputs.current = [
+                  //       //       ...additionalOutputs.current,
+                  //       //       `\n Test ${i + 1} failed: \n ${err}\n`,
+                  //       //     ];
+                  //       //   } else {
+                  //       //     additionalOutputs.current = [
+                  //       //       ...additionalOutputs.current,
+                  //       //       `\n Test ${i + 1} failed: \n`,
+                  //       //     ];
+                  //       //   }
+                  //       // }
+                  //     },
+                  //   });
+                  // });
                 }
               : validateSubmission
           }
@@ -989,6 +1055,7 @@ const Exercise = ({
               minHeight="50vh"
             >
               <Terminal
+                activeLanguage={activeLanguage}
                 submissionFeedback={submissionFeedback}
                 submissionResult={submissionResult}
                 validationOutputs={validationOutputs}

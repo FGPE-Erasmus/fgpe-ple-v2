@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import React, { useContext } from "react";
 import ReactHtmlParser from "react-html-parser";
 import { useTranslation } from "react-i18next";
+import { FindChallenge_programmingLanguages } from "../../generated/FindChallenge";
 import { Result } from "../../generated/globalTypes";
 import { SettingsContext } from "./SettingsContext";
 
@@ -10,11 +11,13 @@ const Terminal = ({
   submissionFeedback,
   validationOutputs,
   loading,
+  activeLanguage,
 }: {
   submissionResult: Result | null;
   submissionFeedback: string;
   validationOutputs: null | any;
   loading: boolean;
+  activeLanguage: FindChallenge_programmingLanguages;
 }) => {
   const { t } = useTranslation();
   const { terminalTheme, terminalFontSize } = useContext(SettingsContext);
@@ -35,7 +38,8 @@ const Terminal = ({
 
         {submissionResult === Result.COMPILATION_ERROR
           ? submissionFeedback
-          : ReactHtmlParser(
+          : activeLanguage.name !== "Python 3"
+          ? ReactHtmlParser(
               submissionFeedback
                 ? loading
                   ? t("playground.terminal.waitingForResult")
@@ -43,7 +47,12 @@ const Terminal = ({
                   ? t("playground.terminal.feedback.Ready")
                   : submissionFeedback
                 : ""
-            )}
+            )
+          : loading
+          ? t("playground.terminal.waitingForResult")
+          : submissionFeedback === "Ready"
+          ? t("playground.terminal.feedback.Ready")
+          : submissionFeedback}
       </div>
     </TerminalStyled>
   );

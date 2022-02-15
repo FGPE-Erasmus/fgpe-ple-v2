@@ -22,7 +22,8 @@ interface RunPythonI {
   onSuccess?: Function;
   onError?: (v: string) => void;
   getInput: () => string;
-  onFinish?: Function;
+  onFinish?: (error?: any) => void;
+  moreThanOneExecution?: boolean;
 }
 
 const runPython = ({
@@ -35,6 +36,7 @@ const runPython = ({
   onError,
   getInput,
   onFinish,
+  moreThanOneExecution,
 }: RunPythonI) => {
   console.log("[SKULPT]", code);
   Sk.pre = "output";
@@ -86,7 +88,8 @@ const runPython = ({
       console.log("ERR", JSON.stringify(err));
       setResult(Result.RUNTIME_ERROR);
       setLoading(false);
-      onFinish && onFinish();
+      setOutput(err.toString() + "\n");
+      onFinish && onFinish(err.toString() + "\n");
     }
   );
 };
