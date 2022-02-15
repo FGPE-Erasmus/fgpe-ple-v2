@@ -64,7 +64,7 @@ const runPython = ({
       "*": () => {
         console.log("CHECK", stopExecution.current);
         if (stopExecution.current) {
-          throw "<br />Execution interrupted";
+          throw "\nExecution interrupted";
         }
       },
     }

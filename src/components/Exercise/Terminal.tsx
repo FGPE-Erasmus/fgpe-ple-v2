@@ -36,23 +36,25 @@ const Terminal = ({
             );
           })}
 
-        {submissionResult === Result.COMPILATION_ERROR
-          ? submissionFeedback
-          : activeLanguage.name !== "Python 3"
-          ? ReactHtmlParser(
-              submissionFeedback
-                ? loading
-                  ? t("playground.terminal.waitingForResult")
-                  : submissionFeedback === "Ready"
-                  ? t("playground.terminal.feedback.Ready")
-                  : submissionFeedback
-                : ""
-            )
-          : loading
-          ? t("playground.terminal.waitingForResult")
-          : submissionFeedback === "Ready"
-          ? t("playground.terminal.feedback.Ready")
-          : submissionFeedback}
+        {submissionResult === Result.COMPILATION_ERROR ? (
+          submissionFeedback
+        ) : activeLanguage.name !== "Python 3" ? (
+          ReactHtmlParser(
+            submissionFeedback
+              ? loading
+                ? t("playground.terminal.waitingForResult")
+                : submissionFeedback === "Ready"
+                ? t("playground.terminal.feedback.Ready")
+                : submissionFeedback
+              : ""
+          )
+        ) : loading ? (
+          t("playground.terminal.waitingForResult")
+        ) : submissionFeedback === "Ready" ? (
+          t("playground.terminal.feedback.Ready")
+        ) : (
+          <span style={{ whiteSpace: "pre-line" }}>{submissionFeedback}</span>
+        )}
       </div>
     </TerminalStyled>
   );
