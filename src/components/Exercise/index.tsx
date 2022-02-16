@@ -890,6 +890,24 @@ const Exercise = ({
                     });
                   }
 
+                  if (testValues.length > 1) {
+                    if (errors.length > 1) {
+                      setSubmissionResult(null);
+                      setValidationOutputs(additionalOutputs.current);
+
+                      setSubmissionFeedback("");
+
+                      saveSubmissionDataInLocalStorage(
+                        "",
+                        submissionResult,
+                        true,
+                        additionalOutputs.current
+                      );
+                    }
+                  }
+
+                  console.log("OUTP", additionalOutputs.current);
+
                   // testValues.forEach((testValue, i) => {
                   //   runPython({
                   //     moreThanOneExecution: testValues.length > 1,

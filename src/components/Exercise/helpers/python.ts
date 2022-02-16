@@ -38,7 +38,7 @@ const runPython = ({
   onFinish,
   moreThanOneExecution,
 }: RunPythonI) => {
-  console.log("[SKULPT]", code);
+  //   console.log("[SKULPT]", code);
   Sk.pre = "output";
   Sk.configure({
     output: setOutput,
@@ -83,7 +83,13 @@ const runPython = ({
     function (err: any) {
       //   console.log("errrr", err);
       //   console.log(err.toString());
-      onError && onError(err.toString() + "\n");
+      onError &&
+        onError(
+          '<span style="white-space: pre-line;">' +
+            err.toString() +
+            "\n" +
+            "</span>"
+        );
 
       console.log("ERR", JSON.stringify(err));
       setResult(Result.RUNTIME_ERROR);
