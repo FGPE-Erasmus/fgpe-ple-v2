@@ -221,6 +221,15 @@ const getTerminalFontSize = () => {
   return "14";
 };
 
+const isSkulptEnabledLocalStorage = () => {
+  const lsSkulptSetting = localStorage.getItem("skulpt");
+  if (lsSkulptSetting) {
+    return JSON.parse(lsSkulptSetting);
+  }
+
+  return true;
+};
+
 const Exercise = ({
   gameId,
   exercise,
@@ -254,6 +263,10 @@ const Exercise = ({
   const [code, setCode] = useState("");
 
   const { keycloak } = useKeycloak();
+
+  const [isSkulptEnabled, setSkulptEnabled] = useState(
+    isSkulptEnabledLocalStorage()
+  );
 
   const [submissionFeedback, setSubmissionFeedback] = useState("Ready");
   const [submissionResult, setSubmissionResult] = useState<Result | null>(null);
@@ -787,6 +800,8 @@ const Exercise = ({
         setTerminalTheme,
         terminalFontSize: getTerminalFontSize(),
         setTerminalFontSize,
+        isSkulptEnabled,
+        setSkulptEnabled,
       }}
     >
       {/* {!subValidationLoading && (
@@ -812,7 +827,8 @@ const Exercise = ({
           setActiveLanguage={setActiveLanguage}
           evaluateSubmission={evaluateSubmission}
           validateSubmission={
-            activeLanguage.name?.substring(0, 6).toLowerCase() === "python"
+            activeLanguage.name?.substring(0, 6).toLowerCase() === "python" &&
+            isSkulptEnabled
               ? async () => {
                   clearPlayground(true);
 

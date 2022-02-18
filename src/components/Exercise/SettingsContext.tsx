@@ -7,4 +7,6 @@ export const SettingsContext = React.createContext({
   terminalFontSize: "14",
   setTerminalFontSize: (value: string) => {},
   setTerminalTheme: (value: string) => {},
+  isSkulptEnabled: true,
+  setSkulptEnabled: (v: boolean) => {},
 });

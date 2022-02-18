@@ -50,7 +50,19 @@ const Settings = ({
     terminalTheme,
     setTerminalFontSize,
     terminalFontSize,
+    isSkulptEnabled,
+    setSkulptEnabled,
   } = useContext(SettingsContext);
+
+  const toggleSkulpt = () => {
+    if (isSkulptEnabled) {
+      localStorage.setItem("skulpt", "false");
+      setSkulptEnabled(false);
+    } else {
+      localStorage.setItem("skulpt", "true");
+      setSkulptEnabled(true);
+    }
+  };
 
   const changeEditorTheme = (newTheme: string) => {
     setEditorTheme(newTheme);
@@ -205,6 +217,17 @@ const Settings = ({
                   </Table>
                 </Box>
               </Box>
+
+              <FormControl display="flex" alignItems="center" w="100%">
+                <FormLabel htmlFor="dark-mode" mb="0">
+                  Skulpt (Python)
+                </FormLabel>
+                <Switch
+                  id="skulpt-on-off"
+                  isChecked={isSkulptEnabled}
+                  onChange={toggleSkulpt}
+                />
+              </FormControl>
             </Stack>
           </DrawerBody>
 
