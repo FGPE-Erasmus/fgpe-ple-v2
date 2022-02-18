@@ -21,7 +21,7 @@ interface RunPythonI {
   stopExecution: { current: boolean };
   onSuccess?: Function;
   onError?: (v: string) => void;
-  getInput: () => string;
+  getInput: () => string | undefined;
   onFinish?: (error?: any) => void;
   moreThanOneExecution?: boolean;
 }

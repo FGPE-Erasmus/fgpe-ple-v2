@@ -836,11 +836,15 @@ const Exercise = ({
                   for (let i = 0; i < testValues.length; i++) {
                     await new Promise((resolve, reject) => {
                       const testValue = testValues[i];
-
+                      const testValueSplitted = testValue.split("\n");
+                      let inputFunN = 0;
                       runPython({
                         moreThanOneExecution: testValues.length > 1,
-                        getInput: () => {
-                          return testValue;
+                        getInput: (v?: any) => {
+                          const nextInput = testValueSplitted[inputFunN];
+                          inputFunN++;
+                          console.log("INP", nextInput.length);
+                          return nextInput.length === 0 ? undefined : nextInput;
                         },
                         code,
                         setLoading: setWaitingForValidationResult,
