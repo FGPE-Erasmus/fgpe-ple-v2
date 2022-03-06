@@ -31,34 +31,7 @@ import {
 } from "react-table";
 import ScrollbarWrapper from "../ScrollbarWrapper";
 import CheckboxForTable from "./CheckboxForTable";
-import { CSVLink } from "react-csv";
-
-function export2csv() {
-  let data = "";
-  const tableData = [];
-  const rows = document.querySelectorAll("table tr");
-  for (const row of rows as any) {
-    const rowData = [];
-    for (const [index, column] of row.querySelectorAll("th, td").entries()) {
-      // To retain the commas in the "Description" column, we can enclose those fields in quotation marks.
-      if ((index + 1) % 3 === 0) {
-        rowData.push('"' + column.innerText + '"');
-      } else {
-        rowData.push(column.innerText);
-      }
-    }
-    tableData.push(rowData.join(","));
-  }
-  data += tableData.join("\n");
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(
-    new Blob(["\ufeff", data], { type: "text/csv" })
-  );
-  a.setAttribute("download", "data.csv");
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
+import { CSVLink, CSVDownload } from "react-csv";
 
 type TableComponentProps = {
   columns: any;
@@ -72,6 +45,9 @@ type TableComponentProps = {
   onRowClick?: (row: any) => void;
   contextMenu?: React.ReactNode;
   tableHeader?: React.ReactNode;
+
+  //** Function invoked before CSV export */
+  refreshData?: () => Promise<any>;
 } & (
   | {
       selectableRows?: false | undefined;
@@ -101,8 +77,10 @@ const TableComponent: React.FC<TableComponentProps> = ({
   loading,
   contextMenu,
   tableHeader,
+  refreshData,
 }) => {
-  const [csvData, setCsvData] = useState<any>();
+  const [isCsvLoading, setCsvLoading] = useState(false);
+  const [isCsvReady, setCsvReady] = useState(false);
   const { colorMode } = useColorMode();
   const { i18n } = useTranslation();
   const columns = useMemo(
@@ -162,8 +140,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
 
   const prepareForCsv = () => {
     const keys = tableInstance.allColumns.map((column) => column.Header);
-
-    const prepared = tableInstance.rows.map((row) => {
+    const prepared = tableInstance.filteredRows.map((row) => {
       let row1 = { ...row };
 
       prepareRow(row1);
@@ -201,7 +178,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
         return key;
       })
     );
-
+    console.log("PREPARED", prepared);
     return prepared;
   };
 
@@ -218,6 +195,12 @@ const TableComponent: React.FC<TableComponentProps> = ({
     }
   }, [selectedFlatRows.length]);
 
+  useEffect(() => {
+    if (isCsvReady) {
+      setCsvReady(false);
+    }
+  }, [isCsvReady]);
+
   return (
     <ScrollbarWrapper>
       <Box overflowX="auto" position="relative">
@@ -232,11 +215,33 @@ const TableComponent: React.FC<TableComponentProps> = ({
 
             <Flex flexDirection={"row"}>
               {contextMenu}
-              <CSVLink data={prepareForCsv()}>
-                <Button size="sm" float="right" marginLeft={2}>
-                  CSV
-                </Button>
-              </CSVLink>
+
+              {isCsvReady && <CSVDownload data={prepareForCsv()} />}
+
+              {/* <CSVLink data={prepareForCsv()}> */}
+              <Button
+                size="sm"
+                float="right"
+                marginLeft={2}
+                isLoading={isCsvLoading}
+                onClick={async () => {
+                  setCsvLoading(true);
+                  if (refreshData) {
+                    try {
+                      await refreshData();
+                      setCsvReady(true);
+                    } catch (err) {
+                      alert("err");
+                    }
+                  } else {
+                    setCsvReady(true);
+                  }
+                  setCsvLoading(false);
+                }}
+              >
+                CSV
+              </Button>
+              {/* </CSVLink> */}
             </Flex>
           </Flex>
         )}

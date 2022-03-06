@@ -107,6 +107,7 @@ const ActivitiesStats = ({ gameId }: { gameId: string }) => {
         <Box minH={200}>
           {statsData && !statsLoading && !statsError && (
             <TableComponent
+              refreshData={refetchStats}
               contextMenu={
                 <RefreshCacheMenu
                   loading={statsLoading}

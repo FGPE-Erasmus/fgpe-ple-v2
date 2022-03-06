@@ -75,6 +75,7 @@ const PlayerAttemptsTable = ({
         <Box minH={200}>
           {playerData && (
             <TableComponent
+              refreshData={refetchPlayerData}
               contextMenu={
                 <RefreshCacheMenu
                   loading={playerLoading}

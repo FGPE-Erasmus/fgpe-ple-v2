@@ -141,6 +141,7 @@ const UserDetails = () => {
               {t("All game profiles")}
             </Heading>
           }
+          refreshData={refetchGameProfiles}
           contextMenu={
             <RefreshCacheMenu
               loading={gameProfilesLoading}

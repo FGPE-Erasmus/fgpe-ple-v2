@@ -163,6 +163,7 @@ const Students = ({
               !studentsDetailsLoading &&
               !studentsDetailsError && (
                 <TableComponent
+                  refreshData={refetchStudentsDetails}
                   contextMenu={
                     <>
                       <ContextMenu

@@ -221,6 +221,7 @@ const InstructorGame = () => {
             >
               <Button variant="outline">{t("Back")}</Button>
             </Link>
+
             <RefreshCacheMenu
               loading={gameLoading}
               refetch={async () => {
@@ -232,7 +233,6 @@ const InstructorGame = () => {
             <Button onClick={onDetailsModalOpen}>
               {t("Change availability")}
             </Button>
-
             <Link
               to={{
                 pathname: `/teacher/game/${gameId}/add-players`,
@@ -240,7 +240,6 @@ const InstructorGame = () => {
             >
               <Button>{t("Add or remove players")}</Button>
             </Link>
-
             <Button onClick={onExportCsvModalOpen}>CSV</Button>
           </HStack>
         </Flex>

@@ -89,6 +89,7 @@ const ValidationsTable = ({
               isValidationsTable
               playerData={playerData}
               gameData={gameData}
+              refreshData={refetchPlayerData}
             />
           )}
         </Box>

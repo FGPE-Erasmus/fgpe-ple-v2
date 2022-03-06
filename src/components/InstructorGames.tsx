@@ -128,6 +128,7 @@ const InstructorGames = () => {
             {teacherGamesData && (
               <Box>
                 <TableComponent
+                  refreshData={refetchTeacherGames}
                   contextMenu={
                     <RefreshCacheMenu
                       loading={teacherGamesLoading}

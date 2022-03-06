@@ -84,6 +84,7 @@ const SubmissionsTable = ({
               onRowClick={onSubmissionRowClick}
               playerData={playerData}
               gameData={gameData}
+              refreshData={refetchPlayerData}
             />
           )}
         </Box>
