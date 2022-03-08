@@ -9,11 +9,6 @@ import { EvaluationEngine, Result } from "./globalTypes";
 // GraphQL query operation: getPlayerFullValidationsQuery
 // ====================================================
 
-export interface getPlayerFullValidationsQuery_validations_game {
-  __typename: "Game";
-  id: string;
-}
-
 export interface getPlayerFullValidationsQuery_validations_player {
   __typename: "Player";
   id: string;
@@ -22,7 +17,6 @@ export interface getPlayerFullValidationsQuery_validations_player {
 export interface getPlayerFullValidationsQuery_validations {
   __typename: "Validation";
   id: string;
-  game: getPlayerFullValidationsQuery_validations_game;
   player: getPlayerFullValidationsQuery_validations_player;
   exerciseId: string;
   evaluationEngine: EvaluationEngine | null;

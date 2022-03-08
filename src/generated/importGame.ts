@@ -29,7 +29,6 @@ export interface importGame {
 export interface importGameVariables {
   file: any;
   gameName: string;
-  courseId: string;
   evaluationEngine: EvaluationEngine;
   gameDescription?: string | null;
   startDate?: any | null;

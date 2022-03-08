@@ -35,7 +35,6 @@ const IMPORT_GAME = gql`
   mutation importGame(
     $file: Upload!
     $gameName: String!
-    $courseId: String!
     $evaluationEngine: EvaluationEngine!
     $gameDescription: String
     $startDate: Date
@@ -49,7 +48,6 @@ const IMPORT_GAME = gql`
         startDate: $startDate
         endDate: $endDate
         evaluationEngine: $evaluationEngine
-        courseId: $courseId
         private: $private
       }
       file: $file
@@ -141,7 +139,7 @@ const AddGameModal = ({
   const [gameName, setGameName] = useState("");
   const [gameDescription, setGameDescription] = useState("");
   const [evaluationEngine, setEvaluationEngine] = useState("");
-  const [courseId, setCourseId] = useState("");
+  // const [courseId, setCourseId] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
 
   const validateAndSetStartDate = (value: string) => {
@@ -215,7 +213,7 @@ const AddGameModal = ({
               endDateError={endDateError}
             />
 
-            <FormControl isRequired>
+            <FormControl isRequired marginBottom={2}>
               <FormLabel id="engine">{t("addGame.evaluationEngine")}</FormLabel>
               <Select
                 placeholder={t("Select option")}
@@ -227,7 +225,7 @@ const AddGameModal = ({
                 <option value="MOOSHAK">MOOSHAK</option>
               </Select>
             </FormControl>
-            <FormControl id="course" isRequired marginBottom={2}>
+            {/* <FormControl id="course" isRequired marginBottom={2}>
               <FormLabel>{t("addGame.courseId")}</FormLabel>
               <Input
                 type="text"
@@ -235,7 +233,7 @@ const AddGameModal = ({
                 value={courseId}
                 onChange={(e) => setCourseId(e.target.value)}
               />
-            </FormControl>
+            </FormControl> */}
 
             <DragAndDropField
               bgColor={colorMode === "dark" ? "blue.700" : "blue.100"}
@@ -301,7 +299,6 @@ const AddGameModal = ({
                 variables: {
                   file: acceptedFiles[0],
                   gameName: gameName,
-                  courseId: courseId,
                   evaluationEngine: evaluationEngine,
                   gameDescription: gameDescription || undefined,
                   startDate: startDate || undefined,
@@ -319,7 +316,6 @@ const AddGameModal = ({
                 acceptedFiles.length > 0 &&
                 gameName &&
                 evaluationEngine &&
-                courseId &&
                 (startDate ? !startDateError : true) &&
                 (endDate ? !endDateError : true) &&
                 (startDate || endDate ? isEndLaterThanStart : true)
