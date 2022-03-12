@@ -6,7 +6,7 @@ import {
   useQuery,
   useSubscription,
 } from "@apollo/client";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Skeleton } from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
 import React, { useEffect, useRef, useState } from "react";
 import { evaluationSubscription } from "../../generated/evaluationSubscription";
@@ -15,6 +15,7 @@ import {
   FindChallenge_myChallengeStatus_refs,
   FindChallenge_programmingLanguages,
 } from "../../generated/FindChallenge";
+import { getActivityById_activity } from "../../generated/getActivityById";
 import { getSubmissionByIdQuery } from "../../generated/getSubmissionByIdQuery";
 import { getValidationByIdQuery } from "../../generated/getValidationByIdQuery";
 import { Result } from "../../generated/globalTypes";
@@ -31,17 +32,15 @@ import EditorSwitcher from "./helpers/EditorSwitcher";
 import runPython from "./helpers/python";
 import Hints from "./Hints";
 import { SettingsContext } from "./SettingsContext";
-import Statement, { getStatementLength } from "./Statement";
+import Statement, { getStatementHeight, getStatementLength } from "./Statement";
 import Terminal from "./Terminal";
 
-const isEditorKindSpotBug = (
-  exercise?: FindChallenge_myChallengeStatus_refs | null
-) => {
-  if (!exercise) {
+const isEditorKindSpotBug = (activity?: getActivityById_activity | null) => {
+  if (!activity) {
     return false;
   }
 
-  if (exercise?.activity?.editorKind === "SPOT_BUG") {
+  if (activity.editorKind === "SPOT_BUG") {
     return true;
   }
 
@@ -232,7 +231,7 @@ const isSkulptEnabledLocalStorage = () => {
 
 const Exercise = ({
   gameId,
-  exercise,
+  activity,
   programmingLanguages,
   challengeRefetch,
   solved,
@@ -240,10 +239,12 @@ const Exercise = ({
   challengeId,
   hints,
   setSideMenuOpen,
+  isLoading,
 }: {
+  isLoading: boolean;
   setSideMenuOpen: () => void;
   gameId: string;
-  exercise: FindChallenge_myChallengeStatus_refs | null;
+  activity: getActivityById_activity | null;
   programmingLanguages: FindChallenge_programmingLanguages[];
   challengeRefetch: (
     variables?: Partial<Record<string, any>> | undefined
@@ -288,7 +289,7 @@ const Exercise = ({
 
   const [testValues, setTestValues] = useState<string[]>([""]);
 
-  const exerciseRef = useRef<FindChallenge_myChallengeStatus_refs | null>(null);
+  const activityRef = useRef<getActivityById_activity | null>(null);
   const activeLanguageRef =
     useRef<FindChallenge_programmingLanguages>(activeLanguage);
   const isEvaluationFetchingRef = useRef<boolean>(isWaitingForEvaluationResult);
@@ -307,10 +308,10 @@ const Exercise = ({
   };
 
   const getCodeSkeleton = (dontSetCode?: boolean, getArray?: boolean) => {
-    if (exercise) {
-      if (exercise?.activity?.codeSkeletons) {
-        // console.log("CODE SKELETONS", exercise?.activity?.codeSkeletons);
-        const codeSkeletons = exercise?.activity?.codeSkeletons;
+    if (activity) {
+      if (activity?.codeSkeletons) {
+        // console.log("CODE SKELETONS", activity?.activity?.codeSkeletons);
+        const codeSkeletons = activity?.codeSkeletons;
         let allCodeSkeletonsForActiveLang: string[] = [];
         for (let i = 0; i < codeSkeletons.length; i++) {
           if (codeSkeletons[i].extension === activeLanguage.extension) {
@@ -335,9 +336,9 @@ const Exercise = ({
   };
 
   const saveCodeToLocalStorage = (codeToSave: string) => {
-    if (exercise && keycloak.profile?.email) {
+    if (activity && keycloak.profile?.email) {
       const userDataLocalStorage = localStorage.getItem(
-        `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise?.activity?.id}`
+        `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${activity?.id}`
       );
       if (userDataLocalStorage) {
         const userData = JSON.parse(userDataLocalStorage);
@@ -351,7 +352,7 @@ const Exercise = ({
           language: activeLanguage.name,
         };
         localStorage.setItem(
-          `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise?.activity?.id}`,
+          `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${activity?.id}`,
           JSON.stringify(userDataWithNewCode)
         );
       } else {
@@ -415,7 +416,7 @@ const Exercise = ({
   useEffect(() => {
     isEvaluationFetchingRef.current = isWaitingForEvaluationResult;
     isValidationFetchingRef.current = isWaitingForValidationResult;
-    exerciseRef.current = exercise;
+    activityRef.current = activity;
     activeLanguageRef.current = activeLanguage;
     codeRef.current = code;
   });
@@ -436,8 +437,8 @@ const Exercise = ({
     loading: lastValidationLoading,
     refetch: refetchLastValidation,
   } = useQuery<latestValidationQuery>(LATEST_VALIDATION, {
-    variables: { gameId, exerciseId: exercise?.activity?.id },
-    skip: exercise ? false : true,
+    variables: { gameId, exerciseId: activity?.id },
+    skip: activity ? false : true,
     fetchPolicy: "no-cache",
   });
 
@@ -510,15 +511,15 @@ const Exercise = ({
     setWaitingForEvaluationResult(false);
     setWaitingForValidationResult(false);
 
-    if (exercise?.activity?.id) {
+    if (activity?.id) {
       const lastSubmissionFeedbackUnparsed = localStorage.getItem(
-        `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise?.activity?.id}`
+        `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${activity?.id}`
       );
       getLastStateFromLocalStorage(lastSubmissionFeedbackUnparsed);
     } else {
       clearPlayground();
     }
-  }, [exercise]);
+  }, [activity]);
 
   useEffect(() => {
     if (submissionResult === Result.ACCEPT) {
@@ -534,10 +535,10 @@ const Exercise = ({
     validationOutputs?: any,
     codeToSave?: string
   ) => {
-    if (exercise?.activity?.id) {
+    if (activity?.id) {
       if (keycloak.profile?.email) {
         localStorage.setItem(
-          `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${exercise?.activity?.id}`,
+          `FGPE_${keycloak.profile?.username}_game_${gameId}_chall_${activity?.id}`,
           JSON.stringify({
             code: encryptWithAES(
               typeof codeToSave !== "undefined" ? codeToSave : code,
@@ -741,7 +742,7 @@ const Exercise = ({
     if (isEvaluationFetchingRef.current) {
       return;
     }
-    if (!exerciseRef.current) {
+    if (!activityRef.current) {
       return;
     } else console.log("[EVALUATE SUBMISSION]");
 
@@ -751,7 +752,7 @@ const Exercise = ({
       variables: {
         file,
         gameId,
-        exerciseId: exerciseRef.current?.activity?.id,
+        exerciseId: activityRef.current?.id,
       },
     });
   };
@@ -762,7 +763,7 @@ const Exercise = ({
     if (isValidationFetchingRef.current) {
       return;
     }
-    if (!exerciseRef.current) {
+    if (!activityRef.current) {
       return;
     } else console.log("[VALIDATE SUBMISSION]");
 
@@ -775,7 +776,7 @@ const Exercise = ({
       variables: {
         file,
         gameId,
-        exerciseId: exerciseRef.current?.activity?.id,
+        exerciseId: activityRef.current?.id,
         inputs: testValues,
       },
     });
@@ -808,10 +809,12 @@ const Exercise = ({
         <span>{subValidationData?.validationProcessedStudent.result}</span>
       )} */}
       <Box width={"100%"} height={"100%"} m={0} p={0}>
-        <Box position="relative">
-          <Statement exercise={exercise} gameId={gameId} />
-          <Hints challengeId={challengeId} gameId={gameId} hints={hints} />
-        </Box>
+        <Skeleton isLoaded={!isLoading}>
+          <Box position="relative">
+            <Statement activity={activity} gameId={gameId} />
+            <Hints challengeId={challengeId} gameId={gameId} hints={hints} />
+          </Box>
+        </Skeleton>
 
         <EditorMenu
           setStopExecution={(v: boolean) => {
@@ -820,7 +823,7 @@ const Exercise = ({
           }}
           gameId={gameId}
           setSideMenuOpen={setSideMenuOpen}
-          editorKind={exercise?.activity?.editorKind}
+          editorKind={activity?.editorKind}
           reload={reloadCode}
           submissionResult={submissionResult}
           activeLanguage={activeLanguage}
@@ -927,95 +930,6 @@ const Exercise = ({
                   }
 
                   console.log("OUTP", additionalOutputs.current);
-
-                  // testValues.forEach((testValue, i) => {
-                  //   runPython({
-                  //     moreThanOneExecution: testValues.length > 1,
-                  //     getInput: () => {
-                  //       return testValue;
-                  //     },
-                  //     code,
-                  //     setLoading: setWaitingForValidationResult,
-                  //     setOutput: (v: string) => {
-                  //       console.log("output", v);
-                  //       additionalOutputs.current = [
-                  //         ...additionalOutputs.current,
-                  //         v,
-                  //       ];
-                  //     },
-                  //     setResult: (v: Result) => {
-                  //       setSubmissionResult(v);
-                  //     },
-                  //     stopExecution,
-                  //     onFinish: (error) => {
-                  //       // if (i === testValues.length - 1) {
-                  //       //   if (error) {
-                  //       //     errors.push({
-                  //       //       content: error,
-                  //       //       index: i,
-                  //       //     });
-                  //       //   }
-                  //       //   if (errors.length > 0) {
-                  //       //     const errorsConnected = errors
-                  //       //       .map((err) => {
-                  //       //         return `<br />Test ${err.index + 1} failed: ${
-                  //       //           err.content
-                  //       //         }`;
-                  //       //       })
-                  //       //       .join("<br />");
-                  //       //     setSubmissionFeedback(errorsConnected);
-                  //       //     setSubmissionResult(Result.RUNTIME_ERROR);
-                  //       //     saveSubmissionDataInLocalStorage(
-                  //       //       errorsConnected,
-                  //       //       Result.RUNTIME_ERROR,
-                  //       //       true,
-                  //       //       null
-                  //       //     );
-                  //       //   }
-                  //       // }
-                  //     },
-                  //     onSuccess: () => {
-                  //       setValidationOutputs(additionalOutputs.current);
-                  //       setSubmissionFeedback("");
-
-                  //       saveSubmissionDataInLocalStorage(
-                  //         "",
-                  //         submissionResult,
-                  //         true,
-                  //         additionalOutputs.current
-                  //       );
-                  //     },
-                  //     onError: (err: string) => {
-                  //       errors.push({
-                  //         content: err,
-                  //         index: i,
-                  //       });
-
-                  //       setSubmissionFeedback(err);
-
-                  //       saveSubmissionDataInLocalStorage(
-                  //         err,
-                  //         Result.RUNTIME_ERROR,
-                  //         true,
-                  //         null
-                  //       );
-
-                  //       // if (testValue !== "") {
-                  //       //   if (i !== testValues.length - 1) {
-                  //       //     additionalOutputs.current = [
-                  //       //       ...additionalOutputs.current,
-                  //       //       `\n Test ${i + 1} failed: \n ${err}\n`,
-                  //       //     ];
-                  //       //   } else {
-                  //       //     additionalOutputs.current = [
-                  //       //       ...additionalOutputs.current,
-                  //       //       `\n Test ${i + 1} failed: \n`,
-                  //       //     ];
-                  //       //   }
-                  //       // }
-                  //     },
-                  //   });
-                  // });
                 }
               : validateSubmission
           }
@@ -1039,22 +953,17 @@ const Exercise = ({
           }
         />
 
-        <Flex
-          height={`calc(100% - ${
-            200 +
-              (exercise?.activity?.pdf ? 0 : getStatementLength(exercise)) / 5 >
-            250
-              ? 300
-              : 200 +
-                (exercise?.activity?.pdf ? 0 : getStatementLength(exercise)) / 5
-          }px)`}
+        <Skeleton
+          height={`calc(100% - ${getStatementHeight(activity) + 50}px)`}
           minHeight={500}
           flexDirection={{ base: "column", md: "row" }}
+          as={Flex}
+          isLoaded={!isLoading}
         >
           <Box
             width={{
               base: "99%",
-              md: isEditorKindSpotBug(exercise) ? "100%" : "58%",
+              md: isEditorKindSpotBug(activity) ? "100%" : "58%",
             }}
             height={{ base: "50vh", md: "100%" }}
             minHeight="50vh"
@@ -1063,7 +972,7 @@ const Exercise = ({
           >
             {
               <EditorSwitcher
-                editorKind={exercise?.activity?.editorKind}
+                editorKind={activity?.editorKind}
                 language={activeLanguage}
                 code={code === "" ? getCodeSkeleton() : code}
                 codeSkeletons={getCodeSkeleton(true, true) || ""}
@@ -1086,7 +995,7 @@ const Exercise = ({
               validateSubmission={validateSubmission}
             /> */}
           </Box>
-          {!isEditorKindSpotBug(exercise) && (
+          {!isEditorKindSpotBug(activity) && (
             <Box
               width={{ base: "99%", md: "42%" }}
               height={{ base: "50vh", md: "100%" }}
@@ -1103,7 +1012,7 @@ const Exercise = ({
               />
             </Box>
           )}
-        </Flex>
+        </Skeleton>
       </Box>
     </SettingsContext.Provider>
   );

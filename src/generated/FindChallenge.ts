@@ -22,21 +22,11 @@ export interface FindChallenge_myChallengeStatus_challenge {
   mode: Mode;
 }
 
-export interface FindChallenge_myChallengeStatus_refs_activity_codeSkeletons {
-  __typename: "CodeSkeleton";
-  extension: string | null;
-  code: string | null;
-}
-
 export interface FindChallenge_myChallengeStatus_refs_activity {
   __typename: "Activity";
   id: string | null;
-  pdf: boolean | null;
-  statement: string | null;
-  editorKind: string | null;
   name: string | null;
   title: string | null;
-  codeSkeletons: FindChallenge_myChallengeStatus_refs_activity_codeSkeletons[] | null;
 }
 
 export interface FindChallenge_myChallengeStatus_refs {

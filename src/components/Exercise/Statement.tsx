@@ -14,6 +14,7 @@ import React from "react";
 import { TFunction, useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import { FindChallenge_myChallengeStatus_refs } from "../../generated/FindChallenge";
+import { getActivityById_activity } from "../../generated/getActivityById";
 import ScrollbarWrapper from "../ScrollbarWrapper";
 
 // TODO: Refactor alphabetical sorting, now it's copied multiple times
@@ -27,23 +28,21 @@ const STATEMENT_LANGUAGES_SPLIT_REGEX = new RegExp(
 );
 
 const Statement = ({
-  exercise,
+  activity,
   gameId,
 }: {
-  exercise: FindChallenge_myChallengeStatus_refs | null;
+  activity: getActivityById_activity | null;
   gameId: string;
 }) => {
   const { t, i18n } = useTranslation();
   const { colorMode } = useColorMode();
-  const statementOrNoDescriptionMessage = getStatement(exercise, t);
+  const statementOrNoDescriptionMessage = getStatement(activity, t);
 
   return (
     <ScrollbarWrapper>
       <Flex
         maxHeight="calc(50vh - 67px)"
-        height={
-          exercise?.activity?.pdf ? 150 : 150 + getStatementLength(exercise) / 5
-        }
+        height={getStatementHeight(activity)}
         overflowY={"auto"}
         borderBottom="1px solid rgba(0,0,0,0.1)"
         position="relative"
@@ -54,7 +53,7 @@ const Statement = ({
           bgColor={colorMode === "dark" ? "gray.900" : "gray.100"}
         >
           <Box bgColor={colorMode === "dark" ? "gray.900" : "gray.100"} p={5}>
-            {exercise?.activity?.pdf ? (
+            {activity?.pdf ? (
               <Button
                 colorScheme="blue"
                 variant="ghost"
@@ -63,7 +62,7 @@ const Statement = ({
                   if (pdfWindow) {
                     pdfWindow.document.write(
                       "<iframe width='100%' height='100%' src='data:application/pdf;base64, " +
-                        encodeURI(exercise.activity?.statement || "") +
+                        encodeURI(activity?.statement || "") +
                         "'></iframe>"
                     );
                   }
@@ -335,32 +334,50 @@ const MarkdownStyled = styled(Box)`
 `;
 
 export const getStatement = (
-  exercise: FindChallenge_myChallengeStatus_refs | null,
+  activity: getActivityById_activity | null,
   tFunction: TFunction
 ) => {
-  if (!exercise) {
+  if (!activity) {
     return tFunction("No description");
   }
 
-  if (exercise.activity?.statement) {
-    return exercise.activity?.statement;
+  if (activity?.statement) {
+    return activity?.statement;
   } else {
     return tFunction("No description");
   }
 };
 
 export const getStatementLength = (
-  exercise: FindChallenge_myChallengeStatus_refs | null
+  activity: getActivityById_activity | null
 ) => {
-  if (!exercise) {
+  if (!activity) {
     return 0;
   }
 
-  if (exercise.activity?.statement) {
-    return exercise.activity?.statement.length;
+  if (activity?.statement) {
+    return activity?.statement.length;
   } else {
     return 0;
   }
+};
+
+export const getStatementHeight = (
+  activity: getActivityById_activity | null
+) => {
+  if (activity?.pdf) {
+    return 150;
+  }
+
+  const statementLength = getStatementLength(activity);
+
+  if (!statementLength) {
+    return 150;
+  }
+
+  const ensureReadbility = 150 + statementLength / 5;
+
+  return ensureReadbility < 300 ? ensureReadbility : 300;
 };
 
 export default Statement;

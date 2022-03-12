@@ -1,155 +1,51 @@
-import { gql, useQuery, useSubscription } from "@apollo/client";
-import { CheckIcon, ChevronRightIcon, ChevronLeftIcon } from "@chakra-ui/icons";
+import { useQuery, useSubscription } from "@apollo/client";
+import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Box,
-  BoxProps,
   Button,
   Flex,
   Icon,
   IconButton,
   Text,
-  useBreakpointValue,
   useColorMode,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import dayjs from "dayjs";
+import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import Countdown from "react-countdown";
+import { useTranslation } from "react-i18next";
+import { BiTimer } from "react-icons/bi";
 import { Redirect, useParams } from "react-router-dom";
+import { challengeStatusUpdatedStudentSub } from "../generated/challengeStatusUpdatedStudentSub";
 import {
   FindChallenge,
   FindChallenge_myChallengeStatus_refs,
 } from "../generated/FindChallenge";
+import { getActivityById } from "../generated/getActivityById";
 import { Mode, RewardType, State } from "../generated/globalTypes";
 import {
   rewardReceivedStudentSubscription,
   rewardReceivedStudentSubscription_rewardReceivedStudent_reward,
 } from "../generated/rewardReceivedStudentSubscription";
+import { CHALLENGE_STATUS_UPDATED_STUDENT_SUB } from "../graphql/challengeStatusUpdatedSub";
+import { FIND_CHALLENGE } from "../graphql/findChallenge";
+import { GET_ACTIVITY_BY_ID } from "../graphql/getActivityById";
+import { REWARD_RECEIVED_STUDENT_SUB } from "../graphql/rewardReceivedStudentSub";
 import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import withChangeAnimation from "../utilities/withChangeAnimation";
+import BreadcrumbComponent from "./BreadcrumbComponent";
 import Error from "./Error";
 import Exercise from "./Exercise";
+import MainLoading from "./MainLoading";
 import { useNotifications } from "./Notifications";
-import Countdown from "react-countdown";
-import { BiTimer } from "react-icons/bi";
-import { challengeStatusUpdatedStudentSub } from "../generated/challengeStatusUpdatedStudentSub";
-import dayjs from "dayjs";
-import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
 import ScrollbarWrapper from "./ScrollbarWrapper";
-import NavGameButton from "./NavGameButton";
-import BreadcrumbComponent from "./BreadcrumbComponent";
 
 interface ParamTypes {
   gameId: string;
   challengeId: string;
   exerciseId?: string;
 }
-
-const FIND_CHALLENGE = gql`
-  query FindChallenge($gameId: String!, $challengeId: String!) {
-    game(id: $gameId) {
-      id
-      name
-    }
-
-    myChallengeStatus(gameId: $gameId, challengeId: $challengeId) {
-      startedAt
-      endedAt
-      openedAt
-
-      challenge {
-        id
-        name
-        mode
-      }
-
-      refs {
-        activity {
-          id
-          pdf
-          statement
-          editorKind
-          name
-          title
-          codeSkeletons {
-            extension
-            code
-          }
-        }
-        solved
-      }
-    }
-
-    # challenge(gameId: $gameId, id: $challengeId) {
-    #   id
-    #   name
-    #   description
-    #   difficulty
-    #   mode
-    #   modeParameters
-    #   locked
-    #   hidden
-    #   refs {
-    #     id
-    #     name
-    #     statement
-    #     pdf
-    #     editorKind
-    #     codeSkeletons {
-    #       code
-    #       extension
-    #     }
-    #   }
-    # }
-
-    # profileInGame(gameId: $gameId) {
-    #   learningPath {
-    #     startedAt
-    #     openedAt
-    #     endedAt
-
-    #     refs {
-    #       activity {
-    #         id
-    #       }
-    #       solved
-    #     }
-    #   }
-    # }
-
-    programmingLanguages(gameId: $gameId) {
-      id
-      name
-      extension
-    }
-  }
-`;
-
-const REWARD_RECEIVED_STUDENT_SUB = gql`
-  subscription rewardReceivedStudentSubscription($gameId: String!) {
-    rewardReceivedStudent(gameId: $gameId) {
-      count
-      id
-      reward {
-        kind
-        image
-        name
-        message
-        description
-      }
-    }
-  }
-`;
-
-const CHALLENGE_STATUS_UPDATED_STUDENT_SUB = gql`
-  subscription challengeStatusUpdatedStudentSub($gameId: String!) {
-    challengeStatusUpdatedStudent(gameId: $gameId) {
-      openedAt
-      endedAt
-      startedAt
-      state
-    }
-  }
-`;
 
 const Challenge = () => {
   const [showExerciseNumbers, setShowExerciseNumbers] = useState(false);
@@ -165,6 +61,7 @@ const Challenge = () => {
     openedAt: string;
   }>();
 
+  //** Active exercise is actually an active ACTIVITY */
   const [activeExercise, setActiveExercise] =
     useState<null | FindChallenge_myChallengeStatus_refs>(null);
   const [shouldRedirect, setShouldRedirect] = useState(false);
@@ -250,6 +147,19 @@ const Challenge = () => {
     );
 
   const {
+    data: activityData,
+    error: activityError,
+    loading: activityLoading,
+  } = useQuery<getActivityById>(GET_ACTIVITY_BY_ID, {
+    skip: !activeExercise,
+    variables: { gameId, activityId: activeExercise?.activity?.id },
+    fetchPolicy: "no-cache",
+    onCompleted: () => {
+      console.log("ACTIVITY READY");
+    },
+  });
+
+  const {
     data: challengeData,
     error: challengeError,
     loading: challengeLoading,
@@ -328,11 +238,7 @@ const Challenge = () => {
   }
 
   // useEffect(() => {
-  //   if (challengeData) {
-  //     // getFirstUnsolvedExercise(challengeData);
-  //     //
-  //     setActiveExercise(challengeData.challenge.refs[0]);
-  //   }
+
   // }, [challengeLoading]);
 
   if (!gameId || !challengeId) {
@@ -400,6 +306,8 @@ const Challenge = () => {
 
   return (
     <Playground>
+      {(challengeLoading || activityLoading) && <MainLoading />}
+
       {challengeData?.game.name && (
         <BreadcrumbComponent
           gameName={challengeData.game.name}
@@ -559,12 +467,13 @@ const Challenge = () => {
               }}
               gameId={gameId}
               challengeId={challengeId}
-              exercise={activeExercise}
+              activity={activityData?.activity || null}
               programmingLanguages={challengeData.programmingLanguages}
               challengeRefetch={challengeRefetch}
               solved={checkIfSolved(challengeData, activeExercise)}
               setNextUnsolvedExercise={setNextUnsolvedExercise}
               hints={hints}
+              isLoading={challengeLoading || activityLoading}
             />
           )}
         </Flex>
