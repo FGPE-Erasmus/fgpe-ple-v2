@@ -8,23 +8,32 @@ import {
 } from "@apollo/client";
 import { Box, Flex, Skeleton } from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
+import dayjs from "dayjs";
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { evaluationSubscription } from "../../generated/evaluationSubscription";
 import {
   FindChallenge,
-  FindChallenge_myChallengeStatus_refs,
   FindChallenge_programmingLanguages,
 } from "../../generated/FindChallenge";
 import { getActivityById_activity } from "../../generated/getActivityById";
+import {
+  getLatestSubmissionAndValidation,
+  getLatestSubmissionAndValidation_latestSubmission,
+  getLatestSubmissionAndValidation_latestValidation,
+} from "../../generated/getLatestSubmissionAndValidation";
 import { getSubmissionByIdQuery } from "../../generated/getSubmissionByIdQuery";
 import { getValidationByIdQuery } from "../../generated/getValidationByIdQuery";
 import { Result } from "../../generated/globalTypes";
 import { latestValidationQuery } from "../../generated/latestValidationQuery";
 import { rewardReceivedStudentSubscription_rewardReceivedStudent_reward } from "../../generated/rewardReceivedStudentSubscription";
 import { validationSubscription } from "../../generated/validationSubscription";
+import { GET_LATEST_SUBMISSION_AND_VALIDATION } from "../../graphql/getLatestSubmissionAndValidation";
 import { GET_SUBMISSION_BY_ID } from "../../graphql/getSubmissionById";
 import { GET_VALIDATION_BY_ID } from "../../graphql/getValidationById";
 import { decryptWithAES, encryptWithAES } from "../../utilities/Encryption";
+import { useLazyQuery as useLazyQueryPromise } from "../ExportGameCsvModal";
+import { useNotifications } from "../Notifications";
 // import Loading from "./Loading";
 import EditorMenu from "./EditorMenu";
 import { getDefaultProgrammingLangOrFirstFromArray } from "./helpers/defaultProgrammingLanguage";
@@ -32,7 +41,7 @@ import EditorSwitcher from "./helpers/EditorSwitcher";
 import runPython from "./helpers/python";
 import Hints from "./Hints";
 import { SettingsContext } from "./SettingsContext";
-import Statement, { getStatementHeight, getStatementLength } from "./Statement";
+import Statement, { getStatementHeight } from "./Statement";
 import Terminal from "./Terminal";
 
 const isEditorKindSpotBug = (activity?: getActivityById_activity | null) => {
@@ -182,19 +191,19 @@ const EVALUATION_SUBSCRIPTION = gql`
   }
 `;
 
-const LATEST_VALIDATION = gql`
-  query latestValidationQuery($gameId: String!, $exerciseId: String!) {
-    latestValidation(gameId: $gameId, exerciseId: $exerciseId) {
-      createdAt
-      feedback
-      result
-      outputs
-      language
-      program
-      id
-    }
-  }
-`;
+// const LATEST_VALIDATION = gql`
+//   query latestValidationQuery($gameId: String!, $exerciseId: String!) {
+//     latestValidation(gameId: $gameId, exerciseId: $exerciseId) {
+//       createdAt
+//       feedback
+//       result
+//       outputs
+//       language
+//       program
+//       id
+//     }
+//   }
+// `;
 
 const getEditorTheme = () => {
   const editorTheme = localStorage.getItem("editorTheme");
@@ -254,6 +263,9 @@ const Exercise = ({
   challengeId: string;
   hints: rewardReceivedStudentSubscription_rewardReceivedStudent_reward[];
 }) => {
+  const { add: addNotification } = useNotifications();
+  const { t } = useTranslation();
+
   const [lastEvaluationOrSubmissionId, setLastEvaluationOrSubmissionId] =
     useState<null | string>(null);
 
@@ -261,7 +273,7 @@ const Exercise = ({
     useState<FindChallenge_programmingLanguages>(
       getDefaultProgrammingLangOrFirstFromArray(programmingLanguages, gameId)
     );
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState<string | null>(null);
 
   const { keycloak } = useKeycloak();
 
@@ -294,7 +306,7 @@ const Exercise = ({
     useRef<FindChallenge_programmingLanguages>(activeLanguage);
   const isEvaluationFetchingRef = useRef<boolean>(isWaitingForEvaluationResult);
   const isValidationFetchingRef = useRef<boolean>(isWaitingForValidationResult);
-  const codeRef = useRef<string>(code);
+  const codeRef = useRef<string | null>(code);
   const [isRestoreAvailable, setRestoreAvailable] = useState(false);
 
   //** Added to use with local code interpreters like Skulpt (Python) */
@@ -302,7 +314,7 @@ const Exercise = ({
   const additionalOutputs = useRef<string[]>([]);
 
   const reloadCode = () => {
-    setCode("");
+    setCode(null);
     clearPlayground();
     saveSubmissionDataInLocalStorage("", null, true, null, "");
   };
@@ -310,7 +322,6 @@ const Exercise = ({
   const getCodeSkeleton = (dontSetCode?: boolean, getArray?: boolean) => {
     if (activity) {
       if (activity?.codeSkeletons) {
-        // console.log("CODE SKELETONS", activity?.activity?.codeSkeletons);
         const codeSkeletons = activity?.codeSkeletons;
         let allCodeSkeletonsForActiveLang: string[] = [];
         for (let i = 0; i < codeSkeletons.length; i++) {
@@ -361,56 +372,190 @@ const Exercise = ({
     }
   };
 
-  const restoreLatestSubmissionOrValidation = async () => {
-    const latestValidation = await refetchLastValidation();
+  const getLatestSubmissionAndValidation =
+    useLazyQueryPromise<getLatestSubmissionAndValidation>(
+      GET_LATEST_SUBMISSION_AND_VALIDATION
+    );
 
-    if (!latestValidation.data) {
-      return;
-    }
+  const restoreSubmission = (
+    latestSubmission: getLatestSubmissionAndValidation_latestSubmission
+  ) => {
+    restoreLatestAttemptExcludingSpecificParameters({
+      program: latestSubmission.program,
+      language: latestSubmission.language,
+      result: latestSubmission.result,
+      feedback: latestSubmission.result,
+    });
 
-    const latestValidationData = latestValidation.data.latestValidation;
+    saveSubmissionDataInLocalStorage(
+      latestSubmission.feedback || "",
+      latestSubmission.result,
+      true,
+      undefined,
+      latestSubmission.program || ""
+    );
+  };
 
-    if (!latestValidationData) {
-      return;
-    }
+  const restoreValidation = (
+    latestValidation: getLatestSubmissionAndValidation_latestValidation
+  ) => {
+    restoreLatestAttemptExcludingSpecificParameters({
+      program: latestValidation.program,
+      language: latestValidation.language,
+      result: latestValidation.result,
+      feedback: latestValidation.result,
+    });
 
-    setCode(latestValidationData.program || "");
-
-    for (let i = 0; i < programmingLanguages.length; i++) {
-      if (programmingLanguages[i].name === latestValidationData.language) {
-        setActiveLanguage(programmingLanguages[i]);
-      }
-    }
-
-    if (latestValidationData.outputs) {
-      setValidationOutputs(latestValidationData.outputs);
+    if (latestValidation.outputs) {
+      setValidationOutputs(latestValidation.outputs);
     } else {
       setValidationOutputs(null);
     }
 
-    if (latestValidationData.feedback) {
-      setSubmissionFeedback(latestValidationData.feedback);
-    } else {
-      setSubmissionFeedback("");
+    saveSubmissionDataInLocalStorage(
+      latestValidation.feedback || "",
+      latestValidation.result,
+      true,
+      latestValidation.outputs,
+      latestValidation.program || ""
+    );
+  };
+
+  const restoreLatestAttemptExcludingSpecificParameters = ({
+    program,
+    language,
+    result,
+    feedback,
+  }: {
+    program?: any;
+    language: any;
+    result?: any;
+    feedback?: any;
+  }) => {
+    setCode(program || "");
+
+    for (let i = 0; i < programmingLanguages.length; i++) {
+      if (programmingLanguages[i].name === language) {
+        setActiveLanguage(programmingLanguages[i]);
+      }
     }
 
-    if (latestValidationData.result) {
-      if (latestValidationData.result === Result.ACCEPT) {
+    if (result) {
+      if (result === Result.ACCEPT) {
         setSubmissionResult(null);
       } else {
-        setSubmissionResult(latestValidationData.result);
+        setSubmissionResult(result);
       }
     } else {
       setSubmissionResult(null);
     }
 
-    saveSubmissionDataInLocalStorage(
-      latestValidationData.feedback || "",
-      latestValidationData.result,
-      true,
-      latestValidationData.outputs,
-      latestValidationData.program || ""
-    );
+    if (feedback) {
+      setSubmissionFeedback(feedback);
+    } else {
+      setSubmissionFeedback("");
+    }
+  };
+
+  const restoreLatestSubmissionOrValidation = async () => {
+    if (!activity) {
+      return;
+    }
+    const submissionAndValidation = await getLatestSubmissionAndValidation({
+      gameId,
+      exerciseId: activity.id,
+    }).catch((err) => {
+      console.log("RESTORE ERROR", err);
+      addNotification({
+        title: t("error.unknownProblem.title"),
+        description: t("error.unknownProblem.description"),
+        status: "error",
+      });
+    });
+
+    if (!submissionAndValidation) {
+      return;
+    }
+
+    if (!submissionAndValidation.data) {
+      addNotification({
+        title: t("error.unknownProblem.title"),
+        description: t("error.unknownProblem.description"),
+        status: "error",
+      });
+      return;
+    }
+
+    const {
+      data: { latestSubmission, latestValidation },
+    } = submissionAndValidation;
+    if (latestSubmission && !latestValidation) {
+      restoreSubmission(latestSubmission);
+    }
+
+    if (latestValidation && !latestSubmission) {
+      restoreValidation(latestValidation);
+    }
+
+    if (latestValidation && latestSubmission) {
+      const validationDate = dayjs(latestValidation.createdAt);
+      const submissionDate = dayjs(latestSubmission.createdAt);
+      if (validationDate.diff(submissionDate) > 0) {
+        restoreValidation(latestValidation);
+      } else {
+        restoreSubmission(latestSubmission);
+      }
+    }
+
+    // const latestValidation = await refetchLastValidation();
+
+    // if (!latestValidation.data) {
+    //   return;
+    // }
+
+    // const latestValidationData = latestValidation.data.latestValidation;
+
+    // if (!latestValidationData) {
+    //   return;
+    // }
+
+    // setCode(latestValidationData.program || "");
+
+    // for (let i = 0; i < programmingLanguages.length; i++) {
+    //   if (programmingLanguages[i].name === latestValidationData.language) {
+    //     setActiveLanguage(programmingLanguages[i]);
+    //   }
+    // }
+
+    // if (latestValidationData.outputs) {
+    //   setValidationOutputs(latestValidationData.outputs);
+    // } else {
+    //   setValidationOutputs(null);
+    // }
+
+    // if (latestValidationData.feedback) {
+    //   setSubmissionFeedback(latestValidationData.feedback);
+    // } else {
+    //   setSubmissionFeedback("");
+    // }
+
+    // if (latestValidationData.result) {
+    //   if (latestValidationData.result === Result.ACCEPT) {
+    //     setSubmissionResult(null);
+    //   } else {
+    //     setSubmissionResult(latestValidationData.result);
+    //   }
+    // } else {
+    //   setSubmissionResult(null);
+    // }
+
+    // saveSubmissionDataInLocalStorage(
+    //   latestValidationData.feedback || "",
+    //   latestValidationData.result,
+    //   true,
+    //   latestValidationData.outputs,
+    //   latestValidationData.program || ""
+    // );
   };
 
   useEffect(() => {
@@ -431,16 +576,16 @@ const Exercise = ({
     return () => clearInterval(timeoutID);
   }, [isWaitingForEvaluationResult, isWaitingForValidationResult]);
 
-  const {
-    data: lastValidationData,
-    error: lastValidationError,
-    loading: lastValidationLoading,
-    refetch: refetchLastValidation,
-  } = useQuery<latestValidationQuery>(LATEST_VALIDATION, {
-    variables: { gameId, exerciseId: activity?.id },
-    skip: activity ? false : true,
-    fetchPolicy: "no-cache",
-  });
+  // const {
+  //   data: lastValidationData,
+  //   error: lastValidationError,
+  //   loading: lastValidationLoading,
+  //   refetch: refetchLastValidation,
+  // } = useQuery<latestValidationQuery>(LATEST_VALIDATION, {
+  //   variables: { gameId, exerciseId: activity?.id },
+  //   skip: activity ? false : true,
+  //   fetchPolicy: "no-cache",
+  // });
 
   const getLastStateFromLocalStorage = (
     lastSubmissionFeedbackUnparsed: any
@@ -505,11 +650,8 @@ const Exercise = ({
     }
   };
 
-  useEffect(() => {
-    setCode("");
-    // setSubmissionResult(null);
-    setWaitingForEvaluationResult(false);
-    setWaitingForValidationResult(false);
+  const getAndSetLatestStateFromLocalStorageOrClear = () => {
+    setCode(null);
 
     if (activity?.id) {
       const lastSubmissionFeedbackUnparsed = localStorage.getItem(
@@ -519,6 +661,14 @@ const Exercise = ({
     } else {
       clearPlayground();
     }
+  };
+
+  useEffect(() => {
+    // setSubmissionResult(null);
+    setWaitingForEvaluationResult(false);
+    setWaitingForValidationResult(false);
+
+    getAndSetLatestStateFromLocalStorageOrClear();
   }, [activity]);
 
   useEffect(() => {
@@ -726,6 +876,9 @@ const Exercise = ({
   });
 
   const getFileFromCode = (isSpotBugMode?: boolean) => {
+    if (!codeRef.current) {
+      return;
+    }
     const blob = new Blob([codeRef.current], { type: "text/plain" });
     const file = new File(
       [blob],
@@ -809,13 +962,13 @@ const Exercise = ({
         <span>{subValidationData?.validationProcessedStudent.result}</span>
       )} */}
       <Box width={"100%"} height={"100%"} m={0} p={0}>
-        <Skeleton isLoaded={!isLoading}>
-          <Box position="relative">
+        <Box position="relative">
+          <Skeleton isLoaded={!isLoading}>
             <Statement activity={activity} gameId={gameId} />
-            <Hints challengeId={challengeId} gameId={gameId} hints={hints} />
-          </Box>
-        </Skeleton>
+          </Skeleton>
 
+          <Hints challengeId={challengeId} gameId={gameId} hints={hints} />
+        </Box>
         <EditorMenu
           setStopExecution={(v: boolean) => {
             stopExecution.current = v;
@@ -827,7 +980,13 @@ const Exercise = ({
           reload={reloadCode}
           submissionResult={submissionResult}
           activeLanguage={activeLanguage}
-          setActiveLanguage={setActiveLanguage}
+          setActiveLanguage={(l) => {
+            // LOSING CODE....
+
+            setCode(null);
+            setActiveLanguage(l);
+            // getAndSetLatestStateFromLocalStorageOrClear();
+          }}
           evaluateSubmission={evaluateSubmission}
           validateSubmission={
             activeLanguage.name?.substring(0, 6).toLowerCase() === "python" &&
@@ -865,7 +1024,7 @@ const Exercise = ({
                           console.log("INP", nextInput.length);
                           return nextInput.length === 0 ? undefined : nextInput;
                         },
-                        code,
+                        code: code ? code : "",
                         setLoading: setWaitingForValidationResult,
                         setOutput: (v: string) => {
                           console.log("output", v);
@@ -947,10 +1106,13 @@ const Exercise = ({
           connectionError={
             subValidationError || subEvaluationError || connectionProblem
           }
-          isRestoreAvailable={
-            (isRestoreAvailable || (lastValidationError ? false : true)) &&
-            !lastValidationLoading
-          }
+          isRestoreAvailable={true}
+
+          // REMOVED TO INCREASE SERVER PERFORMANCE
+          // isRestoreAvailable={
+          //   (isRestoreAvailable || (lastValidationError ? false : true)) &&
+          //   !lastValidationLoading
+          // }
         />
 
         <Skeleton
@@ -974,7 +1136,7 @@ const Exercise = ({
               <EditorSwitcher
                 editorKind={activity?.editorKind}
                 language={activeLanguage}
-                code={code === "" ? getCodeSkeleton() : code}
+                code={code === null ? getCodeSkeleton() : code}
                 codeSkeletons={getCodeSkeleton(true, true) || ""}
                 setCode={(code) => {
                   saveCodeToLocalStorage(code);
