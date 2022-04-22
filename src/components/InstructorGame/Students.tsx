@@ -1,8 +1,8 @@
 import {
+  ApolloQueryResult,
+  FetchResult,
   MutationFunctionOptions,
   OperationVariables,
-  FetchResult,
-  ApolloQueryResult,
   useQuery,
 } from "@apollo/client";
 import { ChevronDownIcon } from "@chakra-ui/icons";
@@ -18,7 +18,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { gameDetailsGetGameByIdQuery } from "../../generated/gameDetailsGetGameByIdQuery";
@@ -56,9 +56,11 @@ const Students = ({
   refetchGame,
   getSelectedStudentsAndRemoveFromGroups,
   getSelectedStudentAndRemoveFromGame,
+  selectedStudentsRef,
 }: {
   gameId: string;
   loading: boolean;
+  selectedStudentsRef: React.MutableRefObject<never[]>;
 } & ContextI) => {
   const {
     isOpen: isAddGroupModalOpen,
@@ -95,7 +97,7 @@ const Students = ({
     },
     []
   );
-  const selectedStudentsRef = useRef([]);
+
   const [isStudentSelected, setIsStudentSelected] = useState<boolean>(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -175,12 +177,14 @@ const Students = ({
                         refetchGame={refetchGame}
                         isStudentSelected={isStudentSelected}
                         onSetGroupModalOpen={onSetGroupModalOpen}
-                        getSelectedStudentsAndRemoveFromGroups={
-                          getSelectedStudentsAndRemoveFromGroups
-                        }
-                        getSelectedStudentAndRemoveFromGame={
-                          getSelectedStudentAndRemoveFromGame
-                        }
+                        getSelectedStudentsAndRemoveFromGroups={async () => {
+                          await getSelectedStudentsAndRemoveFromGroups();
+                          refetchStudentsDetails();
+                        }}
+                        getSelectedStudentAndRemoveFromGame={async () => {
+                          await getSelectedStudentAndRemoveFromGame();
+                          refetchStudentsDetails();
+                        }}
                         gameId={gameId}
                         onAddGroupModalOpen={onAddGroupModalOpen}
                       />

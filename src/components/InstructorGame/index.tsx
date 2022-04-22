@@ -15,9 +15,9 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { gameDetailsGetGameByIdQuery } from "../../generated/gameDetailsGetGameByIdQuery";
 import { getGameByIdQuery_game_players } from "../../generated/getGameByIdQuery";
 import { getOverallStats } from "../../generated/getOverallStats";
@@ -124,6 +124,7 @@ const InstructorGame = () => {
   }
 
   const getSelectedPlayers = () => {
+    console.log("getting selected players", selectedStudentsRef);
     return selectedStudentsRef.current.map(
       (student: getGameByIdQuery_game_players) => student.id
     );
@@ -329,6 +330,7 @@ const InstructorGame = () => {
                 <AccordionPanel pb={4} marginTop={2} marginBottom={10}>
                   {isExpanded && (
                     <Students
+                      selectedStudentsRef={selectedStudentsRef}
                       gameId={gameId}
                       loading={loading}
                       autoAssignGroupsLoading={autoAssignGroupsLoading}

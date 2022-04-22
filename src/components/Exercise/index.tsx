@@ -3,7 +3,6 @@ import {
   gql,
   useLazyQuery,
   useMutation,
-  useQuery,
   useSubscription,
 } from "@apollo/client";
 import { Box, Flex, Skeleton } from "@chakra-ui/react";
@@ -25,7 +24,6 @@ import {
 import { getSubmissionByIdQuery } from "../../generated/getSubmissionByIdQuery";
 import { getValidationByIdQuery } from "../../generated/getValidationByIdQuery";
 import { Result } from "../../generated/globalTypes";
-import { latestValidationQuery } from "../../generated/latestValidationQuery";
 import { rewardReceivedStudentSubscription_rewardReceivedStudent_reward } from "../../generated/rewardReceivedStudentSubscription";
 import { validationSubscription } from "../../generated/validationSubscription";
 import { GET_LATEST_SUBMISSION_AND_VALIDATION } from "../../graphql/getLatestSubmissionAndValidation";
