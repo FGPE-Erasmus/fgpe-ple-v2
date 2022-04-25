@@ -14,6 +14,7 @@ import {
 import styled from "@emotion/styled";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useMemo, useState } from "react";
+import { CSVDownload } from "react-csv";
 import { useTranslation } from "react-i18next";
 import {
   TiArrowSortedDown,
@@ -31,7 +32,6 @@ import {
 } from "react-table";
 import ScrollbarWrapper from "../ScrollbarWrapper";
 import CheckboxForTable from "./CheckboxForTable";
-import { CSVLink, CSVDownload } from "react-csv";
 
 type TableComponentProps = {
   columns: any;
@@ -139,6 +139,8 @@ const TableComponent: React.FC<TableComponentProps> = ({
   const { pageSize, pageIndex } = state;
 
   const prepareForCsv = () => {
+    console.log("PREPARE FOR CSV");
+
     const keys = tableInstance.allColumns.map((column) => column.Header);
     const prepared = tableInstance.filteredRows.map((row) => {
       let row1 = { ...row };
@@ -154,11 +156,13 @@ const TableComponent: React.FC<TableComponentProps> = ({
             }
 
             if (typeof renderedCell === "object") {
+              console.log("lol?", renderedCell);
               return "N/A";
             }
 
-            return renderedCell;
+            return renderedCell.toString().replace(/"/g, '""');
           } catch (err) {
+            console.log("error :(((", err);
             return "N/A";
           }
         }

@@ -18,7 +18,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { CSVDownload, CSVLink } from "react-csv";
+import { CSVLink } from "react-csv";
 import { useTranslation } from "react-i18next";
 import {
   getGamePlayersQuery,
@@ -32,6 +32,22 @@ import { GET_PLAYER_FULL_SUBMISSIONS } from "../graphql/getPlayerFullSubmissions
 import { GET_PLAYER_FULL_VALIDATIONS } from "../graphql/getPlayerFullValidations";
 import { GET_PLAYER_REWARDS } from "../graphql/getPlayerRewards";
 import { useNotifications } from "./Notifications";
+
+function isString(value: any) {
+  return typeof value === "string" || value instanceof String;
+}
+
+export const escapeQuote = (v: any) => {
+  const objectKeys = Object.keys(v);
+
+  for (let i = 0; i < objectKeys.length; i++) {
+    if (isString(v[objectKeys[i]])) {
+      v[objectKeys[i]] = v[objectKeys[i]].replace(/"/g, '""');
+    }
+  }
+
+  return v;
+};
 
 export function useLazyQuery<TData = any, TVariables = OperationVariables>(
   query: DocumentNode
@@ -514,7 +530,7 @@ const ExportGameCsvModal = ({
                     readyToDownload.players
                       ? preparePlayersForCSV(
                           players as getGamePlayersQuery_game_players[]
-                        )
+                        ).map((v: any) => escapeQuote(v))
                       : []
                   }
                 >
@@ -535,7 +551,11 @@ const ExportGameCsvModal = ({
 
               {readyToDownload.submissions ? (
                 <CSVLink
-                  data={readyToDownload.submissions ? playersSubmissions : []}
+                  data={
+                    readyToDownload.submissions
+                      ? playersSubmissions.map((v: any) => escapeQuote(v))
+                      : []
+                  }
                 >
                   <Button size="sm">{t("Export")}</Button>
                 </CSVLink>
@@ -565,7 +585,11 @@ const ExportGameCsvModal = ({
               <Text>{t("validations")}</Text>
               {readyToDownload.validations ? (
                 <CSVLink
-                  data={readyToDownload.validations ? playersValidations : []}
+                  data={
+                    readyToDownload.validations
+                      ? playersValidations.map((v: any) => escapeQuote(v))
+                      : []
+                  }
                 >
                   <Button size="sm">{t("Export")}</Button>
                 </CSVLink>
@@ -594,7 +618,13 @@ const ExportGameCsvModal = ({
             <Flex h="40px" justifyContent="space-between" alignItems="center">
               <Text>{t("Rewards")}</Text>
               {readyToDownload.rewards ? (
-                <CSVLink data={readyToDownload.rewards ? playersRewards : []}>
+                <CSVLink
+                  data={
+                    readyToDownload.rewards
+                      ? playersRewards.map((v: any) => escapeQuote(v))
+                      : []
+                  }
+                >
                   <Button size="sm">{t("Export")}</Button>
                 </CSVLink>
               ) : (
