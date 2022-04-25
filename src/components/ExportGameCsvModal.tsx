@@ -64,7 +64,11 @@ export function useLazyQuery<TData = any, TVariables = OperationVariables>(
   );
 }
 
-const preparePlayersForCSV = (players: getGamePlayersQuery_game_players[]) => {
+const preparePlayersForCSV = (
+  players: getGamePlayersQuery_game_players[],
+  gameName: string,
+  gameId: string
+) => {
   return players.map((player) => {
     const convertedPlayer: any = {
       ...player,
@@ -72,6 +76,8 @@ const preparePlayersForCSV = (players: getGamePlayersQuery_game_players[]) => {
       firstName: player.user.firstName,
       lastName: player.user.lastName,
       userId: player.user.id,
+      gameName,
+      gameId,
     };
 
     delete convertedPlayer["__typename"];
@@ -86,11 +92,13 @@ const ExportGameCsvModal = ({
   onOpen,
   onClose,
   gameId,
+  gameName,
 }: {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
   gameId: string;
+  gameName: string;
 }) => {
   const { add: addNotification } = useNotifications();
 
@@ -208,6 +216,8 @@ const ExportGameCsvModal = ({
             rewardDescription: reward.reward.description,
             rewardKind: reward.reward.kind,
             rewardName: reward.reward.name,
+            gameName,
+            gameId,
           };
         });
 
@@ -404,13 +414,15 @@ const ExportGameCsvModal = ({
             converted.userExecutionTimes = JSON.stringify(
               converted.userExecutionTimes
             );
+            converted.gameId = gameId;
+            converted.gameName = gameName;
             return { ...converted, user: userId };
           });
 
-          console.log("SETTINGS VALIDATIONS", [
-            ...playersValidations,
-            ...convertedValidations,
-          ]);
+          // console.log("SETTINGS VALIDATIONS", [
+          //   ...playersValidations,
+          //   ...convertedValidations,
+          // ]);
 
           playersAttempts = [...playersAttempts, ...convertedValidations];
         } else {
@@ -427,6 +439,8 @@ const ExportGameCsvModal = ({
             delete converted["player"];
             converted.metrics = JSON.stringify(converted.metrics);
             converted.player = submission.player.id;
+            converted.gameId = gameId;
+            converted.gameName = gameName;
 
             return { ...converted, user: userId };
           });
@@ -529,7 +543,9 @@ const ExportGameCsvModal = ({
                   data={
                     readyToDownload.players
                       ? preparePlayersForCSV(
-                          players as getGamePlayersQuery_game_players[]
+                          players as getGamePlayersQuery_game_players[],
+                          gameName,
+                          gameId
                         ).map((v: any) => escapeQuote(v))
                       : []
                   }

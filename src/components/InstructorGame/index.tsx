@@ -187,6 +187,7 @@ const InstructorGame = () => {
         onOpen={onExportCsvModalOpen}
         onClose={onExportCsvModalClose}
         gameId={gameId}
+        gameName={gameData.game.name}
       />
 
       <ChangeDetailsModal
