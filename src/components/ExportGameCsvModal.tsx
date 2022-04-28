@@ -20,6 +20,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { CSVLink } from "react-csv";
 import { useTranslation } from "react-i18next";
+import { getGameChallenges } from "../generated/getGameChallenges";
 import {
   getGamePlayersQuery,
   getGamePlayersQuery_game_players,
@@ -27,6 +28,7 @@ import {
 import { getPlayerFullSubmissionsQuery } from "../generated/getPlayerFullSubmissionsQuery";
 import { getPlayerFullValidationsQuery } from "../generated/getPlayerFullValidationsQuery";
 import { getPlayerRewardsQuery } from "../generated/getPlayerRewardsQuery";
+import { GET_CHALLENGES_BY_GAME } from "../graphql/getChallengesByGame";
 import { GET_GAME_PLAYERS } from "../graphql/getGamePlayers";
 import { GET_PLAYER_FULL_SUBMISSIONS } from "../graphql/getPlayerFullSubmissions";
 import { GET_PLAYER_FULL_VALIDATIONS } from "../graphql/getPlayerFullValidations";
@@ -109,6 +111,7 @@ const ExportGameCsvModal = ({
     submissions: false,
     players: false,
     rewards: false,
+    challenges: false,
   });
 
   const [loading, setLoading] = useState({
@@ -116,11 +119,13 @@ const ExportGameCsvModal = ({
     validations: false,
     submissions: false,
     rewards: false,
+    challenges: false,
   });
   const [players, setPlayers] = useState<getGamePlayersQuery_game_players[]>();
   const [playersValidations, setPlayersValidations] = useState<any>([]);
   const [playersSubmissions, setPlayersSubmissions] = useState<any>([]);
   const [playersRewards, setPlayersRewards] = useState<any>([]);
+  const [gameChallenges, setGameChallenges] = useState<any[]>([]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -129,6 +134,7 @@ const ExportGameCsvModal = ({
         submissions: false,
         players: false,
         rewards: false,
+        challenges: false,
       });
     }
   }, [isOpen]);
@@ -144,6 +150,10 @@ const ExportGameCsvModal = ({
       done: number;
       total: number;
     }>();
+
+  const getGameChallenges = useLazyQuery<getGameChallenges>(
+    GET_CHALLENGES_BY_GAME
+  );
 
   const getUserGameRewards =
     useLazyQuery<getPlayerRewardsQuery>(GET_PLAYER_REWARDS);
@@ -513,6 +523,63 @@ const ExportGameCsvModal = ({
     // done();
   };
 
+  const getChallengesForGame = async () => {
+    setLoading({
+      ...loading,
+      challenges: true,
+    });
+
+    setReadyToDownload({
+      ...readyToDownload,
+      challenges: false,
+    });
+
+    const challenges = await getGameChallenges({
+      gameId,
+    });
+
+    if (!challenges) {
+      setLoading({
+        ...loading,
+        challenges: false,
+      });
+    }
+
+    let allExercises: {
+      challengeName: string;
+      challengeId: string;
+      exerciseName: string | null;
+      exerciseId: string | null;
+    }[] = [];
+
+    challenges.data.challenges.forEach((challenge) => {
+      const refs = challenge.refs;
+
+      const refsConverted = refs.map((ref) => {
+        return {
+          challengeName: challenge.name,
+          challengeId: challenge.id,
+          exerciseName: ref.name,
+          exerciseId: ref.id,
+        };
+      });
+
+      allExercises = [...allExercises, ...refsConverted];
+    });
+
+    setGameChallenges(allExercises);
+
+    setReadyToDownload({
+      ...readyToDownload,
+      challenges: true,
+    });
+
+    setLoading({
+      ...loading,
+      challenges: false,
+    });
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -658,6 +725,40 @@ const ExportGameCsvModal = ({
                       });
 
                       setLoading({ ...loading, rewards: false });
+                    }
+                  }}
+                >
+                  {t("Download")}
+                </Button>
+              )}
+            </Flex>
+            <Flex h="40px" justifyContent="space-between" alignItems="center">
+              <Text>{t("Challenges")}</Text>
+              {readyToDownload.challenges ? (
+                <CSVLink
+                  data={
+                    readyToDownload.challenges
+                      ? gameChallenges.map((v: any) => escapeQuote(v))
+                      : []
+                  }
+                >
+                  <Button size="sm">{t("Export")}</Button>
+                </CSVLink>
+              ) : (
+                <Button
+                  isLoading={loading.challenges}
+                  size="sm"
+                  onClick={async () => {
+                    try {
+                      await getChallengesForGame();
+                    } catch (err) {
+                      addNotification({
+                        title: t("error.unknownProblem.title"),
+                        description: t("error.unknownProblem.description"),
+                        status: "error",
+                      });
+
+                      setLoading({ ...loading, challenges: false });
                     }
                   }}
                 >
