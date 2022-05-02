@@ -23,6 +23,7 @@ import keycloak from "./keycloak";
 import theme from "./styles/theme/themes";
 import ClearLocalStorage from "./utilities/ClearLocalStorage";
 import { persistCache, LocalStorageWrapper } from "apollo3-cache-persist";
+import { serviceWorkerRegistration } from "./service-worker";
 
 ClearLocalStorage();
 
@@ -166,3 +167,5 @@ persistCache({
     document.getElementById("root")
   );
 });
+
+serviceWorkerRegistration.register();
