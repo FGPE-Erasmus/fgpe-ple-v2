@@ -72,6 +72,7 @@
   },
   "scripts": {
     "start": "PORT=3006 react-scripts start",
+    "start:pwa": "npm run build && serve -p 3006 -s build",
     "build": "react-scripts build",
     "build:production": "env-cmd -f .env.production react-scripts build",
     "build:production-docker": "env-cmd -f .env.production-docker react-scripts build",
@@ -115,5 +116,5 @@
     "@types/uuid": "^8.3.0",
     "apollo": "^2.32.0"
   },
-  "homepage": "https://python.usz.edu.pl/learning-platform"
+  "homepage": ""
 }

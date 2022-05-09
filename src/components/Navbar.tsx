@@ -77,7 +77,7 @@ const Navbar = () => {
         isOpen={isOpenLanguageModal}
       />
       <NavbarStyled>
-        <Flex px={2} alignItems="center" height="100%">
+        <Flex px={2} justifyContent="space-between" alignItems="center" height="100%">
           <Box width={1 / 2}>
             <NavLink to={keycloak.authenticated ? "/profile" : "/"}>
               <Logo />
@@ -166,11 +166,7 @@ const Navbar = () => {
               icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}
             /> */}
           </Flex>
-          <Box
-            position="absolute"
-            right="10px"
-            display={{ base: "box", md: "none" }}
-          >
+          <Box display={{ base: "box", md: "none" }}>
             <Menu>
               <MenuButton as={Button}>
                 <HamburgerIcon />
