@@ -1,4 +1,5 @@
 {
+  "Click to copy": "Click to copy",
   "Game profiles": "Game profiles",
   "Export": "Export",
   "Download": "Download",
@@ -202,6 +203,10 @@
   "error": {
     "title": "An unexpected error has occured.",
     "description": "Try to refresh the page. Please contact administration if this error persists.",
+    "serverGraphQLErrors": "Server returned these errors:",
+    "code": "Code",
+    "message": "Message",
+    "path": "Path",
     "csvProblemWithOneOrMore": {
       "title": "There's a problem with one or more records.",
       "description": "You can still export the CSV file. Records that cause errors will be ignored."

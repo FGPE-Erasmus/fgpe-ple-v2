@@ -61,11 +61,11 @@ const RankingTable = ({ gameId }: { gameId: string }) => {
   }
 
   if (errorLeaderboards) {
-    return <Error errorContent={JSON.stringify(errorLeaderboards)} />;
+    return <Error errorContent={errorLeaderboards} />;
   }
 
   if (!dataLeaderboards && !loadingLeaderboards) {
-    return <Error errorContent={"Unknown error"} />;
+    return <Error />;
   }
 
   return (
@@ -143,15 +143,15 @@ const Ranking = ({
 
   if (errorGroupRankings) {
     console.log("ERROR", errorGroupRankings);
-    return <Error errorContent={JSON.stringify(errorGroupRankings)} />;
+    return <Error errorContent={errorGroupRankings} />;
   }
 
   if (!dataGroupRankings && !loadingGroupRankings) {
-    return <Error errorContent={JSON.stringify("No data")} />;
+    return <Error />;
   }
 
   if (!dataGroupRankings) {
-    return <Error errorContent={JSON.stringify("No data")} />;
+    return <Error />;
   }
 
   const metrics = getMetrics(dataGroupRankings.groupRankings, t);

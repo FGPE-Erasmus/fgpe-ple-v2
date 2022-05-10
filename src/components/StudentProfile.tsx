@@ -92,12 +92,12 @@ const StudentProfile: React.ComponentType = () => {
     if (isServerConnectionError) {
       return <Error serverConnectionError />;
     } else {
-      return <Error errorContent={JSON.stringify(error)} />;
+      return <Error errorContent={error} />;
     }
   }
 
   if (!data) {
-    return <Error errorContent={"No data"} />;
+    return <Error />;
   }
 
   return (

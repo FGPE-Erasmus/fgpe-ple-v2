@@ -113,14 +113,14 @@ const InstructorGame = () => {
     if (isServerConnectionError) {
       return <Error serverConnectionError />;
     } else {
-      return (
-        <Error errorContent={JSON.stringify(gameError || overallStatsError)} />
-      );
+      return <Error errorContent={gameError || overallStatsError} />;
     }
   }
 
   if (!gameData || !overallStatsData) {
-    return <Error status="warning" errorContent={"No data"} />;
+    return (
+      <Error status="warning" errorContent={gameError || overallStatsError} />
+    );
   }
 
   const getSelectedPlayers = () => {
