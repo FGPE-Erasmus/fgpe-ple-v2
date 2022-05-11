@@ -39,7 +39,7 @@
     }
   ],
   "start_url": ".",
-  "scope": "/learning-platform/",
+  "scope": "/",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"
