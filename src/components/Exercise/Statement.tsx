@@ -42,7 +42,6 @@ const Statement = ({
     statement: statementOrNoDescriptionMessage,
     renderAsHTML: singleLanguageStatementRenderAsHTML,
   } = getStatement(activity, t);
-  console.log(statementOrNoDescriptionMessage);
 
   return (
     <ScrollbarWrapper>
