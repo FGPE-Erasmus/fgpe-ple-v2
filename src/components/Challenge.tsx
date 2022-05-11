@@ -286,7 +286,7 @@ const Challenge = () => {
     if (isServerConnectionError) {
       return <Error serverConnectionError />;
     } else {
-      return <Error errorContent={JSON.stringify(challengeError)} />;
+      return <Error errorContent={challengeError} />;
     }
   }
 

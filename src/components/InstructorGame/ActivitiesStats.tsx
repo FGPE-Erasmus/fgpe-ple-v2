@@ -85,7 +85,7 @@ const ActivitiesStats = ({ gameId }: { gameId: string }) => {
   );
 
   if (!statsData && !statsLoading) {
-    return <Error errorContent={"Couldn't load data"} />;
+    return <Error errorContent={statsError} />;
   }
 
   return (

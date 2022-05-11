@@ -144,11 +144,11 @@ const ProfileInGame = () => {
     if (isServerConnectionError) {
       return <Error serverConnectionError />;
     } else {
-      return <Error errorContent={JSON.stringify(errorProfile)} />;
+      return <Error errorContent={errorProfile} />;
     }
   }
 
-  if (!dataProfile) return <Text>no data</Text>;
+  if (!dataProfile) return <Text>{t("error.noData.title")}</Text>;
 
   if (!isGameAvailable(dataProfile.profileInGame.game)) {
     return <Redirect to="/profile" />;

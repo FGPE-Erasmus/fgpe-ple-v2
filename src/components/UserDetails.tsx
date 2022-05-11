@@ -72,7 +72,7 @@ const UserDetails = () => {
   const { t } = useTranslation();
 
   if (!userId) {
-    return <Error errorContent="No user id" />;
+    return <Error />;
   }
 
   if (!userLoading && userError) {
@@ -81,7 +81,7 @@ const UserDetails = () => {
     if (isServerConnectionError) {
       return <Error serverConnectionError />;
     } else {
-      return <Error errorContent={JSON.stringify(userError)} />;
+      return <Error errorContent={userError} />;
     }
   }
 
@@ -91,7 +91,7 @@ const UserDetails = () => {
     if (isServerConnectionError) {
       return <Error serverConnectionError />;
     } else {
-      return <Error errorContent={JSON.stringify(gameProfilesError)} />;
+      return <Error errorContent={gameProfilesError} />;
     }
   }
 

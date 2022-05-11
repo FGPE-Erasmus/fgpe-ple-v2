@@ -111,7 +111,7 @@ const PlayerDetails = () => {
     if (isServerConnectionError) {
       return <Error serverConnectionError />;
     } else {
-      return <Error errorContent={JSON.stringify(playerError)} />;
+      return <Error errorContent={playerError} />;
     }
   }
 

@@ -13,9 +13,11 @@ import styled from "@emotion/styled";
 import React from "react";
 import { TFunction, useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
-import { FindChallenge_myChallengeStatus_refs } from "../../generated/FindChallenge";
 import { getActivityById_activity } from "../../generated/getActivityById";
 import ScrollbarWrapper from "../ScrollbarWrapper";
+import { SanitizeHTML } from "./SanitizeHTML";
+
+const DOCTYPE_HTML_STRING = "<!doctype html>";
 
 // TODO: Refactor alphabetical sorting, now it's copied multiple times
 
@@ -36,7 +38,10 @@ const Statement = ({
 }) => {
   const { t, i18n } = useTranslation();
   const { colorMode } = useColorMode();
-  const statementOrNoDescriptionMessage = getStatement(activity, t);
+  const {
+    statement: statementOrNoDescriptionMessage,
+    renderAsHTML: singleLanguageStatementRenderAsHTML,
+  } = getStatement(activity, t);
 
   return (
     <ScrollbarWrapper>
@@ -175,16 +180,31 @@ const Statement = ({
                     })
                     .sort((a, b) => a.lang.localeCompare(b.lang))
                     .map((statementLanguageVersion, i) => {
+                      const renderAsHTML =
+                        statementLanguageVersion.statement
+                          .toLowerCase()
+                          .indexOf(DOCTYPE_HTML_STRING) !== -1
+                          ? false
+                          : true;
+
                       return (
                         <TabPanel key={i}>
-                          <ReactMarkdown allowDangerousHtml>
-                            {statementLanguageVersion.statement}
-                          </ReactMarkdown>
+                          {renderAsHTML ? (
+                            <ReactMarkdown allowDangerousHtml>
+                              {statementLanguageVersion.statement}
+                            </ReactMarkdown>
+                          ) : (
+                            <SanitizeHTML
+                              html={statementLanguageVersion.statement}
+                            />
+                          )}
                         </TabPanel>
                       );
                     })}
                 </TabPanels>
               </Tabs>
+            ) : singleLanguageStatementRenderAsHTML ? (
+              <SanitizeHTML html={statementOrNoDescriptionMessage} />
             ) : (
               <ReactMarkdown allowDangerousHtml>
                 {statementOrNoDescriptionMessage}
@@ -336,16 +356,27 @@ const MarkdownStyled = styled(Box)`
 export const getStatement = (
   activity: getActivityById_activity | null,
   tFunction: TFunction
-) => {
+): {
+  statement: string;
+  renderAsHTML: boolean;
+} => {
   if (!activity) {
-    return tFunction("No description");
+    return { statement: tFunction("No description"), renderAsHTML: false };
   }
 
   if (activity?.statement) {
-    return activity?.statement;
-  } else {
-    return tFunction("No description");
+    const renderAsHTML =
+      activity.statement.toLowerCase().indexOf(DOCTYPE_HTML_STRING) !== -1
+        ? true
+        : false;
+
+    return {
+      statement: activity?.statement,
+      renderAsHTML,
+    };
   }
+
+  return { statement: tFunction("No description"), renderAsHTML: false };
 };
 
 export const getStatementLength = (

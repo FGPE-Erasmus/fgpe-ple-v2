@@ -1,4 +1,5 @@
 {
+  "Click to copy": "Kliknij by skopiować",
   "Game profiles": "Profile graczy",
   "Export": "Eksport",
   "Download": "Pobierz",
@@ -207,6 +208,10 @@
   "error": {
     "title": "Wystąpił nieoczekiwany błąd.",
     "description": "Spróbuj odświeżyć stronę. Skontaktuj się z administracją jeśli błąd będzie nadal występować.",
+    "serverGraphQLErrors": "Serwer zwrócił poniższe błędy:",
+    "code": "Kod",
+    "message": "Komunikat",
+    "path": "Ścieżka",
     "csvProblemWithOneOrMore": {
       "title": "Wystąpił problem z jednym lub więcej rekordów.",
       "description": "Nadal możesz dokonać eksportu pliku CSV. Rekordy wywołujące błędy zostaną zignorowane."

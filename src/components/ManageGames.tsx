@@ -94,7 +94,7 @@ const ManageGames = () => {
     if (isServerConnectionError) {
       return <Error serverConnectionError />;
     } else {
-      return <Error errorContent={JSON.stringify(error)} />;
+      return <Error errorContent={error} />;
     }
   }
 
