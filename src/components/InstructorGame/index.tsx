@@ -12,6 +12,7 @@ import {
   Flex,
   Heading,
   HStack,
+  Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
@@ -198,16 +199,21 @@ const InstructorGame = () => {
         onClose={onDetailsModalClose}
         isGamePrivate={gameData.game.private}
         refetchGame={refetchGame}
+        isGameArchival={gameData.game.archival}
       />
 
       <div>
+        {gameData.game.archival && (
+          <Alert status="warning" marginBottom={2}>
+            <AlertIcon />
+            {t("This is an archival game")}
+          </Alert>
+        )}
         {gameData.game.players.length < 1 && (
-          <>
-            <Alert status="info">
-              <AlertIcon />
-              {t("teacher.noPlayersAlert")}
-            </Alert>
-          </>
+          <Alert status="info">
+            <AlertIcon />
+            {t("teacher.noPlayersAlert")}
+          </Alert>
         )}
         <Flex width="100%" justifyContent="space-between" alignItems="center">
           <Box>
@@ -240,7 +246,23 @@ const InstructorGame = () => {
                 pathname: `/teacher/game/${gameId}/add-players`,
               }}
             >
-              <Button>{t("Add or remove players")}</Button>
+              {gameData.game.archival ? (
+                <Tooltip
+                  label={t("This is an archival game")}
+                  aria-label="A tooltip"
+                  bg="gray.300"
+                  color="black"
+                  hasArrow
+                >
+                  <Box>
+                    <Button disabled={gameData.game.archival}>
+                      {t("Add or remove players")}
+                    </Button>
+                  </Box>
+                </Tooltip>
+              ) : (
+                <Button>{t("Add or remove players")}</Button>
+              )}
             </Link>
             <Button onClick={onExportCsvModalOpen}>CSV</Button>
           </HStack>

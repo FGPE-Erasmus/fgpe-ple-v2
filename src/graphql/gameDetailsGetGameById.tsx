@@ -7,6 +7,8 @@ export const GAME_DETAILS_GET_GAME_BY_ID = gql`
       name
       startDate
       endDate
+
+      archival
       private
 
       players {

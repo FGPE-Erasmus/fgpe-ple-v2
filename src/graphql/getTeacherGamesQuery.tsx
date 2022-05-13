@@ -7,6 +7,7 @@ export const GET_TEACHER_GAMES = gql`
       name
       description
       private
+      archival
       startDate
       endDate
       state

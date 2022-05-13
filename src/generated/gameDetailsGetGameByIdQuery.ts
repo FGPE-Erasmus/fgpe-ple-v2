@@ -29,6 +29,7 @@ export interface gameDetailsGetGameByIdQuery_game {
   name: string;
   startDate: any | null;
   endDate: any | null;
+  archival: boolean;
   private: boolean;
   players: gameDetailsGetGameByIdQuery_game_players[];
   createdAt: any;

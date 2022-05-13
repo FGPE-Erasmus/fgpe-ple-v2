@@ -16,6 +16,7 @@ const PLAYER_GAME_PROFILES = gql`
     myGameProfiles {
       id
       game {
+        archival
         id
         name
         description
@@ -55,6 +56,7 @@ const PLAYER_GAME_PROFILES = gql`
       id
       name
       description
+      archival
     }
   }
 `;
@@ -107,10 +109,6 @@ const StudentProfile: React.ComponentType = () => {
         {t("Rewards")}
       </Heading>
       <Rewards data={data} />
-
-      <Heading as="h3" size="md" marginTop={10}>
-        {t("Games")}
-      </Heading>
 
       <GamesList data={data} />
       {data.myGameProfiles.length < 1 && t("No games")}

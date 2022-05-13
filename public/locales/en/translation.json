@@ -1,4 +1,7 @@
 {
+  "You cannot just an archival game": "You cannot just an archival game",
+  "archival": "Archival",
+  "This is an archival game": "This is an archival game",
   "Click to copy": "Click to copy",
   "Game profiles": "Game profiles",
   "Export": "Export",
@@ -284,6 +287,7 @@
     "wrongFileType": "Wrong file type",
     "dragFileOrClick": "Drag your file here, or click for file selection dialog",
     "setPrivate": "Set private",
+    "setArchival": "Set archival",
     "private": "Private"
   },
   "description": {

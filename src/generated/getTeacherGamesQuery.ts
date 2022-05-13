@@ -20,6 +20,7 @@ export interface getTeacherGamesQuery_myGames {
   name: string;
   description: string | null;
   private: boolean;
+  archival: boolean;
   startDate: any | null;
   endDate: any | null;
   state: GameStateEnum;

@@ -1,9 +1,10 @@
 import {
+  ApolloError,
   ApolloQueryResult,
   OperationVariables,
   useMutation,
 } from "@apollo/client";
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Tooltip } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { enrollMutation } from "../generated/enrollMutation";
@@ -42,11 +43,21 @@ const PublicGames = ({
           gameId: id,
         },
       });
-    } catch (err) {
-      addNotification({
-        status: "error",
-        title: t("error.title"),
-      });
+    } catch (err: any) {
+      if (
+        (err as ApolloError).graphQLErrors[0].message ===
+        "The archival game cannot be accessed."
+      ) {
+        addNotification({
+          status: "error",
+          title: t("You cannot just an archival game"),
+        });
+      } else {
+        addNotification({
+          status: "error",
+          title: t("error.title"),
+        });
+      }
     }
     await refetch();
     setLoading(false);
@@ -85,6 +96,24 @@ const PublicGames = ({
                 <Button size="sm" variant="outline" disabled={true}>
                   {t("You're assigned")}
                 </Button>
+              ) : row.archival ? (
+                <Tooltip
+                  label={t("This is an archival game")}
+                  aria-label="A tooltip"
+                  bg="gray.300"
+                  color="black"
+                  hasArrow
+                >
+                  <Box>
+                    <Button
+                      size="sm"
+                      colorScheme="gray"
+                      disabled={row.archival}
+                    >
+                      {t("Assign me")}
+                    </Button>
+                  </Box>
+                </Tooltip>
               ) : (
                 <Button
                   size="sm"

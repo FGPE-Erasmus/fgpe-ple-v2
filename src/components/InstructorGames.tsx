@@ -50,6 +50,36 @@ export const checkIsActive = (row: any) => {
 };
 
 const InstructorGames = () => {
+  const memoizedArchivalSort = useMemo(
+    () => (rowA: any, rowB: any) => {
+      const a = rowA.original.archival;
+
+      const b = rowB.original.archival;
+
+      if (a > b) return 1;
+
+      if (b > a) return -1;
+
+      return 0;
+    },
+    []
+  );
+
+  const memoizedPrivateSort = useMemo(
+    () => (rowA: any, rowB: any) => {
+      const a = rowA.original.private;
+
+      const b = rowB.original.private;
+
+      if (a > b) return 1;
+
+      if (b > a) return -1;
+
+      return 0;
+    },
+    []
+  );
+
   const memoizedSortFunc = useMemo(
     () => (rowA: any, rowB: any) => {
       const a = rowA.original.name;
@@ -192,7 +222,16 @@ const InstructorGames = () => {
                         return value ? t("Yes") : t("No");
                       },
                       disableFilters: true,
-                      sortType: memoizedSortFunc,
+                      sortType: memoizedPrivateSort,
+                    },
+                    {
+                      Header: t("archival"),
+                      accessor: "archival",
+                      Cell: ({ value }: { value: any }) => {
+                        return value ? t("Yes") : t("No");
+                      },
+                      disableFilters: true,
+                      sortType: memoizedArchivalSort,
                     },
                     // {
                     //   Header: t("Active"),

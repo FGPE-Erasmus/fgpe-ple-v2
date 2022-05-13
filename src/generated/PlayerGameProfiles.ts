@@ -11,6 +11,7 @@ import { GameStateEnum, RewardType } from "./globalTypes";
 
 export interface PlayerGameProfiles_myGameProfiles_game {
   __typename: "Game";
+  archival: boolean;
   id: string;
   name: string;
   description: string | null;
@@ -73,6 +74,7 @@ export interface PlayerGameProfiles_games {
   id: string;
   name: string;
   description: string | null;
+  archival: boolean;
 }
 
 export interface PlayerGameProfiles {

@@ -12,6 +12,7 @@ import {
   Input,
   Checkbox,
   Switch,
+  Flex,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -26,12 +27,15 @@ import { CHANGE_GAME_START_DATE } from "../../graphql/changeGameStartDate";
 import { changeGameStartDateMutation } from "../../generated/changeGameStartDateMutation";
 import { SET_GAME_AVAILABILITY } from "../../graphql/setGameAvailability";
 import { setGameAvailabilityMutation } from "../../generated/setGameAvailabilityMutation";
+import { SET_GAME_ARCHIVAL } from "../../graphql/setGameArchival";
+import { setGameArchivalMutation } from "../../generated/setGameArchivalMutation";
 dayjs.extend(customParseFormat);
 
 const ChangeDetailsModal = ({
   isOpen,
   onClose,
   isGamePrivate,
+  isGameArchival,
   gameId,
   defaultStartDate,
   defaultEndDate,
@@ -40,6 +44,7 @@ const ChangeDetailsModal = ({
   isOpen: boolean;
   onClose: () => void;
   isGamePrivate: boolean;
+  isGameArchival: boolean;
   gameId: string;
   defaultStartDate: string;
   defaultEndDate: string;
@@ -50,6 +55,7 @@ const ChangeDetailsModal = ({
   const [loading, setLoading] = useState(false);
 
   const [gamePrivate, setGamePrivate] = useState(isGamePrivate);
+  const [gameArchival, setGameArchival] = useState(isGameArchival);
 
   const [startDate, setStartDate] = useState(defaultStartDate || "");
   const [startDateError, setStartDateError] = useState(false);
@@ -62,6 +68,9 @@ const ChangeDetailsModal = ({
   const [setGameAvailability] = useMutation<setGameAvailabilityMutation>(
     SET_GAME_AVAILABILITY
   );
+
+  const [setGameArchivalMutate] =
+    useMutation<setGameArchivalMutation>(SET_GAME_ARCHIVAL);
 
   const [changeGameStartDate] = useMutation<changeGameStartDateMutation>(
     CHANGE_GAME_START_DATE
@@ -105,6 +114,15 @@ const ChangeDetailsModal = ({
       });
     }
 
+    if (gameArchival !== isGameArchival) {
+      await setGameArchivalMutate({
+        variables: {
+          gameId,
+          isArchival: gameArchival,
+        },
+      });
+    }
+
     await refetchGame();
     onClose();
     setLoading(false);
@@ -129,17 +147,31 @@ const ChangeDetailsModal = ({
             startDateError={startDateError}
             endDateError={endDateError}
           />
-          <Checkbox
-            isChecked={gamePrivate}
-            size="md"
-            marginTop={4}
-            fontWeight={500}
-            onChange={(value) => {
-              setGamePrivate(value.target.checked);
-            }}
-          >
-            {t("addGame.setPrivate")}
-          </Checkbox>
+          <Flex justifyContent="flex-start" width="100%">
+            <Checkbox
+              isChecked={gamePrivate}
+              size="md"
+              marginTop={4}
+              fontWeight={500}
+              onChange={(value) => {
+                setGamePrivate(value.target.checked);
+              }}
+            >
+              {t("addGame.setPrivate")}
+            </Checkbox>
+            <Checkbox
+              isChecked={gameArchival}
+              size="md"
+              marginTop={4}
+              fontWeight={500}
+              onChange={(value) => {
+                setGameArchival(value.target.checked);
+              }}
+              marginLeft={4}
+            >
+              {t("addGame.setArchival")}
+            </Checkbox>
+          </Flex>
         </ModalBody>
 
         <ModalFooter>

@@ -3,13 +3,14 @@ import {
   Divider,
   Flex,
   Heading,
+  Input,
   StackDivider,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { useKeycloak } from "@react-keycloak/web";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import NavContext from "../context/NavContext";
@@ -44,6 +45,7 @@ const Game = ({
       opacity={game.state === "LOCKED" ? 0.5 : 1}
       pointerEvents={game.state === "LOCKED" ? "none" : "all"}
       small={small}
+      archival={game.archival}
     >
       <Flex justifyContent="space-between" width="100%" alignItems="center">
         <Box>
@@ -80,35 +82,42 @@ export const isGameAvailable = (gameData: {
 };
 
 const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
-  const { keycloak } = useKeycloak();
+  const [searchValue, setSearchValue] = useState("");
   const { setActiveGame } = useContext(NavContext);
+  const { t } = useTranslation();
   const small = data.myGameProfiles.length > 5 ? 1 : 0;
 
   return (
     <Box>
-      <Divider marginTop={4} />
+      <Flex
+        justifyContent="space-between"
+        width="100%"
+        flexDirection="row"
+        marginTop={10}
+        alignItems="center"
+      >
+        <Heading as="h3" size="md">
+          {t("Games")}
+        </Heading>
+        {/* <Input
+          maxWidth={200}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+        /> */}
+      </Flex>
 
+      <Divider marginTop={4} />
       <VStack
         divider={<StackDivider />}
         spacing={small ? 2 : 4}
         align="stretch"
         marginTop={4}
       >
-        {data.myGameProfiles.map((gameProfile, i) => {
-          if (isGameAvailable(gameProfile.game)) {
-            return (
-              <Link
-                key={i}
-                to={{
-                  pathname: `/game/${gameProfile.game.id}`,
-                }}
-                onClick={() =>
-                  setActiveGame({
-                    id: gameProfile.game.id,
-                    name: gameProfile.game.name,
-                  })
-                }
-              >
+        {data.myGameProfiles
+          .sort((a, b) => (a.game.archival > b.game.archival ? 1 : 0))
+          .map((gameProfile, i) => {
+            if (isGameAvailable(gameProfile.game)) {
+              return gameProfile.game.archival ? (
                 <Game
                   game={gameProfile.game}
                   small={small}
@@ -118,17 +127,46 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
                       .reduce((a, b) => a + b, 0) /
                     (gameProfile.learningPath.length || 1)
                   }
+                  key={i}
                 />
-              </Link>
-            );
-          }
-        })}
+              ) : (
+                <Link
+                  key={i}
+                  to={{
+                    pathname: `/game/${gameProfile.game.id}`,
+                  }}
+                  onClick={() => {
+                    !gameProfile.game.archival &&
+                      setActiveGame({
+                        id: gameProfile.game.id,
+                        name: gameProfile.game.name,
+                      });
+                  }}
+                >
+                  <Game
+                    game={gameProfile.game}
+                    small={small}
+                    progress={
+                      gameProfile.learningPath
+                        .flatMap((learningPath) => learningPath.progress)
+                        .reduce((a, b) => a + b, 0) /
+                      (gameProfile.learningPath.length || 1)
+                    }
+                  />
+                </Link>
+              );
+            }
+          })}
       </VStack>
     </Box>
   );
 };
 
-const GameStyled = styled(Box)<{ locked?: boolean; small?: number }>`
+const GameStyled = styled(Box)<{
+  locked?: boolean;
+  small?: number;
+  archival?: boolean;
+}>`
   min-height: ${({ small }) => (small ? 50 : 80)}px;
   width: 100%;
   border-radius: 5px;
@@ -138,8 +176,10 @@ const GameStyled = styled(Box)<{ locked?: boolean; small?: number }>`
   padding: 15px;
   transition: transform 0.5s;
 
+  opacity: ${({ archival }) => (archival ? 0.5 : 1)};
+
   &:hover {
-    transform: scale(0.97);
+    transform: scale(${({ archival }) => (archival ? 1 : 0.97)});
   }
   & > div > div {
     font-size: 12px;
