@@ -80,6 +80,8 @@ const preparePlayersForCSV = (
       userId: player.user.id,
       gameName,
       gameId,
+      username: player.user.username,
+      email: player.user.email,
     };
 
     delete convertedPlayer["__typename"];
@@ -139,17 +141,17 @@ const ExportGameCsvModal = ({
     }
   }, [isOpen]);
 
-  const [playerValidationsLoadingState, setPlayerValidationsLoadingState] =
-    useState<null | {
-      done: number;
-      total: number;
-    }>();
+  // const [playerValidationsLoadingState, setPlayerValidationsLoadingState] =
+  //   useState<null | {
+  //     done: number;
+  //     total: number;
+  //   }>();
 
-  const [playersSubmissionsState, setPlayersSubmissionsState] =
-    useState<null | {
-      done: number;
-      total: number;
-    }>();
+  // const [playersSubmissionsState, setPlayersSubmissionsState] =
+  //   useState<null | {
+  //     done: number;
+  //     total: number;
+  //   }>();
 
   const getGameChallenges = useLazyQuery<getGameChallenges>(
     GET_CHALLENGES_BY_GAME

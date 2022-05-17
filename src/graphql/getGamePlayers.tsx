@@ -14,6 +14,8 @@ export const GET_GAME_PLAYERS = gql`
           id
           firstName
           lastName
+          email
+          username
         }
       }
     }

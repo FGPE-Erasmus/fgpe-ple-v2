@@ -17,6 +17,8 @@ export interface getGamePlayersQuery_game_players_user {
   id: string | null;
   firstName: string | null;
   lastName: string | null;
+  email: string | null;
+  username: string | null;
 }
 
 export interface getGamePlayersQuery_game_players {
