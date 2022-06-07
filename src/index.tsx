@@ -12,10 +12,10 @@ import {
   ColorModeScript,
   localStorageManager,
 } from "@chakra-ui/react";
-import { ReactKeycloakProvider } from "@react-keycloak/web";
 import { createUploadLink } from "apollo-upload-client";
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
+import { ReactKeycloakProvider } from "@react-keycloak/web";
 import App from "./App";
 import MainLoading from "./components/MainLoading";
 import "./i18n/config";
@@ -24,6 +24,8 @@ import theme from "./styles/theme/themes";
 import ClearLocalStorage from "./utilities/ClearLocalStorage";
 import { persistCache, LocalStorageWrapper } from "apollo3-cache-persist";
 import * as serviceWorkerRegistration from "./service-worker-registration";
+import { restoreTokens, storeTokens } from "./utilities/Storage";
+
 
 ClearLocalStorage();
 
@@ -133,29 +135,35 @@ persistCache({
     console.log("expired " + new Date());
     keycloak
       .updateToken(50)
-      .success((refreshed: boolean) => {
+      .then((refreshed: boolean) => {
         if (refreshed) {
           console.log("refreshed " + new Date());
         } else {
           console.log("not refreshed " + new Date());
         }
       })
-      .error(() => {
+      .catch(() => {
         console.error("Failed to refresh token " + new Date());
       });
   };
 
+  const tokens = restoreTokens();
+
   ReactDOM.render(
     <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
-      {/* <GlobalStyle /> */}
-
       <ColorModeScript initialColorMode={theme.config.lightTheme} />
       <ReactKeycloakProvider
         authClient={keycloak}
         initOptions={{
           onLoad: "check-sso",
+          checkLoginIframe: false,
+          enableLogging: true,
+          token: tokens.token,
+          idToken: tokens.idToken,
+          refreshToken: tokens.refreshToken,
         }}
         LoadingComponent={<MainLoading />}
+        onTokens={(tokens) => storeTokens(tokens.token, tokens.idToken, tokens.refreshToken)}
       >
         <ApolloProvider client={client}>
           <Suspense fallback="loading">

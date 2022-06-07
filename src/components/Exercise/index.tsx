@@ -7,9 +7,12 @@ import {
 } from "@apollo/client";
 import { Box, Flex, Skeleton } from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
+import axios from "axios";
 import dayjs from "dayjs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { FocusActivityContextType } from "../../@types/focus-activity";
+import { FocusActivityContext } from "../../context/FocusActivityContext";
 import { evaluationSubscription } from "../../generated/evaluationSubscription";
 import {
   FindChallenge,
@@ -274,6 +277,8 @@ const Exercise = ({
   const [code, setCode] = useState<string | null>(null);
 
   const { keycloak } = useKeycloak();
+
+  const { focusActivity } = useContext(FocusActivityContext) as FocusActivityContextType;
 
   const [isSkulptEnabled, setSkulptEnabled] = useState(
     isSkulptEnabledLocalStorage()
@@ -755,6 +760,10 @@ const Exercise = ({
           setValidationOutputs(null);
           setWaitingForEvaluationResult(false);
 
+          if (focusActivity) {
+            sendLastGradeToLtiPlatform();
+          }
+
           saveSubmissionDataInLocalStorage(
             evaluationData.feedback || "",
             evaluationData.result,
@@ -941,6 +950,24 @@ const Exercise = ({
       additionalOutputs.current = [];
       stopExecution.current = false;
     }
+  };
+
+  const sendLastGradeToLtiPlatform = async () => {
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_URI}/lti/grade`,
+      {
+        game: focusActivity?.gameId,
+        challenge: focusActivity?.challengeId,
+        activity: focusActivity?.activityId
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${focusActivity?.ltik}`,
+        },
+      }
+    );
+
+    console.log(res.data);
   };
 
   return (

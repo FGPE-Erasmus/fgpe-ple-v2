@@ -1,4 +1,4 @@
-import Keycloak from "keycloak-js";
+import Keycloak from '@fgpe/keycloak-js';
 
 const keycloakConfig: Keycloak.KeycloakConfig = {
   url: process.env.REACT_APP_KEYCLOAK_URL,
@@ -6,5 +6,6 @@ const keycloakConfig: Keycloak.KeycloakConfig = {
   clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID,
 };
 
-const keycloak = new (Keycloak as any)(keycloakConfig);
+const keycloak = new Keycloak(keycloakConfig);
+
 export default keycloak;

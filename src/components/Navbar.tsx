@@ -21,10 +21,12 @@ import { IoLanguage } from "react-icons/io5";
 import { VscColorMode } from "react-icons/vsc";
 import { NavLink } from "react-router-dom";
 import useBreadcrumbs from "use-react-router-breadcrumbs";
+import { KeycloakProfile } from "@fgpe/keycloak-js";
 import NavContext from "../context/NavContext";
 import LogoSVG from "../images/logo.svg";
 import ChangeLanguageModal from "./ChangeLanguageModal";
-import { Text } from "@chakra-ui/react";
+import { FocusActivityContext } from "../context/FocusActivityContext";
+import { FocusActivityContextType } from "../@types/focus-activity";
 
 const Logo = styled.div`
   background: url(${LogoSVG});
@@ -50,6 +52,10 @@ const Navbar = () => {
   const { activeGame } = useContext(NavContext);
   const { keycloak, initialized } = useKeycloak();
 
+  const { deactivate: deactivateFocusMode, focusActivity } = useContext(
+    FocusActivityContext
+  ) as FocusActivityContextType;
+
   // const resetActiveGameAndChallenge = () => {
   //   activeGameAndChallenge.setActiveChallenge(null);
   //   activeGameAndChallenge.setActiveGame(null);
@@ -57,7 +63,7 @@ const Navbar = () => {
 
   const { colorMode, toggleColorMode } = useColorMode();
   const [userProfile, setUserProfile] =
-    useState<null | Keycloak.KeycloakProfile>(null);
+    useState<null | KeycloakProfile>(null);
 
   const loadUserProfile = async () => {
     setUserProfile(await keycloak.loadUserProfile());
@@ -77,11 +83,19 @@ const Navbar = () => {
         isOpen={isOpenLanguageModal}
       />
       <NavbarStyled>
-        <Flex px={2} justifyContent="space-between" alignItems="center" height="100%">
+        <Flex
+          px={2}
+          justifyContent="space-between"
+          alignItems="center"
+          height="100%"
+        >
           <Box width={1 / 2}>
-            <NavLink to={keycloak.authenticated ? "/profile" : "/"}>
-              <Logo />
-            </NavLink>
+            {!focusActivity && (
+              <NavLink to={keycloak.authenticated ? "/profile" : "/"}>
+                <Logo />
+              </NavLink>
+            )}
+            {focusActivity && <Logo />}
             {/* {activeGame && activeGame.name} */}
           </Box>
 
@@ -91,7 +105,7 @@ const Navbar = () => {
             alignItems="flex-end"
             display={{ base: "none", md: "flex" }}
           >
-            {keycloak.authenticated && (
+            {keycloak.authenticated && !focusActivity && (
               <Box>
                 <NavLink to="/profile">
                   <IconButton
@@ -106,7 +120,7 @@ const Navbar = () => {
               </Box>
             )}
 
-            {keycloak.authenticated && (
+            {keycloak.authenticated && !focusActivity && (
               <Box>
                 <NavLink to="/profile/settings">
                   <IconButton
@@ -144,21 +158,32 @@ const Navbar = () => {
               />
             </Box>
 
-            <Box marginLeft={5}>
-              {keycloak.authenticated ? (
-                <button onClick={() => keycloak.logout()}>{t("Logout")}</button>
-              ) : (
-                <button
-                  onClick={() => {
-                    keycloak.login({
-                      redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
-                    });
-                  }}
-                >
-                  {t("Login")}
+            {focusActivity && (
+              <Box marginLeft={5}>
+                <button onClick={() => deactivateFocusMode()}>
+                  {t("Exit Focus Mode")}
                 </button>
-              )}
-            </Box>
+              </Box>
+            )}
+            {!focusActivity && (
+              <Box marginLeft={5}>
+                {keycloak.authenticated ? (
+                  <button onClick={() => keycloak.logout()}>
+                    {t("Logout")}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      keycloak.login({
+                        redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
+                      });
+                    }}
+                  >
+                    {t("Login")}
+                  </button>
+                )}
+              </Box>
+            )}
 
             {/* <IconButton
               onClick={toggleColorMode}
@@ -172,7 +197,7 @@ const Navbar = () => {
                 <HamburgerIcon />
               </MenuButton>
               <MenuList>
-                <MenuItem>
+                {!focusActivity && (<MenuItem>
                   <NavLink to="/profile">
                     <Flex color={colorMode === "dark" ? "white" : "black"}>
                       <IconButton
@@ -186,8 +211,8 @@ const Navbar = () => {
                       {t("Your games")}
                     </Flex>
                   </NavLink>
-                </MenuItem>
-                <MenuItem>
+                </MenuItem>)}
+                {!focusActivity && (<MenuItem>
                   <NavLink to="/profile/settings">
                     <Flex color={colorMode === "dark" ? "white" : "black"}>
                       <IconButton
@@ -201,7 +226,7 @@ const Navbar = () => {
                       {t("Account settings")}
                     </Flex>
                   </NavLink>
-                </MenuItem>
+                </MenuItem>)}
                 <MenuItem onClick={toggleColorMode}>
                   <IconButton
                     height={6}
@@ -224,21 +249,30 @@ const Navbar = () => {
                   />
                   {t("Language")}
                 </MenuItem>
-                {keycloak.authenticated ? (
-                  <MenuItem onClick={() => keycloak.logout()} paddingLeft={6}>
-                    {t("Logout")}
+                {focusActivity && (
+                  <MenuItem onClick={async () => await deactivateFocusMode()} paddingLeft={6}>
+                    {t("Exit Focus Mode")}
                   </MenuItem>
-                ) : (
-                  <MenuItem
-                    paddingLeft={6}
-                    onClick={() => {
-                      keycloak.login({
-                        redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
-                      });
-                    }}
-                  >
-                    {t("Login")}
-                  </MenuItem>
+                )}
+                {!focusActivity && (
+                  <>
+                    {keycloak.authenticated ? (
+                      <MenuItem onClick={() => keycloak.logout()} paddingLeft={6}>
+                        {t("Logout")}
+                      </MenuItem>
+                    ) : (
+                      <MenuItem
+                        paddingLeft={6}
+                        onClick={() => {
+                          keycloak.login({
+                            redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
+                          });
+                        }}
+                      >
+                        {t("Login")}
+                      </MenuItem>
+                    )}
+                  </>
                 )}
               </MenuList>
             </Menu>

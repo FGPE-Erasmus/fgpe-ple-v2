@@ -1,0 +1,6 @@
+REACT_APP_KEYCLOAK_CLIENT_ID=fgpe-learning-platform
+REACT_APP_KEYCLOAK_REALM=FGPE
+REACT_APP_KEYCLOAK_URL=https://fgpe.dcc.fc.up.pt/keycloak/auth
+REACT_APP_GRAPHQL_URI=https://fgpe.dcc.fc.up.pt/gamification-service/graphql
+REACT_APP_GRAPHQL_WS=wss://fgpe.dcc.fc.up.pt/gamification-service/graphql
+REACT_APP_KEYCLOAK_AVATAR='avatar'

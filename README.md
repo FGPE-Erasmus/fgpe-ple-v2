@@ -89,9 +89,9 @@ docker build -t fgpe/learning-platform:latest .
 ### Serves for production with Docker
 
 ```
-docker run -it -p 8080:80 \
+docker run -itd -p 8088:80 \
     -v $(pwd)/docker/nginx.conf:/etc/nginx/nginx.conf \
-    --rm fgpe/learning-platform:latest
+    --rm fgpe/learning-platform:pwa
 ```
 
 ## Acknowledgments
