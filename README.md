@@ -105,7 +105,7 @@ This software has been developed as a part of the Framework for Gamified Program
 </td>
 <td border=0>
 
-![Framework for Gamified Programming Education project](docs/logo_FGPE.jpg) ![Erasmus+](docs/logo_erasmus.jpg)
+![Framework for Gamified Programming Education project](https://raw.githubusercontent.com/FGPE-Erasmus/fgpe-ple-v2/master/docs/logo_FGPE.jpeg) ![Erasmus+](https://raw.githubusercontent.com/FGPE-Erasmus/fgpe-ple-v2/master/docs/logo_erasmus.jpeg)
 
 </td>
 </tr>
