@@ -1,6 +1,6 @@
 # Getting Started
 
-This is an FGPE Learning Platform user interface. This project uses react, typescript, keycloak (auth), react-i18next and emotion / chakra-ui (styling).
+This is an FGPE Learning Platform user interface. This project uses react, typescript, keycloak (auth), react-i18next, Apollo GraphQL (check available scripts below) and emotion / chakra-ui (styling).
 
 You need Node.js installed to run this project.
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
