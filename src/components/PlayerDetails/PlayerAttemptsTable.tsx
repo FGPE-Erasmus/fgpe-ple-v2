@@ -49,6 +49,7 @@ const PlayerAttemptsTable = ({
   gameData,
   contextMenu,
   refreshData,
+  dataCy,
 }: {
   isValidationsTable?: boolean;
   playerData: any;
@@ -56,6 +57,7 @@ const PlayerAttemptsTable = ({
   onRowClick?: (row: any) => void;
   contextMenu: React.ReactNode;
   refreshData?: () => Promise<any>;
+  dataCy?: string;
 }) => {
   const memoizedSortDateFunc = useMemo(sortByDate, []);
 
@@ -63,6 +65,7 @@ const PlayerAttemptsTable = ({
   return (
     <Box>
       <TableComponent
+        dataCy={dataCy}
         refreshData={refreshData}
         contextMenu={contextMenu}
         onRowClick={(row: any) => {

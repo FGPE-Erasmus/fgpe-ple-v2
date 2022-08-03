@@ -228,6 +228,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
 
               {/* <CSVLink data={prepareForCsv()}> */}
               <Button
+                data-cy="csv-button"
                 size="sm"
                 float="right"
                 marginLeft={2}
@@ -372,7 +373,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
       {/* {JSON.stringify({
         selectedFlatRows: selectedFlatRows.map((row) => row.original),
       })} */}
-      <PaginationStyled>
+      <PaginationStyled data-cy="pagination-wrapper">
         <Pagination
           activePage={pageIndex + 1}
           itemsCountPerPage={pageSize}

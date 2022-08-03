@@ -123,6 +123,7 @@ const TeacherStudents = () => {
             {teacherStudentsData && (
               <Box>
                 <TableComponent
+                  dataCy="all-your-students-table"
                   refreshData={refetchTeacherStudents}
                   contextMenu={
                     <RefreshCacheMenu

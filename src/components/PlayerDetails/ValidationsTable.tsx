@@ -51,6 +51,7 @@ const ValidationsTable = ({
       <AnimatePresence>
         {playerError && !isRefreshing && (
           <motion.div
+            data-cy="validations-error"
             initial={{ maxHeight: 0, opacity: 0 }}
             animate={{ maxHeight: 50, opacity: 1 }}
             exit={{ maxHeight: 0, opacity: 0 }}
@@ -64,6 +65,7 @@ const ValidationsTable = ({
       <AnimatePresence>
         {isRefreshing && (
           <motion.div
+            data-cy="server-connection-error"
             initial={{ maxHeight: 0, opacity: 0 }}
             animate={{ maxHeight: 50, opacity: 1 }}
             exit={{ maxHeight: 0, opacity: 0 }}
@@ -79,6 +81,7 @@ const ValidationsTable = ({
         <Box minHeight={200}>
           {playerData && (
             <PlayerAttemptsTable
+              dataCy="validations-table"
               contextMenu={
                 <RefreshCacheMenu
                   loading={playerLoading}

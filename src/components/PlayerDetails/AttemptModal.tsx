@@ -195,7 +195,7 @@ const AttemptModal = ({
           isLoaded={!submissionLoading && !validationLoading}
           height="100%"
         >
-          <DrawerBody height="100%">
+          <DrawerBody height="100%" data-cy="attempt-details">
             <Stack
               direction={{ base: "column", lg: "row" }}
               width="100%"
@@ -230,7 +230,7 @@ const AttemptModal = ({
             {activeAttempt?.submittedAt && (
               <Flex justifyContent="center" alignItems="center" marginTop={4}>
                 <CalendarIcon marginRight={2} />
-                <Text fontSize={14}>
+                <Text fontSize={14} data-cy="submitted-at">
                   {t("Submitted at")}{" "}
                   {dayjs(activeAttempt?.submittedAt).format("lll")}
                 </Text>
@@ -252,6 +252,7 @@ const AttemptModal = ({
                   borderRadius={4}
                   // maxH="40vh"
                   overflowY="auto"
+                  data-cy="attempt-content-code"
                 >
                   <SyntaxHighlighter
                     wrapLines
@@ -281,6 +282,7 @@ const AttemptModal = ({
                   // height="100%"
                   // maxHeight={"40vh"}
                   overflowY="auto"
+                  data-cy="attempt-content"
                 >
                   <SyntaxHighlighter
                     wrapLines

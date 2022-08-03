@@ -165,6 +165,7 @@ const Students = ({
               !studentsDetailsLoading &&
               !studentsDetailsError && (
                 <TableComponent
+                  dataCy="students-table"
                   refreshData={refetchStudentsDetails}
                   contextMenu={
                     <>
@@ -310,6 +311,7 @@ const ContextMenu = ({
         refetch={refetchStudentsDetails}
       />
       <Button
+        data-cy="auto-assign-groups"
         marginLeft={2}
         marginRight={2}
         size="sm"
@@ -336,7 +338,12 @@ const ContextMenu = ({
       >
         {t("Auto-assign groups")}
       </Button>
-      <Button marginRight={2} size="sm" onClick={onAddGroupModalOpen}>
+      <Button
+        marginRight={2}
+        size="sm"
+        onClick={onAddGroupModalOpen}
+        data-cy="add-new-group"
+      >
         {t("Add new group")}
       </Button>
 
@@ -346,16 +353,25 @@ const ContextMenu = ({
           size="sm"
           as={Button}
           rightIcon={<ChevronDownIcon />}
+          data-cy="actions"
         >
           {t("Actions")}
         </MenuButton>
 
         <MenuList>
-          <MenuItem onClick={onSetGroupModalOpen}>{t("Set group")}</MenuItem>
-          <MenuItem onClick={getSelectedStudentsAndRemoveFromGroups}>
+          <MenuItem onClick={onSetGroupModalOpen} data-cy="set-group">
+            {t("Set group")}
+          </MenuItem>
+          <MenuItem
+            onClick={getSelectedStudentsAndRemoveFromGroups}
+            data-cy="remove-from-group"
+          >
             {t("Remove from the group")}
           </MenuItem>
-          <MenuItem onClick={getSelectedStudentAndRemoveFromGame}>
+          <MenuItem
+            onClick={getSelectedStudentAndRemoveFromGame}
+            data-cy="remove-from-game"
+          >
             {t("Remove from the game")}
           </MenuItem>
         </MenuList>

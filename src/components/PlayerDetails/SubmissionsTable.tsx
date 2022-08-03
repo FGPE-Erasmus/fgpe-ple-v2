@@ -48,6 +48,7 @@ const SubmissionsTable = ({
       <AnimatePresence>
         {playerError && !isRefreshing && (
           <motion.div
+            data-cy="submissions-error"
             initial={{ maxHeight: 0, opacity: 0 }}
             animate={{ maxHeight: 50, opacity: 1 }}
             exit={{ maxHeight: 0, opacity: 0 }}
@@ -61,6 +62,7 @@ const SubmissionsTable = ({
       <AnimatePresence>
         {isRefreshing && (
           <motion.div
+            data-cy="server-connection-error"
             initial={{ maxHeight: 0, opacity: 0 }}
             animate={{ maxHeight: 50, opacity: 1 }}
             exit={{ maxHeight: 0, opacity: 0 }}
@@ -75,6 +77,7 @@ const SubmissionsTable = ({
         <Box minHeight={200}>
           {playerData && (
             <PlayerAttemptsTable
+              dataCy="submissions-table"
               contextMenu={
                 <RefreshCacheMenu
                   loading={playerLoading}

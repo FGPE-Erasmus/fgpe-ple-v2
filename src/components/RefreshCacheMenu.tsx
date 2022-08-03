@@ -40,6 +40,7 @@ const RefreshCacheMenu = ({
   return (
     <Flex justifyContent="flex-end">
       <Button
+        data-cy="refresh-button"
         isLoading={internalLoading || loading}
         loadingText={t("Loading")}
         leftIcon={

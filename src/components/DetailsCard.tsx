@@ -25,6 +25,7 @@ const DetailsCard = ({
 
   return (
     <Flex
+      data-cy="details-card"
       cursor={active ? "pointer" : "unset"}
       onClick={onClick}
       width="100%"
@@ -52,7 +53,7 @@ const DetailsCard = ({
       }
       transition="border-color 0.5s"
     >
-      <Heading as="h4" size="sm" fontSize={16}>
+      <Heading as="h4" size="sm" fontSize={16} data-cy="details-card-title">
         {title}
       </Heading>
       {badgeContent ? <Badge>{content}</Badge> : content}

@@ -143,7 +143,10 @@ const PlayerDetails = () => {
       <Flex justifyContent="space-between" alignItems="center" marginBottom={4}>
         <Heading as="h3" size="md">
           {t("Game profile")}:{" "}
-          <Link to={`/teacher/student-details/${userId}`}>
+          <Link
+            to={`/teacher/student-details/${userId}`}
+            data-cy="link-to-player"
+          >
             <ChakraLink color="blue.500">
               {playerData.player.user.firstName}{" "}
               {playerData.player.user.lastName}
@@ -158,6 +161,7 @@ const PlayerDetails = () => {
             size="md"
           />
           <Button
+            data-cy="remove-from-game"
             isLoading={removeSingleLoading}
             onClick={async () => {
               try {
@@ -190,8 +194,13 @@ const PlayerDetails = () => {
           >
             {t("Remove from the game")}
           </Button>
-          <Button onClick={onOpenGroupSet}>{t("Change group")}</Button>
-          <Link to={`/teacher/student-details/${userId}`}>
+          <Button onClick={onOpenGroupSet} data-cy="change-group">
+            {t("Change group")}
+          </Button>
+          <Link
+            to={`/teacher/student-details/${userId}`}
+            data-cy="user-profile"
+          >
             <Button>{t("User profile")}</Button>
           </Link>
         </HStack>
@@ -199,7 +208,7 @@ const PlayerDetails = () => {
 
       <Flex flexDirection={{ base: "column", md: "row" }}>
         <Box width="100%" marginRight={{ base: 0, md: 2 }}>
-          <Link to={`/teacher/game/${gameId}`}>
+          <Link to={`/teacher/game/${gameId}`} data-cy="game-link">
             <DetailsCard
               title={t("Game")}
               content={playerData.player.game.name}
@@ -243,7 +252,7 @@ const PlayerDetails = () => {
         <AccordionItem>
           {({ isExpanded }: { isExpanded: boolean }) => (
             <>
-              <AccordionButton>
+              <AccordionButton data-cy="submissions-accordion">
                 <Box flex="1" textAlign="left">
                   <Heading as="h3" size="sm" marginTop={2} marginBottom={2}>
                     {t("submissions")}
@@ -273,7 +282,7 @@ const PlayerDetails = () => {
         <AccordionItem>
           {({ isExpanded }: { isExpanded: boolean }) => (
             <>
-              <AccordionButton>
+              <AccordionButton data-cy="validations-accordion">
                 <Box flex="1" textAlign="left">
                   <Heading as="h3" size="sm" marginTop={2} marginBottom={2}>
                     {t("validations")}
@@ -304,7 +313,7 @@ const PlayerDetails = () => {
         <AccordionItem>
           {({ isExpanded }: { isExpanded: boolean }) => (
             <>
-              <AccordionButton>
+              <AccordionButton data-cy="rewards-accordion">
                 <Box flex="1" textAlign="left">
                   <Heading as="h3" size="sm" marginTop={2} marginBottom={2}>
                     {t("Rewards")}

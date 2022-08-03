@@ -204,13 +204,17 @@ const InstructorGame = () => {
 
       <div>
         {gameData.game.archival && (
-          <Alert status="warning" marginBottom={2}>
+          <Alert
+            status="warning"
+            marginBottom={2}
+            data-cy="archival-game-alert"
+          >
             <AlertIcon />
             {t("This is an archival game")}
           </Alert>
         )}
         {gameData.game.players.length < 1 && (
-          <Alert status="info">
+          <Alert status="info" data-cy="no-players-alert">
             <AlertIcon />
             {t("teacher.noPlayersAlert")}
           </Alert>
@@ -238,13 +242,17 @@ const InstructorGame = () => {
               }}
               size="md"
             />
-            <Button onClick={onDetailsModalOpen}>
+            <Button
+              onClick={onDetailsModalOpen}
+              data-cy="change-availability-button"
+            >
               {t("Change availability")}
             </Button>
             <Link
               to={{
                 pathname: `/teacher/game/${gameId}/add-players`,
               }}
+              data-cy="add-players"
             >
               {gameData.game.archival ? (
                 <Tooltip
@@ -264,7 +272,9 @@ const InstructorGame = () => {
                 <Button>{t("Add or remove players")}</Button>
               )}
             </Link>
-            <Button onClick={onExportCsvModalOpen}>CSV</Button>
+            <Button onClick={onExportCsvModalOpen} data-cy="csv-export">
+              CSV
+            </Button>
           </HStack>
         </Flex>
 
@@ -341,7 +351,7 @@ const InstructorGame = () => {
           <AccordionItem>
             {({ isExpanded }: { isExpanded: boolean }) => (
               <>
-                <AccordionButton>
+                <AccordionButton data-cy="students-accordion">
                   <Box flex="1" textAlign="left">
                     <Heading as="h3" size="sm" marginTop={2} marginBottom={2}>
                       {t("Students")}
@@ -375,7 +385,7 @@ const InstructorGame = () => {
           <AccordionItem>
             {({ isExpanded }: { isExpanded: boolean }) => (
               <>
-                <AccordionButton>
+                <AccordionButton data-cy="activities-accordion">
                   <Box flex="1" textAlign="left">
                     <Heading as="h3" size="sm" marginTop={2} marginBottom={2}>
                       {t("Activities")}

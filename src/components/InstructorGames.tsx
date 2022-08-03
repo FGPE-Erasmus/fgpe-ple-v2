@@ -121,6 +121,7 @@ const InstructorGames = () => {
       <AnimatePresence>
         {teacherGamesError && !isRefreshing && (
           <motion.div
+            data-cy="table-error"
             initial={{ maxHeight: 0, opacity: 0 }}
             animate={{ maxHeight: 50, opacity: 1 }}
             exit={{ maxHeight: 0, opacity: 0 }}
@@ -135,6 +136,7 @@ const InstructorGames = () => {
       <AnimatePresence>
         {isRefreshing && (
           <motion.div
+            data-cy="server-connection-error"
             initial={{ maxHeight: 0, opacity: 0 }}
             animate={{ maxHeight: 50, opacity: 1 }}
             exit={{ maxHeight: 0, opacity: 0 }}
@@ -149,7 +151,7 @@ const InstructorGames = () => {
         <Skeleton isLoaded={!teacherGamesLoading && !teacherGamesError}>
           <Box minH={200}>
             {teacherGamesData?.myGames.length === 0 && (
-              <Alert status="info">
+              <Alert status="info" data-cy="no-games-alert">
                 <AlertIcon />
                 {t("No games available")}
               </Alert>
@@ -158,6 +160,7 @@ const InstructorGames = () => {
             {teacherGamesData && (
               <Box>
                 <TableComponent
+                  dataCy="your-games-table"
                   refreshData={refetchTeacherGames}
                   contextMenu={
                     <RefreshCacheMenu

@@ -34,7 +34,7 @@ const TeacherProfile = () => {
         <AccordionItem>
           {({ isExpanded }: { isExpanded: boolean }) => (
             <>
-              <AccordionButton>
+              <AccordionButton data-cy="your-games">
                 <Box flex="1" textAlign="left">
                   <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
                     {t("Your games")}
@@ -52,7 +52,7 @@ const TeacherProfile = () => {
         <AccordionItem>
           {({ isExpanded }: { isExpanded: boolean }) => (
             <>
-              <AccordionButton>
+              <AccordionButton data-cy="all-your-students">
                 <Box flex="1" textAlign="left">
                   <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
                     {t("All your students")}

@@ -48,6 +48,7 @@ const PlayerAttemptsTable = ({
       <AnimatePresence>
         {playerError && !isRefreshing && (
           <motion.div
+            data-cy="rewards-error"
             initial={{ maxHeight: 0, opacity: 0 }}
             animate={{ maxHeight: 50, opacity: 1 }}
             exit={{ maxHeight: 0, opacity: 0 }}
@@ -61,6 +62,7 @@ const PlayerAttemptsTable = ({
       <AnimatePresence>
         {isRefreshing && (
           <motion.div
+            data-cy="server-connection-error"
             initial={{ maxHeight: 0, opacity: 0 }}
             animate={{ maxHeight: 50, opacity: 1 }}
             exit={{ maxHeight: 0, opacity: 0 }}
@@ -75,6 +77,7 @@ const PlayerAttemptsTable = ({
         <Box minH={200}>
           {playerData && (
             <TableComponent
+              dataCy="rewards-table"
               refreshData={refetchPlayerData}
               contextMenu={
                 <RefreshCacheMenu
