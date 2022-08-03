@@ -41,7 +41,7 @@ const FillInGapsEditor = ({
 
   return (
     <>
-      <Box width="100%" height="100%">
+      <Box width="100%" height="100%" data-cy="fill-in-gaps-editor">
         {skeleton &&
           skeleton.split("{{gap}}").map((line, i) => {
             return (

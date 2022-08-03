@@ -57,9 +57,14 @@ const Statement = ({
           w="100%"
           bgColor={colorMode === "dark" ? "gray.900" : "gray.100"}
         >
-          <Box bgColor={colorMode === "dark" ? "gray.900" : "gray.100"} p={5}>
+          <Box
+            bgColor={colorMode === "dark" ? "gray.900" : "gray.100"}
+            p={5}
+            data-cy="statement"
+          >
             {activity?.pdf ? (
               <Button
+                data-cy="open-pdf"
                 colorScheme="blue"
                 variant="ghost"
                 onClick={() => {
@@ -78,6 +83,7 @@ const Statement = ({
             ) : statementOrNoDescriptionMessage.split('data-type="lang"')
                 .length > 1 ? (
               <Tabs
+                data-cy="statement-language-tabs"
                 variant="soft-rounded"
                 defaultIndex={(() => {
                   // Initial active tab to active language

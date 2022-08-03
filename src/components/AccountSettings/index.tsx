@@ -2,7 +2,7 @@ import { Box, VStack } from "@chakra-ui/layout";
 import { Heading } from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import withChangeAnimation from "../../utilities/withChangeAnimation";
 import { useNotifications } from "../Notifications";
@@ -17,19 +17,18 @@ const AccountSettings = () => {
   const { t } = useTranslation();
   const [userProfile, setUserProfile] = useState<any>({});
 
-  const loadUserProfile = async () => {
+  const loadUserProfile = useCallback(async () => {
     const keycloakUserProfile = await keycloak.loadUserProfile();
     if (keycloakUserProfile) {
-      console.log("KK", keycloakUserProfile);
       setUserProfile(keycloakUserProfile);
     }
 
     axios.defaults.headers.post["Authorization"] = `Bearer ${keycloak.token}`;
-  };
+  }, [keycloak]);
 
   useEffect(() => {
     loadUserProfile();
-  }, []);
+  }, [loadUserProfile]);
 
   if (!userProfile.email) {
     return <span>{t("Loading")}</span>;

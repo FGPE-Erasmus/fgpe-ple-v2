@@ -46,6 +46,7 @@ const Game = ({
       pointerEvents={game.state === "LOCKED" ? "none" : "all"}
       small={small}
       archival={game.archival}
+      data-cy="game-description-wrapper"
     >
       <Flex justifyContent="space-between" width="100%" alignItems="center">
         <Box>
@@ -112,6 +113,7 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
         spacing={small ? 2 : 4}
         align="stretch"
         marginTop={4}
+        data-cy="games-list"
       >
         {data.myGameProfiles
           .sort((a, b) => (a.game.archival > b.game.archival ? 1 : 0))
@@ -131,6 +133,7 @@ const GamesList = ({ data }: { data: PlayerGameProfiles }) => {
                 />
               ) : (
                 <Link
+                  data-cy="game-link"
                   key={i}
                   to={{
                     pathname: `/game/${gameProfile.game.id}`,

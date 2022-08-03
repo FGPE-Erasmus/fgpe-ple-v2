@@ -23,7 +23,7 @@ const SpotTheBugEditor = ({
   const [selectedLine, setSelectedLine] = useState(-1);
 
   return (
-    <Box padding={2}>
+    <Box padding={2} data-cy="spot-the-bug-editor">
       {codeSkeleton &&
         codeSkeleton.split("\n").map((line, i) => {
           return (

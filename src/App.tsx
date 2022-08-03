@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useKeycloak } from "@react-keycloak/web";
 import { AnimatePresence } from "framer-motion";
-import React, { useState } from "react";
+import { useState } from "react";
 // import "./i18n/config";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter, Route, Switch } from "react-router-dom";

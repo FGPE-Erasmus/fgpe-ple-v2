@@ -12,7 +12,7 @@ import {
 import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import Countdown from "react-countdown";
 import { useTranslation } from "react-i18next";
 import { BiTimer } from "react-icons/bi";
@@ -409,6 +409,7 @@ const Challenge = () => {
                 w="100%"
                 // height="100%"
                 overflowY="hidden"
+                data-cy="exercises-list"
               >
                 {!challengeLoading &&
                   challengeData &&
@@ -443,6 +444,7 @@ const Challenge = () => {
                         }
                         onClick={() => setActiveExercise(exercise)}
                         rightIcon={exercise.solved ? <CheckIcon /> : undefined}
+                        data-cy="exercise-button"
                       >
                         <Text
                           whiteSpace="nowrap"

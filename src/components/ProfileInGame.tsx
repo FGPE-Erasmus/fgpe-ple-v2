@@ -8,7 +8,6 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { BiCheck, BiCircle, BiXCircle } from "react-icons/bi";
 import { HiLockClosed, HiLockOpen } from "react-icons/hi";
@@ -172,7 +171,7 @@ const ProfileInGame = () => {
       <Heading as="h3" size="md">
         {t("Challenges")}
       </Heading>
-      <Box>
+      <Box data-cy="challenges-list">
         {dataProfile.profileInGame.learningPath.map((learningPath, i) => {
           if (
             learningPath.state === State.HIDDEN ||
@@ -223,6 +222,7 @@ const ProfileInGame = () => {
                     childChallenge && (
                       <ChildrenChallenge>
                         <Link
+                          data-cy="challenge-link"
                           key={i}
                           to={{
                             pathname: "/profile/game/challenge",
@@ -253,6 +253,7 @@ const ProfileInGame = () => {
                   )
                 ) && (
                   <Link
+                    data-cy="challenge-link"
                     to={{
                       pathname: `/game/${dataProfile.profileInGame.game.id}/challenge/${learningPath.challenge.id}`,
                     }}
@@ -299,10 +300,12 @@ const ChallengeBox = ({
 
   return (
     <Box bg={color} p={3} borderRadius={5}>
-      <Heading size="md" color={textColor}>
+      <Heading size="md" color={textColor} data-cy="challenge-name">
         {name}
       </Heading>
-      <Text color={textColor}>{description}</Text>
+      <Text color={textColor} data-cy="challenge-description">
+        {description}
+      </Text>
       <Progress
         colorScheme="blue"
         size="lg"

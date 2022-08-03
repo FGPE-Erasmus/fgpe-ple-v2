@@ -62,7 +62,7 @@ const PLAYER_GAME_PROFILES = gql`
 `;
 
 const StudentProfile: React.ComponentType = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { keycloak, initialized } = useKeycloak();
   const { data, error, loading, refetch } = useQuery<PlayerGameProfiles>(
     PLAYER_GAME_PROFILES,
@@ -71,8 +71,7 @@ const StudentProfile: React.ComponentType = () => {
     }
   );
 
-  const [userProfile, setUserProfile] =
-    useState<null | Keycloak.KeycloakProfile>(null);
+  const [, setUserProfile] = useState<null | Keycloak.KeycloakProfile>(null);
   //   console.log("userProfile", userProfile);
   const loadUserProfile = async () => {
     setUserProfile(await keycloak.loadUserProfile());

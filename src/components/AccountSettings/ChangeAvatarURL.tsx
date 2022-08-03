@@ -1,5 +1,4 @@
 import { Avatar, Box, Flex, Text, useColorMode } from "@chakra-ui/react";
-import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Editable from "./Editable";
 

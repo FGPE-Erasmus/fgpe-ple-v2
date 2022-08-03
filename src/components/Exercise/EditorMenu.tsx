@@ -122,6 +122,7 @@ const EditorMenu = ({
         justifyContent="center"
         p={2}
         flexDirection={{ base: "column", md: "row" }}
+        data-cy="editor-menu"
       >
         <Box
           width={{ base: "100%", md: 7 / 12 }}
@@ -151,6 +152,7 @@ const EditorMenu = ({
                         w="95%"
                         rightIcon={<ChevronDownIcon />}
                         fontSize={12}
+                        data-cy="active-language-dropdown"
                       >
                         {activeLanguage.name}
                       </MenuButton>
@@ -162,6 +164,7 @@ const EditorMenu = ({
                               setDefaultProgrammingLanguage(language, gameId);
                               setActiveLanguage(language);
                             }}
+                            data-cy="active-language-item"
                           >
                             {language.name}
                           </MenuItem>
@@ -176,6 +179,7 @@ const EditorMenu = ({
                 <Center width={1 / 3}>
                   <ButtonGroup size="sm" isAttached w="95%" colorScheme="blue">
                     <Button
+                      data-cy="run"
                       onClick={() => {
                         if (isWaitingForValidationResult) {
                           console.log("stopping...");
@@ -211,6 +215,7 @@ const EditorMenu = ({
                       visibility={isTextareaModalOpen ? "hidden" : "initial"}
                     >
                       <IconButton
+                        data-cy="test-values"
                         color={colorMode === "dark" ? "black" : "white"}
                         bgColor={colorMode === "dark" ? "gray.500" : "gray.800"}
                         onClick={openTextareaModal}
@@ -228,6 +233,7 @@ const EditorMenu = ({
 
               <Center width={1 / 3}>
                 <Button
+                  data-cy="submit"
                   colorScheme="blue"
                   onClick={() => {
                     if (isWaitingForEvaluationResult) {
@@ -262,6 +268,7 @@ const EditorMenu = ({
             >
               <Center width={1 / 3} display={{ md: "none" }} marginLeft={3}>
                 <IconButton
+                  data-cy="settings"
                   onClick={setSideMenuOpen}
                   size="lg"
                   w="95%"
@@ -282,6 +289,7 @@ const EditorMenu = ({
                     {({ isOpen }) => (
                       <>
                         <MenuButton
+                          data-cy="actions-dropdown"
                           colorScheme="teal"
                           size="sm"
                           isActive={isOpen}
@@ -293,7 +301,7 @@ const EditorMenu = ({
                           {t("Actions")}
                         </MenuButton>
                         <MenuList>
-                          <MenuItem onClick={reload}>
+                          <MenuItem onClick={reload} data-cy="reload">
                             {t("playground.menu.reload")}
                           </MenuItem>
                           <MenuItem
@@ -306,6 +314,7 @@ const EditorMenu = ({
                             cursor={
                               isRestoreAvailable ? "pointer" : "not-allowed"
                             }
+                            data-cy="restore"
                           >
                             {t("playground.menu.restore")}
                           </MenuItem>
@@ -383,6 +392,7 @@ const EditorMenu = ({
                   overflow="hidden"
                   whiteSpace="nowrap"
                   maxW="calc(100% - 100px)"
+                  data-cy="status"
                 >
                   {connectionError
                     ? t("playground.menu.status.CONNECTION_PROBLEM")
@@ -390,9 +400,18 @@ const EditorMenu = ({
                 </Badge>
               ) : isWaitingForValidationResult ||
                 isWaitingForEvaluationResult ? (
-                <Spinner marginRight={3} marginLeft={3} size="xs" />
+                <Spinner
+                  marginRight={3}
+                  marginLeft={3}
+                  size="xs"
+                  data-cy="loading"
+                />
               ) : (
-                <Badge m={1} colorScheme={connectionError ? "red" : "green"}>
+                <Badge
+                  m={1}
+                  colorScheme={connectionError ? "red" : "green"}
+                  data-cy="status"
+                >
                   {connectionError
                     ? t("playground.menu.status.CONNECTION_PROBLEM")
                     : t("playground.menu.status.READY")}
@@ -412,6 +431,7 @@ const EditorMenu = ({
                 <Badge
                   colorScheme={connectionError ? "red" : "green"}
                   variant="solid"
+                  data-cy="status-icon"
                 >
                   {connectionError ? (
                     <BiUnlink fontSize={18} />
@@ -428,6 +448,7 @@ const EditorMenu = ({
                 w="95%"
                 fontSize={{ base: 12, lg: 14 }}
                 onClick={setNextUnsolvedExercise}
+                data-cy="next"
               >
                 {t("playground.menu.next")}
               </Button>

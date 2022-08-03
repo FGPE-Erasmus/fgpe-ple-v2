@@ -8,7 +8,7 @@ import {
 import { Box, Flex, Skeleton } from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
 import dayjs from "dayjs";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { evaluationSubscription } from "../../generated/evaluationSubscription";
 import {
@@ -290,12 +290,11 @@ const Exercise = ({
 
   const [connectionProblem, setConnectionProblem] = useState(false);
 
-  const [evaluationId, setEvaluationId] = useState<null | string>(null);
-  const [validationId, setValidationId] = useState<null | string>(null);
+  const [, setEvaluationId] = useState<null | string>(null);
 
-  const [editorTheme, setEditorTheme] = useState("light");
-  const [terminalTheme, setTerminalTheme] = useState("light");
-  const [terminalFontSize, setTerminalFontSize] = useState("18");
+  const [, setEditorTheme] = useState("light");
+  const [, setTerminalTheme] = useState("light");
+  const [, setTerminalFontSize] = useState("18");
 
   const [testValues, setTestValues] = useState<string[]>([""]);
 
@@ -305,7 +304,7 @@ const Exercise = ({
   const isEvaluationFetchingRef = useRef<boolean>(isWaitingForEvaluationResult);
   const isValidationFetchingRef = useRef<boolean>(isWaitingForValidationResult);
   const codeRef = useRef<string | null>(code);
-  const [isRestoreAvailable, setRestoreAvailable] = useState(false);
+  const [, setRestoreAvailable] = useState(false);
 
   //** Added to use with local code interpreters like Skulpt (Python) */
   const stopExecution = useRef(false);

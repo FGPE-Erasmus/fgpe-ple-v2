@@ -96,6 +96,7 @@ const SortBlocksEditor = ({
       justifyContent="center"
       marginTop={5}
       flexDirection="column"
+      data-cy="sort-blocks-editor"
     >
       {codeSkeletonsOrdered.map((line, i) => {
         return (

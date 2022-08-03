@@ -22,9 +22,11 @@ const BreadcrumbComponent = ({
       <Breadcrumb
         separator={<ChevronRightIcon color="gray.500" />}
         width="100%"
+        data-cy="breadcrumb"
       >
         <BreadcrumbItem pointerEvents="all" maxWidth="100%">
           <BreadcrumbLink
+            data-cy="breadcrumb-link"
             as={Link}
             overflow="hidden"
             whiteSpace="nowrap"
@@ -42,6 +44,7 @@ const BreadcrumbComponent = ({
             maxWidth="100%"
           >
             <BreadcrumbLink
+              data-cy="breadcrumb-link"
               as={Link}
               to={`/game/${gameId.toString()}/challenge/${challengeId.toString()}`}
               overflow="hidden"

@@ -41,6 +41,7 @@ const HomePage = () => {
           fontWeight={500}
           marginTop={25}
           marginBottom={25}
+          data-cy="homepage-login-link"
         >
           {t("home.clickToLogin")}
         </Link>

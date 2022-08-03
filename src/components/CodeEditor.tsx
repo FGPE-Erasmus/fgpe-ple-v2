@@ -21,7 +21,7 @@ const CodeEditor = ({
   evaluateSubmission,
   validateSubmission,
 }: CodeEditorProps) => {
-  const hotkeys = useHotKeys({ validateSubmission, evaluateSubmission });
+  useHotKeys({ validateSubmission, evaluateSubmission });
 
   const { editorTheme } = useContext(SettingsContext);
 
@@ -129,7 +129,7 @@ const CodeEditor = ({
   }
 
   return (
-    <EditorStyled>
+    <EditorStyled data-cy="editor-wrapper">
       <Editor
         onMount={handleEditorDidMount}
         language={language.id?.toLowerCase()}

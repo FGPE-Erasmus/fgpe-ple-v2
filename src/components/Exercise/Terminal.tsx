@@ -25,8 +25,9 @@ const Terminal = ({
     <TerminalStyled
       terminalTheme={terminalTheme}
       terminalFontSize={terminalFontSize}
+      data-cy="terminal-wrapper"
     >
-      <div>
+      <div data-cy="terminal">
         {validationOutputs &&
           Object.keys(validationOutputs).map((objectKey, i) => {
             return (

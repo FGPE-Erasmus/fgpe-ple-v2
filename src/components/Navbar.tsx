@@ -77,7 +77,12 @@ const Navbar = () => {
         isOpen={isOpenLanguageModal}
       />
       <NavbarStyled>
-        <Flex px={2} justifyContent="space-between" alignItems="center" height="100%">
+        <Flex
+          px={2}
+          justifyContent="space-between"
+          alignItems="center"
+          height="100%"
+        >
           <Box width={1 / 2}>
             <NavLink to={keycloak.authenticated ? "/profile" : "/"}>
               <Logo />
@@ -101,6 +106,7 @@ const Navbar = () => {
                     colorScheme="gray"
                     aria-label="Profile"
                     icon={<BiUserCircle fontSize={24} />}
+                    data-cy="profile"
                   />
                 </NavLink>
               </Box>
@@ -116,6 +122,7 @@ const Navbar = () => {
                     colorScheme="gray"
                     aria-label="Settings"
                     icon={<SettingsIcon fontSize={20} />}
+                    data-cy="settings"
                   />
                 </NavLink>
               </Box>
@@ -130,6 +137,7 @@ const Navbar = () => {
                 colorScheme="gray"
                 aria-label="Toggle color mode"
                 icon={<VscColorMode fontSize={24} />}
+                data-cy="color-mode"
               />
             </Box>
             <Box>
@@ -140,15 +148,19 @@ const Navbar = () => {
                 variant="link"
                 colorScheme="gray"
                 aria-label="Change language"
+                data-cy="change-language"
                 icon={<IoLanguage fontSize={24} />}
               />
             </Box>
 
             <Box marginLeft={5}>
               {keycloak.authenticated ? (
-                <button onClick={() => keycloak.logout()}>{t("Logout")}</button>
+                <button onClick={() => keycloak.logout()} data-cy="logout">
+                  {t("Logout")}
+                </button>
               ) : (
                 <button
+                  data-cy="login"
                   onClick={() => {
                     keycloak.login({
                       redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
@@ -168,7 +180,7 @@ const Navbar = () => {
           </Flex>
           <Box display={{ base: "box", md: "none" }}>
             <Menu>
-              <MenuButton as={Button}>
+              <MenuButton as={Button} data-cy="mobile-nav-button">
                 <HamburgerIcon />
               </MenuButton>
               <MenuList>
@@ -182,6 +194,7 @@ const Navbar = () => {
                         colorScheme="gray"
                         aria-label="Profile"
                         icon={<BiUserCircle fontSize={24} />}
+                        data-cy="mobile-profile"
                       />
                       {t("Your games")}
                     </Flex>
@@ -197,6 +210,7 @@ const Navbar = () => {
                         colorScheme="gray"
                         aria-label="Settings"
                         icon={<SettingsIcon fontSize={20} />}
+                        data-cy="mobile-settings"
                       />
                       {t("Account settings")}
                     </Flex>
@@ -210,6 +224,7 @@ const Navbar = () => {
                     colorScheme="gray"
                     aria-label="Toggle color mode"
                     icon={<VscColorMode fontSize={24} />}
+                    data-cy="mobile-toggle-color"
                   />
                   {t("settings.darkMode")}
                 </MenuItem>
@@ -221,11 +236,16 @@ const Navbar = () => {
                     colorScheme="gray"
                     aria-label="Change language"
                     icon={<IoLanguage fontSize={24} />}
+                    data-cy="mobile-change-language"
                   />
                   {t("Language")}
                 </MenuItem>
                 {keycloak.authenticated ? (
-                  <MenuItem onClick={() => keycloak.logout()} paddingLeft={6}>
+                  <MenuItem
+                    onClick={() => keycloak.logout()}
+                    paddingLeft={6}
+                    data-cy="mobile-logout"
+                  >
                     {t("Logout")}
                   </MenuItem>
                 ) : (
@@ -236,6 +256,7 @@ const Navbar = () => {
                         redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
                       });
                     }}
+                    data-cy="mobile-login"
                   >
                     {t("Login")}
                   </MenuItem>

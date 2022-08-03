@@ -66,6 +66,7 @@ const PublicGames = ({
   return (
     <Box>
       <TableComponent
+        dataCy="public-games"
         loading={loading}
         columns={[
           {
@@ -93,7 +94,12 @@ const PublicGames = ({
             // accessor: "id",
             accessor: (row: PlayerGameProfiles_games) => {
               return gameProfileIds.includes(row.id) ? (
-                <Button size="sm" variant="outline" disabled={true}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={true}
+                  data-cy="assign-button"
+                >
                   {t("You're assigned")}
                 </Button>
               ) : row.archival ? (
@@ -109,6 +115,7 @@ const PublicGames = ({
                       size="sm"
                       colorScheme="gray"
                       disabled={row.archival}
+                      data-cy="assign-button"
                     >
                       {t("Assign me")}
                     </Button>
@@ -119,6 +126,7 @@ const PublicGames = ({
                   size="sm"
                   colorScheme="blue"
                   onClick={() => enrollInGame(row.id)}
+                  data-cy="assign-button"
                 >
                   {t("Assign me")}
                 </Button>

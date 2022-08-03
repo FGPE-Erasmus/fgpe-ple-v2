@@ -48,6 +48,9 @@ type TableComponentProps = {
 
   //** Function invoked before CSV export */
   refreshData?: () => Promise<any>;
+
+  //** data-cy value for Cypress testing */
+  dataCy?: string;
 } & (
   | {
       selectableRows?: false | undefined;
@@ -78,6 +81,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
   contextMenu,
   tableHeader,
   refreshData,
+  dataCy,
 }) => {
   const [isCsvLoading, setCsvLoading] = useState(false);
   const [isCsvReady, setCsvReady] = useState(false);
@@ -272,6 +276,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
           )}
         </AnimatePresence>
         <Table
+          data-cy={dataCy}
           {...getTableProps()}
           maxWidth="100%"
           transition="opacity 0.5s"

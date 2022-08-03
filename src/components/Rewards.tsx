@@ -114,6 +114,7 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
             size="sm"
             opacity={0.7}
             _hover={{ opacity: 1 }}
+            data-cy="toggle-view"
           >
             {t("Toggle view")}
           </Button>
@@ -189,7 +190,11 @@ const Rewards = ({ data }: { data: PlayerGameProfiles }) => {
                   })}
               </DynamicGrid>
             </ScrollbarWrapper>
-            {showRewardsAlert && <RewardsAlert>{t("No rewards")}</RewardsAlert>}
+            {showRewardsAlert && (
+              <RewardsAlert data-cy="rewards-info">
+                {t("No rewards")}
+              </RewardsAlert>
+            )}
           </RewardsWrapper>
         </Box>
       </Box>
