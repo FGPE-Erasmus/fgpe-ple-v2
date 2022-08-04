@@ -12,11 +12,13 @@ import {
 import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Countdown from "react-countdown";
 import { useTranslation } from "react-i18next";
 import { BiTimer } from "react-icons/bi";
 import { Redirect, useParams } from "react-router-dom";
+import { FocusActivityContextType } from "../@types/focus-activity";
+import { FocusActivityContext } from "../context/FocusActivityContext";
 import { challengeStatusUpdatedStudentSub } from "../generated/challengeStatusUpdatedStudentSub";
 import {
   FindChallenge,
@@ -53,6 +55,9 @@ const Challenge = () => {
   const { t } = useTranslation();
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const { colorMode } = useColorMode();
+  const { focusActivity } = useContext(
+    FocusActivityContext
+  ) as FocusActivityContextType;
 
   const { add: addNotification } = useNotifications();
   const [challengeStatus, setChallengeStatus] = useState<{
@@ -308,7 +313,7 @@ const Challenge = () => {
     <Playground>
       {(challengeLoading || activityLoading) && <MainLoading />}
 
-      {challengeData?.game.name && (
+      {!focusActivity && challengeData?.game.name && (
         <BreadcrumbComponent
           gameName={challengeData.game.name}
           gameId={gameId}

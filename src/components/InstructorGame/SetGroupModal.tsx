@@ -89,7 +89,7 @@ const SetGroupModal = ({
         </ModalBody>
 
         <ModalFooter>
-          <Button varianet="outline" mr={3} onClick={onClose}>
+          <Button variant="outline" mr={3} onClick={onClose}>
             {t("Close")}
           </Button>
           <Button
