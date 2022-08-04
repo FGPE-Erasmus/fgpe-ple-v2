@@ -9,7 +9,7 @@
     "@emotion/react": "^11.1.4",
     "@emotion/styled": "^11.0.0",
     "@fgpe/keycloak-js": "^1.0.4",
-    "@monaco-editor/react": "^4.0.4",
+    "@monaco-editor/react": "4.0.4",
     "@react-keycloak/keycloak-ts": "^0.2.4",
     "@react-keycloak/web": "^3.4.0",
     "@testing-library/jest-dom": "^5.11.8",
@@ -119,5 +119,5 @@
     "@types/uuid": "^8.3.0",
     "apollo": "^2.32.0"
   },
-  "homepage": "/"
+  "homepage": "/ple"
 }

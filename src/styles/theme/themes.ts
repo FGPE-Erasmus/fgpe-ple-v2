@@ -45,7 +45,7 @@ const theme = extendTheme({
     useSystemColorMode: false,
   },
   styles: {
-    global: (props) => ({
+    global: () => ({
       html: {
         height: "100%",
       },
