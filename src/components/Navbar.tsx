@@ -62,8 +62,7 @@ const Navbar = () => {
   // };
 
   const { colorMode, toggleColorMode } = useColorMode();
-  const [userProfile, setUserProfile] =
-    useState<null | KeycloakProfile>(null);
+  const [userProfile, setUserProfile] = useState<null | KeycloakProfile>(null);
 
   const loadUserProfile = async () => {
     setUserProfile(await keycloak.loadUserProfile());
@@ -91,7 +90,10 @@ const Navbar = () => {
         >
           <Box width={1 / 2}>
             {!focusActivity && (
-              <NavLink to={keycloak.authenticated ? "/profile" : "/"}>
+              <NavLink
+                to={keycloak.authenticated ? "/profile" : "/"}
+                data-cy="profile-or-homepage"
+              >
                 <Logo />
               </NavLink>
             )}
@@ -107,7 +109,7 @@ const Navbar = () => {
           >
             {keycloak.authenticated && !focusActivity && (
               <Box>
-                <NavLink to="/profile">
+                <NavLink to="/profile" data-cy="profile">
                   <IconButton
                     height={6}
                     _focus={{}}
@@ -122,7 +124,7 @@ const Navbar = () => {
 
             {keycloak.authenticated && !focusActivity && (
               <Box>
-                <NavLink to="/profile/settings">
+                <NavLink to="/profile/settings" data-cy="settings">
                   <IconButton
                     height={6}
                     _focus={{}}
@@ -144,6 +146,7 @@ const Navbar = () => {
                 colorScheme="gray"
                 aria-label="Toggle color mode"
                 icon={<VscColorMode fontSize={24} />}
+                data-cy="toggle-color-mode"
               />
             </Box>
             <Box>
@@ -155,12 +158,16 @@ const Navbar = () => {
                 colorScheme="gray"
                 aria-label="Change language"
                 icon={<IoLanguage fontSize={24} />}
+                data-cy="change-language"
               />
             </Box>
 
             {focusActivity && (
               <Box marginLeft={5}>
-                <button onClick={() => deactivateFocusMode()}>
+                <button
+                  onClick={() => deactivateFocusMode()}
+                  data-cy="exit-focus-mode"
+                >
                   {t("Exit Focus Mode")}
                 </button>
               </Box>
@@ -168,7 +175,7 @@ const Navbar = () => {
             {!focusActivity && (
               <Box marginLeft={5}>
                 {keycloak.authenticated ? (
-                  <button onClick={() => keycloak.logout()}>
+                  <button onClick={() => keycloak.logout()} data-cy="logout">
                     {t("Logout")}
                   </button>
                 ) : (
@@ -178,6 +185,7 @@ const Navbar = () => {
                         redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
                       });
                     }}
+                    data-cy="login"
                   >
                     {t("Login")}
                   </button>
@@ -193,40 +201,44 @@ const Navbar = () => {
           </Flex>
           <Box display={{ base: "box", md: "none" }}>
             <Menu>
-              <MenuButton as={Button}>
+              <MenuButton as={Button} data-cy="hamburger-menu">
                 <HamburgerIcon />
               </MenuButton>
               <MenuList>
-                {!focusActivity && (<MenuItem>
-                  <NavLink to="/profile">
-                    <Flex color={colorMode === "dark" ? "white" : "black"}>
-                      <IconButton
-                        height={6}
-                        _focus={{}}
-                        variant="link"
-                        colorScheme="gray"
-                        aria-label="Profile"
-                        icon={<BiUserCircle fontSize={24} />}
-                      />
-                      {t("Your games")}
-                    </Flex>
-                  </NavLink>
-                </MenuItem>)}
-                {!focusActivity && (<MenuItem>
-                  <NavLink to="/profile/settings">
-                    <Flex color={colorMode === "dark" ? "white" : "black"}>
-                      <IconButton
-                        height={6}
-                        _focus={{}}
-                        variant="link"
-                        colorScheme="gray"
-                        aria-label="Settings"
-                        icon={<SettingsIcon fontSize={20} />}
-                      />
-                      {t("Account settings")}
-                    </Flex>
-                  </NavLink>
-                </MenuItem>)}
+                {!focusActivity && (
+                  <MenuItem>
+                    <NavLink to="/profile" data-cy="profile-mobile">
+                      <Flex color={colorMode === "dark" ? "white" : "black"}>
+                        <IconButton
+                          height={6}
+                          _focus={{}}
+                          variant="link"
+                          colorScheme="gray"
+                          aria-label="Profile"
+                          icon={<BiUserCircle fontSize={24} />}
+                        />
+                        {t("Your games")}
+                      </Flex>
+                    </NavLink>
+                  </MenuItem>
+                )}
+                {!focusActivity && (
+                  <MenuItem>
+                    <NavLink to="/profile/settings" data-cy="settings-mobile">
+                      <Flex color={colorMode === "dark" ? "white" : "black"}>
+                        <IconButton
+                          height={6}
+                          _focus={{}}
+                          variant="link"
+                          colorScheme="gray"
+                          aria-label="Settings"
+                          icon={<SettingsIcon fontSize={20} />}
+                        />
+                        {t("Account settings")}
+                      </Flex>
+                    </NavLink>
+                  </MenuItem>
+                )}
                 <MenuItem onClick={toggleColorMode}>
                   <IconButton
                     height={6}
@@ -235,6 +247,7 @@ const Navbar = () => {
                     colorScheme="gray"
                     aria-label="Toggle color mode"
                     icon={<VscColorMode fontSize={24} />}
+                    data-cy="toggle-color-mode-mobile"
                   />
                   {t("settings.darkMode")}
                 </MenuItem>
@@ -246,18 +259,27 @@ const Navbar = () => {
                     colorScheme="gray"
                     aria-label="Change language"
                     icon={<IoLanguage fontSize={24} />}
+                    data-cy="change-language-mobile"
                   />
                   {t("Language")}
                 </MenuItem>
                 {focusActivity && (
-                  <MenuItem onClick={async () => await deactivateFocusMode()} paddingLeft={6}>
+                  <MenuItem
+                    onClick={async () => await deactivateFocusMode()}
+                    paddingLeft={6}
+                    data-cy="exit-focus-mode-mobile"
+                  >
                     {t("Exit Focus Mode")}
                   </MenuItem>
                 )}
                 {!focusActivity && (
                   <>
                     {keycloak.authenticated ? (
-                      <MenuItem onClick={() => keycloak.logout()} paddingLeft={6}>
+                      <MenuItem
+                        onClick={() => keycloak.logout()}
+                        paddingLeft={6}
+                        data-cy="logout-mobile"
+                      >
                         {t("Logout")}
                       </MenuItem>
                     ) : (
@@ -268,6 +290,7 @@ const Navbar = () => {
                             redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/profile`,
                           });
                         }}
+                        data-cy="login-mobile"
                       >
                         {t("Login")}
                       </MenuItem>
