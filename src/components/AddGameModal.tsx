@@ -1,10 +1,12 @@
 import { gql, useMutation } from "@apollo/client";
+import { QuestionOutlineIcon } from "@chakra-ui/icons";
 import {
   Button,
   Checkbox,
   Flex,
   FormControl,
   FormLabel,
+  IconButton,
   Input,
   Modal,
   ModalBody,
@@ -15,6 +17,7 @@ import {
   ModalOverlay,
   Select,
   Textarea,
+  Tooltip,
   useColorMode,
   VStack,
 } from "@chakra-ui/react";
@@ -22,7 +25,7 @@ import styled from "@emotion/styled";
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from "react-i18next";
 import { importGame } from "../generated/importGame";
@@ -86,28 +89,44 @@ const AddGameModal = ({
   const [isTutorialWizardOpen, setTutorialWizardOpen] = useState(false);
   const tutorialStepName = useRef<HTMLInputElement>();
   const tutorialStepDescription = useRef<HTMLInputElement>();
+  const tutorialStepDateStart = useRef<HTMLInputElement>();
+  const tutorialStepDateEnd = useRef<HTMLInputElement>();
+  const tutorialStepEngine = useRef<HTMLInputElement>();
+  const tutorialStepFile = useRef<HTMLInputElement>();
+  const tutorialStepPrivateGame = useRef<HTMLInputElement>();
+  const tutorialStepAddButton = useRef<HTMLInputElement>();
 
-  const setRef1 = useCallback(
-    (node: any) => {
-      tutorialStepDescription.current = node;
-      if (isOpen) {
-        // always logs the DOM node, or undefined if it's being unmounted
-        console.log(node);
-      }
-    },
-    [isOpen]
-  );
+  const setRefStepName = useCallback((node: any) => {
+    tutorialStepName.current = node;
+  }, []);
 
-  const setRef = useCallback(
-    (node: any) => {
-      tutorialStepName.current = node;
-      if (isOpen) {
-        // always logs the DOM node, or undefined if it's being unmounted
-        console.log(node);
-      }
-    },
-    [isOpen]
-  );
+  const setRefStepDescription = useCallback((node: any) => {
+    tutorialStepDescription.current = node;
+  }, []);
+
+  const setRefStepDateStart = useCallback((node: any) => {
+    tutorialStepDateStart.current = node;
+  }, []);
+
+  const setRefStepDateEnd = useCallback((node: any) => {
+    tutorialStepDateEnd.current = node;
+  }, []);
+
+  const setRefStepEngine = useCallback((node: any) => {
+    tutorialStepEngine.current = node;
+  }, []);
+
+  const setRefStepFile = useCallback((node: any) => {
+    tutorialStepFile.current = node;
+  }, []);
+
+  const setRefStepPrivateGame = useCallback((node: any) => {
+    tutorialStepPrivateGame.current = node;
+  }, []);
+
+  const setRefStepAddButton = useCallback((node: any) => {
+    tutorialStepAddButton.current = node;
+  }, []);
 
   const { t } = useTranslation();
   const {
@@ -166,25 +185,57 @@ const AddGameModal = ({
   const [gameName, setGameName] = useState("");
   const [gameDescription, setGameDescription] = useState("");
   const [evaluationEngine, setEvaluationEngine] = useState("");
-  // const [courseId, setCourseId] = useState("");
+
   const [isPrivate, setIsPrivate] = useState(false);
 
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} size="md">
         <TutorialWizard
-          isTutorialWizardOpen={isOpen}
+          isTutorialWizardOpen={isTutorialWizardOpen}
           setTutorialWizardOpen={setTutorialWizardOpen}
-          tutorialSteps={[
+          steps={[
+            {
+              content: `The tutorial will present itself as a series of modals with annotations and prompts on how to progress.`,
+            },
             {
               ref: tutorialStepName as any,
-              content: "Tutaj wpisujemy name",
+              content:
+                "You can start with the name of the game that will help everyone identify it. Try to come up with something unique. This step is required and cannot be changed later.",
               canGoNext: gameName !== "",
             },
             {
               ref: tutorialStepDescription as any,
-              content: "Tutaj wpisujemy description",
-              canGoNext: gameDescription !== "",
+              content:
+                "Add a small meaningful description of the game. This step is not required, you can skip it, but you cannot change it later.",
+            },
+            {
+              ref: tutorialStepDateStart as any,
+              content: `You can choose when the game will be available for the players. Enter a date in YYYY-MM-DD format.
+
+If you want your game to be always available just skip this step. You can always edit these dates later.`,
+            },
+            {
+              ref: tutorialStepEngine as any,
+              content:
+                "You need to choose an engine that will evaluate players' code.",
+              canGoNext: evaluationEngine !== "",
+            },
+            {
+              ref: tutorialStepFile as any,
+              content:
+                "Here you need to provide the game package with all required data. You can export the game package in the Authorkit by choosing the GEDiL + MEF format.",
+              canGoNext: acceptedFiles.length > 0,
+            },
+            {
+              ref: tutorialStepPrivateGame as any,
+              content:
+                "You can make your game private. Only invited playres will have access to your game. You can change this later.",
+            },
+            {
+              ref: tutorialStepAddButton as any,
+              content: "There's only one thing left to do. Add the game!",
+              canGoNext: importGameLoading,
             },
           ]}
         />
@@ -193,9 +244,10 @@ const AddGameModal = ({
         <ModalContent>
           <ModalHeader>{t("Add new game")}</ModalHeader>
           <ModalCloseButton />
+
           <ModalBody>
             <VStack spacing={1}>
-              <FormControl id="name" isRequired ref={setRef}>
+              <FormControl id="name" isRequired ref={setRefStepName}>
                 <FormLabel>{t("addGame.name")}</FormLabel>
                 <Input
                   type="text"
@@ -204,7 +256,7 @@ const AddGameModal = ({
                   onChange={(e) => setGameName(e.target.value)}
                 />
               </FormControl>
-              <FormControl id="description" ref={setRef1}>
+              <FormControl id="description" ref={setRefStepDescription}>
                 <FormLabel>{t("addGame.description")}</FormLabel>
                 <Textarea
                   placeholder={t("addGame.descriptionPlaceholder")}
@@ -213,20 +265,22 @@ const AddGameModal = ({
                 />
               </FormControl>
 
-              <StartAndEndDateInput
-                startDate={startDate}
-                endDate={endDate}
-                setStartDate={setStartDate}
-                setEndDate={setEndDate}
-                setEndDateError={setEndDateError}
-                setStartDateError={setStartDateError}
-                isEndLaterThanStart={isEndLaterThanStart}
-                setEndLaterThanStart={setEndLaterThanStart}
-                startDateError={startDateError}
-                endDateError={endDateError}
-              />
+              <div ref={setRefStepDateStart}>
+                <StartAndEndDateInput
+                  startDate={startDate}
+                  endDate={endDate}
+                  setStartDate={setStartDate}
+                  setEndDate={setEndDate}
+                  setEndDateError={setEndDateError}
+                  setStartDateError={setStartDateError}
+                  isEndLaterThanStart={isEndLaterThanStart}
+                  setEndLaterThanStart={setEndLaterThanStart}
+                  startDateError={startDateError}
+                  endDateError={endDateError}
+                />
+              </div>
 
-              <FormControl isRequired marginBottom={2}>
+              <FormControl isRequired marginBottom={2} ref={setRefStepEngine}>
                 <FormLabel id="engine">
                   {t("addGame.evaluationEngine")}
                 </FormLabel>
@@ -279,6 +333,7 @@ const AddGameModal = ({
                     alignItems: "center",
                     fontSize: 13,
                   }}
+                  ref={setRefStepFile}
                 >
                   <input {...getInputProps()} />
                   <p style={{ textAlign: "center" }}>
@@ -293,7 +348,11 @@ const AddGameModal = ({
                 </div>
               </DragAndDropField>
 
-              <Flex justifyContent="space-between" width="100%">
+              <Flex
+                justifyContent="space-between"
+                width="100%"
+                ref={setRefStepPrivateGame}
+              >
                 <Checkbox
                   isChecked={isPrivate}
                   onChange={(e) => setIsPrivate(e.target.checked)}
@@ -305,40 +364,50 @@ const AddGameModal = ({
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={onClose} disabled={importGameLoading}>
-              {t("Close")}
-            </Button>
-            <Button
-              onClick={() => {
-                importNewGame({
-                  variables: {
-                    file: acceptedFiles[0],
-                    gameName: gameName,
-                    evaluationEngine: evaluationEngine,
-                    gameDescription: gameDescription || undefined,
-                    startDate: startDate || undefined,
-                    endDate: endDate || undefined,
-                    private: isPrivate,
-                  },
-                });
-              }}
-              isLoading={importGameLoading}
-              loadingText={t("Adding")}
-              colorScheme="blue"
-              disabled={
-                !(
-                  !importGameLoading &&
-                  acceptedFiles.length > 0 &&
-                  gameName &&
-                  evaluationEngine &&
-                  (startDate ? !startDateError : true) &&
-                  (endDate ? !endDateError : true) &&
-                  (startDate || endDate ? isEndLaterThanStart : true)
-                )
-              }
-            >
-              {t("Add")}
-            </Button>
+            <Flex style={{ gap: 8 }}>
+              <IconButton
+                onClick={() => setTutorialWizardOpen(true)}
+                aria-label="Open tutorial"
+                icon={<QuestionOutlineIcon />}
+              />
+
+              <Button onClick={onClose} disabled={importGameLoading}>
+                {t("Close")}
+              </Button>
+              <Button
+                ref={setRefStepAddButton}
+                onClick={() => {
+                  setTutorialWizardOpen(false);
+                  importNewGame({
+                    variables: {
+                      file: acceptedFiles[0],
+                      gameName: gameName,
+                      evaluationEngine: evaluationEngine,
+                      gameDescription: gameDescription || undefined,
+                      startDate: startDate || undefined,
+                      endDate: endDate || undefined,
+                      private: isPrivate,
+                    },
+                  });
+                }}
+                isLoading={importGameLoading}
+                loadingText={t("Adding")}
+                colorScheme="blue"
+                disabled={
+                  !(
+                    !importGameLoading &&
+                    acceptedFiles.length > 0 &&
+                    gameName &&
+                    evaluationEngine &&
+                    (startDate ? !startDateError : true) &&
+                    (endDate ? !endDateError : true) &&
+                    (startDate || endDate ? isEndLaterThanStart : true)
+                  )
+                }
+              >
+                {t("Add")}
+              </Button>
+            </Flex>
           </ModalFooter>
         </ModalContent>
       </Modal>

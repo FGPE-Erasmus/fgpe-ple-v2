@@ -2,55 +2,62 @@ import { Button, Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import React, { useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
+import { useTranslation } from "react-i18next";
 
 const TUTORIALS_PORTAL = document.getElementById("tutorial");
 
 interface TutorialStep {
-  ref: { current: HTMLElement | null };
+  ref?: { current: HTMLElement | null };
   content: string;
   canGoNext?: boolean;
 }
 
 const TutorialWizard = ({
-  tutorialSteps,
+  steps,
   isTutorialWizardOpen,
   setTutorialWizardOpen,
 }: {
-  tutorialSteps: TutorialStep[];
+  steps: TutorialStep[];
   isTutorialWizardOpen: boolean;
   setTutorialWizardOpen: (v: boolean) => void;
 }) => {
-  const [tutorial, setTutorial] = useState<TutorialStep[]>([]);
+  const { t } = useTranslation();
+
+  const [tutorialSteps, setTutorialSteps] = useState<TutorialStep[]>([]);
   const [activeStepIndex, setActiveStepIndex] = useState(0);
 
   const canGoNext = useMemo(() => {
-    return tutorial.length < 1
+    return tutorialSteps.length < 1
       ? false
-      : typeof tutorial[activeStepIndex].canGoNext !== "undefined"
-      ? tutorial[activeStepIndex].canGoNext
+      : typeof tutorialSteps[activeStepIndex].canGoNext !== "undefined"
+      ? tutorialSteps[activeStepIndex].canGoNext
       : true;
-  }, [activeStepIndex, tutorial]);
+  }, [activeStepIndex, tutorialSteps]);
+
+  const activeStep = useMemo(() => {
+    console.log(tutorialSteps.find((_x, i) => i === activeStepIndex));
+    return tutorialSteps.find((_x, i) => i === activeStepIndex);
+  }, [activeStepIndex, tutorialSteps]);
+  const stepClassName: string = `step-${activeStepIndex}`;
 
   useEffect(() => {
-    tutorial.length > 0 && tutorial[activeStepIndex].ref.current?.focus();
-  }, [activeStepIndex]);
-
-  useEffect(() => {
-    tutorialSteps.forEach((step, i) => {
-      if (!step.ref.current) {
-        return "";
+    steps.forEach((step, i) => {
+      if (!step.ref) {
+        return;
       }
 
-      setTutorial(tutorialSteps);
+      if (!step.ref.current) {
+        return;
+      }
+
+      setTutorialSteps(steps);
 
       const stepClassName = `step-${i}`;
       if (!step.ref.current.classList.contains(stepClassName)) {
         step.ref.current.classList.add(stepClassName);
       }
-
-      console.log(step.ref.current);
     });
-  }, [tutorialSteps]);
+  }, [steps]);
 
   if (!TUTORIALS_PORTAL) {
     return <></>;
@@ -60,30 +67,41 @@ const TutorialWizard = ({
     isTutorialWizardOpen && (
       <>
         <style>
-          {tutorial
-            .filter((_x, i) => i === activeStepIndex)
-            .map((step, i) => {
-              const stepClassName: string = `step-${activeStepIndex}`;
-
-              return `
+          {activeStep &&
+            activeStep.ref &&
+            `
             html {
                 pointer-events:  none !important;
             }
 
             .${stepClassName} {
+              pointer-events: auto;
+              position: relative;
+              z-index: 9999;
+            }
+
+            .${stepClassName}:before {
+                content: "";
+                position: absolute;
+                width: calc(100% + 16px);
+                height: calc(100% + 16px);
+                left: -8px;
+                top: -8px;
                 z-index: 1000;
                 box-shadow: 0 0 0 99999px rgba(0, 0, 0, .9), inset 0 0 10px #000;
                
-                pointer-events:  auto;
+                pointer-events:  none;
                 border-radius: 4px;
             }
 
             .${stepClassName}:after {
-                content: '${step.canGoNext ? "✅" : ""} ${step.content}';
+                content: '${activeStep.canGoNext ? "✅ " : ""}${CSS.escape(
+              activeStep.content
+            )}';
                 margin-top: 1rem;
                 position: absolute;
                 left: 0;
-                top: ${(step.ref.current?.offsetHeight || 40) + 2}px;
+                top: ${(activeStep.ref.current?.offsetHeight || 40) + 2}px;
                 width: 100%;
                 min-width: 200px;
                 max-width: 500px;
@@ -93,18 +111,37 @@ const TutorialWizard = ({
                 font-size: 15px;
                 line-height: 1.2em;
                 text-align: left;
-            }`;
-            })}
+            }`}
         </style>
         <TutorialBox>
+          {!activeStep?.ref && (
+            <CenterText>
+              <p>{activeStep?.content}</p>
+            </CenterText>
+          )}
           <Flex className="tutorial-buttons">
-            <Button variant="outline">Close</Button>
             <Button
-              disabled={!canGoNext}
-              onClick={() => setActiveStepIndex(activeStepIndex + 1)}
+              variant="outline"
+              onClick={() => setTutorialWizardOpen(false)}
             >
-              Next
+              {t("Close")}
             </Button>
+            <Flex style={{ gap: 4 }}>
+              <Button
+                disabled={activeStepIndex <= 0}
+                onClick={() => setActiveStepIndex(activeStepIndex - 1)}
+              >
+                {t("Back")}
+              </Button>
+              <Button
+                disabled={
+                  !canGoNext || activeStepIndex >= tutorialSteps.length - 1
+                }
+                onClick={() => setActiveStepIndex(activeStepIndex + 1)}
+              >
+                {t("playground.menu.next")}
+              </Button>
+            </Flex>
           </Flex>
         </TutorialBox>
       </>
@@ -112,6 +149,28 @@ const TutorialWizard = ({
     TUTORIALS_PORTAL
   );
 };
+
+const CenterText = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  color: white;
+  pointer-events: none;
+  background-color: rgba(0, 0, 0, 0.9);
+
+  & > p {
+    max-width: 400px;
+    padding: 20px;
+    text-align: justify;
+    white-space: break-spaces;
+  }
+`;
 
 const TutorialBox = styled.div`
   position: absolute;
@@ -123,7 +182,7 @@ const TutorialBox = styled.div`
 
   .tutorial-buttons {
     position: absolute;
-    z-index: 9999;
+    z-index: 99999;
     gap: 8px;
     width: 100%;
     justify-content: space-between;
