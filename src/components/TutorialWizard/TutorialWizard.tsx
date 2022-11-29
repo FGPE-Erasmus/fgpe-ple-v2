@@ -41,6 +41,10 @@ const TutorialWizard = ({
   const stepClassName: string = `step-${activeStepIndex}`;
 
   useEffect(() => {
+    setActiveStepIndex(0);
+  }, [isTutorialWizardOpen]);
+
+  useEffect(() => {
     steps.forEach((step, i) => {
       if (!step.ref) {
         return;
