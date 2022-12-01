@@ -1,5 +1,6 @@
 import { Button, Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { useTranslation } from "react-i18next";
@@ -59,6 +60,7 @@ const TutorialWizard = ({
       const stepClassName = `step-${i}`;
       if (!step.ref.current.classList.contains(stepClassName)) {
         step.ref.current.classList.add(stepClassName);
+        step.ref.current.classList.add("step-animate");
       }
     });
   }, [steps]);
@@ -69,86 +71,109 @@ const TutorialWizard = ({
 
   return ReactDOM.createPortal(
     isTutorialWizardOpen && (
-      <>
-        <style>
-          {activeStep &&
-            activeStep.ref &&
-            `
-            html {
-                pointer-events:  none !important;
-            }
-
-            .${stepClassName} {
-              pointer-events: auto;
-              position: relative;
-              z-index: 9999;
-            }
-
-            .${stepClassName}:before {
-                content: "";
-                position: absolute;
-                width: calc(100% + 16px);
-                height: calc(100% + 16px);
-                left: -8px;
-                top: -8px;
-                z-index: 1000;
-                box-shadow: 0 0 0 99999px rgba(0, 0, 0, .9), inset 0 0 10px #000;
-               
-                pointer-events:  none;
-                border-radius: 4px;
-            }
-
-            .${stepClassName}:after {
-                content: '${activeStep.canGoNext ? "✅ " : ""}${CSS.escape(
-              activeStep.content
-            )}';
-                margin-top: 1rem;
-                position: absolute;
-                left: 0;
-                top: ${(activeStep.ref.current?.offsetHeight || 40) + 2}px;
-                width: 100%;
-                min-width: 200px;
-                max-width: 500px;
-                z-index: 1052;
-                color: #fff;
-                white-space: pre-wrap;
-                font-size: 15px;
-                line-height: 1.2em;
-                text-align: left;
-            }`}
-        </style>
-        <TutorialBox>
-          {!activeStep?.ref && (
-            <CenterText>
-              <p>{activeStep?.content}</p>
-            </CenterText>
-          )}
-          <Flex className="tutorial-buttons">
-            <Button
-              variant="outline"
-              onClick={() => setTutorialWizardOpen(false)}
-            >
-              {t("Close")}
-            </Button>
-            <Flex style={{ gap: 4 }}>
-              <Button
-                disabled={activeStepIndex <= 0}
-                onClick={() => setActiveStepIndex(activeStepIndex - 1)}
-              >
-                {t("Back")}
-              </Button>
-              <Button
-                disabled={
-                  !canGoNext || activeStepIndex >= tutorialSteps.length - 1
+      <AnimatePresence>
+        {isTutorialWizardOpen && (
+          <>
+            <style>
+              {activeStep &&
+                activeStep.ref &&
+                `
+                html {
+                    pointer-events:  none !important;
                 }
-                onClick={() => setActiveStepIndex(activeStepIndex + 1)}
-              >
-                {t("playground.menu.next")}
-              </Button>
-            </Flex>
-          </Flex>
-        </TutorialBox>
-      </>
+
+                .step-animate:after {
+                  opacity: 0;
+                  transition: opacity 0.5s;
+                }
+    
+                .${stepClassName} {
+                  pointer-events: auto;
+                  position: relative;
+                  z-index: 9999;
+                  
+                }
+    
+                .${stepClassName}:before {
+                    content: "";
+                    position: absolute;
+                    width: calc(100% + 16px);
+                    height: calc(100% + 16px);
+                    left: -8px;
+                    top: -8px;
+                    z-index: 1000;
+                    box-shadow: 0 0 0 99999px rgba(0, 0, 0, .9), inset 0 0 10px #000;
+                    pointer-events:  none;
+                    border-radius: 4px;
+
+                }
+    
+                .${stepClassName}:after {
+                    content: '${activeStep.canGoNext ? "✅ " : ""}${CSS.escape(
+                  activeStep.content
+                )}';
+                    margin-top: 1rem;
+                    position: absolute;
+                    left: 0;
+                    top: ${(activeStep.ref.current?.offsetHeight || 40) + 2}px;
+                    width: 100%;
+                    min-width: 200px;
+                    max-width: 500px;
+                    z-index: 1052;
+                    color: #fff;
+                    white-space: pre-wrap;
+                    font-size: 15px;
+                    line-height: 1.2em;
+                    text-align: left;
+                    animation: fadeIn 0.5s; 
+                    animation-fill-mode: forwards;
+                }
+                
+                @keyframes fadeIn {
+                  0% { opacity: 0; }
+                  100% { opacity: 1; }
+                }
+
+                `}
+            </style>
+            <TutorialBox
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {!activeStep?.ref && (
+                <CenterText>
+                  <p>{activeStep?.content}</p>
+                </CenterText>
+              )}
+              <Flex className="tutorial-buttons">
+                <Button
+                  variant="outline"
+                  onClick={() => setTutorialWizardOpen(false)}
+                >
+                  {t("Close")}
+                </Button>
+                <Flex style={{ gap: 4 }}>
+                  <Button
+                    disabled={activeStepIndex <= 0}
+                    onClick={() => setActiveStepIndex(activeStepIndex - 1)}
+                  >
+                    {t("Back")}
+                  </Button>
+                  <Button
+                    disabled={
+                      !canGoNext || activeStepIndex >= tutorialSteps.length - 1
+                    }
+                    onClick={() => setActiveStepIndex(activeStepIndex + 1)}
+                  >
+                    {t("playground.menu.next")}
+                  </Button>
+                </Flex>
+              </Flex>
+            </TutorialBox>
+          </>
+        )}
+      </AnimatePresence>
     ),
     TUTORIALS_PORTAL
   );
@@ -176,7 +201,7 @@ const CenterText = styled.div`
   }
 `;
 
-const TutorialBox = styled.div`
+const TutorialBox = styled(motion.div)`
   position: absolute;
   height: 100%;
   width: 100%;
