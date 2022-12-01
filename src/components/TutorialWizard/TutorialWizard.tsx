@@ -1,4 +1,4 @@
-import { Button, Flex } from "@chakra-ui/react";
+import { Button, Flex, useColorMode } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useMemo, useState } from "react";
@@ -148,7 +148,9 @@ const TutorialWizard = ({
               )}
               <Flex className="tutorial-buttons">
                 <Button
+                  color={"white"}
                   variant="outline"
+                  colorScheme="gray"
                   onClick={() => setTutorialWizardOpen(false)}
                 >
                   {t("Close")}
