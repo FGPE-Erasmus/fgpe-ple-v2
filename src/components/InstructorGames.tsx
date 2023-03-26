@@ -151,7 +151,7 @@ const InstructorGames = () => {
         <Skeleton isLoaded={!teacherGamesLoading && !teacherGamesError}>
           <Box minH={200}>
             {teacherGamesData?.myGames.length === 0 && (
-              <Alert status="info" data-cy="no-games-alert">
+              <Alert status="info" data-cy="no-games-alert" marginBottom={4}>
                 <AlertIcon />
                 {t("No games available")}
               </Alert>
