@@ -74,8 +74,6 @@ const JoinGameByToken = () => {
   };
 
   useEffect(() => {
-    console.log(1, gameToken, 2, groupToken);
-
     if (gameToken && !groupToken) {
       joinGameOnly(true);
     }

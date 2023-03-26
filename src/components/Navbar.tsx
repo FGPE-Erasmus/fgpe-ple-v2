@@ -175,7 +175,14 @@ const Navbar = () => {
             {!focusActivity && (
               <Box marginLeft={5}>
                 {keycloak.authenticated ? (
-                  <button onClick={() => keycloak.logout()} data-cy="logout">
+                  <button
+                    onClick={() =>
+                      keycloak.logout({
+                        redirectUri: `${window.location.origin}${process.env.PUBLIC_URL}/`,
+                      })
+                    }
+                    data-cy="logout"
+                  >
                     {t("Logout")}
                   </button>
                 ) : (
