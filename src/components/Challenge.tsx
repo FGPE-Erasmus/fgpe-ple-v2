@@ -156,7 +156,7 @@ const Challenge = () => {
     error: activityError,
     loading: activityLoading,
   } = useQuery<getActivityById>(GET_ACTIVITY_BY_ID, {
-    skip: !activeExercise,
+    skip: !activeExercise?.activity?.id,
     variables: { gameId, activityId: activeExercise?.activity?.id },
     fetchPolicy: "no-cache",
     onCompleted: () => {

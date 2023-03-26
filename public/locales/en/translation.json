@@ -281,6 +281,8 @@
     "descriptionPlaceholder": "Description of your game",
     "startDate": "Start date",
     "endDate": "End date",
+    "createdAt": "Created at",
+    "lastSubmission": "Last submission date",
     "evaluationEngine": "Evaluation engine",
     "courseId": "Course ID",
     "courseIdPlaceholder": "Unique course id",

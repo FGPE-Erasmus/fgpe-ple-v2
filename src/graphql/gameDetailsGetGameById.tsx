@@ -11,6 +11,10 @@ export const GAME_DETAILS_GET_GAME_BY_ID = gql`
       archival
       private
 
+      submissions {
+        submittedAt
+      }
+
       players {
         id
         stats {

@@ -100,6 +100,8 @@ const InstructorGame = () => {
     fetchPolicy: "cache-first",
   });
 
+  const lastSubmissionDate = gameData?.game.submissions[0]?.submittedAt;
+
   if (!gameId) {
     return <div>Game ID not provided</div>;
   }
@@ -125,7 +127,6 @@ const InstructorGame = () => {
   }
 
   const getSelectedPlayers = () => {
-    console.log("getting selected players", selectedStudentsRef);
     return selectedStudentsRef.current.map(
       (student: getGameByIdQuery_game_players) => student.id
     );
@@ -345,7 +346,34 @@ const InstructorGame = () => {
             content={gameData.game.private ? t("Yes") : t("No")}
           />
         </Flex>
-        {/* <Divider marginBottom={10} /> */}
+
+        <Flex
+          margin="auto"
+          width="100%"
+          justifyContent="space-between"
+          flexDirection={{ base: "column", md: "row" }}
+        >
+          <DetailsCard
+            badgeContent
+            flexDirection="row"
+            title={t("addGame.createdAt")}
+            content={
+              gameData.game.createdAt
+                ? dayjs(gameData.game.createdAt).format("DD/MM/YYYY")
+                : "-"
+            }
+          />
+          <DetailsCard
+            badgeContent
+            flexDirection="row"
+            title={t("addGame.lastSubmission")}
+            content={
+              lastSubmissionDate
+                ? dayjs(lastSubmissionDate).format("DD/MM/YYYY")
+                : "-"
+            }
+          />
+        </Flex>
 
         <Accordion allowToggle allowMultiple marginTop={3}>
           <AccordionItem>
@@ -401,163 +429,6 @@ const InstructorGame = () => {
             )}
           </AccordionItem>
         </Accordion>
-        {/* 
-        <Flex justifyContent="space-between" alignItems="center">
-          <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
-            {t("Students")}
-          </Heading>
-
-          <Flex>
-            <Button
-              marginRight={2}
-              size="sm"
-              isLoading={autoAssignGroupsLoading}
-              disabled={autoAssignGroupsLoading}
-              onClick={async () => {
-                setLoading(true);
-                try {
-                  await autoAssignGroups({
-                    variables: {
-                      gameId,
-                    },
-                  });
-                  await refetchGame();
-                } catch (err) {
-                  addNotification({
-                    status: "error",
-                    title: t("error.autoAssign.title"),
-                    description: t("error.autoAssign.description"),
-                  });
-                }
-                setLoading(false);
-              }}
-            >
-              {t("Auto-assign groups")}
-            </Button>
-            <Button marginRight={2} size="sm" onClick={onAddGroupModalOpen}>
-              {t("Add new group")}
-            </Button>
-
-            <Menu>
-              <MenuButton
-                disabled={!isStudentSelected}
-                size="sm"
-                as={Button}
-                rightIcon={<ChevronDownIcon />}
-              >
-                {t("Actions")}
-              </MenuButton>
-
-              <MenuList>
-                <MenuItem onClick={onSetGroupModalOpen}>
-                  {t("Set group")}
-                </MenuItem>
-                <MenuItem onClick={getSelectedStudentsAndRemoveFromGroups}>
-                  {t("Remove from the group")}
-                </MenuItem>
-                <MenuItem onClick={getSelectedStudentAndRemoveFromGame}>
-                  {t("Remove from the game")}
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </Flex>
-        </Flex>
-
-        <Box>
-          <TableComponent
-            loading={loading}
-            onRowClick={(row: getGameByIdQuery_game_players) => {
-              history.push({
-                pathname: `/teacher/player-details/${row.user.id}/${gameId}`,
-              });
-            }}
-            selectableRows
-            setIsAnythingSelected={setIsStudentSelected}
-            setSelectedStudents={(rows: any) => {
-              selectedStudentsRef.current = rows;
-            }}
-            columns={[
-              {
-                Header: t("table.name"),
-                accessor: "user.firstName",
-                Filter: ({ column }: { column: any }) => (
-                  <ColumnFilter
-                    column={column}
-                    placeholder={t("placeholders.name")}
-                  />
-                ),
-              },
-              {
-                Header: t("table.lastName"),
-                accessor: "user.lastName",
-                Filter: ({ column }: { column: any }) => (
-                  <ColumnFilter
-                    column={column}
-                    placeholder={t("placeholders.lastName")}
-                  />
-                ),
-              },
-
-              {
-                Header: t("table.submissions"),
-                accessor: "stats.nrOfSubmissions",
-                Filter: ({ column }: { column: any }) => (
-                  <ColumnFilter column={column} placeholder="123" />
-                ),
-              },
-              {
-                Header: t("table.validations"),
-                accessor: "stats.nrOfValidations",
-                Filter: ({ column }: { column: any }) => (
-                  <ColumnFilter column={column} placeholder="123" />
-                ),
-              },
-              {
-                Header: t("table.group"),
-                accessor: "group.name",
-                Cell: ({ value }: { value: any }) => {
-                  return value ? value : "-";
-                },
-                Filter: ({ column }: { column: any }) => (
-                  <ColumnFilter
-                    column={column}
-                    placeholder={t("table.group")}
-                  />
-                ),
-              },
-              {
-                Header: t("table.progress"),
-                accessor: "learningPath",
-                Cell: ({ value }: { value: any }) => {
-                  const totalChallengesCount = value.length || 1;
-
-                  const progressCombined =
-                    value
-                      .flatMap((learningPath: any) => learningPath.progress)
-                      .reduce((a: any, b: any) => a + b, 0) /
-                    totalChallengesCount;
-
-                  return (progressCombined * 100).toFixed(1) + "%";
-                },
-                disableFilters: true,
-                sortType: memoizedSorting,
-              },
-            ]}
-            data={gameData.game.players}
-          />
-        </Box> */}
-
-        {/* <Flex justifyContent="space-between" alignItems="center">
-          <Heading as="h3" size="sm" marginTop={5} marginBottom={5}>
-            {t("Activities")}
-          </Heading>
-        </Flex>
-
-        <ActivitiesStats
-          gameData={gameData}
-          gameId={gameId}
-          statsData={overallStatsData}
-        /> */}
       </div>
     </>
   );
