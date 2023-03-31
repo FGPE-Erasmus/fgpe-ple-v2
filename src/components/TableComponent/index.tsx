@@ -51,6 +51,7 @@ type TableComponentProps = {
 
   //** data-cy value for Cypress testing */
   dataCy?: string;
+  contextMenuRef?: any;
 } & (
   | {
       selectableRows?: false | undefined;
@@ -82,6 +83,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
   tableHeader,
   refreshData,
   dataCy,
+  contextMenuRef,
 }) => {
   const [isCsvLoading, setCsvLoading] = useState(false);
   const [isCsvReady, setCsvReady] = useState(false);
@@ -210,181 +212,187 @@ const TableComponent: React.FC<TableComponentProps> = ({
   }, [isCsvReady]);
 
   return (
-    <ScrollbarWrapper>
-      <Box overflowX="auto" position="relative">
-        {contextMenu && (
-          <Flex
-            float={tableHeader ? "left" : "right"}
-            width={tableHeader ? "100%" : "auto"}
-            justifyContent={"space-between"}
-            alignItems="center"
-          >
-            {tableHeader && <Box>{tableHeader}</Box>}
-
-            <Flex flexDirection={"row"}>
-              {contextMenu}
-
-              {isCsvReady && <CSVDownload data={prepareForCsv()} />}
-
-              {/* <CSVLink data={prepareForCsv()}> */}
-              <Button
-                data-cy="csv-button"
-                size="sm"
-                float="right"
-                marginLeft={2}
-                isLoading={isCsvLoading}
-                onClick={async () => {
-                  setCsvLoading(true);
-                  if (refreshData) {
-                    try {
-                      await refreshData();
-                      setCsvReady(true);
-                    } catch (err) {
-                      alert("err");
-                    }
-                  } else {
-                    setCsvReady(true);
-                  }
-                  setCsvLoading(false);
-                }}
-              >
-                CSV
-              </Button>
-              {/* </CSVLink> */}
-            </Flex>
-          </Flex>
-        )}
-
-        <AnimatePresence>
-          {loading && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              style={{ zIndex: 9999 }}
+    <>
+      <ScrollbarWrapper>
+        <Box overflowX="auto" position="relative">
+          {contextMenu && (
+            <Flex
+              float={tableHeader ? "left" : "right"}
+              width={tableHeader ? "100%" : "auto"}
+              justifyContent={"space-between"}
+              alignItems="center"
+              ref={contextMenuRef}
             >
-              <CircularProgress
-                size="35px"
-                isIndeterminate
-                color="blue.300"
-                position="absolute"
-                left="50%"
-                top="50%"
-                transform="translate3d(-50%, -50%, 0)"
-                zIndex="9999"
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <Table
-          data-cy={dataCy}
-          {...getTableProps()}
-          maxWidth="100%"
-          transition="opacity 0.5s"
-          pointerEvents={loading ? "none" : "all"}
-          opacity={loading ? 0.3 : 1}
-        >
-          <Thead userSelect="none">
-            {headerGroups.map((headerGroup) => (
-              <Tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, i) => (
-                  <Th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    <Flex justifyContent="space-between">
-                      <Box color={column.isSorted ? "deepskyblue" : "default"}>
-                        {column.render("Header")}
-                      </Box>
+              {tableHeader && <Box>{tableHeader}</Box>}
 
-                      <Box float="right" textAlign="right">
-                        {column.isSorted ? (
-                          <Box color="deepskyblue">
-                            <AnimatedSortIcon
-                              icon={<TiArrowSortedDown fontSize={16} />}
-                              isVisible={column.isSortedDesc ? true : false}
-                            />
-                            <AnimatedSortIcon
-                              icon={<TiArrowSortedUp fontSize={16} />}
-                              isVisible={!column.isSortedDesc ? true : false}
-                            />
-                          </Box>
-                        ) : (
-                          !column.disableSortBy && (
-                            <TiArrowUnsorted fontSize={16} />
-                          )
-                        )}
+              <Flex flexDirection={"row"}>
+                {contextMenu}
 
-                        {/* {column.canFilter ? column.render("Filter") : null} */}
-                      </Box>
-                    </Flex>
-                  </Th>
-                ))}
-              </Tr>
-            ))}
-
-            {headerGroups.map((headerGroup) => (
-              <Tr {...headerGroup.getHeaderGroupProps()} padding={0}>
-                {headerGroup.headers.map((column, i) =>
-                  column.canFilter ? (
-                    <Th {...column.getHeaderProps()} padding={2}>
-                      {column.render("Filter")}
-                    </Th>
-                  ) : (
-                    <Th key={i}>- </Th>
-                  )
-                )}
-              </Tr>
-            ))}
-          </Thead>
-          <Tbody {...getTableBodyProps()}>
-            {page.map((row) => {
-              prepareRow(row);
-              return (
-                <Tr
-                  {...row.getRowProps()}
-                  style={{
-                    cursor: onRowClick ? "pointer" : "inherit",
-                  }}
-                  transition="all 0.5s"
-                  _hover={
-                    onRowClick
-                      ? { bg: colorMode == "dark" ? "gray.700" : "gray.100" }
-                      : {}
-                  }
-                >
-                  {row.cells.map((cell) => (
-                    <Td
-                      {...cell.getCellProps()}
-                      onClick={() =>
-                        cell.column.id != "selection" &&
-                        cell.column.id.substring(0, 6) != "button" &&
-                        onRowClick
-                          ? onRowClick(row.original)
-                          : null
+                {isCsvReady && <CSVDownload data={prepareForCsv()} />}
+                {/* <CSVLink data={prepareForCsv()}> */}
+                <Button
+                  data-cy="csv-button"
+                  size="sm"
+                  float="right"
+                  marginLeft={2}
+                  isLoading={isCsvLoading}
+                  onClick={async () => {
+                    setCsvLoading(true);
+                    if (refreshData) {
+                      try {
+                        await refreshData();
+                        setCsvReady(true);
+                      } catch (err) {
+                        alert("err");
                       }
+                    } else {
+                      setCsvReady(true);
+                    }
+                    setCsvLoading(false);
+                  }}
+                >
+                  CSV
+                </Button>
+                {/* </CSVLink> */}
+              </Flex>
+            </Flex>
+          )}
+
+          <AnimatePresence>
+            {loading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{ zIndex: 9999 }}
+              >
+                <CircularProgress
+                  size="35px"
+                  isIndeterminate
+                  color="blue.300"
+                  position="absolute"
+                  left="50%"
+                  top="50%"
+                  transform="translate3d(-50%, -50%, 0)"
+                  zIndex="9999"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <Table
+            data-cy={dataCy}
+            {...getTableProps()}
+            maxWidth="100%"
+            transition="opacity 0.5s"
+            pointerEvents={loading ? "none" : "all"}
+            opacity={loading ? 0.3 : 1}
+          >
+            <Thead userSelect="none">
+              {headerGroups.map((headerGroup) => (
+                <Tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column, i) => (
+                    <Th
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
                     >
-                      {cell.render("Cell")}
-                    </Td>
+                      <Flex justifyContent="space-between">
+                        <Box
+                          color={column.isSorted ? "deepskyblue" : "default"}
+                        >
+                          {column.render("Header")}
+                        </Box>
+
+                        <Box float="right" textAlign="right">
+                          {column.isSorted ? (
+                            <Box color="deepskyblue">
+                              <AnimatedSortIcon
+                                icon={<TiArrowSortedDown fontSize={16} />}
+                                isVisible={column.isSortedDesc ? true : false}
+                              />
+                              <AnimatedSortIcon
+                                icon={<TiArrowSortedUp fontSize={16} />}
+                                isVisible={!column.isSortedDesc ? true : false}
+                              />
+                            </Box>
+                          ) : (
+                            !column.disableSortBy && (
+                              <TiArrowUnsorted fontSize={16} />
+                            )
+                          )}
+
+                          {/* {column.canFilter ? column.render("Filter") : null} */}
+                        </Box>
+                      </Flex>
+                    </Th>
                   ))}
                 </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </Box>
-      {/* {JSON.stringify({
+              ))}
+
+              {headerGroups.map((headerGroup) => (
+                <Tr {...headerGroup.getHeaderGroupProps()} padding={0}>
+                  {headerGroup.headers.map((column, i) =>
+                    column.canFilter ? (
+                      <Th {...column.getHeaderProps()} padding={2}>
+                        {column.render("Filter")}
+                      </Th>
+                    ) : (
+                      <Th key={i}>- </Th>
+                    )
+                  )}
+                </Tr>
+              ))}
+            </Thead>
+            <Tbody {...getTableBodyProps()}>
+              {page.map((row) => {
+                prepareRow(row);
+                return (
+                  <Tr
+                    {...row.getRowProps()}
+                    style={{
+                      cursor: onRowClick ? "pointer" : "inherit",
+                    }}
+                    transition="all 0.5s"
+                    _hover={
+                      onRowClick
+                        ? { bg: colorMode == "dark" ? "gray.700" : "gray.100" }
+                        : {}
+                    }
+                  >
+                    {row.cells.map((cell) => (
+                      <Td
+                        {...cell.getCellProps()}
+                        onClick={() =>
+                          cell.column.id != "selection" &&
+                          cell.column.id.substring(0, 6) != "button" &&
+                          onRowClick
+                            ? onRowClick(row.original)
+                            : null
+                        }
+                      >
+                        {cell.render("Cell")}
+                      </Td>
+                    ))}
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </Box>
+        {/* {JSON.stringify({
         selectedFlatRows: selectedFlatRows.map((row) => row.original),
       })} */}
-      <PaginationStyled data-cy="pagination-wrapper">
-        <Pagination
-          activePage={pageIndex + 1}
-          itemsCountPerPage={pageSize}
-          totalItemsCount={data.length}
-          pageRangeDisplayed={5}
-          onChange={(pageNumber: number) => {
-            gotoPage(pageNumber - 1);
-          }}
-        />
-      </PaginationStyled>
-    </ScrollbarWrapper>
+        <PaginationStyled data-cy="pagination-wrapper">
+          <Pagination
+            activePage={pageIndex + 1}
+            itemsCountPerPage={pageSize}
+            totalItemsCount={data.length}
+            pageRangeDisplayed={5}
+            onChange={(pageNumber: number) => {
+              gotoPage(pageNumber - 1);
+            }}
+          />
+        </PaginationStyled>
+      </ScrollbarWrapper>
+    </>
   );
 };
 

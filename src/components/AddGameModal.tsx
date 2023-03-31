@@ -192,6 +192,7 @@ const AddGameModal = ({
     <>
       <Modal isOpen={isOpen} onClose={onClose} size="md">
         <TutorialWizard
+          top
           isTutorialWizardOpen={isTutorialWizardOpen}
           setTutorialWizardOpen={setTutorialWizardOpen}
           steps={[

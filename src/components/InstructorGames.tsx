@@ -49,7 +49,13 @@ export const checkIsActive = (row: any) => {
   return false;
 };
 
-const InstructorGames = () => {
+const InstructorGames = ({
+  tutorialData,
+  showTutorialData,
+}: {
+  tutorialData?: any;
+  showTutorialData?: boolean;
+}) => {
   const memoizedArchivalSort = useMemo(
     () => (rowA: any, rowB: any) => {
       const a = rowA.original.archival;
@@ -273,7 +279,11 @@ const InstructorGames = () => {
                     //   disableFilters: true,
                     // },
                   ]}
-                  data={teacherGamesData?.myGames}
+                  data={
+                    showTutorialData && tutorialData
+                      ? tutorialData
+                      : teacherGamesData?.myGames
+                  }
                 />
               </Box>
             )}

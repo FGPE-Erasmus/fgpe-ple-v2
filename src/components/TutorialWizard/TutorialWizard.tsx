@@ -11,16 +11,23 @@ interface TutorialStep {
   ref?: { current: HTMLElement | null };
   content: string;
   canGoNext?: boolean;
+  top?: number;
+  right?: number;
+  left?: number;
+  bottom?: number;
+  textAlign?: "left" | "right" | "center";
 }
 
 const TutorialWizard = ({
   steps,
   isTutorialWizardOpen,
   setTutorialWizardOpen,
+  top,
 }: {
   steps: TutorialStep[];
   isTutorialWizardOpen: boolean;
   setTutorialWizardOpen: (v: boolean) => void;
+  top?: boolean;
 }) => {
   const { t } = useTranslation();
 
@@ -36,7 +43,10 @@ const TutorialWizard = ({
   }, [activeStepIndex, tutorialSteps]);
 
   const activeStep = useMemo(() => {
-    console.log(tutorialSteps.find((_x, i) => i === activeStepIndex));
+    console.log(
+      tutorialSteps,
+      tutorialSteps.find((_x, i) => i === activeStepIndex)
+    );
     return tutorialSteps.find((_x, i) => i === activeStepIndex);
   }, [activeStepIndex, tutorialSteps]);
   const stepClassName: string = `step-${activeStepIndex}`;
@@ -46,6 +56,8 @@ const TutorialWizard = ({
   }, [isTutorialWizardOpen]);
 
   useEffect(() => {
+    setTutorialSteps(steps);
+
     steps.forEach((step, i) => {
       if (!step.ref) {
         return;
@@ -54,8 +66,6 @@ const TutorialWizard = ({
       if (!step.ref.current) {
         return;
       }
-
-      setTutorialSteps(steps);
 
       const stepClassName = `step-${i}`;
       if (!step.ref.current.classList.contains(stepClassName)) {
@@ -66,6 +76,7 @@ const TutorialWizard = ({
   }, [steps]);
 
   if (!TUTORIALS_PORTAL) {
+    console.log("No tutorials portal found");
     return <></>;
   }
 
@@ -114,8 +125,32 @@ const TutorialWizard = ({
                 )}';
                     margin-top: 1rem;
                     position: absolute;
-                    left: 0;
-                    top: ${(activeStep.ref.current?.offsetHeight || 40) + 2}px;
+                    ${
+                      activeStep.right
+                        ? `right: ${activeStep.right}px;`
+                        : "left: 0;"
+                    }
+
+                    ${
+                      top
+                        ? `top: ${
+                            (activeStep.ref.current?.offsetHeight || 40) + 2
+                          }px;`
+                        : ""
+                    }
+
+                    ${
+                      activeStep.top && !activeStep.bottom
+                        ? `top: ${activeStep.top}px;`
+                        : ""
+                    }
+                    ${
+                      activeStep.bottom && !activeStep.top
+                        ? `bottom: ${activeStep.top}px;`
+                        : ""
+                    }
+                    ${activeStep.left ? `left: ${activeStep.top}px;` : ""}
+                    
                     width: 100%;
                     min-width: 200px;
                     max-width: 500px;
@@ -124,7 +159,7 @@ const TutorialWizard = ({
                     white-space: pre-wrap;
                     font-size: 15px;
                     line-height: 1.2em;
-                    text-align: left;
+                    text-align: ${activeStep.textAlign || "left"};
                     animation: fadeIn 0.5s; 
                     animation-fill-mode: forwards;
                 }

@@ -1,4 +1,10 @@
-import { ChevronDownIcon, HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
+import {
+  ChevronDownIcon,
+  HamburgerIcon,
+  QuestionIcon,
+  QuestionOutlineIcon,
+  SettingsIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -145,7 +151,7 @@ const Navbar = () => {
                 variant="link"
                 colorScheme="gray"
                 aria-label="Toggle color mode"
-                icon={<VscColorMode fontSize={24} />}
+                icon={<VscColorMode fontSize={22} />}
                 data-cy="toggle-color-mode"
               />
             </Box>
@@ -159,6 +165,17 @@ const Navbar = () => {
                 aria-label="Change language"
                 icon={<IoLanguage fontSize={24} />}
                 data-cy="change-language"
+              />
+            </Box>
+
+            <Box>
+              <IconButton
+                height={6}
+                variant="link"
+                colorScheme="gray"
+                // onClick={() => setTutorialWizardOpen(true)}
+                aria-label="Open tutorial"
+                icon={<QuestionIcon fontSize={20} />}
               />
             </Box>
 
