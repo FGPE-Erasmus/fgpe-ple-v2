@@ -22,6 +22,7 @@ import { teacherProfileTutorialData } from "./TutorialWizard/teacherProfileTutor
 
 const TeacherProfile = () => {
   const { t } = useTranslation();
+  const [usedFilter, setUsedFilter] = useState(false);
   const [isTutorialWizardOpen, setTutorialWizardOpen] = useState(false);
   const [tutorialState, setTutorialState] = useState({
     yourGames: false,
@@ -69,26 +70,41 @@ const TeacherProfile = () => {
             canGoNext: tutorialState.yourGames,
           },
           {
+            ref: tutorialStepSort as any,
+            content:
+              "You can sort and filter the table by clicking on the table headers or by typing in one of the filter fields.",
+            top: 180,
+          },
+          {
             ref: tutorialStepTableMenu as any,
             content:
-              "Tables also have a menu on the right side. You can use it to refresh data, export CSV or more.",
+              "Tables also have a menu on the right side. You can use it to refresh cached data, export CSV or more.\n\nWe cache data to improve performance.",
             top: 70,
             right: -10,
             textAlign: "center",
+          },
+          {
+            ref: tutorialStepStudents as any,
+            content:
+              "Main panel also contains a list of all your students profiles.\n\nStudents can be assigned to multiple games, so you can see them numerous times.",
+            top: -130,
+            menuOnTop: true,
+            // textAlign: "center",
+          },
+          {
+            content:
+              "This concludes this tutorial. You can always access it by clicking on the question mark icon. \n\nExplore to find more - start by checking one of your games.",
           },
         ]}
       />
       <div>
         <Flex justifyContent="flex-end" alignItems="center" marginBottom={4}>
-          {/* <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-            {t("Your games")}
-          </Heading> */}
-          <IconButton
+          {/* <IconButton
             onClick={() => setTutorialWizardOpen(true)}
             aria-label="Open tutorial"
             icon={<QuestionOutlineIcon />}
             marginRight={4}
-          />
+          /> */}
           <Link to="/teacher/manage-games">
             <Button marginRight={5}>{t("Manage games")}</Button>
           </Link>
@@ -119,13 +135,15 @@ const TeacherProfile = () => {
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
+                  {/* Tutorial Only elements */}
                   {isTutorialWizardOpen && (
                     <Box
-                      ref={setRefStepTableMenu}
+                      ref={setRefStepSort}
                       position={"absolute !important" as any}
-                      width="180px"
-                      height="62px"
-                      right="10px"
+                      width="100%"
+                      height="160px"
+                      top="120px"
+                      pointerEvents={"none !important" as any}
                     />
                   )}
                   {isTutorialWizardOpen && (
@@ -135,11 +153,23 @@ const TeacherProfile = () => {
                       width="180px"
                       height="62px"
                       right="10px"
+                      pointerEvents={"none !important" as any}
+                    />
+                  )}
+                  {isTutorialWizardOpen && (
+                    <Box
+                      ref={setRefStepTableMenu}
+                      position={"absolute !important" as any}
+                      width="180px"
+                      height="62px"
+                      right="10px"
+                      pointerEvents={"none !important" as any}
                     />
                   )}
                   <AccordionPanel pb={4} marginTop={2} marginBottom={10}>
                     {isExpanded && (
                       <InstructorGames
+                        setUsedFilter={setUsedFilter}
                         tutorialData={teacherProfileTutorialData}
                         showTutorialData={isTutorialWizardOpen}
                       />

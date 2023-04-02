@@ -70,4 +70,29 @@ export const teacherProfileTutorialData: getTeacherGamesQuery_myGames[] = [
       },
     ],
   },
+  {
+    __typename: "Game",
+    id: "4",
+    name: "Amazing Game",
+    description: "An amazing game description",
+    private: true,
+    archival: false,
+    startDate: null,
+    endDate: null,
+    state: GameStateEnum.OPEN,
+    players: [
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "2",
+      },
+      {
+        __typename: "Player",
+        id: "3",
+      },
+    ],
+  },
 ];

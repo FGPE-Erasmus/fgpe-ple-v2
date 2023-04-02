@@ -16,6 +16,7 @@ interface TutorialStep {
   left?: number;
   bottom?: number;
   textAlign?: "left" | "right" | "center";
+  menuOnTop?: boolean;
 }
 
 const TutorialWizard = ({
@@ -175,6 +176,7 @@ const TutorialWizard = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              menuOnTop={activeStep?.menuOnTop || false}
             >
               {!activeStep?.ref && (
                 <CenterText>
@@ -238,7 +240,8 @@ const CenterText = styled.div`
   }
 `;
 
-const TutorialBox = styled(motion.div)`
+// Add props menuOnTop
+const TutorialBox = styled(motion.div)<{ menuOnTop?: boolean }>`
   position: absolute;
   height: 100%;
   width: 100%;
@@ -247,13 +250,21 @@ const TutorialBox = styled(motion.div)`
   pointer-events: all;
 
   .tutorial-buttons {
-    position: absolute;
+    position: fixed;
     z-index: 99999;
     gap: 8px;
     width: 100%;
     justify-content: space-between;
     padding: 16px;
     bottom: 0px;
+    top: calc(100% - 74px);
+    ${({ menuOnTop }) => (menuOnTop ? "top: calc(0% - 0px);" : "")}
+    transition: top 0.5s;
+    height: 74px;
+  }
+
+  .menu-on-top {
+    color: red !important;
   }
 `;
 

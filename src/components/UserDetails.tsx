@@ -105,7 +105,7 @@ const UserDetails = () => {
     <div>
       <Flex justifyContent="space-between" alignItems="center">
         <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-          User: {userData?.user.firstName} {userData?.user.lastName}
+          {t("User")}: {userData?.user.firstName} {userData?.user.lastName}
         </Heading>
       </Flex>
 

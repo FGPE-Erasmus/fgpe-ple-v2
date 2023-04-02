@@ -168,7 +168,7 @@ const Navbar = () => {
               />
             </Box>
 
-            <Box>
+            {/* <Box>
               <IconButton
                 height={6}
                 variant="link"
@@ -177,7 +177,7 @@ const Navbar = () => {
                 aria-label="Open tutorial"
                 icon={<QuestionIcon fontSize={20} />}
               />
-            </Box>
+            </Box> */}
 
             {focusActivity && (
               <Box marginLeft={5}>

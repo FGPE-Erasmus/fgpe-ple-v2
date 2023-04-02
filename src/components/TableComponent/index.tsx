@@ -52,6 +52,7 @@ type TableComponentProps = {
   //** data-cy value for Cypress testing */
   dataCy?: string;
   contextMenuRef?: any;
+  tutorialPageSize?: number;
 } & (
   | {
       selectableRows?: false | undefined;
@@ -84,6 +85,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
   refreshData,
   dataCy,
   contextMenuRef,
+  tutorialPageSize,
 }) => {
   const [isCsvLoading, setCsvLoading] = useState(false);
   const [isCsvReady, setCsvReady] = useState(false);
@@ -162,7 +164,6 @@ const TableComponent: React.FC<TableComponentProps> = ({
             }
 
             if (typeof renderedCell === "object") {
-              console.log("lol?", renderedCell);
               return "N/A";
             }
 

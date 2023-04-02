@@ -52,9 +52,11 @@ export const checkIsActive = (row: any) => {
 const InstructorGames = ({
   tutorialData,
   showTutorialData,
+  setUsedFilter,
 }: {
   tutorialData?: any;
   showTutorialData?: boolean;
+  setUsedFilter?: (v: boolean) => void;
 }) => {
   const memoizedArchivalSort = useMemo(
     () => (rowA: any, rowB: any) => {
@@ -166,6 +168,7 @@ const InstructorGames = ({
             {teacherGamesData && (
               <Box>
                 <TableComponent
+                  tutorialPageSize={showTutorialData ? 4 : 0}
                   dataCy="your-games-table"
                   refreshData={refetchTeacherGames}
                   contextMenu={
