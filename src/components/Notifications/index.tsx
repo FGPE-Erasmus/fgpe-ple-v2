@@ -10,8 +10,11 @@ import {
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import React, { useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import Reward from "react-rewards";
 import { RewardType } from "../../generated/globalTypes";
+
+const ALERTS_PORTAL = document.getElementById("alerts");
 
 const Ctx = React.createContext({
   add: (value: NotificationI) => {},
@@ -37,7 +40,7 @@ const ToastContainer = (props: any) => (
     top="0"
     left="50%"
     transform="translateX(-50%)"
-    zIndex={9999}
+    zIndex={999999}
     {...props}
   />
 );
@@ -155,19 +158,28 @@ export function NotificationsProvider({
   // avoid creating a new fn on every render
   const onDismiss = (id: any) => () => remove(id);
 
+  if (!ALERTS_PORTAL) {
+    console.log("No alerts portal found");
+    return <></>;
+  }
+
   return (
     <Ctx.Provider value={{ add, remove }}>
       {children}
-      <ToastContainer>
-        {toasts.map(({ content, id, ...rest }: { content: any; id: any }) => (
-          <Toast
-            content={content}
-            key={id}
-            onDismiss={onDismiss(id)}
-            {...rest}
-          />
-        ))}
-      </ToastContainer>
+
+      {ReactDOM.createPortal(
+        <ToastContainer>
+          {toasts.map(({ content, id, ...rest }: { content: any; id: any }) => (
+            <Toast
+              content={content}
+              key={id}
+              onDismiss={onDismiss(id)}
+              {...rest}
+            />
+          ))}
+        </ToastContainer>,
+        ALERTS_PORTAL
+      )}
     </Ctx.Provider>
   );
 }

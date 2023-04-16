@@ -50,7 +50,13 @@ const getPlayers = (data: getTeacherStudentsDetails | undefined) => {
   return players;
 };
 
-const TeacherStudents = () => {
+const TeacherStudents = ({
+  tutorialData,
+  showTutorialData,
+}: {
+  tutorialData?: any;
+  showTutorialData?: boolean;
+}) => {
   // const memoizedSortFunc = useMemo(
   //   () => (rowA: any, rowB: any) => {
   //     const a = rowA.original.progress;
@@ -86,7 +92,9 @@ const TeacherStudents = () => {
     },
   });
 
-  const players = getPlayersWithoutProgress(teacherStudentsData);
+  const players = showTutorialData
+    ? tutorialData
+    : getPlayersWithoutProgress(teacherStudentsData);
 
   return (
     <div>

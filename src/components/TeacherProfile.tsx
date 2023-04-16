@@ -16,11 +16,16 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import withChangeAnimation from "../utilities/withChangeAnimation";
 import InstructorGames from "./InstructorGames";
+import { useNotifications } from "./Notifications";
 import TeacherStudents from "./TeacherStudents";
 import TutorialWizard from "./TutorialWizard";
-import { teacherProfileTutorialData } from "./TutorialWizard/teacherProfileTutorialData";
+import {
+  teacherProfileStudentsData,
+  teacherProfileTutorialData,
+} from "./TutorialWizard/teacherProfileTutorialData";
 
 const TeacherProfile = () => {
+  const { add: addNotification } = useNotifications();
   const { t } = useTranslation();
   const [usedFilter, setUsedFilter] = useState(false);
   const [isTutorialWizardOpen, setTutorialWizardOpen] = useState(false);
@@ -99,12 +104,12 @@ const TeacherProfile = () => {
       />
       <div>
         <Flex justifyContent="flex-end" alignItems="center" marginBottom={4}>
-          {/* <IconButton
+          <IconButton
             onClick={() => setTutorialWizardOpen(true)}
             aria-label="Open tutorial"
             icon={<QuestionOutlineIcon />}
             marginRight={4}
-          /> */}
+          />
           <Link to="/teacher/manage-games">
             <Button marginRight={5}>{t("Manage games")}</Button>
           </Link>
@@ -127,6 +132,25 @@ const TeacherProfile = () => {
               }
               return (
                 <>
+                  {isTutorialWizardOpen && tutorialState.yourGames && (
+                    <Box
+                      position="absolute"
+                      width="100%"
+                      height="calc(100% - 200px)"
+                      top="200px"
+                      pointerEvents="all"
+                      zIndex={100}
+                      cursor="not-allowed"
+                      onClick={() => {
+                        // alert that you can't click here yet
+                        addNotification({
+                          title: "Tutorial",
+                          description: "You can't click here yet",
+                          status: "warning",
+                        });
+                      }}
+                    />
+                  )}
                   <AccordionButton data-cy="your-games">
                     <Box flex="1" textAlign="left">
                       <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
@@ -182,6 +206,25 @@ const TeacherProfile = () => {
           <AccordionItem ref={setRefStepStudents}>
             {({ isExpanded }: { isExpanded: boolean }) => (
               <>
+                {isTutorialWizardOpen && (
+                  <Box
+                    position="absolute"
+                    width="100%"
+                    height="calc(100% - 200px)"
+                    top="200px"
+                    pointerEvents="all"
+                    zIndex={100}
+                    cursor="not-allowed"
+                    onClick={() => {
+                      // alert that you can't click here yet
+                      addNotification({
+                        title: "Tutorial",
+                        description: "You can't click here yet",
+                        status: "warning",
+                      });
+                    }}
+                  />
+                )}
                 <AccordionButton data-cy="all-your-students">
                   <Box flex="1" textAlign="left">
                     <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
@@ -192,7 +235,12 @@ const TeacherProfile = () => {
                 </AccordionButton>
 
                 <AccordionPanel pb={4} marginTop={2} marginBottom={10}>
-                  {isExpanded && <TeacherStudents />}
+                  {isExpanded && (
+                    <TeacherStudents
+                      tutorialData={teacherProfileStudentsData}
+                      showTutorialData={isTutorialWizardOpen}
+                    />
+                  )}
                 </AccordionPanel>
               </>
             )}

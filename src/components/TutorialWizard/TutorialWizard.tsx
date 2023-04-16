@@ -53,6 +53,14 @@ const TutorialWizard = ({
   const stepClassName: string = `step-${activeStepIndex}`;
 
   useEffect(() => {
+    activeStep?.ref?.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest",
+    });
+  }, [activeStep]);
+
+  useEffect(() => {
     setActiveStepIndex(0);
   }, [isTutorialWizardOpen]);
 
@@ -192,7 +200,7 @@ const TutorialWizard = ({
                 >
                   {t("Close")}
                 </Button>
-                <Flex style={{ gap: 4 }}>
+                <Flex style={{ gap: 16 }}>
                   <Button
                     disabled={activeStepIndex <= 0}
                     onClick={() => setActiveStepIndex(activeStepIndex - 1)}
@@ -261,6 +269,22 @@ const TutorialBox = styled(motion.div)<{ menuOnTop?: boolean }>`
     ${({ menuOnTop }) => (menuOnTop ? "top: calc(0% - 0px);" : "")}
     transition: top 0.5s;
     height: 74px;
+
+    & > button,
+    & > div > button {
+      &:before {
+        content: "";
+        position: absolute;
+        width: calc(100% + 8px);
+        height: calc(100% + 8px);
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+        border-radius: 8px;
+        // center
+        left: -4px;
+        top: -4px;
+      }
+    }
   }
 
   .menu-on-top {

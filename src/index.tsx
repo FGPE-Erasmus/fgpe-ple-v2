@@ -25,7 +25,7 @@ import ClearLocalStorage from "./utilities/ClearLocalStorage";
 import { persistCache, LocalStorageWrapper } from "apollo3-cache-persist";
 import * as serviceWorkerRegistration from "./service-worker-registration";
 import { restoreTokens, storeTokens } from "./utilities/Storage";
-
+import { useTranslation } from "react-i18next";
 
 ClearLocalStorage();
 
@@ -163,17 +163,25 @@ persistCache({
           refreshToken: tokens.refreshToken,
         }}
         LoadingComponent={<MainLoading />}
-        onTokens={(tokens) => storeTokens(tokens.token, tokens.idToken, tokens.refreshToken)}
+        onTokens={(tokens) =>
+          storeTokens(tokens.token, tokens.idToken, tokens.refreshToken)
+        }
       >
         <ApolloProvider client={client}>
-          <Suspense fallback="loading">
-            <App />
-          </Suspense>
+          <Main />
         </ApolloProvider>
       </ReactKeycloakProvider>
     </ChakraProvider>,
     document.getElementById("root")
   );
 });
+
+const Main = () => {
+  return (
+    <Suspense fallback="...">
+      <App />
+    </Suspense>
+  );
+};
 
 serviceWorkerRegistration.register();

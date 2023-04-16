@@ -39,7 +39,7 @@ const MainWrapper = styled.div`
 `;
 
 function App() {
-  const { ready } = useTranslation();
+  const { ready, t } = useTranslation();
   const [zoomFactor, setZoomFactor] = useState(
     getZoomFactorFromLocalStorage() || 1
   );
