@@ -264,6 +264,17 @@
     "setPrivate": "Установить частный",
     "private": "Частный"
   },
+  "ltiPublicKey": "LTI Public Key",
+  "registerLtiTool": "Register LTI Tool",
+  "registerPlatformForm": {
+    "title": "Register LTI Platform",
+    "clientName": "Client Name",
+    "clientNamePlaceholder": "Awesome client name",
+    "clientId": "Client ID",
+    "clientIdPlaceholder": "XXXXXXXXXXXXXXX",
+    "moodleUrl": "Moodle URL",
+    "moodleUrlPlaceholder": "http://example.com"
+  },
   "description": {
     "part1": "Для начала отредактируйте <1> src / App.js </1> и сохраните его для перезагрузки.",
     "part2": "Переключайте язык между английским и немецким с помощью кнопок выше."

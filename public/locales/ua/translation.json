@@ -264,6 +264,17 @@
     "setPrivate": "Встановити приватний",
     "private": "Приватна"
   },
+  "ltiPublicKey": "LTI Public Key",
+  "registerLtiTool": "Register LTI Tool",
+  "registerPlatformForm": {
+    "title": "Register LTI Platform",
+    "clientName": "Client Name",
+    "clientNamePlaceholder": "Awesome client name",
+    "clientId": "Client ID",
+    "clientIdPlaceholder": "XXXXXXXXXXXXXXX",
+    "moodleUrl": "Moodle URL",
+    "moodleUrlPlaceholder": "http://example.com"
+  },
   "description": {
     "part1": "Для початку відредагуйте <1> src / App.js </1> і збережіть для ��ерезавантаження.",
     "part2": "Перемикайте мову між англійською та німецькою за допомогою кнопок вище."

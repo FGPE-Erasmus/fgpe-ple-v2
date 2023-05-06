@@ -290,6 +290,17 @@
     "setArchival": "Set archival",
     "private": "Private"
   },
+  "ltiPublicKey": "LTI Public Key",
+  "registerLtiTool": "Register LTI Tool",
+  "registerPlatformForm": {
+    "title": "Register LTI Platform",
+    "clientName": "Client Name",
+    "clientNamePlaceholder": "Awesome client name",
+    "clientId": "Client ID",
+    "clientIdPlaceholder": "XXXXXXXXXXXXXXX",
+    "moodleUrl": "Moodle URL",
+    "moodleUrlPlaceholder": "http://example.com"
+  },
   "description": {
     "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
     "part2": "Switch language between english and german using buttons above."

@@ -264,6 +264,17 @@
     "setPrivate": "Definir como privado",
     "private": "Privado"
   },
+  "ltiPublicKey": "LTI Public Key",
+  "registerLtiTool": "Register LTI Tool",
+  "registerPlatformForm": {
+    "title": "Registar Platforma LTI",
+    "clientName": "Nome do Cliente",
+    "clientNamePlaceholder": "Nome de cliente incrível",
+    "clientId": "ID do Cliente",
+    "clientIdPlaceholder": "XXXXXXXXXXXXXXX",
+    "moodleUrl": "URL Moodle",
+    "moodleUrlPlaceholder": "http://example.com"
+  },
   "description": {
     "part1": "Para começar, edite <1>src/App.js</1> e guarde para recarregar.",
     "part2": "Altera o idioma entre inglês e alemão usando os botões acima."

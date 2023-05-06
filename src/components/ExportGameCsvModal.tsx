@@ -57,7 +57,7 @@ export function useLazyQuery<TData = any, TVariables = OperationVariables>(
   const client = useApolloClient();
   return React.useCallback(
     (variables: TVariables) =>
-      client.query<TData, TVariables>({
+      client.query<TData, any>({
         query: query,
         variables: variables,
         fetchPolicy: "no-cache",

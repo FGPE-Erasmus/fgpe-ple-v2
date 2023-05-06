@@ -119,5 +119,5 @@
     "@types/uuid": "^8.3.0",
     "apollo": "^2.32.0"
   },
-  "homepage": "/learning-platform"
+  "homepage": "/learning-platform/"
 }

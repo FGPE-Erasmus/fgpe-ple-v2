@@ -26,6 +26,7 @@ import { FocusActivityContextProvider } from "./context/FocusActivityContext";
 import NavContext from "./context/NavContext";
 import ZoomContext from "./context/ZoomContext";
 import PrivateRoute from "./utilities/PrivateRoute";
+import RegisterPlatformForm from "./components/RegisterPlatformForm";
 
 const getZoomFactorFromLocalStorage = () => {
   const zoomFactor = localStorage.getItem("zoom");
@@ -140,6 +141,13 @@ function App() {
                               path="/teacher/player-details/:userId/:gameId"
                               roles={["teacher"]}
                               component={PlayerDetails}
+                            />
+
+                            <PrivateRoute
+                              exact
+                              path="/teacher/register-lti-platform"
+                              roles={["teacher"]}
+                              component={RegisterPlatformForm}
                             />
 
                             <PrivateRoute

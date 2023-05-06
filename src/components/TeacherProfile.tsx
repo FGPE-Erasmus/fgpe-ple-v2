@@ -29,6 +29,9 @@ const TeacherProfile = () => {
         <Link to="/teacher/manage-games">
           <Button marginRight={5}>{t("Manage games")}</Button>
         </Link>
+        <Link to="/teacher/register-lti-platform">
+          <Button>{t("registerLtiTool")}</Button>
+        </Link>
       </Flex>
       <Accordion allowToggle allowMultiple>
         <AccordionItem>

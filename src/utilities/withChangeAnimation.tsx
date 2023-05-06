@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 export default function withChangeAnimation<T>(
   Component: React.ComponentType<T>
 ) {
-  return (props: T) => (
+  return (props: any) => (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
