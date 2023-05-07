@@ -53,6 +53,7 @@ type TableComponentProps = {
   dataCy?: string;
   contextMenuRef?: any;
   tutorialPageSize?: number;
+  tutorial?: boolean;
 } & (
   | {
       selectableRows?: false | undefined;
@@ -86,6 +87,7 @@ const TableComponent: React.FC<TableComponentProps> = ({
   dataCy,
   contextMenuRef,
   tutorialPageSize,
+  tutorial,
 }) => {
   const [isCsvLoading, setCsvLoading] = useState(false);
   const [isCsvReady, setCsvReady] = useState(false);
@@ -223,6 +225,9 @@ const TableComponent: React.FC<TableComponentProps> = ({
               justifyContent={"space-between"}
               alignItems="center"
               ref={contextMenuRef}
+              zIndex={tutorial ? 999 : "auto"}
+              position={tutorial ? "relative" : "static"}
+              pointerEvents={tutorial ? "all" : "auto"}
             >
               {tableHeader && <Box>{tableHeader}</Box>}
 

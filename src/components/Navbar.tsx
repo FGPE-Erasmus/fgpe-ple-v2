@@ -1,10 +1,4 @@
-import {
-  ChevronDownIcon,
-  HamburgerIcon,
-  QuestionIcon,
-  QuestionOutlineIcon,
-  SettingsIcon,
-} from "@chakra-ui/icons";
+import { HamburgerIcon, QuestionIcon, SettingsIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -14,25 +8,31 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  useBreakpointValue,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
+import { KeycloakProfile } from "@fgpe/keycloak-js";
 import { useKeycloak } from "@react-keycloak/web";
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BiUserCircle } from "react-icons/bi";
 import { IoLanguage } from "react-icons/io5";
 import { VscColorMode } from "react-icons/vsc";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import useBreadcrumbs from "use-react-router-breadcrumbs";
-import { KeycloakProfile } from "@fgpe/keycloak-js";
+import { FocusActivityContextType } from "../@types/focus-activity";
+import { FocusActivityContext } from "../context/FocusActivityContext";
 import NavContext from "../context/NavContext";
 import LogoSVG from "../images/logo.svg";
 import ChangeLanguageModal from "./ChangeLanguageModal";
-import { FocusActivityContext } from "../context/FocusActivityContext";
-import { FocusActivityContextType } from "../@types/focus-activity";
 
 const Logo = styled.div`
   background: url(${LogoSVG});
@@ -46,6 +46,16 @@ const Logo = styled.div`
 `;
 
 const Navbar = () => {
+  const hasSeenTutorial = useMemo(() => {
+    const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
+    console.log("HAS?", hasSeenTutorial === "true");
+    return hasSeenTutorial === "true";
+  }, []);
+
+  const [tutorialPopoverOpen, setTutorialPopoverOpen] = useState(
+    !hasSeenTutorial
+  );
+
   const breadcrumbs = useBreadcrumbs();
   const {
     isOpen: isOpenLanguageModal,
@@ -55,8 +65,15 @@ const Navbar = () => {
 
   const { t, i18n } = useTranslation();
 
-  const { activeGame } = useContext(NavContext);
+  const {
+    activeGame,
+    setShouldBaseTutorialStart,
+    setToggledDarkMode,
+    shouldBaseTutorialStart,
+  } = useContext(NavContext);
   const { keycloak, initialized } = useKeycloak();
+  const isTeacher =
+    keycloak.hasRealmRole("teacher") || keycloak.hasResourceRole("teacher");
 
   const { deactivate: deactivateFocusMode, focusActivity } = useContext(
     FocusActivityContext
@@ -67,6 +84,7 @@ const Navbar = () => {
   //   activeGameAndChallenge.setActiveGame(null);
   // };
 
+  const history = useHistory();
   const { colorMode, toggleColorMode } = useColorMode();
   const [userProfile, setUserProfile] = useState<null | KeycloakProfile>(null);
 
@@ -130,7 +148,13 @@ const Navbar = () => {
 
             {keycloak.authenticated && !focusActivity && (
               <Box>
-                <NavLink to="/profile/settings" data-cy="settings">
+                <NavLink
+                  to="/profile/settings"
+                  data-cy="settings"
+                  style={{
+                    pointerEvents: shouldBaseTutorialStart ? "none" : "all",
+                  }}
+                >
                   <IconButton
                     height={6}
                     _focus={{}}
@@ -147,7 +171,10 @@ const Navbar = () => {
               <IconButton
                 height={6}
                 _focus={{}}
-                onClick={toggleColorMode}
+                onClick={() => {
+                  toggleColorMode();
+                  shouldBaseTutorialStart && setToggledDarkMode(true);
+                }}
                 variant="link"
                 colorScheme="gray"
                 aria-label="Toggle color mode"
@@ -159,7 +186,12 @@ const Navbar = () => {
               <IconButton
                 height={6}
                 _focus={{}}
-                onClick={onOpenLanguageModal}
+                onClick={() => {
+                  if (shouldBaseTutorialStart) {
+                    return;
+                  }
+                  onOpenLanguageModal();
+                }}
                 variant="link"
                 colorScheme="gray"
                 aria-label="Change language"
@@ -168,16 +200,46 @@ const Navbar = () => {
               />
             </Box>
 
-            {/* <Box>
-              <IconButton
-                height={6}
-                variant="link"
-                colorScheme="gray"
-                // onClick={() => setTutorialWizardOpen(true)}
-                aria-label="Open tutorial"
-                icon={<QuestionIcon fontSize={20} />}
-              />
-            </Box> */}
+            {isTeacher && (
+              <Popover
+                returnFocusOnClose={false}
+                isOpen={tutorialPopoverOpen}
+                onClose={() => {
+                  setTutorialPopoverOpen(false);
+                  localStorage.setItem("hasSeenTutorial", "true");
+                }}
+                placement="bottom-end"
+                closeOnBlur={false}
+              >
+                <PopoverTrigger>
+                  <Box>
+                    <IconButton
+                      height={6}
+                      variant="link"
+                      colorScheme="gray"
+                      onClick={() => {
+                        history.push("/profile");
+                        setTutorialPopoverOpen(false);
+                        localStorage.setItem("hasSeenTutorial", "true");
+                        setShouldBaseTutorialStart(true);
+                      }}
+                      aria-label="Open tutorial"
+                      icon={<QuestionIcon fontSize={20} />}
+                    />
+                  </Box>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverHeader fontWeight="semibold">
+                    {t("Tutorial")}
+                  </PopoverHeader>
+                  <PopoverArrow />
+                  <PopoverCloseButton />
+                  <PopoverBody>
+                    {t("Have you seen the tutorial? Let's learn the basics!")}
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+            )}
 
             {focusActivity && (
               <Box marginLeft={5}>
@@ -263,7 +325,12 @@ const Navbar = () => {
                     </NavLink>
                   </MenuItem>
                 )}
-                <MenuItem onClick={toggleColorMode}>
+                <MenuItem
+                  onClick={() => {
+                    toggleColorMode();
+                    shouldBaseTutorialStart && setToggledDarkMode(true);
+                  }}
+                >
                   <IconButton
                     height={6}
                     _focus={{}}

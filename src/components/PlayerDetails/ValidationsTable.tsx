@@ -1,17 +1,14 @@
 import { useQuery } from "@apollo/client";
 import { Box, Skeleton } from "@chakra-ui/react";
-import React, { useState } from "react";
-import {
-  getPlayerQuery_player_game,
-  getPlayerQuery_player_learningPath,
-} from "../../generated/getPlayerQuery";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { getPlayerQuery_player_learningPath } from "../../generated/getPlayerQuery";
 import { getPlayerValidationsQuery } from "../../generated/getPlayerValidationsQuery";
 import { GET_PLAYER_VALIDATIONS } from "../../graphql/getPlayerValidations";
 import { checkIfConnectionAborted } from "../../utilities/ErrorMessages";
-import PlayerAttemptsTable from "./PlayerAttemptsTable";
-import { useTranslation } from "react-i18next";
-import { AnimatePresence, motion } from "framer-motion";
 import RefreshCacheMenu from "../RefreshCacheMenu";
+import PlayerAttemptsTable from "./PlayerAttemptsTable";
 
 const ValidationsTable = ({
   userId,

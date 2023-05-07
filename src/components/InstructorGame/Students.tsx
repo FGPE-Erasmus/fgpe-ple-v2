@@ -281,7 +281,7 @@ const Students = ({
   );
 };
 
-const ContextMenu = ({
+export const ContextMenu = ({
   autoAssignGroupsLoading,
   setLoading,
   autoAssignGroups,

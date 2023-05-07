@@ -171,6 +171,7 @@ const InstructorGames = ({
                   tutorialPageSize={showTutorialData ? 4 : 0}
                   dataCy="your-games-table"
                   refreshData={refetchTeacherGames}
+                  tutorial={showTutorialData}
                   contextMenu={
                     <RefreshCacheMenu
                       loading={teacherGamesLoading}

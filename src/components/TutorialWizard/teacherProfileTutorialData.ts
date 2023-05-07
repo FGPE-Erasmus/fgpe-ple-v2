@@ -11,7 +11,7 @@ import { GameStateEnum } from "../../generated/globalTypes";
 export const teacherProfileTutorialData: getTeacherGamesQuery_myGames[] = [
   {
     __typename: "Game",
-    id: "1",
+    id: "tutorial-1",
     name: "JavaScript challenge",
     description: "JavaScript challenge description",
     private: false,
@@ -24,13 +24,53 @@ export const teacherProfileTutorialData: getTeacherGamesQuery_myGames[] = [
         __typename: "Player",
         id: "1",
       },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
     ],
   },
   {
     __typename: "Game",
-    id: "2",
-    name: "Python masterclass",
-    description: "Python masterclass description",
+    id: "tutorial-2",
+    name: "JavaScript masterclass",
+    description: "Master JS techniques and advanced concepts",
     private: false,
     archival: false,
     startDate: null,
@@ -41,13 +81,37 @@ export const teacherProfileTutorialData: getTeacherGamesQuery_myGames[] = [
         __typename: "Player",
         id: "1",
       },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
     ],
   },
   {
     __typename: "Game",
-    id: "3",
-    name: "C# vs Java",
-    description: "C# vs Java description",
+    id: "tutorial-3",
+    name: "JavaScript Fundamentals",
+    description: "Learn JS fundamentals",
     private: false,
     archival: false,
     startDate: null,
@@ -58,13 +122,37 @@ export const teacherProfileTutorialData: getTeacherGamesQuery_myGames[] = [
         __typename: "Player",
         id: "1",
       },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
     ],
   },
   {
     __typename: "Game",
-    id: "4",
-    name: "The Legend of Python",
-    description: "The Legend of Python description",
+    id: "tutorial-4",
+    name: "The Legend of JS",
+    description: "Embark on a legendary journey through JS mastery.",
     private: false,
     archival: false,
     startDate: null,
@@ -75,13 +163,29 @@ export const teacherProfileTutorialData: getTeacherGamesQuery_myGames[] = [
         __typename: "Player",
         id: "1",
       },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
+      {
+        __typename: "Player",
+        id: "1",
+      },
     ],
   },
   {
     __typename: "Game",
-    id: "4",
+    id: "tutorial-4",
     name: "Amazing Game",
-    description: "An amazing game description",
+    description: "Immersive and captivating",
     private: true,
     archival: false,
     startDate: null,
@@ -153,7 +257,7 @@ export const teacherProfileStudentsData: {
     user: {
       __typename: "User",
       id: "1",
-      lastName: "Dylan",
+      lastName: "Smith",
       firstName: "Bob",
     },
     learningPath: [],
@@ -176,7 +280,7 @@ export const teacherProfileStudentsData: {
     user: {
       __typename: "User",
       id: "1",
-      lastName: "Dylan",
+      lastName: "Smith",
       firstName: "Bob",
     },
     learningPath: [],

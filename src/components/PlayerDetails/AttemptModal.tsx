@@ -1,55 +1,43 @@
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Button,
-  Text,
-  HStack,
   Box,
-  useColorMode,
-  Stack,
-  Flex,
   Drawer,
   DrawerBody,
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
+  Flex,
+  ModalCloseButton,
   Skeleton,
+  Stack,
+  Text,
+  useColorMode,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 // import {
 //   getPlayerQuery_player_submissions,
 //   getPlayerQuery_player_validations,
 // } from "../../generated/getPlayerQuery";
-import DetailsCard from "../DetailsCard";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
+import DetailsCard from "../DetailsCard";
 
+import { useLazyQuery } from "@apollo/client";
+import { CalendarIcon } from "@chakra-ui/icons";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import {
-  docco,
   atomOneDark,
+  docco,
 } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { CalendarIcon } from "@chakra-ui/icons";
-import ReactHtmlParser from "react-html-parser";
-import { GET_SUBMISSION_BY_ID } from "../../graphql/getSubmissionById";
-import { useLazyQuery } from "@apollo/client";
-import { GET_VALIDATION_BY_ID } from "../../graphql/getValidationById";
-import {
-  getSubmissionByIdQuery,
-  getSubmissionByIdQuery_submission,
-} from "../../generated/getSubmissionByIdQuery";
+import { getPlayerValidationsQuery_player_validations } from "../../generated/getPlayerValidationsQuery";
+import { getSubmissionByIdQuery } from "../../generated/getSubmissionByIdQuery";
 import {
   getValidationByIdQuery,
   getValidationByIdQuery_validation,
 } from "../../generated/getValidationByIdQuery";
+import { GET_SUBMISSION_BY_ID } from "../../graphql/getSubmissionById";
+import { GET_VALIDATION_BY_ID } from "../../graphql/getValidationById";
 import { useNotifications } from "../Notifications";
-import { getPlayerValidationsQuery_player_validations } from "../../generated/getPlayerValidationsQuery";
 
 dayjs.extend(LocalizedFormat);
 

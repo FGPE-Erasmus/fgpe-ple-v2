@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
+import { QuestionOutlineIcon } from "@chakra-ui/icons";
 import {
   Accordion,
   AccordionButton,
@@ -12,13 +13,14 @@ import {
   Flex,
   Heading,
   HStack,
+  IconButton,
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
+import { Link, Redirect, useHistory, useParams } from "react-router-dom";
 import { gameDetailsGetGameByIdQuery } from "../../generated/gameDetailsGetGameByIdQuery";
 import { getGameByIdQuery_game_players } from "../../generated/getGameByIdQuery";
 import { getOverallStats } from "../../generated/getOverallStats";
@@ -35,6 +37,7 @@ import Error from "../Error";
 import ExportGameCsvModal from "../ExportGameCsvModal";
 import { useNotifications } from "../Notifications";
 import RefreshCacheMenu from "../RefreshCacheMenu";
+import { teacherProfileTutorialData } from "../TutorialWizard/teacherProfileTutorialData";
 import ActivitiesStats from "./ActivitiesStats";
 import ChangeDetailsModal from "./ChangeDetailsModal";
 import Students from "./Students";
@@ -44,6 +47,7 @@ interface ParamTypes {
 }
 
 const InstructorGame = () => {
+  const history = useHistory();
   const [loading, setLoading] = useState(false);
 
   const {
@@ -61,6 +65,7 @@ const InstructorGame = () => {
   const { add: addNotification } = useNotifications();
 
   const { gameId } = useParams<ParamTypes>();
+
   const { t } = useTranslation();
 
   const selectedStudentsRef = useRef([]);
@@ -101,6 +106,11 @@ const InstructorGame = () => {
   });
 
   const lastSubmissionDate = gameData?.game.submissions[0]?.submittedAt;
+
+  if (teacherProfileTutorialData.map((i) => i.id).includes(gameId)) {
+    // redirect to tutorial
+    return <Redirect to={`/teacher/tutorial/game/${gameId}`} />;
+  }
 
   if (!gameId) {
     return <div>Game ID not provided</div>;
@@ -276,6 +286,18 @@ const InstructorGame = () => {
             <Button onClick={onExportCsvModalOpen} data-cy="csv-export">
               CSV
             </Button>
+
+            <Tooltip label={t("Show basic player profile tutorial")}>
+              <IconButton
+                onClick={() => {
+                  history.push(
+                    "/teacher/tutorial/player-details/f3124287-9db1-46e5-bd20-c628fd714637/tutorial-1"
+                  );
+                }}
+                aria-label="Open tutorial"
+                icon={<QuestionOutlineIcon />}
+              />
+            </Tooltip>
           </HStack>
         </Flex>
 

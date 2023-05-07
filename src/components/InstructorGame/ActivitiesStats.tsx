@@ -12,7 +12,9 @@ import RefreshCacheMenu from "../RefreshCacheMenu";
 import TableComponent from "../TableComponent";
 import ColumnFilter from "../TableComponent/ColumnFilter";
 
-const getActivitiesList = (gameData: activityStatsAndChallengeNamesQuery) => {
+export const getActivitiesList = (
+  gameData: activityStatsAndChallengeNamesQuery
+) => {
   let activities: getGameByIdQuery_game_challenges_refs[] = [];
   gameData.game.challenges.forEach((challenge) => {
     challenge.refs.forEach((ref) => {
@@ -29,7 +31,7 @@ interface StatsInterface {
   nrOfSubmissionsByActivityAndResult: { ACCEPT: number; WRONG_ANSWER: number };
 }
 
-const getActivitiesStats = (
+export const getActivitiesStats = (
   statsData: activityStatsAndChallengeNamesQuery,
   activitiesList: getGameByIdQuery_game_challenges_refs[]
 ) => {

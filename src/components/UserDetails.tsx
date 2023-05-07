@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client";
-import { Box, Flex, Heading } from "@chakra-ui/react";
+import { QuestionOutlineIcon } from "@chakra-ui/icons";
+import { Box, Flex, Heading, IconButton, Tooltip } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
@@ -107,6 +108,18 @@ const UserDetails = () => {
         <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
           {t("User")}: {userData?.user.firstName} {userData?.user.lastName}
         </Heading>
+
+        <Tooltip label={t("Show basic user profile tutorial")}>
+          <IconButton
+            onClick={() => {
+              history.push(
+                "/teacher/tutorial/student-details/f3124287-9db1-46e5-bd20-c628fd714637"
+              );
+            }}
+            aria-label="Open tutorial"
+            icon={<QuestionOutlineIcon />}
+          />
+        </Tooltip>
       </Flex>
 
       <Flex
