@@ -11,6 +11,7 @@ import withChangeAnimation from "../utilities/withChangeAnimation";
 import AddGameModal from "./AddGameModal";
 import Error from "./Error";
 import { useNotifications } from "./Notifications";
+import { RemoveAssignmentAlert } from "./RemoveAssignmentAlert";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
 
@@ -46,6 +47,12 @@ const REMOVE_GAME = gql`
 `;
 
 const ManageGames = () => {
+  const [gameRowCellToUnassign, setGameRowCellToUnassign] = React.useState<{
+    row: any;
+    cell: any;
+    value: any;
+  }>();
+
   const { add: addNotification } = useNotifications();
   const history = useHistory();
 
@@ -88,6 +95,9 @@ const ManageGames = () => {
     onClose: onAddGameModalClose,
   } = useDisclosure();
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const cancelRef = React.useRef<any>();
+
   if (!loading && error) {
     const isServerConnectionError = checkIfConnectionAborted(error);
 
@@ -104,6 +114,44 @@ const ManageGames = () => {
 
   return (
     <Box>
+      <RemoveAssignmentAlert
+        onConfirm={async () => {
+          if (!gameRowCellToUnassign) return;
+          const { row, cell, value } = gameRowCellToUnassign;
+          const gameId = row.original.id;
+          cell.setState({ loading: true });
+
+          if (!keycloak.userInfo) {
+            await keycloak.loadUserInfo();
+          }
+
+          const userInfo = keycloak.userInfo as any;
+          const userId = userInfo.sub;
+
+          if (value) {
+            await unassignInstructor({
+              variables: {
+                gameId,
+                userId,
+              },
+            });
+          } else {
+            await assignInstructor({
+              variables: {
+                gameId,
+                userId,
+              },
+            });
+          }
+
+          await refetch();
+          cell.setState({ loading: false });
+        }}
+        isLoading={removeGameLoading}
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onClose={onClose}
+      />
       <AddGameModal
         isOpen={isAddGameModalOpen}
         onOpen={onAddGameModalOpen}
@@ -182,6 +230,12 @@ const ManageGames = () => {
                   size="sm"
                   isLoading={cell.state.loading}
                   onClick={async () => {
+                    setGameRowCellToUnassign({
+                      row,
+                      cell,
+                      value,
+                    });
+
                     const gameId = row.original.id;
                     cell.setState({ loading: true });
 
@@ -193,12 +247,14 @@ const ManageGames = () => {
                     const userId = userInfo.sub;
 
                     if (value) {
-                      await unassignInstructor({
-                        variables: {
-                          gameId,
-                          userId,
-                        },
-                      });
+                      return onOpen();
+
+                      // await unassignInstructor({
+                      //   variables: {
+                      //     gameId,
+                      //     userId,
+                      //   },
+                      // });
                     } else {
                       await assignInstructor({
                         variables: {

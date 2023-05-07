@@ -42,12 +42,23 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <div
+      id="alerts"
+      style="
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 999999;
+        pointer-events: all;
+      "
+    ></div>
+
+    <div
       id="tutorial"
       style="
         position: absolute;
         left: 0;
         top: 0;
-        height: 100vh;
+        height: calc(100vh + 65px);
         width: 100vw;
         pointer-events: none;
       "

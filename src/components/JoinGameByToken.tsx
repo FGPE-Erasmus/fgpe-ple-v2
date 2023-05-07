@@ -4,12 +4,9 @@ import {
   AlertDescription,
   AlertIcon,
   AlertTitle,
-  Box,
-  Flex,
   Spinner,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import { joinGameWithEnrollTokenMutation } from "../generated/joinGameWithEnrollTokenMutation";
@@ -17,7 +14,6 @@ import { joinGroupWithToken } from "../generated/joinGroupWithToken";
 import { JOIN_GAME_WITH_ENROLL_TOKEN } from "../graphql/joinGameWithEnrollToken";
 import { JOIN_GROUP_WITH_TOKEN } from "../graphql/joinGroupWithToken";
 import withChangeAnimation from "../utilities/withChangeAnimation";
-import { useNotifications } from "./Notifications";
 
 const JoinGameByToken = () => {
   const { t } = useTranslation();
@@ -27,11 +23,10 @@ const JoinGameByToken = () => {
   const [game, setGame] = useState<string | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
 
-  const { gameToken, groupToken } =
-    useParams<{
-      gameToken?: string;
-      groupToken?: string;
-    }>();
+  const { gameToken, groupToken } = useParams<{
+    gameToken?: string;
+    groupToken?: string;
+  }>();
 
   const [joinGameWithToken, { error: joinGameError }] =
     useMutation<joinGameWithEnrollTokenMutation>(JOIN_GAME_WITH_ENROLL_TOKEN);
@@ -79,8 +74,6 @@ const JoinGameByToken = () => {
   };
 
   useEffect(() => {
-    console.log(1, gameToken, 2, groupToken);
-
     if (gameToken && !groupToken) {
       joinGameOnly(true);
     }

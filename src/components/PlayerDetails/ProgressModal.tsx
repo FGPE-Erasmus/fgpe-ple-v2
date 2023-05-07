@@ -22,10 +22,12 @@ const ProgressModal = ({
   isOpen,
   onClose,
   learningPaths,
+  ref,
 }: {
   isOpen: boolean;
   onClose: () => void;
   learningPaths?: getPlayerQuery_player_learningPath[];
+  ref?: any;
 }) => {
   const { t } = useTranslation();
 
@@ -38,7 +40,7 @@ const ProgressModal = ({
             <ModalHeader>{t("table.progress")}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <Table variant="simple">
+              <Table variant="simple" ref={ref}>
                 <Thead>
                   <Tr>
                     <Th>{t("Challenges")}</Th>

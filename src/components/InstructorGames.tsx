@@ -49,7 +49,15 @@ export const checkIsActive = (row: any) => {
   return false;
 };
 
-const InstructorGames = () => {
+const InstructorGames = ({
+  tutorialData,
+  showTutorialData,
+  setUsedFilter,
+}: {
+  tutorialData?: any;
+  showTutorialData?: boolean;
+  setUsedFilter?: (v: boolean) => void;
+}) => {
   const memoizedArchivalSort = useMemo(
     () => (rowA: any, rowB: any) => {
       const a = rowA.original.archival;
@@ -151,7 +159,7 @@ const InstructorGames = () => {
         <Skeleton isLoaded={!teacherGamesLoading && !teacherGamesError}>
           <Box minH={200}>
             {teacherGamesData?.myGames.length === 0 && (
-              <Alert status="info" data-cy="no-games-alert">
+              <Alert status="info" data-cy="no-games-alert" marginBottom={4}>
                 <AlertIcon />
                 {t("No games available")}
               </Alert>
@@ -160,8 +168,10 @@ const InstructorGames = () => {
             {teacherGamesData && (
               <Box>
                 <TableComponent
+                  tutorialPageSize={showTutorialData ? 4 : 0}
                   dataCy="your-games-table"
                   refreshData={refetchTeacherGames}
+                  tutorial={showTutorialData}
                   contextMenu={
                     <RefreshCacheMenu
                       loading={teacherGamesLoading}
@@ -273,7 +283,11 @@ const InstructorGames = () => {
                     //   disableFilters: true,
                     // },
                   ]}
-                  data={teacherGamesData?.myGames}
+                  data={
+                    showTutorialData && tutorialData
+                      ? tutorialData
+                      : teacherGamesData?.myGames
+                  }
                 />
               </Box>
             )}

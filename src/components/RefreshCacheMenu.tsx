@@ -10,10 +10,14 @@ const RefreshCacheMenu = ({
   refetch,
   loading,
   size,
+  disabled,
+  zIndex,
 }: {
   refetch: () => Promise<any>;
   loading: boolean;
   size?: string;
+  disabled?: boolean;
+  zIndex?: number | "auto";
 }) => {
   const { add: addNotification } = useNotifications();
   const { t } = useTranslation();
@@ -38,7 +42,12 @@ const RefreshCacheMenu = ({
   };
 
   return (
-    <Flex justifyContent="flex-end">
+    <Flex
+      justifyContent="flex-end"
+      cursor={disabled ? "not-allowed" : "pointer"}
+      pointerEvents={disabled ? "none" : "auto"}
+      zIndex={zIndex || "auto"}
+    >
       <Button
         data-cy="refresh-button"
         isLoading={internalLoading || loading}

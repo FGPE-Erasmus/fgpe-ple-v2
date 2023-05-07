@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import { useKeycloak } from "@react-keycloak/web";
 import { AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom";
 import AccountSettings from "./components/AccountSettings";
 import AddPlayersToGame from "./components/AddPlayersToGame";
 import Challenge from "./components/Challenge";
@@ -21,6 +21,9 @@ import Profile from "./components/Profile";
 // import MainLoading from "./components/MainLoading";
 import ProfileInGame from "./components/ProfileInGame";
 import ToS from "./components/ToS";
+import TutorialGame from "./components/tutorials/TutorialGame";
+import TutorialPlayer from "./components/tutorials/TutorialPlayer";
+import TutorialUserDetails from "./components/tutorials/TutorialUserDetails";
 import UserDetails from "./components/UserDetails";
 import { FocusActivityContextProvider } from "./context/FocusActivityContext";
 import NavContext from "./context/NavContext";
@@ -40,7 +43,10 @@ const MainWrapper = styled.div`
 `;
 
 function App() {
-  const { ready } = useTranslation();
+  const history = useHistory();
+  const [shouldBaseTutorialStart, setShouldBaseTutorialStart] = useState(false);
+  const [toggledDarkMode, setToggledDarkMode] = useState(false);
+  const { ready, t } = useTranslation();
   const [zoomFactor, setZoomFactor] = useState(
     getZoomFactorFromLocalStorage() || 1
   );
@@ -69,7 +75,16 @@ function App() {
                   },
                 }}
               >
-                <NavContext.Provider value={{ setActiveGame, activeGame }}>
+                <NavContext.Provider
+                  value={{
+                    setActiveGame,
+                    activeGame,
+                    shouldBaseTutorialStart,
+                    setShouldBaseTutorialStart,
+                    toggledDarkMode,
+                    setToggledDarkMode,
+                  }}
+                >
                   <ZoomWrapper zoomFactor={zoomFactor}>
                     <NotificationsProvider>
                       <Navbar />
@@ -162,6 +177,28 @@ function App() {
                               path="/game/enroll/:gameToken/:groupToken?"
                               roles={["student"]}
                               component={JoinGameByToken}
+                            />
+
+                            {/* TutorialRoutes */}
+                            <PrivateRoute
+                              exact
+                              path="/teacher/tutorial/game/:tutorialGameId"
+                              roles={["teacher"]}
+                              component={TutorialGame}
+                            />
+
+                            <PrivateRoute
+                              exact
+                              path="/teacher/tutorial/player-details/:userId/:tutorialGameId"
+                              roles={["teacher"]}
+                              component={TutorialPlayer}
+                            />
+
+                            <PrivateRoute
+                              exact
+                              path="/teacher/tutorial/student-details/:userId"
+                              roles={["teacher"]}
+                              component={TutorialUserDetails}
                             />
 
                             <Route component={NotFound} />

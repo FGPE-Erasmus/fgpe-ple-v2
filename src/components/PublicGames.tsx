@@ -5,7 +5,7 @@ import {
   useMutation,
 } from "@apollo/client";
 import { Box, Button, Tooltip } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { enrollMutation } from "../generated/enrollMutation";
 import {
@@ -29,6 +29,10 @@ const PublicGames = ({
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<PlayerGameProfiles>>;
 }) => {
+  const filteredGamesData = useMemo(
+    () => gamesData.filter((game) => !game.archival),
+    [gamesData]
+  );
   const { t } = useTranslation();
   const gameProfileIds = gameProfiles.map((gameProfile) => gameProfile.game.id);
   const [loading, setLoading] = useState(false);
@@ -150,7 +154,7 @@ const PublicGames = ({
             // },
           },
         ]}
-        data={gamesData}
+        data={filteredGamesData}
       />
     </Box>
   );

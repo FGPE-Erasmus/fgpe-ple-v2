@@ -11,16 +11,35 @@ interface TutorialStep {
   ref?: { current: HTMLElement | null };
   content: string;
   canGoNext?: boolean;
+  top?: number;
+  right?: number;
+  left?: number;
+  bottom?: number;
+  textAlign?: "left" | "right" | "center";
+  menuOnTop?: boolean;
+  pointerEvents?: "none" | "all";
+  onStepEnter?: () => void;
+  scrollToTop?: boolean;
+  /** Immediately goes to next step if this is true */
+  forceNext?: boolean;
+  /** Use element id instead of ref */
+  elementId?: string;
+  additionalMargin?: number;
+  htmlPointerEvents?: "none" | "all";
 }
 
 const TutorialWizard = ({
   steps,
   isTutorialWizardOpen,
   setTutorialWizardOpen,
+  top,
+  onClose,
 }: {
   steps: TutorialStep[];
   isTutorialWizardOpen: boolean;
   setTutorialWizardOpen: (v: boolean) => void;
+  top?: boolean;
+  onClose?: () => void;
 }) => {
   const { t } = useTranslation();
 
@@ -36,17 +55,57 @@ const TutorialWizard = ({
   }, [activeStepIndex, tutorialSteps]);
 
   const activeStep = useMemo(() => {
-    console.log(tutorialSteps.find((_x, i) => i === activeStepIndex));
     return tutorialSteps.find((_x, i) => i === activeStepIndex);
   }, [activeStepIndex, tutorialSteps]);
   const stepClassName: string = `step-${activeStepIndex}`;
+
+  useEffect(() => {
+    if (!activeStep) {
+      return;
+    }
+
+    if (activeStep.scrollToTop) {
+      // smoothly scroll to top
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } else {
+      activeStep?.ref?.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "nearest",
+      });
+    }
+
+    if (activeStep?.onStepEnter) {
+      activeStep.onStepEnter();
+    }
+
+    if (activeStep.forceNext) {
+      setActiveStepIndex(activeStepIndex + 1);
+    }
+  }, [activeStep]);
 
   useEffect(() => {
     setActiveStepIndex(0);
   }, [isTutorialWizardOpen]);
 
   useEffect(() => {
+    setTutorialSteps(steps);
+
     steps.forEach((step, i) => {
+      const stepClassName = `step-${i}`;
+      const element = step.elementId
+        ? document.getElementById(step.elementId)
+        : undefined;
+
+      if (element) {
+        element.classList.add(stepClassName);
+        element.classList.add("step-animate");
+        return;
+      }
+
       if (!step.ref) {
         return;
       }
@@ -55,17 +114,15 @@ const TutorialWizard = ({
         return;
       }
 
-      setTutorialSteps(steps);
-
-      const stepClassName = `step-${i}`;
       if (!step.ref.current.classList.contains(stepClassName)) {
         step.ref.current.classList.add(stepClassName);
         step.ref.current.classList.add("step-animate");
       }
     });
-  }, [steps]);
+  }, [steps, activeStep]);
 
   if (!TUTORIALS_PORTAL) {
+    console.log("No tutorials portal found");
     return <></>;
   }
 
@@ -79,7 +136,10 @@ const TutorialWizard = ({
                 activeStep.ref &&
                 `
                 html {
-                    pointer-events:  none !important;
+                    pointer-events:  ${
+                      activeStep.htmlPointerEvents === "none" ? "none" : "all"
+                    } !important;
+                    
                 }
 
                 .step-animate:after {
@@ -91,7 +151,11 @@ const TutorialWizard = ({
                   pointer-events: auto;
                   position: relative;
                   z-index: 9999;
-                  
+                  ${
+                    activeStep.additionalMargin
+                      ? "margin-bottom: " + activeStep.additionalMargin + "px;"
+                      : ""
+                  }
                 }
     
                 .${stepClassName}:before {
@@ -114,8 +178,32 @@ const TutorialWizard = ({
                 )}';
                     margin-top: 1rem;
                     position: absolute;
-                    left: 0;
-                    top: ${(activeStep.ref.current?.offsetHeight || 40) + 2}px;
+                    ${
+                      activeStep.right
+                        ? `right: ${activeStep.right}px;`
+                        : "left: 0;"
+                    }
+
+                    ${
+                      top
+                        ? `top: ${
+                            (activeStep.ref.current?.offsetHeight || 40) + 2
+                          }px;`
+                        : ""
+                    }
+
+                    ${
+                      activeStep.top && !activeStep.bottom
+                        ? `top: ${activeStep.top}px;`
+                        : ""
+                    }
+                    ${
+                      activeStep.bottom && !activeStep.top
+                        ? `bottom: ${activeStep.top}px;`
+                        : ""
+                    }
+                    ${activeStep.left ? `left: ${activeStep.top}px;` : ""}
+                    
                     width: 100%;
                     min-width: 200px;
                     max-width: 500px;
@@ -124,7 +212,7 @@ const TutorialWizard = ({
                     white-space: pre-wrap;
                     font-size: 15px;
                     line-height: 1.2em;
-                    text-align: left;
+                    text-align: ${activeStep.textAlign || "left"};
                     animation: fadeIn 0.5s; 
                     animation-fill-mode: forwards;
                 }
@@ -140,6 +228,10 @@ const TutorialWizard = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              menuOnTop={activeStep?.menuOnTop || false}
+              style={{
+                pointerEvents: activeStep?.pointerEvents || "all",
+              }}
             >
               {!activeStep?.ref && (
                 <CenterText>
@@ -151,11 +243,14 @@ const TutorialWizard = ({
                   color={"white"}
                   variant="outline"
                   colorScheme="gray"
-                  onClick={() => setTutorialWizardOpen(false)}
+                  onClick={() => {
+                    setTutorialWizardOpen(false);
+                    onClose?.();
+                  }}
                 >
                   {t("Close")}
                 </Button>
-                <Flex style={{ gap: 4 }}>
+                <Flex style={{ gap: 16 }}>
                   <Button
                     disabled={activeStepIndex <= 0}
                     onClick={() => setActiveStepIndex(activeStepIndex - 1)}
@@ -203,7 +298,8 @@ const CenterText = styled.div`
   }
 `;
 
-const TutorialBox = styled(motion.div)`
+// Add props menuOnTop
+const TutorialBox = styled(motion.div)<{ menuOnTop?: boolean }>`
   position: absolute;
   height: 100%;
   width: 100%;
@@ -212,13 +308,38 @@ const TutorialBox = styled(motion.div)`
   pointer-events: all;
 
   .tutorial-buttons {
-    position: absolute;
+    position: fixed;
     z-index: 99999;
     gap: 8px;
     width: 100%;
     justify-content: space-between;
     padding: 16px;
     bottom: 0px;
+    top: calc(100% - 74px);
+    ${({ menuOnTop }) => (menuOnTop ? "top: calc(0% - 0px);" : "")}
+    transition: top 0.5s;
+    height: 74px;
+    pointer-events: all;
+
+    & > button,
+    & > div > button {
+      &:before {
+        content: "";
+        position: absolute;
+        width: calc(100% + 8px);
+        height: calc(100% + 8px);
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+        border-radius: 8px;
+        // center
+        left: -4px;
+        top: -4px;
+      }
+    }
+  }
+
+  .menu-on-top {
+    color: red !important;
   }
 `;
 

@@ -7,6 +7,11 @@
 // GraphQL query operation: gameDetailsGetGameByIdQuery
 // ====================================================
 
+export interface gameDetailsGetGameByIdQuery_game_submissions {
+  __typename: "Submission";
+  submittedAt: any;
+}
+
 export interface gameDetailsGetGameByIdQuery_game_players_stats {
   __typename: "PlayerStats";
   nrOfSubmissions: number;
@@ -31,6 +36,7 @@ export interface gameDetailsGetGameByIdQuery_game {
   endDate: any | null;
   archival: boolean;
   private: boolean;
+  submissions: gameDetailsGetGameByIdQuery_game_submissions[];
   players: gameDetailsGetGameByIdQuery_game_players[];
   createdAt: any;
 }

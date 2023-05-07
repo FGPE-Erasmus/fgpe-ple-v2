@@ -6,11 +6,29 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { getTeacherStudentsDetails } from "../generated/getTeacherStudentsDetails";
 import { GET_TEACHER_STUDENTS_DETAILS } from "../graphql/getTeacherStudentsDetails";
+import { GET_TEACHER_STUDENTS_DETAILS_SMALL } from "../graphql/getTeacherStudentsDetailsSmall";
 import { checkIfConnectionAborted } from "../utilities/ErrorMessages";
 import RefreshCacheMenu from "./RefreshCacheMenu";
 import TableComponent from "./TableComponent";
 import ColumnFilter from "./TableComponent/ColumnFilter";
 
+const getPlayersWithoutProgress = (
+  data: getTeacherStudentsDetails | undefined
+) => {
+  if (!data) {
+    return [];
+  }
+
+  const players = data.myGames.flatMap((game) => {
+    return game.players.flatMap((player) => {
+      return { ...player, game };
+    });
+  });
+
+  return players;
+};
+
+/** @deprecated */
 const getPlayers = (data: getTeacherStudentsDetails | undefined) => {
   if (!data) {
     return [];
@@ -18,15 +36,6 @@ const getPlayers = (data: getTeacherStudentsDetails | undefined) => {
 
   const players = data.myGames.flatMap((game) => {
     return game.players.flatMap((player) => {
-      // const totalExercises = player.learningPath.flatMap((learningPath) =>
-      //   learningPath.refs.flatMap((ref) => ref)
-      // );
-
-      // const progress = {
-      //   total: totalExercises.length,
-      //   progress: totalExercises.filter((item) => item.solved).length,
-      // };
-
       const totalChallengesCount = player.learningPath.length || 1;
 
       const progressCombined =
@@ -41,20 +50,26 @@ const getPlayers = (data: getTeacherStudentsDetails | undefined) => {
   return players;
 };
 
-const TeacherStudents = () => {
-  const memoizedSortFunc = useMemo(
-    () => (rowA: any, rowB: any) => {
-      const a = rowA.original.progress;
-      const b = rowB.original.progress;
+const TeacherStudents = ({
+  tutorialData,
+  showTutorialData,
+}: {
+  tutorialData?: any;
+  showTutorialData?: boolean;
+}) => {
+  // const memoizedSortFunc = useMemo(
+  //   () => (rowA: any, rowB: any) => {
+  //     const a = rowA.original.progress;
+  //     const b = rowB.original.progress;
 
-      if (a > b) return 1;
+  //     if (a > b) return 1;
 
-      if (b > a) return -1;
+  //     if (b > a) return -1;
 
-      return 0;
-    },
-    []
-  );
+  //     return 0;
+  //   },
+  //   []
+  // );
   const history = useHistory();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -65,7 +80,7 @@ const TeacherStudents = () => {
     error: teacherStudentsError,
     loading: teacherStudentsLoading,
     refetch: refetchTeacherStudents,
-  } = useQuery<getTeacherStudentsDetails>(GET_TEACHER_STUDENTS_DETAILS, {
+  } = useQuery<getTeacherStudentsDetails>(GET_TEACHER_STUDENTS_DETAILS_SMALL, {
     fetchPolicy: "cache-first",
     onError: async (err) => {
       const isServerConnectionError = checkIfConnectionAborted(err);
@@ -77,7 +92,9 @@ const TeacherStudents = () => {
     },
   });
 
-  const players = getPlayers(teacherStudentsData);
+  const players = showTutorialData
+    ? tutorialData
+    : getPlayersWithoutProgress(teacherStudentsData);
 
   return (
     <div>
@@ -109,9 +126,7 @@ const TeacherStudents = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {/* <Heading as="h3" size="md" marginTop={5} marginBottom={5}>
-          {t("All your students")}
-        </Heading> */}
+
         <Skeleton isLoaded={!teacherStudentsLoading && !teacherStudentsError}>
           <Box minH={200}>
             {players.length === 0 && (
@@ -167,20 +182,20 @@ const TeacherStudents = () => {
                         />
                       ),
                     },
-                    {
-                      Header: t("table.submissions"),
-                      accessor: "stats.nrOfSubmissions",
-                      Filter: ({ column }: { column: any }) => (
-                        <ColumnFilter column={column} placeholder="123" />
-                      ),
-                    },
-                    {
-                      Header: t("table.validations"),
-                      accessor: "stats.nrOfValidations",
-                      Filter: ({ column }: { column: any }) => (
-                        <ColumnFilter column={column} placeholder="123" />
-                      ),
-                    },
+                    // {
+                    //   Header: t("table.submissions"),
+                    //   accessor: "stats.nrOfSubmissions",
+                    //   Filter: ({ column }: { column: any }) => (
+                    //     <ColumnFilter column={column} placeholder="123" />
+                    //   ),
+                    // },
+                    // {
+                    //   Header: t("table.validations"),
+                    //   accessor: "stats.nrOfValidations",
+                    //   Filter: ({ column }: { column: any }) => (
+                    //     <ColumnFilter column={column} placeholder="123" />
+                    //   ),
+                    // },
                     {
                       Header: t("table.group"),
                       accessor: "group.name",
@@ -194,15 +209,15 @@ const TeacherStudents = () => {
                         />
                       ),
                     },
-                    {
-                      Header: t("table.progress"),
-                      accessor: "progress",
-                      Cell: ({ value }: { value: any }) => {
-                        return (value * 100).toFixed(1) + "%";
-                      },
-                      disableFilters: true,
-                      sortType: memoizedSortFunc,
-                    },
+                    // {
+                    //   Header: t("table.progress"),
+                    //   accessor: "progress",
+                    //   Cell: ({ value }: { value: any }) => {
+                    //     return (value * 100).toFixed(1) + "%";
+                    //   },
+                    //   disableFilters: true,
+                    //   sortType: memoizedSortFunc,
+                    // },
                   ]}
                   data={players}
                 />
