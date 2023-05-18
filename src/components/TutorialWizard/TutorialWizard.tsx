@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 const TUTORIALS_PORTAL = document.getElementById("tutorial");
 
 interface TutorialStep {
-  ref?: { current: HTMLElement | null };
+  ref?: { current: HTMLElement | null } | any;
   content: string;
   canGoNext?: boolean;
   top?: number;

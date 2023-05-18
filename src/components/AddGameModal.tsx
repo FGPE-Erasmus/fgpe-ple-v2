@@ -17,7 +17,6 @@ import {
   ModalOverlay,
   Select,
   Textarea,
-  Tooltip,
   useColorMode,
   VStack,
 } from "@chakra-ui/react";
@@ -200,41 +199,41 @@ const AddGameModal = ({
               content: `The tutorial will present itself as a series of modals with annotations and prompts on how to progress.`,
             },
             {
-              ref: tutorialStepName as any,
+              ref: tutorialStepName,
               content:
                 "You can start with the name of the game that will help everyone identify it. Try to come up with something unique. This step is required and cannot be changed later.",
               canGoNext: gameName !== "",
             },
             {
-              ref: tutorialStepDescription as any,
+              ref: tutorialStepDescription,
               content:
                 "Add a small meaningful description of the game. This step is not required, you can skip it, but you cannot change it later.",
             },
             {
-              ref: tutorialStepDateStart as any,
+              ref: tutorialStepDateStart,
               content: `You can choose when the game will be available for the players. Enter a date in YYYY-MM-DD format.
 
 If you want your game to be always available just skip this step. You can always edit these dates later.`,
             },
             {
-              ref: tutorialStepEngine as any,
+              ref: tutorialStepEngine,
               content:
                 "You need to choose an engine that will evaluate players' code.",
               canGoNext: evaluationEngine !== "",
             },
             {
-              ref: tutorialStepFile as any,
+              ref: tutorialStepFile,
               content:
                 "Here you need to provide the game package with all required data. You can export the game package in the Authorkit by choosing the GEDiL + MEF format.",
               canGoNext: acceptedFiles.length > 0,
             },
             {
-              ref: tutorialStepPrivateGame as any,
+              ref: tutorialStepPrivateGame,
               content:
                 "You can make your game private. Only invited playres will have access to your game. You can change this later.",
             },
             {
-              ref: tutorialStepAddButton as any,
+              ref: tutorialStepAddButton,
               content: "There's only one thing left to do. Add the game!",
               canGoNext: importGameLoading,
             },
