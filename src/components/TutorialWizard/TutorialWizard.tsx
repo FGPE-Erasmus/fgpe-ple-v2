@@ -1,7 +1,7 @@
-import { Button, Flex, useColorMode } from "@chakra-ui/react";
+import { Button, Flex } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import { useTranslation } from "react-i18next";
 
@@ -210,7 +210,7 @@ const TutorialWizard = ({
                     z-index: 1052;
                     color: #fff;
                     white-space: pre-wrap;
-                    font-size: 15px;
+                    font-size: 16px;
                     line-height: 1.2em;
                     text-align: ${activeStep.textAlign || "left"};
                     animation: fadeIn 0.5s; 

@@ -129,7 +129,7 @@ const TeacherStudents = ({
 
         <Skeleton isLoaded={!teacherStudentsLoading && !teacherStudentsError}>
           <Box minH={200}>
-            {players.length === 0 && (
+            {players.length === 0 && !showTutorialData && (
               <Alert status="info">
                 <AlertIcon />
                 {t("You have no students yet")}
@@ -146,7 +146,7 @@ const TeacherStudents = ({
                       refetch={refetchTeacherStudents}
                     />
                   }
-                  onRowClick={(row: typeof players[number]) => {
+                  onRowClick={(row: (typeof players)[number]) => {
                     history.push({
                       pathname: `/teacher/student-details/${row.user.id}`,
                     });

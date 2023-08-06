@@ -22,7 +22,6 @@ const FillInGapsEditor = ({
   const gapsLength = skeleton ? skeleton.split("{{gap}}").length - 1 : 0;
 
   const onChange = (code: string, index: number) => {
-    console.log("code", code);
     let newCode = "";
     const splitted = skeleton.split("{{gap}}");
 
@@ -71,7 +70,9 @@ const FillInGapsEditor = ({
                     }}
                     fontSize={14}
                     display="inline-block"
-                    maxW={50}
+                    maxW={`${
+                      50 + (inputsValues[gapsLength - 1 - i]?.length || 0) * 6
+                    }px`}
                     maxH={30}
                     padding={1}
                     textAlign="center"

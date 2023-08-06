@@ -112,7 +112,7 @@ const TutorialGame = () => {
             ref: tutorialStepStudents as any,
             content: `Here you can see the list of players that are participating in the game.\n\nYou can remove players directly from here or from the "Add or remove players" button in the main menu.\n\nYou can also manage groups here - the context menu on the right side of the table will allow you to create, edit or delete groups.\n\nClick "Next" to look at the Activities table`,
             menuOnTop: true,
-            top: -200,
+            top: -240,
             scrollToTop: true,
           },
           {
